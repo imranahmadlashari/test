@@ -8206,39 +8206,70 @@ add_shortcode('eligibility_checker', function($atts) {
     },
     
     /**
-     * Setup event listeners for grant cards
-     */
-    setupGrantCardEvents() {
-      // Details button click event
-      const detailsButtons = document.querySelectorAll('.eligibility-checker__match-details');
-      detailsButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const grantId = button.getAttribute('data-grant-id');
-          const grant = this.grants.find(g => g.id.toString() === grantId);
-          
-          if (grant) {
-            this.showGrantDetails(grant);
-          }
-        });
-      });
-    },
+ * Setup event listeners for grant cards - FIXED VERSION
+ */
+setupGrantCardEvents() {
+  // Details button click event
+  const detailsButtons = document.querySelectorAll('.eligibility-checker__match-details');
+  
+  // Remove previous event listeners (to prevent duplicates)
+  detailsButtons.forEach(button => {
+    // Use cloneNode to remove existing event listeners
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
     
-    /**
-     * Show grant details in modal with enhanced match information
-     */
+    // Add new event listener
+    newButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default behavior
+      const grantId = newButton.getAttribute('data-grant-id');
+      const grant = this.grants.find(g => g.id.toString() === grantId);
+      
+      if (grant) {
+        this.showGrantDetails(grant);
+      } else {
+        console.error('Grant not found with ID:', grantId);
+      }
+    });
+  });
+  
+  // Also check if we need to add event listeners to the modal close buttons again
+  const modalClose = document.getElementById('modal-close');
+  const modalBack = document.getElementById('modal-back');
+  
+  if (modalClose) {
+    const newModalClose = modalClose.cloneNode(true);
+    modalClose.parentNode.replaceChild(newModalClose, modalClose);
+    newModalClose.addEventListener('click', () => {
+      document.getElementById('match-modal').classList.remove('active');
+    });
+  }
+  
+  if (modalBack) {
+    const newModalBack = modalBack.cloneNode(true);
+    modalBack.parentNode.replaceChild(newModalBack, modalBack);
+    newModalBack.addEventListener('click', () => {
+      document.getElementById('match-modal').classList.remove('active');
+    });
+  }
+},
+    
     showGrantDetails(grant) {
-      const modal = document.getElementById('match-modal');
-      const modalTitle = document.getElementById('modal-title');
-      const modalDescription = document.getElementById('modal-description');
-      const modalMeta = document.getElementById('modal-meta');
-      const modalEligibility = document.getElementById('modal-eligibility');
-      const modalMatchList = document.getElementById('modal-match-list');
-      
-      if (!modal || !modalTitle || !modalDescription || !modalMeta || !modalEligibility || !modalMatchList) return;
-      
-      // Set modal content
-      modalTitle.textContent = grant.title;
-      modalDescription.textContent = grant.description;
+  console.log('Showing grant details:', grant); // Debug log
+  const modal = document.getElementById('match-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDescription = document.getElementById('modal-description');
+  const modalMeta = document.getElementById('modal-meta');
+  const modalEligibility = document.getElementById('modal-eligibility');
+  const modalMatchList = document.getElementById('modal-match-list');
+  
+  if (!modal || !modalTitle || !modalDescription || !modalMeta || !modalEligibility || !modalMatchList) {
+    console.error('One or more modal elements not found');
+    return;
+  }
+  
+  // Set modal content
+  modalTitle.textContent = grant.title;
+  modalDescription.textContent = grant.description;
       
       // Format deadline for display with same logic as card
       let deadlineFormatted = grant.deadline;
@@ -9113,6 +9144,46 @@ add_shortcode('eligibility_checker', function($atts) {
   document.addEventListener('DOMContentLoaded', function() {
     EligibilityChecker.init();
   });
+  // Fix for grant modal windows not opening
+document.addEventListener('click', function(event) {
+  // Check if the clicked element is a details button or has a parent that is
+  let targetButton = event.target.closest('.eligibility-checker__match-details');
+  
+  if (targetButton) {
+    const grantId = targetButton.getAttribute('data-grant-id');
+    const eligibilityChecker = window.EligibilityChecker || {};
+    
+    // Find the grant in the stored grants
+    const grant = eligibilityChecker.grants && eligibilityChecker.grants.find(g => g.id.toString() === grantId);
+    
+    if (grant) {
+      const modal = document.getElementById('match-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalDescription = document.getElementById('modal-description');
+      
+      if (modal && modalTitle && modalDescription) {
+        // Set minimal content
+        modalTitle.textContent = grant.title;
+        modalDescription.textContent = grant.description;
+        
+        // Fill other fields if the function exists
+        if (typeof eligibilityChecker.showGrantDetails === 'function') {
+          eligibilityChecker.showGrantDetails(grant);
+        } else {
+          modal.classList.add('active');
+        }
+      }
+    }
+  }
+  
+  // Also handle modal close buttons
+  if (event.target.closest('#modal-close') || event.target.closest('#modal-back')) {
+    const modal = document.getElementById('match-modal');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  }
+});
 })();
 </script>
 </section>
