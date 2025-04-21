@@ -1,3 +1,605 @@
+<section class="gec-hero-section" data-section-id="gec-hero-v1-0">
+  <style>
+    /* gec-hero-section: Styles for the main hero section container */
+    .gec-hero-section {
+      /* Mobile First Styles */
+      padding: var(--grantaura-spacing-md) var(--grantaura-spacing-sm); /* 2rem top/bottom, 1rem left/right for mobile */
+      background: linear-gradient(135deg, var(--grantaura-primary-light) 0%, var(--grantaura-primary) 100%);
+      color: var(--grantaura-white);
+      text-align: center;
+      overflow: hidden; /* Ensures no overflow issues */
+      position: relative; /* Needed for potential future pseudo-elements */
+    }
+
+    /* Tablet and larger screens */
+    @media (min-width: 768px) {
+      .gec-hero-section {
+        padding: var(--grantaura-spacing-lg) var(--grantaura-spacing-md); /* 4rem top/bottom, 2rem left/right */
+        text-align: left; /* Align text left on larger screens */
+      }
+    }
+
+    /* Desktop screens */
+    @media (min-width: 1024px) {
+      .gec-hero-section {
+        padding: var(--grantaura-spacing-xl) var(--grantaura-spacing-lg); /* 6rem top/bottom, 4rem left/right */
+      }
+    }
+  </style>
+
+  <div class="gec-hero-container">
+    <style>
+      /* gec-hero-container: Styles for the content constraint */
+      .gec-hero-container {
+        /* Mobile First Styles */
+        max-width: var(--grantaura-max-width);
+        margin-left: auto;
+        margin-right: auto;
+        position: relative; /* Context for absolute positioning if needed later */
+        z-index: 1; /* Ensure content is above any background elements */
+      }
+
+       /* Tablet and larger screens: Introduce two-column layout possibility */
+       @media (min-width: 768px) {
+        .gec-hero-container {
+           display: flex;
+           align-items: center; /* Vertically align items */
+           gap: var(--grantaura-spacing-md); /* Space between text and potential image/graphic */
+        }
+       }
+    </style>
+
+        <!-- Start of Updated gec-hero-content -->
+    <div class="gec-hero-content">
+  <style>
+    /* gec-hero-content: Styles for the text content wrapper */
+    .gec-hero-content {
+      /* Mobile First Styles */
+      position: relative;
+      padding: 1.5rem 0;
+      z-index: 2;
+    }
+
+    /* Decorative element - subtle purple circle in background */
+    .gec-hero-content::before {
+      content: "";
+      position: absolute;
+      top: -30px;
+      left: -80px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(90, 59, 140, 0.2) 0%, rgba(90, 59, 140, 0) 70%);
+      border-radius: 50%;
+      z-index: -1;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    /* Only show decorative elements on larger screens */
+    @media (min-width: 768px) {
+      .gec-hero-content {
+        flex: 1;
+        max-width: 650px;
+        padding: 2rem 0;
+      }
+      
+      .gec-hero-content::before {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Desktop screens */
+    @media (min-width: 1024px) {
+      .gec-hero-content {
+        padding: 2.5rem 0;
+      }
+    }
+  </style>
+
+  <!-- Badge - Small attention grabber -->
+  <!-- Start: Revamped Grantaura Hero Badge -->
+<div class="gec-hero-badge--revamped" data-component-id="gec-hero-badge-revamped-outer">
+  <style>
+    .gec-hero-badge--revamped {
+      /* Mobile First Styles - Outer container for gradient border */
+      display: inline-block; /* Allows inline flow but respects padding */
+      padding: 1.5px; /* Creates space for the gradient border */
+      background: linear-gradient(115deg, var(--grantaura-secondary), var(--grantaura-primary-light));
+      border-radius: var(--grantaura-border-radius-xl); /* Softer, larger radius */
+      transition: var(--grantaura-transition);
+      box-shadow: var(--grantaura-box-shadow-sm);
+      margin-bottom: var(--grantaura-spacing-sm); /* Consistent spacing */
+      cursor: default; /* Indicate it's not clickable unless linked elsewhere */
+    }
+
+    .gec-hero-badge--revamped:hover {
+       transform: translateY(-2px) scale(1.02);
+       box-shadow: var(--grantaura-box-shadow-lg);
+       background: linear-gradient(115deg, var(--grantaura-secondary-light), var(--grantaura-primary)); /* Subtle shift on hover */
+    }
+
+    /* Desktop Styles */
+    @media (min-width: 768px) {
+      .gec-hero-badge--revamped {
+         margin-bottom: var(--grantaura-spacing-md); /* More space on larger screens */
+      }
+    }
+  </style>
+  <div class="gec-hero-badge--revamped__inner" data-component-id="gec-hero-badge-revamped-inner">
+    <style>
+      .gec-hero-badge--revamped__inner {
+        /* Mobile First Styles - Inner container for content */
+        display: inline-flex; /* Use flex for alignment */
+        align-items: center;
+        background-color: var(--grantaura-white);
+        /* Calculate inner radius based on outer radius and border thickness */
+        border-radius: calc(var(--grantaura-border-radius-xl) - 1.5px);
+        padding: var(--grantaura-spacing-xs) 0.8rem; /* Vertical padding smaller than horizontal */
+        transition: var(--grantaura-transition);
+      }
+
+      /* Desktop Styles */
+       @media (min-width: 768px) {
+         .gec-hero-badge--revamped__inner {
+            padding: 0.4rem 1rem; /* Slightly increase padding */
+         }
+       }
+    </style>
+    <span class="gec-hero-badge--revamped__icon" data-component-id="gec-hero-badge-revamped-icon" aria-hidden="true">
+      <style>
+        .gec-hero-badge--revamped__icon {
+          /* Mobile First Styles - CSS Checkmark Icon */
+          display: inline-block;
+          transform: rotate(45deg);
+          height: 0.7rem; /* Base size */
+          width: 0.35rem; /* Base size */
+          border-bottom: 2px solid var(--grantaura-success); /* Use success color for check */
+          border-right: 2px solid var(--grantaura-success);
+          margin-right: 0.6rem; /* Space between icon and text */
+          flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+         /* Desktop Styles */
+        @media (min-width: 768px) {
+          .gec-hero-badge--revamped__icon {
+            height: 0.8rem; /* Slightly larger */
+            width: 0.4rem; /* Slightly larger */
+            margin-right: 0.7rem; /* More space */
+          }
+        }
+      </style>
+    </span>
+    <span class="gec-hero-badge--revamped__text" data-component-id="gec-hero-badge-revamped-text">
+      <style>
+        .gec-hero-badge--revamped__text {
+          /* Mobile First Styles - Text */
+          font-size: 0.8rem; /* Slightly smaller, cleaner */
+          font-weight: 600; /* Semi-bold for clarity */
+          color: var(--grantaura-text-dark) !important; /* Ensure high contrast, important if theme overrides */
+          letter-spacing: 0.3px; /* Subtle spacing */
+          line-height: 1.3; /* Ensure text aligns well vertically */
+        }
+
+        /* Desktop Styles */
+         @media (min-width: 768px) {
+           .gec-hero-badge--revamped__text {
+              font-size: 0.9rem; /* Slightly larger */
+           }
+         }
+      </style>
+      Quick Eligibility Check
+    </span>
+  </div>
+</div>
+
+
+  <!-- Main Headline with improved typography and SEO -->
+  <h1 class="gec-hero-headline">
+    <style>
+      /* gec-hero-headline: Styles for the main heading */
+      .gec-hero-headline {
+        /* Mobile First Styles */
+        font-family: 'Poppins', sans-serif;
+        font-size: 2.25rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: var(--grantaura-white);
+        margin-bottom: var(--grantaura-spacing-sm);
+        position: relative;
+        letter-spacing: -0.5px;
+      }
+
+      /* Circle highlight elements */
+      .gec-hero-headline .gec-hero-highlight {
+        position: relative;
+        display: inline-block;
+        font-weight: 700;
+        z-index: 1;
+      }
+      
+      /* Underline decoration for highlight */
+      .gec-hero-headline .gec-hero-highlight::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    z-index: -1;
+    border-radius: 4px;
+    background: linear-gradient(to top, var(--grantaura-secondary-light) 45%, transparent 45%);
+}
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        .gec-hero-headline {
+          font-size: 2.75rem;
+          margin-bottom: var(--grantaura-spacing-sm);
+        }
+        
+        .gec-hero-headline .gec-hero-highlight::after {
+          height: 52px;
+          bottom: 7px;
+        }
+      }
+
+      /* Desktop screens */
+      @media (min-width: 1024px) {
+        .gec-hero-headline {
+          font-size: 3.5rem;
+        }
+        
+        .gec-hero-headline .gec-hero-highlight::after {
+          height: 52px;
+          bottom: 10px;
+        }
+      }
+    </style>
+    <!-- Improved headline content with better SEO keywords -->
+    Find Grants <span class="gec-hero-highlight">You Qualify For</span><br>
+    In Under 3 Minutes
+  </h1>
+
+  <!-- Stylized Subheadline -->
+  <h2 class="gec-hero-subheadline">
+    <style>
+      .gec-hero-subheadline {
+        /* Mobile First Styles */
+        font-family: 'Inter', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--grantaura-secondary-light);
+        margin-bottom: var(--grantaura-spacing-sm);
+        max-width: 580px;
+      }
+      
+      @media (min-width: 768px) {
+        .gec-hero-subheadline {
+          font-size: 1.35rem;
+          margin-bottom: var(--grantaura-spacing-sm);
+        }
+      }
+    </style>
+    Access our database of 500+ funding opportunities for businesses, nonprofits & individuals
+  </h2>
+
+  <!-- Improved description with better SEO content -->
+  <p class="gec-hero-description">
+    <style>
+      /* gec-hero-description: Styles for the descriptive text */
+      .gec-hero-description {
+        /* Mobile First Styles */
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--grantaura-gray-100);
+        margin-bottom: var(--grantaura-spacing-md);
+        max-width: 600px;
+      }
+
+      .gec-hero-description strong {
+        color: var(--grantaura-white);
+        font-weight: 600;
+      }
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        .gec-hero-description {
+          font-size: 1.05rem;
+          margin-bottom: var(--grantaura-spacing-md);
+        }
+      }
+    </style>
+    Stop wasting hours on grants you don't qualify for. Our expert-designed tool instantly matches your profile with relevant funding opportunities. <strong>Over 300+ successful projects</strong> with a 4.9/5 rating from 185+ reviews prove our expertise in connecting businesses with the right grants.
+  </p>
+
+  <!-- Enhanced CTA with features list -->
+  <div class="gec-hero-cta-group">
+    <style>
+      .gec-hero-cta-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: var(--grantaura-spacing-md);
+      }
+      
+      @media (min-width: 768px) {
+        .gec-hero-cta-group {
+          flex-direction: row;
+          align-items: center;
+          gap: 2rem;
+        }
+      }
+    </style>
+    
+    <a href="#eligibility-checker__form" class="gec-hero-cta" role="button" aria-label="Start your free grant eligibility check now">
+      <style>
+        /* gec-hero-cta: Styles for the Call to Action button */
+        .gec-hero-cta {
+          /* Mobile First Styles */
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem 1.75rem !important;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.1rem !important;
+          font-weight: 700 !important;
+          color: var(--grantaura-primary-dark) !important;
+          background: var(--grantaura-secondary) !important;
+          background: linear-gradient(135deg, var(--grantaura-secondary) 0%, var(--grantaura-secondary-dark) 100%) !important;
+          border: none !important;
+          border-radius: var(--grantaura-border-radius-lg) !important;
+          text-decoration: none !important;
+          text-align: center;
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          width: 100%;
+        }
+
+        /* Pseudo-element for hover effect */
+        .gec-hero-cta::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, var(--grantaura-secondary-dark) 0%, var(--grantaura-secondary) 100%) !important;
+          opacity: 0;
+          z-index: -1;
+          transition: opacity 0.3s ease !important;
+        }
+
+        /* Hover and Focus states */
+        .gec-hero-cta:hover,
+        .gec-hero-cta:focus {
+          transform: translateY(-3px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+          outline: none !important;
+        }
+        
+        .gec-hero-cta:hover::before,
+        .gec-hero-cta:focus::before {
+          opacity: 1;
+        }
+
+        /* Active state */
+        .gec-hero-cta:active {
+          transform: translateY(-1px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Icon styles */
+        .gec-hero-cta-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 0.75rem;
+          background-color: rgba(255, 255, 255, 0.25);
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          font-size: 0.9em;
+          transition: transform 0.3s ease;
+        }
+        
+        .gec-hero-cta:hover .gec-hero-cta-icon {
+          transform: rotate(10deg);
+        }
+
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+          .gec-hero-cta {
+            padding: 1.1rem 2.5rem !important;
+            width: auto;
+          }
+        }
+      </style>
+      <!-- Enhanced CTA content -->
+      <span class="gec-hero-cta-icon" aria-hidden="true">
+        <i class="fas fa-check-circle"></i>
+      </span>
+      Check My Eligibility Now
+    </a>
+    
+    <!-- Feature highlights - mobile and desktop friendly -->
+    <ul class="gec-hero-features">
+      <style>
+        .gec-hero-features {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+        }
+        
+        .gec-hero-feature-item {
+          display: flex;
+          align-items: center;
+          font-size: 0.95rem;
+          color: var(--grantaura-white);
+        }
+        
+        .gec-hero-feature-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 0.5rem;
+          color: var(--grantaura-secondary);
+          font-size: 0.8rem;
+        }
+        
+        @media (min-width: 768px) {
+          .gec-hero-features {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          
+          .gec-hero-feature-item {
+            font-size: 1rem;
+          }
+        }
+      </style>
+      <li class="gec-hero-feature-item">
+        <span class="gec-hero-feature-icon" aria-hidden="true">
+          <i class="fas fa-clock"></i>
+        </span>
+        Takes only 2-3 minutes
+      </li>
+      <li class="gec-hero-feature-item">
+        <span class="gec-hero-feature-icon" aria-hidden="true">
+          <i class="fas fa-check"></i>
+        </span>
+        100% Free, no obligations
+      </li>
+      <li class="gec-hero-feature-item">
+        <span class="gec-hero-feature-icon" aria-hidden="true">
+          <i class="fas fa-shield-alt"></i>
+        </span>
+        Expert-backed results
+      </li>
+    </ul>
+  </div>
+  
+  <!-- Social proof element -->
+  <div class="gec-hero-social-proof">
+    <style>
+      .gec-hero-social-proof {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .gec-hero-social-proof-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--grantaura-gray-300);
+        display: flex;
+        align-items: center;
+      }
+      
+      .gec-hero-social-proof-title::after {
+        content: "";
+        flex-grow: 1;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.15);
+        margin-left: 0.75rem;
+      }
+      
+      .gec-hero-social-proof-stars {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--grantaura-secondary);
+        font-size: 1rem;
+      }
+      
+      .gec-hero-social-proof-text {
+        font-size: 0.9rem;
+        color: var(--grantaura-gray-200);
+      }
+      
+      .gec-hero-social-proof-number {
+        font-weight: 600;
+        color: var(--grantaura-white);
+      }
+      
+      @media (min-width: 768px) {
+        .gec-hero-social-proof-stars {
+          font-size: 1.1rem;
+        }
+        
+        .gec-hero-social-proof-text {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+    <span class="gec-hero-social-proof-title">Trusted by businesses nationwide</span>
+    <div class="gec-hero-social-proof-stars" aria-label="4.9 out of 5 star rating">
+      <i class="fas fa-star" aria-hidden="true"></i>
+      <i class="fas fa-star" aria-hidden="true"></i>
+      <i class="fas fa-star" aria-hidden="true"></i>
+      <i class="fas fa-star" aria-hidden="true"></i>
+      <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+    </div>
+    <p class="gec-hero-social-proof-text">
+      <span class="gec-hero-social-proof-number">4.9/5</span> rating from <span class="gec-hero-social-proof-number">185+</span> verified reviews
+    </p>
+  </div>
+</div>
+
+     <!-- Optional: Placeholder for a graphic/image on larger screens -->
+     <div class="gec-hero-visual">
+        <style>
+            /* gec-hero-visual: Styles for optional graphic area */
+            .gec-hero-visual {
+                /* Mobile First Styles: Hidden on mobile */
+                display: none;
+            }
+
+             /* Tablet and larger screens */
+            @media (min-width: 768px) {
+                .gec-hero-visual {
+                    display: flex; /* Show on tablet+ */
+                    align-items: center;
+                    justify-content: center;
+                    flex: 0 0 40%; /* Takes up roughly 40% of the width, adjust as needed */
+                    max-width: 400px; /* Max size of the visual element */
+                    /* Add background or image styles here if needed */
+                    /* Example: background-image: url('...'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 300px; */
+                    /* For now, a simple placeholder background */
+                    /* background-color: rgba(255, 255, 255, 0.1); */
+                    /* border-radius: var(--grantaura-border-radius-xl); */
+                }
+            }
+             /* Desktop screens */
+             @media (min-width: 1024px) {
+                 .gec-hero-visual {
+                     max-width: 500px; /* Allow slightly larger visual on desktop */
+                     /* Example: Maybe add a subtle animation */
+                 }
+             }
+        </style>
+        <!-- Visual Content -->
+        <!-- @integration-point: Replace this comment with an <img> tag or SVG for a relevant visual. -->
+        <!-- Example: <img src="https://grantaura.com/wp-content/uploads/2025/02/results_checklist-png.webp" alt="Illustration showing checklist and results" style="width: 100%; height: auto; max-width: 350px; object-fit: contain;"> -->
+         <!-- For now, let's add one of the abstract images provided as an example -->
+         <img src="https://grantaura.com/wp-content/uploads/2025/02/badge-with-abs-bg-10.webp" alt="Abstract graphic representing achievement or checking" style="width: 100%; height: auto; max-width: 350px; object-fit: contain; border-radius: var(--grantaura-border-radius-lg);">
+
+     </div> <!-- End gec-hero-visual -->
+
+  </div> <!-- End gec-hero-container -->
+
+</section> 
+
 <!-- 
   ENHANCED GRANT ELIGIBILITY ASSESSMENT TOOL
   A precise, intelligent tool that strictly matches users with grants they're eligible for
@@ -12,8 +614,6 @@
   3. More comprehensive search with metadata integration
   4. UI improvements to highlight priority matches
   5. Better presentation of match reasons
-  6. Premium grant teasing with lead capture
-  7. Admin URL access for viewing all grants
 -->
 <section class="eligibility-checker" data-section-id="eligibility-checker">
   <style>
@@ -1253,466 +1853,6 @@
       color: var(--secondary-color) !important;
     }
     
-    /* Premium grants section */
-    .eligibility-checker__premium-section {
-      margin-top: 3rem;
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
-      position: relative;
-    }
-    
-    .eligibility-checker__premium-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://grantaura.com/wp-content/uploads/2025/02/waves-with-patterns-6.webp');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.1;
-      z-index: 1;
-    }
-    
-    .eligibility-checker__premium-content {
-      position: relative;
-      z-index: 2;
-      padding: 2.5rem;
-      color: var(--white);
-      text-align: center;
-    }
-    
-    .eligibility-checker__premium-badge {
-      display: inline-block;
-      background-color: rgba(255, 255, 255, 0.2);
-      color: var(--white);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      backdrop-filter: blur(5px);
-    }
-    
-    .eligibility-checker__premium-badge i {
-      margin-right: 0.5rem;
-    }
-    
-    .eligibility-checker__premium-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    
-    .eligibility-checker__premium-description {
-      font-size: 1.125rem;
-      max-width: 800px;
-      margin: 0 auto 2rem;
-      line-height: 1.5;
-      opacity: 0.9;
-    }
-    
-    .eligibility-checker__premium-stats {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 2.5rem;
-    }
-    
-    .eligibility-checker__premium-stat {
-      text-align: center;
-    }
-    
-    .eligibility-checker__premium-stat-value {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--secondary-color);
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-    
-    .eligibility-checker__premium-stat-label {
-      font-size: 0.875rem;
-      opacity: 0.8;
-    }
-    
-    .eligibility-checker__premium-footer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-    }
-    
-    .eligibility-checker__premium-button {
-      background-color: var(--secondary-color);
-      color: var(--white) !important;
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: var(--transition);
-    }
-    
-    .eligibility-checker__premium-button:hover {
-      background-color: var(--secondary-dark);
-      transform: translateY(-2px);
-    }
-    
-    .eligibility-checker__premium-button i {
-      font-size: 1.125rem;
-    }
-    
-    .eligibility-checker__premium-button.secondary {
-      background-color: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-    }
-    
-    .eligibility-checker__premium-button.secondary:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: var(--white);
-    }
-    
-    
-    
-    .eligibility-checker__premium-popup.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .eligibility-checker__premium-popup-content {
-      background-color: var(--white);
-      border-radius: var(--border-radius);
-      width: 90%;
-      max-width: 500px;
-      overflow-y: auto;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      transform: scale(0.95);
-      transition: transform 0.3s ease;
-    }
-    
-    .eligibility-checker__premium-popup.active .eligibility-checker__premium-popup-content {
-      transform: scale(1);
-    }
-    
-    .eligibility-checker__premium-popup-header {
-      position: relative;
-      height: 150px;
-      overflow: hidden;
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
-    }
-    
-    .eligibility-checker__premium-popup-header-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
-      z-index: 1;
-    }
-    
-    .eligibility-checker__premium-popup-header-pattern {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://grantaura.com/wp-content/uploads/2025/02/badge-with-abs-bg-10.webp');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.1;
-      z-index: 2;
-    }
-    
-    .eligibility-checker__premium-popup-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: var(--white);
-      font-size: 1.25rem;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 3;
-      transition: var(--transition);
-    }
-    
-    .eligibility-checker__premium-popup-close:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-    
-    .eligibility-checker__premium-popup-title-container {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 1.5rem;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-      z-index: 3;
-    }
-    
-    .eligibility-checker__premium-popup-title {
-      color: var(--white);
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin: 0;
-    }
-    
-    .eligibility-checker__premium-popup-body {
-      padding: 2rem;
-    }
-    
-    .eligibility-checker__premium-popup-subtitle {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      margin: 0 0 1rem;
-    }
-    
-    .eligibility-checker__premium-popup-description {
-      font-size: 1rem;
-      color: var(--text-dark);
-      margin-bottom: 2rem;
-      line-height: 1.5;
-    }
-    
-    .eligibility-checker__premium-popup-benefits {
-      margin-bottom: 2rem;
-    }
-    
-    .eligibility-checker__premium-popup-benefit {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    
-    .eligibility-checker__premium-popup-benefit-icon {
-      width: 24px;
-      height: 24px;
-      background-color: rgba(90, 59, 140, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary-color);
-      font-size: 0.75rem;
-      flex-shrink: 0;
-    }
-    
-    .eligibility-checker__premium-popup-benefit-text {
-      font-size: 0.9375rem;
-      color: var(--text-dark);
-      line-height: 1.5;
-    }
-    
-    .eligibility-checker__premium-popup-form {
-      margin-bottom: 1.5rem;
-    }
-    
-    .eligibility-checker__premium-popup-form-group {
-      margin-bottom: 1.5rem;
-    }
-    
-    .eligibility-checker__premium-popup-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 0.5rem;
-    }
-    
-    .eligibility-checker__premium-popup-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      color: var(--text-dark);
-      background-color: var(--white);
-      transition: var(--transition);
-    }
-    
-    .eligibility-checker__premium-popup-input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
-    }
-    
-    .eligibility-checker__premium-popup-error {
-      color: var(--danger-color);
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-    
-    .eligibility-checker__premium-popup-form-group.has-error .eligibility-checker__premium-popup-input {
-      border-color: var(--danger-color);
-    }
-    
-    .eligibility-checker__premium-popup-form-group.has-error .eligibility-checker__premium-popup-error {
-      display: block;
-    }
-    
-    .eligibility-checker__premium-popup-select {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      color: var(--text-dark);
-      background-color: var(--white);
-      transition: var(--transition);
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      background-size: 1rem;
-    }
-    
-    .eligibility-checker__premium-popup-select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
-    }
-    
-    .eligibility-checker__premium-popup-submit {
-      width: 100%;
-      background-color: var(--primary-color);
-      color: var(--white);
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: var(--transition);
-    }
-    
-    .eligibility-checker__premium-popup-submit:hover {
-      background-color: var(--primary-dark);
-    }
-    
-    .eligibility-checker__premium-popup-privacy {
-      font-size: 0.75rem;
-      color: var(--text-light);
-      text-align: center;
-    }
-    
-    .eligibility-checker__premium-popup-privacy a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-    
-    .eligibility-checker__premium-popup-privacy a:hover {
-      text-decoration: underline;
-    }
-    
-    /* Success state styling */
-    .eligibility-checker__premium-popup-success {
-      text-align: center;
-      display: none;
-    }
-    
-    .eligibility-checker__premium-popup-success.active {
-      display: block;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    .eligibility-checker__premium-popup-success-icon {
-      width: 80px;
-      height: 80px;
-      background-color: rgba(16, 185, 129, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--success-color);
-      font-size: 2rem;
-      margin: 0 auto 1.5rem;
-    }
-    
-    .eligibility-checker__premium-popup-success-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-    }
-    
-    .eligibility-checker__premium-popup-success-message {
-      font-size: 1rem;
-      color: var(--text-dark);
-      margin-bottom: 2rem;
-      line-height: 1.5;
-    }
-    
-    .eligibility-checker__premium-popup-success-button {
-      background-color: var(--primary-color);
-      color: var(--white);
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: var(--transition);
-    }
-    
-    .eligibility-checker__premium-popup-success-button:hover {
-      background-color: var(--primary-dark);
-    }
-    
-    /* Admin view styling */
-    .eligibility-checker__admin-notice {
-      background-color: #FFE5B4;
-      color: #663C00;
-      border-radius: var(--border-radius);
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9375rem;
-      line-height: 1.5;
-    }
-    
-    .eligibility-checker__admin-notice i {
-      font-size: 1.25rem;
-      color: #B54708;
-    }
-    
-    /* Responsive styling */
-    @media (min-width: 768px) {
-      .eligibility-checker__matches-list {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .eligibility-checker__form {
-        padding: 3rem;
-      }
-    }
-    
     @media (min-width: 1024px) {
       .eligibility-checker__matches-list {
         grid-template-columns: repeat(3, 1fr);
@@ -1742,21 +1882,7 @@
         align-items: flex-start;
       }
       
-      .eligibility-checker__premium-title {
-        font-size: 1.5rem;
-      }
       
-      .eligibility-checker__premium-description {
-        font-size: 1rem;
-      }
-      
-      .eligibility-checker__premium-stats {
-        gap: 1rem;
-      }
-      
-      .eligibility-checker__premium-stat-value {
-        font-size: 2rem;
-      }
     }
   </style>
   
@@ -2440,11 +2566,7 @@
 
     <!-- Step 3: Grant Matches Results -->
     <div class="eligibility-checker__step-content" id="step3" data-step="3">
-      <!-- Admin notice (only visible with special URL parameter) -->
-      <div class="eligibility-checker__admin-notice" id="admin-notice" style="display: none;">
-        <i class="fas fa-shield-alt"></i>
-        <span>Admin mode active: Viewing all grants including premium matches.</span>
-      </div>
+    
       
       <h3 class="eligibility-checker__step-title"><i class="fas fa-award"></i>Your grant matches</h3>
       <p class="eligibility-checker__step-description">Based on your profile, we've identified these grants that match your eligibility criteria. Review each opportunity to find the best fit for your needs.</p>
@@ -4516,369 +4638,6 @@
       </a>
     </div>
   </div>
-  
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Function to update the match score display with color coding and animation
-    function updateMatchScoreDisplay(score) {
-      const scoreDisplay = document.querySelector('.grant-details-modal__match-score');
-      if (scoreDisplay) {
-        // Animate the score changing
-        const currentScore = parseInt(scoreDisplay.textContent.replace('%', '')) || 0;
-        const targetScore = parseInt(score);
-        
-        // Use requestAnimationFrame for smooth animation
-        function animateScore(timestamp) {
-          // Calculate the score for this frame
-          const progress = Math.min((timestamp - startTime) / 800, 1);
-          const currentValue = Math.floor(currentScore + (targetScore - currentScore) * progress);
-          
-          // Update the display
-          scoreDisplay.textContent = currentValue + '%';
-          
-          // Continue animation until complete
-          if (progress < 1) {
-            requestAnimationFrame(animateScore);
-          }
-        }
-        
-        const startTime = performance.now();
-        requestAnimationFrame(animateScore);
-        
-        const matchCircle = document.getElementById('match-score-display');
-        // Update color based on score with transition
-        if (matchCircle) {
-          if (score >= 90) {
-            matchCircle.style.background = 'var(--grantaura-success)'; // Excellent match
-          } else if (score >= 80) {
-            matchCircle.style.background = 'var(--grantaura-secondary)'; // High match
-          } else if (score >= 70) {
-            matchCircle.style.background = 'var(--grantaura-warning)'; // Medium match
-          } else {
-            matchCircle.style.background = 'var(--grantaura-gray-500)'; // Lower match
-          }
-        }
-      }
-    }
-    
-    // Function to calculate and set dynamic content height based on viewport
-    function setDynamicContentHeight() {
-      const modal = document.getElementById('match-modal');
-      if (!modal || !modal.classList.contains('active')) return;
-      
-      const modalContent = modal.querySelector('.grant-details-modal__content');
-      if (!modalContent) return;
-      
-      // Get actual heights of elements rather than using CSS variables
-      // This ensures we're using actual rendered heights for calculations
-      const modalContainer = modal.querySelector('.grant-details-modal__container');
-      const headerHeight = modal.querySelector('.grant-details-modal__header').offsetHeight;
-      const footerHeight = modal.querySelector('.grant-details-modal__footer').offsetHeight;
-      const ctaHeight = modal.querySelector('.grant-details-modal__cta-section').offsetHeight;
-      
-      // Calculate available space and set max-height
-      const containerHeight = modalContainer.offsetHeight;
-      const availableHeight = containerHeight - headerHeight - footerHeight - ctaHeight;
-      
-      // Apply the calculated height with a small buffer for potential borders/margins
-      modalContent.style.maxHeight = `${availableHeight - 5}px`;
-      
-      // Log sizes for debugging (remove in production)
-      console.log({
-        containerHeight,
-        headerHeight,
-        footerHeight,
-        ctaHeight,
-        availableHeight
-      });
-    }
-    
-    // Function to trigger entry animations for modal elements
-    function triggerEntryAnimations() {
-      // Reset animations by removing and re-adding classes
-      const elementsWithAnimation = document.querySelectorAll(
-        '.grant-details-modal__tag-container, ' +
-        '.grant-details-modal__title-container, ' +
-        '.grant-details-modal__match-container'
-      );
-      
-      elementsWithAnimation.forEach(element => {
-        element.style.animation = 'none';
-        element.offsetHeight; // Trigger reflow
-        element.style.animation = '';
-      });
-    }
-    
-    // Hook into existing event handlers for the modal
-    const existingDetailButtons = document.querySelectorAll('.eligibility-checker__match-details');
-    existingDetailButtons.forEach(button => {
-      button.addEventListener('click', function(e) {
-        const grantId = this.getAttribute('data-grant-id');
-        const grant = window.EligibilityChecker && window.EligibilityChecker.grants &&
-          window.EligibilityChecker.grants.find(g => g.id.toString() === grantId);
-        
-        if (grant) {
-          // Trigger modal animations
-          triggerEntryAnimations();
-          
-          // Open modal
-          const modal = document.getElementById('match-modal');
-          if (modal) {
-            modal.classList.add('active');
-          }
-          
-          // Update match score display
-          updateMatchScoreDisplay(grant.match_score);
-          
-          // Set dynamic height after modal opens
-          setTimeout(setDynamicContentHeight, 100);
-        }
-      });
-    });
-    
-    // Format the meta details in the enhanced card format
-    const originalUpdateMetaDetails = window.EligibilityChecker && window.EligibilityChecker.showGrantDetails;
-    if (originalUpdateMetaDetails && window.EligibilityChecker) {
-      window.EligibilityChecker.showGrantDetails = function(grant) {
-        // Call original function to maintain core functionality
-        originalUpdateMetaDetails.call(window.EligibilityChecker, grant);
-        
-        // Update the match score display
-        updateMatchScoreDisplay(grant.match_score);
-        
-        // Set dynamic height after content is updated
-        setTimeout(setDynamicContentHeight, 100);
-        
-        // Additional formatting for the new modal cards
-        const modalMeta = document.getElementById('modal-meta');
-        if (modalMeta && grant) {
-          // Format deadline for display
-          let deadlineFormatted = grant.deadline;
-          let deadlineClass = '';
-          
-          if (deadlineFormatted !== 'Ongoing') {
-            try {
-              const deadlineDate = new Date(grant.deadline);
-              const today = new Date();
-              const diffTime = deadlineDate - today;
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              
-              if (diffDays > 30) {
-                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-              } else if (diffDays > 14) {
-                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-                deadlineClass = 'grant-details-modal__deadline--urgent';
-              } else if (diffDays > 0) {
-                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-                deadlineClass = 'grant-details-modal__deadline--critical';
-              } else if (diffDays === 0) {
-                deadlineFormatted = `${grant.deadline} (Today)`;
-                deadlineClass = 'grant-details-modal__deadline--critical';
-              } else {
-                deadlineFormatted = `${grant.deadline} (Expired)`;
-                deadlineClass = 'grant-details-modal__deadline--expired';
-              }
-            } catch (e) {
-              console.warn('Could not parse deadline:', e);
-            }
-          }
-          
-          // Format locations for display
-          const locationsDisplay = Array.isArray(grant.locations) && grant.locations.length > 0 
-            ? grant.locations.join(', ') 
-            : (grant.location || 'Multiple Locations');
-          
-          // Enhanced card layout for meta information
-          modalMeta.innerHTML = `
-            <div class="grant-details-modal__detail-item grant-details-modal__detail-item--amount">
-              <div class="grant-details-modal__detail-label">
-                <i class="fas fa-dollar-sign"></i> Funding Amount
-              </div>
-              <div class="grant-details-modal__detail-value">${grant.amount}</div>
-            </div>
-            
-            <div class="grant-details-modal__detail-item grant-details-modal__detail-item--deadline">
-              <div class="grant-details-modal__detail-label">
-                <i class="fas fa-calendar-alt"></i> Application Deadline
-              </div>
-              <div class="grant-details-modal__detail-value ${deadlineClass}">${deadlineFormatted}</div>
-            </div>
-            
-            <div class="grant-details-modal__detail-item">
-              <div class="grant-details-modal__detail-label">
-                <i class="fas fa-tag"></i> Funding Type
-              </div>
-              <div class="grant-details-modal__detail-value">${grant.funding_type || 'Grant'}</div>
-            </div>
-            
-            <div class="grant-details-modal__detail-item">
-              <div class="grant-details-modal__detail-label">
-                <i class="fas fa-map-marker-alt"></i> Eligible Location
-              </div>
-              <div class="grant-details-modal__detail-value">${locationsDisplay}</div>
-            </div>
-          `;
-        }
-        
-        // Enhanced formatting for match criteria
-        const modalMatchList = document.getElementById('modal-match-list');
-        if (modalMatchList && grant && grant.match_reasons && grant.match_reasons.length > 0) {
-          // Group match reasons by priority
-          const highPriorityReasons = [];
-          const otherReasons = [];
-          
-          grant.match_reasons.forEach(reason => {
-            // Check if reason contains high priority field terms
-            const isHighPriority = this.highPriorityFields && this.highPriorityFields.some(field => {
-              const fieldName = this.getFieldDisplayName ? this.getFieldDisplayName(field) : field;
-              return reason.includes(fieldName);
-            });
-            
-            if (isHighPriority) {
-              highPriorityReasons.push(reason);
-            } else {
-              otherReasons.push(reason);
-            }
-          });
-          
-          // Build enhanced HTML for match criteria
-          const highPriorityHTML = highPriorityReasons.map(reason => `
-            <div class="grant-details-modal__match-item grant-details-modal__match-item--priority">
-              <div class="grant-details-modal__match-icon">
-                <i class="fas fa-star"></i>
-              </div>
-              <div class="grant-details-modal__match-text">${reason}</div>
-            </div>
-          `).join('');
-          
-          const otherReasonsHTML = otherReasons.map(reason => `
-            <div class="grant-details-modal__match-item">
-              <div class="grant-details-modal__match-icon">
-                <i class="fas fa-check-circle"></i>
-              </div>
-              <div class="grant-details-modal__match-text">${reason}</div>
-            </div>
-          `).join('');
-          
-          modalMatchList.innerHTML = highPriorityHTML + otherReasonsHTML;
-        }
-      };
-    }
-    
-    // Modal interaction event handlers
-    const modal = document.getElementById('match-modal');
-    const modalClose = document.getElementById('modal-close');
-    const modalBack = document.getElementById('modal-back');
-    
-    // Function to open modal with animation
-    function openModal() {
-      if (modal) {
-        modal.classList.add('active');
-        triggerEntryAnimations();
-        // Set dynamic height after modal opens
-        setTimeout(setDynamicContentHeight, 100);
-        document.body.style.overflow = 'hidden'; // Prevent body scrolling
-      }
-    }
-    
-    // Function to close modal with animation
-    function closeModal() {
-      if (modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = ''; // Restore body scrolling
-      }
-    }
-    
-    // Close button event handler
-    if (modalClose) {
-      modalClose.addEventListener('click', closeModal);
-    }
-    
-    // Back button event handler
-    if (modalBack) {
-      modalBack.addEventListener('click', closeModal);
-    }
-    
-    // Close modal when clicking outside of content
-    document.addEventListener('click', function(event) {
-      if (!modal || !modal.classList.contains('active')) return;
-      
-      const modalContainer = modal.querySelector('.grant-details-modal__container');
-      if (modalContainer && !modalContainer.contains(event.target) && 
-          !event.target.closest('.eligibility-checker__match-details')) {
-        closeModal();
-      }
-    });
-    
-    // Handle resize events to adjust dynamic height
-    window.addEventListener('resize', function() {
-      if (modal && modal.classList.contains('active')) {
-        setDynamicContentHeight();
-      }
-    });
-    
-    // Handle orientation change for mobile devices
-    window.addEventListener('orientationchange', function() {
-      if (modal && modal.classList.contains('active')) {
-        setTimeout(setDynamicContentHeight, 200);
-      }
-    });
-    
-    // Add swipe down to close functionality for mobile
-    let touchStartY = 0;
-    let touchEndY = 0;
-    
-    if (modal) {
-      modal.addEventListener('touchstart', function(e) {
-        touchStartY = e.changedTouches[0].screenY;
-      }, {passive: true});
-      
-      modal.addEventListener('touchend', function(e) {
-        touchEndY = e.changedTouches[0].screenY;
-        
-        // If swiped down more than 100px from the top of the modal, close it
-        if (touchEndY - touchStartY > 100 && touchStartY < 150) {
-          closeModal();
-        }
-      }, {passive: true});
-    }
-    
-    // Add keyboard accessibility - close on Escape
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-        closeModal();
-      }
-    });
-    
-    // Initialize once everything is loaded
-    window.addEventListener('load', function() {
-      // If modal is already open, set dynamic height
-      if (modal && modal.classList.contains('active')) {
-        setDynamicContentHeight();
-      }
-    });
-    
-    // Enable debug mode - log available height information when modal toggles
-    const debugMode = true;
-    if (debugMode) {
-      // Monitor DOM changes to detect when modal becomes active
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.attributeName === 'class') {
-            if (modal.classList.contains('active')) {
-              console.log('Modal activated - calculating heights');
-              setTimeout(setDynamicContentHeight, 100);
-            }
-          }
-        });
-      });
-      
-      if (modal) {
-        observer.observe(modal, { attributes: true });
-      }
-    }
-  });
-  </script>
 </div>
 
 
@@ -5377,130 +5136,7 @@ if ( ! function_exists( 'format_deadline_date' ) ) {
     }
 }
 
-/**
- * Handle premium leads submission and email notifications
- */
-if ( ! function_exists( 'handle_premium_lead_submission' ) ) {
-    function handle_premium_lead_submission() {
-        // Verify nonce for security
-        check_ajax_referer('premium_lead_nonce', 'nonce');
-        
-        // Get form data
-        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
-        $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
-        $interest = isset($_POST['interest']) ? sanitize_text_field(wp_unslash($_POST['interest'])) : '';
-        
-        // Get matching criteria
-        $entity_type = isset($_POST['entity_type']) ? sanitize_text_field(wp_unslash($_POST['entity_type'])) : '';
-        $entity_details = isset($_POST['entity_details']) ? wp_unslash($_POST['entity_details']) : '';
-        
-        // Basic validation
-        if (empty($name) || empty($email) || empty($interest)) {
-            wp_send_json_error([
-                'message' => 'Please fill in all required fields.'
-            ]);
-            return;
-        }
-        
-        // Format interest type for readability
-        $interest_types = [
-            'grant_research' => 'Grant Research and Identification',
-            'grant_writing' => 'Grant Writing Assistance',
-            'application_support' => 'Application Support and Review',
-            'full_service' => 'Full-Service Grant Acquisition',
-            'just_exploring' => 'Just Exploring Options'
-        ];
-        
-        $interest_formatted = isset($interest_types[$interest]) ? $interest_types[$interest] : $interest;
-        
-        // Format entity type for readability
-        $entity_types = [
-            'for_profit_business' => 'For-Profit Business',
-            'nonprofit' => 'Nonprofit Organization',
-            'individual' => 'Individual',
-            'institution' => 'Institution/Organization'
-        ];
-        
-        $entity_type_formatted = isset($entity_types[$entity_type]) ? $entity_types[$entity_type] : $entity_type;
-        
-        // Parse entity details if it's a JSON string
-        $entity_details_formatted = '';
-        if (!empty($entity_details)) {
-            if (is_string($entity_details)) {
-                $entity_details = json_decode($entity_details, true);
-            }
-            
-            if (is_array($entity_details)) {
-                foreach ($entity_details as $key => $value) {
-                    if ($key === 'entity_type') continue; // Already included above
-                    
-                    // Format key for readability
-                    $formatted_key = str_replace('_', ' ', $key);
-                    $formatted_key = ucwords($formatted_key);
-                    
-                    // Format value
-                    if (is_array($value)) {
-                        $value = implode(', ', $value);
-                    }
-                    
-                    $entity_details_formatted .= "{$formatted_key}: {$value}\n";
-                }
-            }
-        }
-        
-        // Prepare emails
-        $admin_email = 'contact@grantaura.com';
-        $subject_admin = 'New Premium Grant Lead - ' . $name;
-        $subject_user = 'Your Grantaura Premium Grant Request';
-        
-        // Admin email content
-        $message_admin = "New premium grant lead submission:\n\n";
-        $message_admin .= "Name: {$name}\n";
-        $message_admin .= "Email: {$email}\n";
-        $message_admin .= "Phone: {$phone}\n";
-        $message_admin .= "Interest: {$interest_formatted}\n\n";
-        $message_admin .= "Entity Type: {$entity_type_formatted}\n";
-        $message_admin .= "Entity Details:\n{$entity_details_formatted}\n\n";
-        $message_admin .= "Submitted on: " . current_time('F j, Y \a\t g:i a') . "\n";
-        
-        // User email content
-        $message_user = "Dear {$name},\n\n";
-        $message_user .= "Thank you for your interest in Grantaura's premium grant matching service. We've received your request and will be reviewing the additional grant opportunities that match your specific eligibility criteria.\n\n";
-        $message_user .= "One of our grant experts will contact you shortly with personalized recommendations and guidance tailored to your needs.\n\n";
-        $message_user .= "Your request details:\n";
-        $message_user .= "Primary Interest: {$interest_formatted}\n";
-        $message_user .= "Entity Type: {$entity_type_formatted}\n\n";
-        $message_user .= "If you have any questions in the meantime, please feel free to contact us at contact@grantaura.com.\n\n";
-        $message_user .= "Warm regards,\n\n";
-        $message_user .= "Imran Ahmad\n";
-        $message_user .= "Founder, Grantaura\n";
-        $message_user .= "https://grantaura.com";
-        
-        // Headers
-        $headers = 'From: Grantaura <contact@grantaura.com>' . "\r\n";
-        
-        // Send emails
-        $admin_mail_sent = wp_mail($admin_email, $subject_admin, $message_admin, $headers);
-        $user_mail_sent = wp_mail($email, $subject_user, $message_user, $headers);
-        
-        // Response
-        if ($admin_mail_sent && $user_mail_sent) {
-            wp_send_json_success([
-                'message' => 'Thank you! Your request has been received. We will contact you shortly with your premium grant matches.'
-            ]);
-        } else {
-            // Log the error but still return success to the user
-            error_log('Grantaura - Error sending premium lead emails for: ' . $email);
-            
-            wp_send_json_success([
-                'message' => 'Thank you! Your request has been received. We will contact you shortly with your premium grant matches.'
-            ]);
-        }
-    }
-}
-add_action('wp_ajax_premium_lead_submission', 'handle_premium_lead_submission');
-add_action('wp_ajax_nopriv_premium_lead_submission', 'handle_premium_lead_submission');
+
 
 // Output grants to JS
 add_action('wp_footer', function() {
@@ -5723,7 +5359,6 @@ add_shortcode('eligibility_checker', function($atts) {
     <div class="eligibility-checker-container">
         <!-- Nonce for security -->
         <div id="grant-checker-nonce" data-nonce="<?php echo wp_create_nonce('grant_checker_nonce'); ?>"></div>
-        <div id="premium-lead-nonce" data-nonce="<?php echo wp_create_nonce('premium_lead_nonce'); ?>"></div>
         
         <!-- Enhanced Eligibility Checker will be rendered here -->
         <div class="eligibility-checker" data-section-id="eligibility-checker">
