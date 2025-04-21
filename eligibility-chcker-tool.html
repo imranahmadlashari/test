@@ -3202,25 +3202,58 @@
   </div>
 </section>
       
-      <!-- Enhanced Grant Details Modal - Optimized for Mobile -->
+      <!-- Grant Details Modal -->
 <div class="grant-details-modal" id="match-modal">
   <style>
-    /* Reset and Base Styles */
+    /* =========== Base Modal Variables & Setup - MOBILE FIRST =========== */
     .grant-details-modal {
+      /* Core variables */
+      --modal-radius: var(--grantaura-border-radius-lg, 12px);
+      --modal-shadow: 0 10px 35px rgba(31, 41, 55, 0.25);
+      --animation-timing: cubic-bezier(0.16, 1, 0.3, 1);
+      --modal-header-bg: linear-gradient(135deg, var(--grantaura-primary-dark), var(--grantaura-primary));
+      
+      /* Height allocation variables - mobile first */
+      --modal-height: 95vh;
+      --modal-max-height: 95vh;
+      --modal-header-height-mobile: 130px;
+      --modal-header-height-tablet: 150px;
+      --modal-header-height-desktop: 170px;
+      --modal-footer-height-mobile: 60px; /* Reduced for smaller screens */
+      --modal-footer-height-tablet: 70px;
+      --modal-footer-height-desktop: 70px;
+      --modal-cta-height-mobile: 70px; /* Reduced for smaller screens */
+      --modal-cta-height-tablet: 70px;
+      --modal-cta-height-desktop: 70px;
+      
+      /* Spacing variables */
+      --modal-padding-mobile: 0.75rem;
+      --modal-padding-tablet: 1.25rem;
+      --modal-padding-desktop: 1.5rem;
+      --modal-section-spacing-mobile: 0.5rem;
+      --modal-section-spacing-tablet: 0.875rem;
+      --modal-section-spacing-desktop: 1.125rem;
+      
+      /* Visual elements */
+      --modal-backdrop-blur: 8px;
+      --modal-backdrop-opacity: 0.85;
+      
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
+      background-color: rgba(31, 41, 55, var(--modal-backdrop-opacity));
+      backdrop-filter: blur(var(--modal-backdrop-blur));
+      -webkit-backdrop-filter: blur(var(--modal-backdrop-blur));
       z-index: 9999;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 0.5rem;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s ease;
+      transition: opacity 0.4s var(--animation-timing), visibility 0.4s var(--animation-timing);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
@@ -3229,128 +3262,319 @@
       visibility: visible;
     }
 
-    /* Modal Container */
+    /* =========== Modal Container - Mobile First =========== */
     .grant-details-modal__container {
-      width: 95%;
-      max-width: 600px;
-      max-height: 85vh;
+      width: 100%;
+      max-width: 800px;
+      height: var(--modal-height);
+      max-height: var(--modal-max-height);
       background: #fff;
-      border-radius: 12px;
+      border-radius: var(--modal-radius);
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: var(--modal-shadow);
       display: flex;
       flex-direction: column;
       position: relative;
-      transform: scale(0.95);
-      transition: transform 0.3s ease;
-      margin: 20px;
+      transform: translateY(30px) scale(0.97);
+      transition: transform 0.5s var(--animation-timing);
     }
 
     .grant-details-modal.active .grant-details-modal__container {
-      transform: scale(1);
+      transform: translateY(0) scale(1);
     }
 
-    /* Header Section */
+    /* =========== Header Section - Mobile First =========== */
     .grant-details-modal__header {
-      background: linear-gradient(135deg, #5A3B8C, #7650A9);
       position: relative;
-      min-height: 50px;
+      height: auto; /* Auto height for very small screens */
+      min-height: var(--modal-header-height-mobile);
+      max-height: 30vh; /* Maximum percentage of viewport */
+      padding: var(--modal-padding-mobile);
+      background: var(--modal-header-bg);
       display: flex;
-      align-items: center;
-      padding: 16px 16px 16px 20px;
-    }
-
-    .grant-details-modal__header-pattern {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://grantaura.com/wp-content/uploads/2025/02/patterns-with-connection-7.webp');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.1;
-      z-index: 1;
-    }
-
-    .grant-details-modal__close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+      overflow: hidden;
       z-index: 10;
     }
 
-    .grant-details-modal__close:hover {
-      background: rgba(255, 255, 255, 0.3);
+    /* Creative pattern overlay */
+    .grant-details-modal__header:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(255, 255, 255, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(255, 255, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+      z-index: 1;
+    }
+    
+    /* Decorative light accent */
+    .grant-details-modal__header:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--grantaura-secondary) 50%, transparent 100%);
+      opacity: 0.7;
+      z-index: 2;
     }
 
     .grant-details-modal__header-content {
       position: relative;
       z-index: 3;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       width: 100%;
+    }
+
+    /* Close button with enhanced touch target */
+    .grant-details-modal__close {
+      position: absolute;
+      top: 0.625rem;
+      right: 0.625rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white !important;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 15;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .grant-details-modal__close:hover,
+    .grant-details-modal__close:active {
+      background: rgba(255, 255, 255, 0.25);
+      transform: rotate(90deg);
+    }
+
+    /* Grant type tag with modern styling */
+    .grant-details-modal__tag-container {
+      margin-bottom: 0.375rem;
     }
 
     .grant-details-modal__tag {
       display: inline-flex;
       align-items: center;
       background: rgba(255, 255, 255, 0.15);
-      border-radius: 50px;
-      padding: 5px 12px;
-      font-size: 12px;
-      color: white;
-      font-weight: 500;
-      margin-right: 10px;
+      border-radius: 30px;
+      padding: 0.3125rem 0.625rem;
+      font-size: 0.6875rem;
+      color: white !important;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transform-origin: left center;
+      animation: tagFadeIn 0.4s var(--animation-timing) forwards;
+    }
+
+    @keyframes tagFadeIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .grant-details-modal__tag i {
-      margin-right: 4px;
-      font-size: 12px;
+      margin-right: 0.375rem;
+      font-size: 0.6875rem;
+      opacity: 0.9;
     }
 
-    /* Match Score Circle */
-    .grant-details-modal__match-circle {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-      border-radius: 50%;
-      background: #FFA366;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+    /* Grant title with dynamic accent line */
+    .grant-details-modal__title-container {
+      position: relative;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      animation: titleFadeIn 0.5s var(--animation-timing) forwards;
+      animation-delay: 0.1s;
+      opacity: 0;
+    }
+
+    @keyframes titleFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grant-details-modal__title-decoration {
+      position: absolute;
+      left: 0;
+      top: 0.25em;
+      width: 3px;
+      height: 0;
+      background: var(--grantaura-secondary);
+      border-radius: 1.5px;
+      animation: accentLineGrow 0.6s var(--animation-timing) forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes accentLineGrow {
+      from { height: 0; }
+      to { height: calc(100% - 0.5em); }
+    }
+
+    .grant-details-modal__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white !important;
+      margin: 0;
+      line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Enhanced match score display */
+    .grant-details-modal__match-container {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      margin-left: auto;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      justify-content: space-between;
+      margin-top: 0.25rem;
+      animation: matchInfoFadeIn 0.6s var(--animation-timing) forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
     }
 
-    /* Content Area */
+    @keyframes matchInfoFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grant-details-modal__match-info {
+      flex: 1;
+      padding-right: 0.5rem;
+    }
+
+    .grant-details-modal__match-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 0.1875rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .grant-details-modal__match-label i {
+      margin-right: 0.3125rem;
+      font-size: 0.625rem;
+      color: var(--grantaura-secondary-light);
+    }
+
+    .grant-details-modal__match-description {
+      font-size: 0.625rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.3;
+      margin: 0;
+      max-width: 95%;
+    }
+
+    /* Animated match score circle with pulsing effect */
+    .grant-details-modal__match-circle {
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      border-radius: 50%;
+      background: var(--grantaura-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 
+                  inset 0 -2px 6px rgba(0, 0, 0, 0.1), 
+                  inset 0 2px 6px rgba(255, 255, 255, 0.3);
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .grant-details-modal__match-circle:before {
+      content: 'MATCH';
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: -3px;
+    }
+
+    .grant-details-modal__match-circle:after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      bottom: -2px;
+      left: -2px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 255, 255, 0.7);
+      opacity: 0.8;
+      animation: rotate 30s linear infinite;
+    }
+
+    /* Match score pulsing animation */
+    .pulse-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--grantaura-secondary);
+      opacity: 0;
+      z-index: -1;
+      animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.3; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .grant-details-modal__match-score {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: white !important;
+      line-height: 1;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    /* =========== Content Area - Mobile First =========== */
     .grant-details-modal__content {
       flex: 1;
       overflow-y: auto;
       padding: 0;
-      max-height: calc(85vh - 145px); /* Adjusted to account for header and footer */
+      min-height: 100px; /* Ensure there's always scrollable space */
+      /* Using fixed height calculation to ensure compatibility across browsers */
+      max-height: calc(var(--modal-height) - var(--modal-header-height-mobile) - var(--modal-footer-height-mobile) - var(--modal-cta-height-mobile));
       scrollbar-width: thin;
-      scrollbar-color: #5A3B8C #F3F4F6;
+      scrollbar-color: var(--grantaura-primary) #F3F4F6;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      overscroll-behavior: contain; /* Prevents scroll chaining */
+      scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+      background: var(--grantaura-gray-50);
     }
 
+    /* Custom scrollbar styling */
     .grant-details-modal__content::-webkit-scrollbar {
-      width: 5px;
+      width: 3px;
     }
 
     .grant-details-modal__content::-webkit-scrollbar-track {
@@ -3358,78 +3582,94 @@
     }
 
     .grant-details-modal__content::-webkit-scrollbar-thumb {
-      background-color: #5A3B8C;
-      border-radius: 5px;
+      background-color: var(--grantaura-primary);
+      border-radius: 6px;
     }
 
-    /* Title Section */
-    .grant-details-modal__title-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
-    }
-
-    .grant-details-modal__title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1F2937;
-      margin: 0;
-      line-height: 1.3;
-    }
-
-    /* Description Section */
+    /* =========== Description Section - Mobile First =========== */
     .grant-details-modal__description-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
-      background: #F9FAFB;
+      padding: var(--modal-padding-mobile);
+      border-bottom: 1px solid var(--grantaura-gray-200);
+      background: white;
     }
 
     .grant-details-modal__description {
-      font-size: 15px;
-      line-height: 1.6;
-      color: #4B5563;
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: var(--grantaura-gray-700);
       margin: 0;
     }
 
-    /* Match Criteria Section */
+    /* =========== Match Criteria Section - Mobile First =========== */
     .grant-details-modal__match-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
-      background: linear-gradient(to right, rgba(90, 59, 140, 0.05), rgba(90, 59, 140, 0.02));
+      padding: var(--modal-padding-mobile);
+      border-bottom: 1px solid var(--grantaura-gray-200);
+      background: linear-gradient(to right, rgba(90, 59, 140, 0.05), rgba(255, 255, 255, 1));
+      position: relative;
     }
 
+    .grant-details-modal__match-section:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 3px;
+      background: var(--grantaura-primary-light);
+      opacity: 0.5;
+    }
+
+    /* Section titles with creative icon styling */
     .grant-details-modal__section-title {
       display: flex;
       align-items: center;
-      font-size: 17px;
+      font-size: 0.875rem;
       font-weight: 700;
-      color: #5A3B8C;
-      margin: 0 0 14px 0;
+      color: var(--grantaura-primary);
+      margin: 0 0 0.625rem 0;
+      position: relative;
     }
 
     .grant-details-modal__section-title i {
       margin-right: 8px;
       background: rgba(90, 59, 140, 0.1);
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 11px;
+      transition: all 0.3s ease;
+    }
+
+    .grant-details-modal__section-title:hover i {
+      transform: scale(1.08);
+      background: rgba(90, 59, 140, 0.15);
     }
 
     .grant-details-modal__match-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
     }
 
+    /* =========== Match Items - Mobile First =========== */
     .grant-details-modal__match-item {
       display: flex;
       align-items: flex-start;
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 8px;
-      padding: 10px;
+      padding: 0.5rem;
+      border: 1px solid var(--grantaura-gray-200);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
+    }
+
+    .grant-details-modal__match-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+      border-color: var(--grantaura-gray-300);
     }
 
     .grant-details-modal__match-icon {
@@ -3438,102 +3678,238 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #10B981;
-      margin-right: 8px;
+      color: var(--grantaura-success);
+      margin-right: 7px;
       margin-top: 2px;
-      font-size: 14px;
+      font-size: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 50%;
+    }
+
+    /* Priority match items with highlight styling */
+    .grant-details-modal__match-item--priority {
+      background: linear-gradient(to right, rgba(255, 163, 102, 0.12), rgba(255, 163, 102, 0.05));
+      border-color: rgba(255, 163, 102, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grant-details-modal__match-item--priority:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 24px;
+      height: 24px;
+      background: var(--grantaura-secondary-light);
+      transform: rotate(45deg) translate(12px, -12px);
+      opacity: 0.2;
+      z-index: 0;
+      border-radius: 0 0 0 5px;
     }
 
     .grant-details-modal__match-item--priority .grant-details-modal__match-icon {
-      color: #5A3B8C;
+      color: var(--grantaura-secondary-dark);
+      background: rgba(255, 163, 102, 0.15);
     }
 
     .grant-details-modal__match-text {
-      font-size: 14px;
-      color: #4B5563;
+      font-size: 0.75rem;
+      color: var(--grantaura-text-dark);
       line-height: 1.4;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Grant Details Section */
+    /* =========== Grant Details Section - Mobile First =========== */
     .grant-details-modal__details-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
+      padding: var(--modal-padding-mobile);
+      border-bottom: 1px solid var(--grantaura-gray-200);
+      background: var(--grantaura-white);
     }
 
     .grant-details-modal__details-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
     }
 
+    /* =========== Detail Item Cards - Mobile First =========== */
     .grant-details-modal__detail-item {
       display: flex;
       flex-direction: column;
-      background: white;
+      background: var(--grantaura-gray-50);
       border-radius: 8px;
-      padding: 12px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      border: 1px solid #E5E7EB;
+      padding: 0.625rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--grantaura-gray-200);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grant-details-modal__detail-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      border-color: var(--grantaura-gray-300);
+    }
+
+    .grant-details-modal__detail-item:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--grantaura-primary-light);
+      opacity: 0.3;
     }
 
     .grant-details-modal__detail-label {
-      font-size: 12px;
+      font-size: 0.625rem;
       font-weight: 600;
-      color: #6B7280;
-      margin-bottom: 5px;
+      color: var(--grantaura-gray-600);
+      margin-bottom: 0.25rem;
       display: flex;
       align-items: center;
     }
 
     .grant-details-modal__detail-label i {
       margin-right: 5px;
-      font-size: 12px;
-      color: #5A3B8C;
+      font-size: 10px;
+      color: var(--grantaura-primary);
     }
 
     .grant-details-modal__detail-value {
-      font-size: 15px;
-      font-weight: 600;
-      color: #1F2937;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--grantaura-text-dark);
+    }
+
+    /* Special Styles for Detail Items */
+    .grant-details-modal__detail-item--amount {
+      background: linear-gradient(to right bottom, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.01));
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .grant-details-modal__detail-item--amount:before {
+      background: var(--grantaura-success);
+      opacity: 0.6;
     }
 
     .grant-details-modal__detail-item--amount .grant-details-modal__detail-label i {
-      color: #10B981;
+      color: var(--grantaura-success);
+    }
+
+    .grant-details-modal__detail-item--amount .grant-details-modal__detail-value {
+      color: var(--grantaura-success);
+      position: relative;
+      display: inline-block;
+    }
+
+    .grant-details-modal__detail-item--amount .grant-details-modal__detail-value:after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--grantaura-success);
+      opacity: 0.3;
+    }
+
+    .grant-details-modal__detail-item--deadline {
+      background: linear-gradient(to right bottom, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.01));
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .grant-details-modal__detail-item--deadline:before {
+      background: var(--grantaura-warning);
+      opacity: 0.6;
     }
 
     .grant-details-modal__detail-item--deadline .grant-details-modal__detail-label i {
-      color: #F59E0B;
+      color: var(--grantaura-warning);
     }
 
+    /* Deadline Status Indicators */
     .grant-details-modal__deadline--urgent {
-      color: #F59E0B;
+      color: var(--grantaura-warning);
+      display: flex;
+      align-items: center;
+    }
+
+    .grant-details-modal__deadline--urgent:before {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--grantaura-warning);
+      margin-right: 4px;
+      animation: pulse 2s infinite;
     }
 
     .grant-details-modal__deadline--critical {
-      color: #EF4444;
+      color: var(--grantaura-danger);
+      display: flex;
+      align-items: center;
+    }
+
+    .grant-details-modal__deadline--critical:before {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--grantaura-danger);
+      margin-right: 4px;
+      animation: pulse 1.5s infinite;
     }
 
     .grant-details-modal__deadline--expired {
-      color: #9CA3AF;
+      color: var(--grantaura-gray-500);
       text-decoration: line-through;
+      opacity: 0.8;
     }
 
-    /* Application Steps Section (replacing eligibility) */
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(0.95); opacity: 1; }
+    }
+
+    /* =========== Application Steps Section - Mobile First =========== */
     .grant-details-modal__steps-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
+      padding: var(--modal-padding-mobile);
+      border-bottom: 1px solid var(--grantaura-gray-200);
+      background: var(--grantaura-white);
     }
 
+    /* Creative timeline design for steps */
     .grant-details-modal__steps-list {
       margin: 0;
       padding: 0;
       list-style: none;
+      position: relative;
+    }
+
+    .grant-details-modal__steps-list:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10px;
+      height: 100%;
+      width: 2px;
+      background: var(--grantaura-gray-200);
+      z-index: 1;
     }
 
     .grant-details-modal__step-item {
       position: relative;
-      padding-left: 35px;
-      margin-bottom: 16px;
+      padding-left: 28px;
+      margin-bottom: 0.875rem;
+      z-index: 2;
     }
 
     .grant-details-modal__step-item:last-child {
@@ -3544,68 +3920,75 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 26px;
-      height: 26px;
-      background: #5A3B8C;
-      color: white;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
+      color: white !important;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 10px;
       font-weight: 600;
+      box-shadow: 0 0 0 3px white, 0 3px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .grant-details-modal__step-item:hover .grant-details-modal__step-number {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 3px white, 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .grant-details-modal__step-title {
-      font-size: 15px;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: #1F2937;
-      margin: 0 0 5px 0;
+      color: var(--grantaura-text-dark);
+      margin: 0 0 2px 0;
       line-height: 1.3;
     }
 
     .grant-details-modal__step-description {
-      font-size: 14px;
-      color: #6B7280;
+      font-size: 0.75rem;
+      color: var(--grantaura-gray-600);
       margin: 0;
       line-height: 1.5;
     }
 
-    /* CTA Section */
+    /* =========== CTA Section - Mobile First =========== */
     .grant-details-modal__cta-section {
-      padding: 12px 20px;
-      background: #FFF8F3;
+      padding: 0.625rem var(--modal-padding-mobile);
+      background: linear-gradient(to right, #FFF8F3, #FFF);
       border-top: 1px solid #FFE4CC;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      height: var(--modal-cta-height-mobile);
+      min-height: var(--modal-cta-height-mobile);
     }
 
     .grant-details-modal__cta-text {
-      font-size: 14px;
-      color: #4B5563;
+      font-size: 0.75rem;
+      color: var(--grantaura-gray-600);
       margin: 0;
-      flex: 1;
-      min-width: 150px;
     }
 
     .grant-details-modal__cta-title {
-      font-weight: 600;
-      color: #1F2937;
-      margin-bottom: 2px;
-      font-size: 15px;
+      font-weight: 700;
+      color: var(--grantaura-text-dark);
+      margin-bottom: 0.125rem;
+      font-size: 0.875rem;
       display: block;
     }
 
+    /* Enhanced CTA button with animation */
     .grant-details-modal__cta-button {
-      background: #FFA366;
+      background: var(--grantaura-secondary);
       color: white !important;
       font-weight: 600;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 0.54375rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
       cursor: pointer;
       white-space: nowrap;
       text-decoration: none !important;
@@ -3613,120 +3996,431 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 2px 6px rgba(255, 163, 102, 0.3);
+      box-shadow: 0 4px 8px rgba(255, 163, 102, 0.25);
+      transition: all 0.3s ease;
+      width: 100%;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
     }
 
-    .grant-details-modal__cta-button:hover {
-      background: #FF8544;
+    .grant-details-modal__cta-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: 0.5s;
     }
 
-    /* Footer Section */
+    .grant-details-modal__cta-button:hover,
+    .grant-details-modal__cta-button:active {
+      background: var(--grantaura-secondary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 163, 102, 0.3);
+    }
+
+    .grant-details-modal__cta-button:hover:before {
+      left: 100%;
+    }
+
+    /* =========== Footer Section - Mobile First with Minimal Content =========== */
     .grant-details-modal__footer {
-      padding: 14px 20px;
-      background: #F9FAFB;
-      border-top: 1px solid #E5E7EB;
+      padding: 0 0.75rem;
+      background: var(--grantaura-gray-50);
+      border-top: 1px solid var(--grantaura-gray-200);
       display: flex;
-      justify-content: space-between;
+      height: var(--modal-footer-height-mobile);
+      min-height: var(--modal-footer-height-mobile);
       align-items: center;
-      gap: 10px;
+      gap: 0.5rem;
     }
 
+    /* Super compact footer buttons for small mobile */
     .grant-details-modal__back-button {
-      background: none;
-      border: 1px solid #D1D5DB;
-      color: #4B5563;
+      background: white;
+      border: 1px solid var(--grantaura-gray-300);
+      color: var(--grantaura-gray-700) !important;
       font-weight: 600;
-      padding: 8px 14px;
+      padding: 0.375rem 0.5rem;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 0.75rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex: 1;
+      gap: 4px;
       justify-content: center;
       white-space: nowrap;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      flex: 1;
     }
 
-    .grant-details-modal__back-button:hover {
-      background: #F3F4F6;
-      color: #1F2937;
+    .grant-details-modal__back-button:hover,
+    .grant-details-modal__back-button:active {
+      background: var(--grantaura-gray-100);
+      color: var(--grantaura-text-dark) !important;
+      border-color: var(--grantaura-gray-400);
     }
 
     .grant-details-modal__apply-button {
-      background: #5A3B8C;
+      background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
       color: white !important;
       font-weight: 600;
-      padding: 8px 14px;
+      padding: 0.375rem 0.5rem;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 0.75rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       text-decoration: none !important;
       border: none;
-      flex: 1;
       justify-content: center;
       white-space: nowrap;
-      box-shadow: 0 2px 6px rgba(90, 59, 140, 0.25);
+      box-shadow: 0 3px 6px rgba(90, 59, 140, 0.25);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      flex: 1.5;
     }
 
-    .grant-details-modal__apply-button:hover {
-      background: #472D6F;
+    .grant-details-modal__apply-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
     }
 
-    /* Media Queries */
-    @media (min-width: 640px) {
-      .grant-details-modal__container {
-        max-width: 750px;
-      }
+    .grant-details-modal__apply-button:hover,
+    .grant-details-modal__apply-button:active {
+      background: var(--grantaura-primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(90, 59, 140, 0.3);
+    }
 
-      .grant-details-modal__header {
-        padding: 18px 20px;
-      }
+    .grant-details-modal__apply-button:hover:before {
+      left: 100%;
+    }
 
-      .grant-details-modal__title {
-        font-size: 22px;
+    /* Hide text in buttons on very small screens */
+    .grant-details-modal__back-text,
+    .grant-details-modal__apply-text {
+      display: none;
+    }
+
+    /* Special handling for very small screens */
+    @media (min-width: 360px) {
+      /* Show minimal text on buttons */
+      .grant-details-modal__apply-text {
+        display: inline;
       }
       
-      .grant-details-modal__close {
-        top: 14px;
-        right: 14px;
-        width: 34px;
-        height: 34px;
-        font-size: 20px;
+      .grant-details-modal__back-button,
+      .grant-details-modal__apply-button {
+        padding: 0.4375rem 0.625rem;
       }
+    }
 
+    /* =========== Tablet Styles =========== */
+    @media (min-width: 480px) {
+      .grant-details-modal {
+        padding: 0.75rem;
+      }
+      
+      .grant-details-modal__header {
+        min-height: var(--modal-header-height-tablet);
+        max-height: none;
+        padding: var(--modal-padding-tablet);
+      }
+      
+      .grant-details-modal__content {
+        max-height: calc(var(--modal-height) - var(--modal-header-height-tablet) - var(--modal-footer-height-tablet) - var(--modal-cta-height-tablet));
+      }
+      
+      .grant-details-modal__match-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .grant-details-modal__title {
+        font-size: 1.25rem;
+      }
+      
+      .grant-details-modal__tag {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+      }
+      
       .grant-details-modal__match-circle {
         width: 60px;
         height: 60px;
         min-width: 60px;
-        font-size: 18px;
       }
-
+      
+      .grant-details-modal__match-score {
+        font-size: 1.375rem;
+      }
+      
+      .grant-details-modal__match-description {
+        font-size: 0.6875rem;
+      }
+      
+      .grant-details-modal__description-section,
+      .grant-details-modal__match-section,
+      .grant-details-modal__details-section,
+      .grant-details-modal__steps-section {
+        padding: var(--modal-padding-tablet);
+      }
+      
+      .grant-details-modal__cta-section {
+        padding: 0 var(--modal-padding-tablet);
+        height: var(--modal-cta-height-tablet);
+        min-height: var(--modal-cta-height-tablet);
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      .grant-details-modal__footer {
+        padding: 0 var(--modal-padding-tablet);
+        height: var(--modal-footer-height-tablet);
+        min-height: var(--modal-footer-height-tablet);
+      }
+      
+      .grant-details-modal__cta-text {
+        max-width: 65%;
+        font-size: 0.8125rem;
+      }
+      
+      .grant-details-modal__cta-button {
+        width: auto;
+        font-size: 0.8125rem;
+        padding: 0.5rem 0.875rem;
+      }
+      
       .grant-details-modal__description {
-        font-size: 16px;
+        font-size: 0.875rem;
       }
       
       .grant-details-modal__section-title {
-        font-size: 18px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .grant-details-modal__section-title i {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+      
+      .grant-details-modal__match-item {
+        padding: 0.625rem;
+      }
+      
+      .grant-details-modal__match-text {
+        font-size: 0.8125rem;
+      }
+      
+      .grant-details-modal__match-icon {
+        min-width: 20px;
+        height: 20px;
+        font-size: 11px;
+      }
+      
+      .grant-details-modal__step-number {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+      
+      .grant-details-modal__step-item {
+        padding-left: 32px;
+      }
+      
+      .grant-details-modal__steps-list:before {
+        left: 12px;
+      }
+      
+      .grant-details-modal__step-title {
+        font-size: 0.9375rem;
+      }
+      
+      .grant-details-modal__step-description {
+        font-size: 0.8125rem;
+      }
+      
+      .grant-details-modal__back-button,
+      .grant-details-modal__apply-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+      }
+      
+      /* Show back button text on tablet */
+      .grant-details-modal__back-text,
+      .grant-details-modal__apply-text {
+        display: inline;
+      }
+    }
+    
+    @media (min-width: 640px) {
+      .grant-details-modal__details-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .grant-details-modal__back-button,
+      .grant-details-modal__apply-button {
+        padding: 0.5rem 1rem;
+      }
+      
+      .grant-details-modal__detail-item {
+        padding: 0.75rem;
+      }
+      
+      .grant-details-modal__detail-value {
+        font-size: 0.9375rem;
+      }
+      
+      .grant-details-modal__detail-label {
+        font-size: 0.6875rem;
+      }
+    }
+    
+    /* =========== Desktop Styles =========== */
+    @media (min-width: 768px) {
+      .grant-details-modal {
+        padding: 1rem;
+      }
+      
+      .grant-details-modal__header {
+        min-height: var(--modal-header-height-desktop);
+        padding: var(--modal-padding-desktop);
+      }
+      
+      .grant-details-modal__content {
+        max-height: calc(var(--modal-height) - var(--modal-header-height-desktop) - var(--modal-footer-height-desktop) - var(--modal-cta-height-desktop));
+      }
+      
+      .grant-details-modal__description-section,
+      .grant-details-modal__match-section,
+      .grant-details-modal__details-section,
+      .grant-details-modal__steps-section {
+        padding: var(--modal-padding-desktop);
+      }
+      
+      .grant-details-modal__title {
+        font-size: 1.5rem;
+      }
+      
+      .grant-details-modal__tag {
+        font-size: 0.8125rem;
+        padding: 0.375rem 0.875rem;
+      }
+      
+      .grant-details-modal__match-circle {
+        width: 70px;
+        height: 70px;
+        min-width: 70px;
+      }
+      
+      .grant-details-modal__match-score {
+        font-size: 1.625rem;
+      }
+      
+      .grant-details-modal__match-description {
+        font-size: 0.75rem;
+      }
+      
+      .grant-details-modal__description {
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+      
+      .grant-details-modal__section-title {
+        font-size: 1.125rem;
       }
       
       .grant-details-modal__match-text,
       .grant-details-modal__step-description {
-        font-size: 15px;
+        font-size: 0.9375rem;
+      }
+      
+      .grant-details-modal__step-title {
+        font-size: 1.0625rem;
+      }
+      
+      .grant-details-modal__match-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       }
       
       .grant-details-modal__detail-value {
-        font-size: 16px;
+        font-size: 1.0625rem;
       }
       
       .grant-details-modal__back-button,
       .grant-details-modal__apply-button,
       .grant-details-modal__cta-button {
-        padding: 10px 16px;
-        font-size: 15px;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9375rem;
+      }
+      
+      .grant-details-modal__footer {
+        padding: 0 var(--modal-padding-desktop);
+        height: var(--modal-footer-height-desktop);
+        min-height: var(--modal-footer-height-desktop);
+      }
+      
+      .grant-details-modal__cta-section {
+        padding: 0 var(--modal-padding-desktop);
+        height: var(--modal-cta-height-desktop);
+        min-height: var(--modal-cta-height-desktop);
+      }
+      
+      .grant-details-modal__cta-title {
+        font-size: 1.125rem;
+      }
+      
+      .grant-details-modal__cta-text {
+        font-size: 0.9375rem;
+      }
+      
+      .grant-details-modal__content::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .grant-details-modal__detail-label {
+        font-size: 0.75rem;
+      }
+      
+      .grant-details-modal__detail-label i {
+        font-size: 12px;
+      }
+      
+      .grant-details-modal__match-icon {
+        min-width: 22px;
+        height: 22px;
+        font-size: 14px;
+      }
+      
+      .grant-details-modal__step-number {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+      }
+      
+      .grant-details-modal__step-item {
+        padding-left: 38px;
+      }
+      
+      .grant-details-modal__steps-list:before {
+        left: 14px;
       }
     }
   </style>
@@ -3734,24 +4428,44 @@
   <div class="grant-details-modal__container">
     <!-- Header with Tag and Match Score -->
     <div class="grant-details-modal__header">
-      <div class="grant-details-modal__header-pattern"></div>
-      <button class="grant-details-modal__close" id="modal-close" aria-label="Close modal">&times;</button>
+      <!-- Close button -->
+      <button class="grant-details-modal__close" id="modal-close" aria-label="Close grant details">&times;</button>
       
       <div class="grant-details-modal__header-content">
-        <div class="grant-details-modal__tag">
-          <i class="fas fa-award"></i> Grant
+        <!-- Grant type indicator -->
+        <div class="grant-details-modal__tag-container">
+          <div class="grant-details-modal__tag" aria-label="Grant opportunity type">
+            <i class="fas fa-award" aria-hidden="true"></i> Grant Opportunity
+          </div>
         </div>
-        <div class="grant-details-modal__match-circle" id="match-score-display">95%</div>
+        
+        <!-- Grant title with decorative element -->
+        <div class="grant-details-modal__title-container">
+          <span class="grant-details-modal__title-decoration" aria-hidden="true"></span>
+          <h2 class="grant-details-modal__title" id="modal-title">Grant Title</h2>
+        </div>
+        
+        <!-- Match information with score -->
+        <div class="grant-details-modal__match-container">
+          <div class="grant-details-modal__match-info">
+            <div class="grant-details-modal__match-label">
+              <i class="fas fa-check-circle" aria-hidden="true"></i> Compatibility Score
+            </div>
+            <p class="grant-details-modal__match-description">
+              Based on your profile details and grant requirements alignment
+            </p>
+          </div>
+          
+          <div class="grant-details-modal__match-circle" id="match-score-display" aria-label="Match score percentage">
+            <div class="pulse-ring"></div>
+            <span class="grant-details-modal__match-score">95%</span>
+          </div>
+        </div>
       </div>
     </div>
     
     <!-- Scrollable Content Area -->
     <div class="grant-details-modal__content">
-      <!-- Title Section -->
-      <div class="grant-details-modal__title-section">
-        <h2 class="grant-details-modal__title" id="modal-title">Grant Title</h2>
-      </div>
-      
       <!-- Description Section -->
       <div class="grant-details-modal__description-section">
         <p class="grant-details-modal__description" id="modal-description">
@@ -3762,7 +4476,7 @@
       <!-- Match Criteria Section -->
       <div class="grant-details-modal__match-section" id="modal-match-criteria">
         <h3 class="grant-details-modal__section-title">
-          <i class="fas fa-check-double"></i> Why This Matches Your Profile
+          <i class="fas fa-check-double"></i> Your Profile Match Indicators
         </h3>
         <div class="grant-details-modal__match-grid" id="modal-match-list">
           <!-- Matched criteria will be dynamically added here -->
@@ -3772,38 +4486,38 @@
       <!-- Grant Details Section -->
       <div class="grant-details-modal__details-section">
         <h3 class="grant-details-modal__section-title">
-          <i class="fas fa-info-circle"></i> Grant Details
+          <i class="fas fa-info-circle"></i> Key Grant Details
         </h3>
         <div class="grant-details-modal__details-grid" id="modal-meta">
           <!-- Meta details will be dynamically added here -->
         </div>
       </div>
       
-      <!-- Application Steps Section (replacing eligibility) -->
+      <!-- Application Steps Section -->
       <div class="grant-details-modal__steps-section">
         <h3 class="grant-details-modal__section-title">
-          <i class="fas fa-list-ol"></i> Application Steps
+          <i class="fas fa-list-ol"></i> Application Process
         </h3>
         <ul class="grant-details-modal__steps-list" id="modal-eligibility">
           <li class="grant-details-modal__step-item">
             <div class="grant-details-modal__step-number">1</div>
-            <h4 class="grant-details-modal__step-title">Check Eligibility</h4>
-            <p class="grant-details-modal__step-description">Review all requirements to ensure you qualify for this grant opportunity.</p>
+            <h4 class="grant-details-modal__step-title">Verify Eligibility Requirements</h4>
+            <p class="grant-details-modal__step-description">Review all criteria carefully to confirm your qualification for this grant opportunity.</p>
           </li>
           <li class="grant-details-modal__step-item">
             <div class="grant-details-modal__step-number">2</div>
-            <h4 class="grant-details-modal__step-title">Prepare Documents</h4>
-            <p class="grant-details-modal__step-description">Gather all necessary documentation and information required for the application.</p>
+            <h4 class="grant-details-modal__step-title">Gather Required Documentation</h4>
+            <p class="grant-details-modal__step-description">Collect all necessary materials, financial statements, and supporting documents for a complete application.</p>
           </li>
           <li class="grant-details-modal__step-item">
             <div class="grant-details-modal__step-number">3</div>
-            <h4 class="grant-details-modal__step-title">Submit Application</h4>
-            <p class="grant-details-modal__step-description">Complete and submit your application before the deadline to be considered.</p>
+            <h4 class="grant-details-modal__step-title">Submit Your Application</h4>
+            <p class="grant-details-modal__step-description">Complete all sections and submit your application before the deadline for consideration.</p>
           </li>
           <li class="grant-details-modal__step-item">
             <div class="grant-details-modal__step-number">4</div>
-            <h4 class="grant-details-modal__step-title">Follow Up</h4>
-            <p class="grant-details-modal__step-description">Track your application status and respond to any additional requests for information.</p>
+            <h4 class="grant-details-modal__step-title">Track & Follow Up</h4>
+            <p class="grant-details-modal__step-description">Monitor your application status and respond promptly to any requests for additional information.</p>
           </li>
         </ul>
       </div>
@@ -3812,46 +4526,115 @@
     <!-- Consultation CTA -->
     <div class="grant-details-modal__cta-section">
       <div class="grant-details-modal__cta-text">
-        <span class="grant-details-modal__cta-title">Need help with your application?</span>
-        Our grant experts can provide guidance and support.
+        <span class="grant-details-modal__cta-title">Maximize Your Grant Approval Chances</span>
+        Get personalized guidance from our expert team with 300+ successful grant projects.
       </div>
       <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/grantaura'});return false;" class="grant-details-modal__cta-button">
-        <i class="fas fa-calendar-alt"></i> Book Free Consultation
+        <i class="fas fa-calendar-alt"></i> Schedule Free Strategy Call
       </a>
     </div>
     
-    <!-- Footer Actions -->
+    <!-- Footer Actions - Extra Compact for Mobile -->
     <div class="grant-details-modal__footer">
       <button class="grant-details-modal__back-button" id="modal-back">
-        <i class="fas fa-arrow-left"></i> Back to results
+        <i class="fas fa-arrow-left"></i> <span class="grant-details-modal__back-text">Return</span>
       </button>
       <a href="https://grantaura.com/apply/" class="grant-details-modal__apply-button" id="modal-apply">
-        Apply for this grant <i class="fas fa-arrow-right"></i>
+        <span class="grant-details-modal__apply-text">Apply</span> <i class="fas fa-arrow-right"></i>
       </a>
     </div>
   </div>
-</div>
-
-<!-- Updated JavaScript to work with the new modal -->
-<script>
+  
+  <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Function to update the match score display
+    // Function to update the match score display with color coding and animation
     function updateMatchScoreDisplay(score) {
-      const scoreDisplay = document.getElementById('match-score-display');
+      const scoreDisplay = document.querySelector('.grant-details-modal__match-score');
       if (scoreDisplay) {
-        scoreDisplay.textContent = score + '%';
+        // Animate the score changing
+        const currentScore = parseInt(scoreDisplay.textContent.replace('%', '')) || 0;
+        const targetScore = parseInt(score);
         
-        // Update color based on score
-        if (score >= 90) {
-          scoreDisplay.style.background = '#10B981'; // Excellent match
-        } else if (score >= 80) {
-          scoreDisplay.style.background = '#FFA366'; // High match
-        } else if (score >= 70) {
-          scoreDisplay.style.background = '#F59E0B'; // Medium match
-        } else {
-          scoreDisplay.style.background = '#9CA3AF'; // Lower match
+        // Use requestAnimationFrame for smooth animation
+        function animateScore(timestamp) {
+          // Calculate the score for this frame
+          const progress = Math.min((timestamp - startTime) / 800, 1);
+          const currentValue = Math.floor(currentScore + (targetScore - currentScore) * progress);
+          
+          // Update the display
+          scoreDisplay.textContent = currentValue + '%';
+          
+          // Continue animation until complete
+          if (progress < 1) {
+            requestAnimationFrame(animateScore);
+          }
+        }
+        
+        const startTime = performance.now();
+        requestAnimationFrame(animateScore);
+        
+        const matchCircle = document.getElementById('match-score-display');
+        // Update color based on score with transition
+        if (matchCircle) {
+          if (score >= 90) {
+            matchCircle.style.background = 'var(--grantaura-success)'; // Excellent match
+          } else if (score >= 80) {
+            matchCircle.style.background = 'var(--grantaura-secondary)'; // High match
+          } else if (score >= 70) {
+            matchCircle.style.background = 'var(--grantaura-warning)'; // Medium match
+          } else {
+            matchCircle.style.background = 'var(--grantaura-gray-500)'; // Lower match
+          }
         }
       }
+    }
+    
+    // Function to calculate and set dynamic content height based on viewport
+    function setDynamicContentHeight() {
+      const modal = document.getElementById('match-modal');
+      if (!modal || !modal.classList.contains('active')) return;
+      
+      const modalContent = modal.querySelector('.grant-details-modal__content');
+      if (!modalContent) return;
+      
+      // Get actual heights of elements rather than using CSS variables
+      // This ensures we're using actual rendered heights for calculations
+      const modalContainer = modal.querySelector('.grant-details-modal__container');
+      const headerHeight = modal.querySelector('.grant-details-modal__header').offsetHeight;
+      const footerHeight = modal.querySelector('.grant-details-modal__footer').offsetHeight;
+      const ctaHeight = modal.querySelector('.grant-details-modal__cta-section').offsetHeight;
+      
+      // Calculate available space and set max-height
+      const containerHeight = modalContainer.offsetHeight;
+      const availableHeight = containerHeight - headerHeight - footerHeight - ctaHeight;
+      
+      // Apply the calculated height with a small buffer for potential borders/margins
+      modalContent.style.maxHeight = `${availableHeight - 5}px`;
+      
+      // Log sizes for debugging (remove in production)
+      console.log({
+        containerHeight,
+        headerHeight,
+        footerHeight,
+        ctaHeight,
+        availableHeight
+      });
+    }
+    
+    // Function to trigger entry animations for modal elements
+    function triggerEntryAnimations() {
+      // Reset animations by removing and re-adding classes
+      const elementsWithAnimation = document.querySelectorAll(
+        '.grant-details-modal__tag-container, ' +
+        '.grant-details-modal__title-container, ' +
+        '.grant-details-modal__match-container'
+      );
+      
+      elementsWithAnimation.forEach(element => {
+        element.style.animation = 'none';
+        element.offsetHeight; // Trigger reflow
+        element.style.animation = '';
+      });
     }
     
     // Hook into existing event handlers for the modal
@@ -3863,8 +4646,20 @@
           window.EligibilityChecker.grants.find(g => g.id.toString() === grantId);
         
         if (grant) {
+          // Trigger modal animations
+          triggerEntryAnimations();
+          
+          // Open modal
+          const modal = document.getElementById('match-modal');
+          if (modal) {
+            modal.classList.add('active');
+          }
+          
           // Update match score display
           updateMatchScoreDisplay(grant.match_score);
+          
+          // Set dynamic height after modal opens
+          setTimeout(setDynamicContentHeight, 100);
         }
       });
     });
@@ -3878,6 +4673,9 @@
         
         // Update the match score display
         updateMatchScoreDisplay(grant.match_score);
+        
+        // Set dynamic height after content is updated
+        setTimeout(setDynamicContentHeight, 100);
         
         // Additional formatting for the new modal cards
         const modalMeta = document.getElementById('modal-meta');
@@ -3922,39 +4720,32 @@
           modalMeta.innerHTML = `
             <div class="grant-details-modal__detail-item grant-details-modal__detail-item--amount">
               <div class="grant-details-modal__detail-label">
-                <i class="fas fa-dollar-sign"></i> Amount
+                <i class="fas fa-dollar-sign"></i> Funding Amount
               </div>
               <div class="grant-details-modal__detail-value">${grant.amount}</div>
             </div>
             
             <div class="grant-details-modal__detail-item grant-details-modal__detail-item--deadline">
               <div class="grant-details-modal__detail-label">
-                <i class="fas fa-calendar-alt"></i> Deadline
+                <i class="fas fa-calendar-alt"></i> Application Deadline
               </div>
               <div class="grant-details-modal__detail-value ${deadlineClass}">${deadlineFormatted}</div>
             </div>
             
             <div class="grant-details-modal__detail-item">
               <div class="grant-details-modal__detail-label">
-                <i class="fas fa-tag"></i> Type
+                <i class="fas fa-tag"></i> Funding Type
               </div>
               <div class="grant-details-modal__detail-value">${grant.funding_type || 'Grant'}</div>
             </div>
             
             <div class="grant-details-modal__detail-item">
               <div class="grant-details-modal__detail-label">
-                <i class="fas fa-map-marker-alt"></i> Location
+                <i class="fas fa-map-marker-alt"></i> Eligible Location
               </div>
               <div class="grant-details-modal__detail-value">${locationsDisplay}</div>
             </div>
           `;
-        }
-        
-        // Enhanced formatting for application steps (replacing eligibility)
-        const modalEligibility = document.getElementById('modal-eligibility');
-        if (modalEligibility && grant) {
-          // Keep the default application steps unless we have custom steps
-          // The default steps are already in the HTML
         }
         
         // Enhanced formatting for match criteria
@@ -4002,42 +4793,123 @@
       };
     }
     
-    // Fix modal close event handlers (with proper null checks)
+    // Modal interaction event handlers
     const modal = document.getElementById('match-modal');
     const modalClose = document.getElementById('modal-close');
     const modalBack = document.getElementById('modal-back');
     
+    // Function to open modal with animation
+    function openModal() {
+      if (modal) {
+        modal.classList.add('active');
+        triggerEntryAnimations();
+        // Set dynamic height after modal opens
+        setTimeout(setDynamicContentHeight, 100);
+        document.body.style.overflow = 'hidden'; // Prevent body scrolling
+      }
+    }
+    
+    // Function to close modal with animation
+    function closeModal() {
+      if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore body scrolling
+      }
+    }
+    
+    // Close button event handler
     if (modalClose) {
-      modalClose.addEventListener('click', function() {
-        if (modal) {
-          modal.classList.remove('active');
-        }
-      });
+      modalClose.addEventListener('click', closeModal);
     }
     
+    // Back button event handler
     if (modalBack) {
-      modalBack.addEventListener('click', function() {
-        if (modal) {
-          modal.classList.remove('active');
-        }
-      });
+      modalBack.addEventListener('click', closeModal);
     }
     
-    // Fix the click outside modal to close it - with proper null checks
+    // Close modal when clicking outside of content
     document.addEventListener('click', function(event) {
       if (!modal || !modal.classList.contains('active')) return;
       
       const modalContainer = modal.querySelector('.grant-details-modal__container');
-      if (!modalContainer) return;
-      
-      // If click is outside of modal content but modal is active
-      if (!modalContainer.contains(event.target) && 
+      if (modalContainer && !modalContainer.contains(event.target) && 
           !event.target.closest('.eligibility-checker__match-details')) {
-        modal.classList.remove('active');
+        closeModal();
       }
     });
+    
+    // Handle resize events to adjust dynamic height
+    window.addEventListener('resize', function() {
+      if (modal && modal.classList.contains('active')) {
+        setDynamicContentHeight();
+      }
+    });
+    
+    // Handle orientation change for mobile devices
+    window.addEventListener('orientationchange', function() {
+      if (modal && modal.classList.contains('active')) {
+        setTimeout(setDynamicContentHeight, 200);
+      }
+    });
+    
+    // Add swipe down to close functionality for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+    
+    if (modal) {
+      modal.addEventListener('touchstart', function(e) {
+        touchStartY = e.changedTouches[0].screenY;
+      }, {passive: true});
+      
+      modal.addEventListener('touchend', function(e) {
+        touchEndY = e.changedTouches[0].screenY;
+        
+        // If swiped down more than 100px from the top of the modal, close it
+        if (touchEndY - touchStartY > 100 && touchStartY < 150) {
+          closeModal();
+        }
+      }, {passive: true});
+    }
+    
+    // Add keyboard accessibility - close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+    
+    // Initialize once everything is loaded
+    window.addEventListener('load', function() {
+      // If modal is already open, set dynamic height
+      if (modal && modal.classList.contains('active')) {
+        setDynamicContentHeight();
+      }
+    });
+    
+    // Enable debug mode - log available height information when modal toggles
+    const debugMode = true;
+    if (debugMode) {
+      // Monitor DOM changes to detect when modal becomes active
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.attributeName === 'class') {
+            if (modal.classList.contains('active')) {
+              console.log('Modal activated - calculating heights');
+              setTimeout(setDynamicContentHeight, 100);
+            }
+          }
+        });
+      });
+      
+      if (modal) {
+        observer.observe(modal, { attributes: true });
+      }
+    }
   });
-</script>
+  </script>
+</div>
+
+
       
       <!-- Premium lead capture popup -->
       <div class="eligibility-checker__premium-popup" id="premium-popup">
@@ -5002,6 +5874,7 @@ add_shortcode('eligibility_checker', function($atts) {
 });
 [/php]
   
+
 <script>
 (function() {
   'use strict';
