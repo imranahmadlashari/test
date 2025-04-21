@@ -3202,57 +3202,842 @@
   </div>
 </section>
       
-      <!-- Grant details modal -->
-      <div class="eligibility-checker__match-modal" id="match-modal">
-        <div class="eligibility-checker__modal-content">
-          <div class="eligibility-checker__modal-header">
-            <h3 class="eligibility-checker__modal-title" id="modal-title">Grant Title</h3>
-            <button class="eligibility-checker__modal-close" id="modal-close">&times;</button>
-          </div>
-          
-          <div class="eligibility-checker__modal-body">
-            <div class="eligibility-checker__modal-section">
-              <p class="eligibility-checker__match-description" id="modal-description">Grant description goes here...</p>
-            </div>
-            
-            <div class="eligibility-checker__match-criteria" id="modal-match-criteria">
-              <h4 class="eligibility-checker__match-criteria-title">
-                <i class="fas fa-check-double"></i>Matched Criteria
-              </h4>
-              <div class="eligibility-checker__match-criteria-list" id="modal-match-list">
-                <!-- Matched criteria will be dynamically added here -->
-              </div>
-            </div>
-            
-            <div class="eligibility-checker__modal-section">
-              <h4 class="eligibility-checker__modal-section-title">
-                <i class="fas fa-info-circle"></i>Grant details
-              </h4>
-              <div class="eligibility-checker__match-meta" id="modal-meta">
-                <!-- Meta details will be dynamically added here -->
-              </div>
-            </div>
-            
-            <div class="eligibility-checker__modal-section">
-              <h4 class="eligibility-checker__modal-section-title">
-                <i class="fas fa-check-circle"></i>Eligibility criteria
-              </h4>
-              <ul class="eligibility-checker__eligibility-list" id="modal-eligibility">
-                <!-- Eligibility criteria will be dynamically added here -->
-              </ul>
-            </div>
-          </div>
-          
-          <div class="eligibility-checker__modal-footer">
-            <button class="eligibility-checker__modal-action eligibility-checker__secondary-action" id="modal-back">
-              Back to results
-            </button>
-            <a href="https://grantaura.com/apply/" class="eligibility-checker__modal-action eligibility-checker__primary-action" id="modal-apply">
-              Apply for this grant
-            </a>
-          </div>
+      <!-- Enhanced Grant Details Modal - Optimized for Mobile -->
+<div class="grant-details-modal" id="match-modal">
+  <style>
+    /* Reset and Base Styles */
+    .grant-details-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .grant-details-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Modal Container */
+    .grant-details-modal__container {
+      width: 95%;
+      max-width: 600px;
+      max-height: 85vh;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+      margin: 20px;
+    }
+
+    .grant-details-modal.active .grant-details-modal__container {
+      transform: scale(1);
+    }
+
+    /* Header Section */
+    .grant-details-modal__header {
+      background: linear-gradient(135deg, #5A3B8C, #7650A9);
+      position: relative;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 16px 16px 16px 20px;
+    }
+
+    .grant-details-modal__header-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://grantaura.com/wp-content/uploads/2025/02/patterns-with-connection-7.webp');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .grant-details-modal__close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .grant-details-modal__close:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .grant-details-modal__header-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .grant-details-modal__tag {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: white;
+      font-weight: 500;
+      margin-right: 10px;
+    }
+
+    .grant-details-modal__tag i {
+      margin-right: 4px;
+      font-size: 12px;
+    }
+
+    /* Match Score Circle */
+    .grant-details-modal__match-circle {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      border-radius: 50%;
+      background: #FFA366;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      margin-left: auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Content Area */
+    .grant-details-modal__content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      max-height: calc(85vh - 145px); /* Adjusted to account for header and footer */
+      scrollbar-width: thin;
+      scrollbar-color: #5A3B8C #F3F4F6;
+    }
+
+    .grant-details-modal__content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .grant-details-modal__content::-webkit-scrollbar-track {
+      background: #F3F4F6;
+    }
+
+    .grant-details-modal__content::-webkit-scrollbar-thumb {
+      background-color: #5A3B8C;
+      border-radius: 5px;
+    }
+
+    /* Title Section */
+    .grant-details-modal__title-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .grant-details-modal__title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1F2937;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    /* Description Section */
+    .grant-details-modal__description-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+      background: #F9FAFB;
+    }
+
+    .grant-details-modal__description {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #4B5563;
+      margin: 0;
+    }
+
+    /* Match Criteria Section */
+    .grant-details-modal__match-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+      background: linear-gradient(to right, rgba(90, 59, 140, 0.05), rgba(90, 59, 140, 0.02));
+    }
+
+    .grant-details-modal__section-title {
+      display: flex;
+      align-items: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: #5A3B8C;
+      margin: 0 0 14px 0;
+    }
+
+    .grant-details-modal__section-title i {
+      margin-right: 8px;
+      background: rgba(90, 59, 140, 0.1);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .grant-details-modal__match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .grant-details-modal__match-item {
+      display: flex;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .grant-details-modal__match-icon {
+      min-width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #10B981;
+      margin-right: 8px;
+      margin-top: 2px;
+      font-size: 14px;
+    }
+
+    .grant-details-modal__match-item--priority .grant-details-modal__match-icon {
+      color: #5A3B8C;
+    }
+
+    .grant-details-modal__match-text {
+      font-size: 14px;
+      color: #4B5563;
+      line-height: 1.4;
+    }
+
+    /* Grant Details Section */
+    .grant-details-modal__details-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .grant-details-modal__details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grant-details-modal__detail-item {
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E5E7EB;
+    }
+
+    .grant-details-modal__detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6B7280;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .grant-details-modal__detail-label i {
+      margin-right: 5px;
+      font-size: 12px;
+      color: #5A3B8C;
+    }
+
+    .grant-details-modal__detail-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1F2937;
+    }
+
+    .grant-details-modal__detail-item--amount .grant-details-modal__detail-label i {
+      color: #10B981;
+    }
+
+    .grant-details-modal__detail-item--deadline .grant-details-modal__detail-label i {
+      color: #F59E0B;
+    }
+
+    .grant-details-modal__deadline--urgent {
+      color: #F59E0B;
+    }
+
+    .grant-details-modal__deadline--critical {
+      color: #EF4444;
+    }
+
+    .grant-details-modal__deadline--expired {
+      color: #9CA3AF;
+      text-decoration: line-through;
+    }
+
+    /* Application Steps Section (replacing eligibility) */
+    .grant-details-modal__steps-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .grant-details-modal__steps-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .grant-details-modal__step-item {
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 16px;
+    }
+
+    .grant-details-modal__step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .grant-details-modal__step-number {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      background: #5A3B8C;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .grant-details-modal__step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1F2937;
+      margin: 0 0 5px 0;
+      line-height: 1.3;
+    }
+
+    .grant-details-modal__step-description {
+      font-size: 14px;
+      color: #6B7280;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* CTA Section */
+    .grant-details-modal__cta-section {
+      padding: 12px 20px;
+      background: #FFF8F3;
+      border-top: 1px solid #FFE4CC;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .grant-details-modal__cta-text {
+      font-size: 14px;
+      color: #4B5563;
+      margin: 0;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .grant-details-modal__cta-title {
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 2px;
+      font-size: 15px;
+      display: block;
+    }
+
+    .grant-details-modal__cta-button {
+      background: #FFA366;
+      color: white !important;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none !important;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(255, 163, 102, 0.3);
+    }
+
+    .grant-details-modal__cta-button:hover {
+      background: #FF8544;
+    }
+
+    /* Footer Section */
+    .grant-details-modal__footer {
+      padding: 14px 20px;
+      background: #F9FAFB;
+      border-top: 1px solid #E5E7EB;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grant-details-modal__back-button {
+      background: none;
+      border: 1px solid #D1D5DB;
+      color: #4B5563;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .grant-details-modal__back-button:hover {
+      background: #F3F4F6;
+      color: #1F2937;
+    }
+
+    .grant-details-modal__apply-button {
+      background: #5A3B8C;
+      color: white !important;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none !important;
+      border: none;
+      flex: 1;
+      justify-content: center;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(90, 59, 140, 0.25);
+    }
+
+    .grant-details-modal__apply-button:hover {
+      background: #472D6F;
+    }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+      .grant-details-modal__container {
+        max-width: 750px;
+      }
+
+      .grant-details-modal__header {
+        padding: 18px 20px;
+      }
+
+      .grant-details-modal__title {
+        font-size: 22px;
+      }
+      
+      .grant-details-modal__close {
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        font-size: 20px;
+      }
+
+      .grant-details-modal__match-circle {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        font-size: 18px;
+      }
+
+      .grant-details-modal__description {
+        font-size: 16px;
+      }
+      
+      .grant-details-modal__section-title {
+        font-size: 18px;
+      }
+      
+      .grant-details-modal__match-text,
+      .grant-details-modal__step-description {
+        font-size: 15px;
+      }
+      
+      .grant-details-modal__detail-value {
+        font-size: 16px;
+      }
+      
+      .grant-details-modal__back-button,
+      .grant-details-modal__apply-button,
+      .grant-details-modal__cta-button {
+        padding: 10px 16px;
+        font-size: 15px;
+      }
+    }
+  </style>
+
+  <div class="grant-details-modal__container">
+    <!-- Header with Tag and Match Score -->
+    <div class="grant-details-modal__header">
+      <div class="grant-details-modal__header-pattern"></div>
+      <button class="grant-details-modal__close" id="modal-close" aria-label="Close modal">&times;</button>
+      
+      <div class="grant-details-modal__header-content">
+        <div class="grant-details-modal__tag">
+          <i class="fas fa-award"></i> Grant
+        </div>
+        <div class="grant-details-modal__match-circle" id="match-score-display">95%</div>
+      </div>
+    </div>
+    
+    <!-- Scrollable Content Area -->
+    <div class="grant-details-modal__content">
+      <!-- Title Section -->
+      <div class="grant-details-modal__title-section">
+        <h2 class="grant-details-modal__title" id="modal-title">Grant Title</h2>
+      </div>
+      
+      <!-- Description Section -->
+      <div class="grant-details-modal__description-section">
+        <p class="grant-details-modal__description" id="modal-description">
+          Grant description goes here...
+        </p>
+      </div>
+      
+      <!-- Match Criteria Section -->
+      <div class="grant-details-modal__match-section" id="modal-match-criteria">
+        <h3 class="grant-details-modal__section-title">
+          <i class="fas fa-check-double"></i> Why This Matches Your Profile
+        </h3>
+        <div class="grant-details-modal__match-grid" id="modal-match-list">
+          <!-- Matched criteria will be dynamically added here -->
         </div>
       </div>
+      
+      <!-- Grant Details Section -->
+      <div class="grant-details-modal__details-section">
+        <h3 class="grant-details-modal__section-title">
+          <i class="fas fa-info-circle"></i> Grant Details
+        </h3>
+        <div class="grant-details-modal__details-grid" id="modal-meta">
+          <!-- Meta details will be dynamically added here -->
+        </div>
+      </div>
+      
+      <!-- Application Steps Section (replacing eligibility) -->
+      <div class="grant-details-modal__steps-section">
+        <h3 class="grant-details-modal__section-title">
+          <i class="fas fa-list-ol"></i> Application Steps
+        </h3>
+        <ul class="grant-details-modal__steps-list" id="modal-eligibility">
+          <li class="grant-details-modal__step-item">
+            <div class="grant-details-modal__step-number">1</div>
+            <h4 class="grant-details-modal__step-title">Check Eligibility</h4>
+            <p class="grant-details-modal__step-description">Review all requirements to ensure you qualify for this grant opportunity.</p>
+          </li>
+          <li class="grant-details-modal__step-item">
+            <div class="grant-details-modal__step-number">2</div>
+            <h4 class="grant-details-modal__step-title">Prepare Documents</h4>
+            <p class="grant-details-modal__step-description">Gather all necessary documentation and information required for the application.</p>
+          </li>
+          <li class="grant-details-modal__step-item">
+            <div class="grant-details-modal__step-number">3</div>
+            <h4 class="grant-details-modal__step-title">Submit Application</h4>
+            <p class="grant-details-modal__step-description">Complete and submit your application before the deadline to be considered.</p>
+          </li>
+          <li class="grant-details-modal__step-item">
+            <div class="grant-details-modal__step-number">4</div>
+            <h4 class="grant-details-modal__step-title">Follow Up</h4>
+            <p class="grant-details-modal__step-description">Track your application status and respond to any additional requests for information.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Consultation CTA -->
+    <div class="grant-details-modal__cta-section">
+      <div class="grant-details-modal__cta-text">
+        <span class="grant-details-modal__cta-title">Need help with your application?</span>
+        Our grant experts can provide guidance and support.
+      </div>
+      <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/grantaura'});return false;" class="grant-details-modal__cta-button">
+        <i class="fas fa-calendar-alt"></i> Book Free Consultation
+      </a>
+    </div>
+    
+    <!-- Footer Actions -->
+    <div class="grant-details-modal__footer">
+      <button class="grant-details-modal__back-button" id="modal-back">
+        <i class="fas fa-arrow-left"></i> Back to results
+      </button>
+      <a href="https://grantaura.com/apply/" class="grant-details-modal__apply-button" id="modal-apply">
+        Apply for this grant <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Updated JavaScript to work with the new modal -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to update the match score display
+    function updateMatchScoreDisplay(score) {
+      const scoreDisplay = document.getElementById('match-score-display');
+      if (scoreDisplay) {
+        scoreDisplay.textContent = score + '%';
+        
+        // Update color based on score
+        if (score >= 90) {
+          scoreDisplay.style.background = '#10B981'; // Excellent match
+        } else if (score >= 80) {
+          scoreDisplay.style.background = '#FFA366'; // High match
+        } else if (score >= 70) {
+          scoreDisplay.style.background = '#F59E0B'; // Medium match
+        } else {
+          scoreDisplay.style.background = '#9CA3AF'; // Lower match
+        }
+      }
+    }
+    
+    // Hook into existing event handlers for the modal
+    const existingDetailButtons = document.querySelectorAll('.eligibility-checker__match-details');
+    existingDetailButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        const grantId = this.getAttribute('data-grant-id');
+        const grant = window.EligibilityChecker && window.EligibilityChecker.grants &&
+          window.EligibilityChecker.grants.find(g => g.id.toString() === grantId);
+        
+        if (grant) {
+          // Update match score display
+          updateMatchScoreDisplay(grant.match_score);
+        }
+      });
+    });
+    
+    // Format the meta details in the enhanced card format
+    const originalUpdateMetaDetails = window.EligibilityChecker && window.EligibilityChecker.showGrantDetails;
+    if (originalUpdateMetaDetails && window.EligibilityChecker) {
+      window.EligibilityChecker.showGrantDetails = function(grant) {
+        // Call original function to maintain core functionality
+        originalUpdateMetaDetails.call(window.EligibilityChecker, grant);
+        
+        // Update the match score display
+        updateMatchScoreDisplay(grant.match_score);
+        
+        // Additional formatting for the new modal cards
+        const modalMeta = document.getElementById('modal-meta');
+        if (modalMeta && grant) {
+          // Format deadline for display
+          let deadlineFormatted = grant.deadline;
+          let deadlineClass = '';
+          
+          if (deadlineFormatted !== 'Ongoing') {
+            try {
+              const deadlineDate = new Date(grant.deadline);
+              const today = new Date();
+              const diffTime = deadlineDate - today;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              
+              if (diffDays > 30) {
+                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+              } else if (diffDays > 14) {
+                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+                deadlineClass = 'grant-details-modal__deadline--urgent';
+              } else if (diffDays > 0) {
+                deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+                deadlineClass = 'grant-details-modal__deadline--critical';
+              } else if (diffDays === 0) {
+                deadlineFormatted = `${grant.deadline} (Today)`;
+                deadlineClass = 'grant-details-modal__deadline--critical';
+              } else {
+                deadlineFormatted = `${grant.deadline} (Expired)`;
+                deadlineClass = 'grant-details-modal__deadline--expired';
+              }
+            } catch (e) {
+              console.warn('Could not parse deadline:', e);
+            }
+          }
+          
+          // Format locations for display
+          const locationsDisplay = Array.isArray(grant.locations) && grant.locations.length > 0 
+            ? grant.locations.join(', ') 
+            : (grant.location || 'Multiple Locations');
+          
+          // Enhanced card layout for meta information
+          modalMeta.innerHTML = `
+            <div class="grant-details-modal__detail-item grant-details-modal__detail-item--amount">
+              <div class="grant-details-modal__detail-label">
+                <i class="fas fa-dollar-sign"></i> Amount
+              </div>
+              <div class="grant-details-modal__detail-value">${grant.amount}</div>
+            </div>
+            
+            <div class="grant-details-modal__detail-item grant-details-modal__detail-item--deadline">
+              <div class="grant-details-modal__detail-label">
+                <i class="fas fa-calendar-alt"></i> Deadline
+              </div>
+              <div class="grant-details-modal__detail-value ${deadlineClass}">${deadlineFormatted}</div>
+            </div>
+            
+            <div class="grant-details-modal__detail-item">
+              <div class="grant-details-modal__detail-label">
+                <i class="fas fa-tag"></i> Type
+              </div>
+              <div class="grant-details-modal__detail-value">${grant.funding_type || 'Grant'}</div>
+            </div>
+            
+            <div class="grant-details-modal__detail-item">
+              <div class="grant-details-modal__detail-label">
+                <i class="fas fa-map-marker-alt"></i> Location
+              </div>
+              <div class="grant-details-modal__detail-value">${locationsDisplay}</div>
+            </div>
+          `;
+        }
+        
+        // Enhanced formatting for application steps (replacing eligibility)
+        const modalEligibility = document.getElementById('modal-eligibility');
+        if (modalEligibility && grant) {
+          // Keep the default application steps unless we have custom steps
+          // The default steps are already in the HTML
+        }
+        
+        // Enhanced formatting for match criteria
+        const modalMatchList = document.getElementById('modal-match-list');
+        if (modalMatchList && grant && grant.match_reasons && grant.match_reasons.length > 0) {
+          // Group match reasons by priority
+          const highPriorityReasons = [];
+          const otherReasons = [];
+          
+          grant.match_reasons.forEach(reason => {
+            // Check if reason contains high priority field terms
+            const isHighPriority = this.highPriorityFields && this.highPriorityFields.some(field => {
+              const fieldName = this.getFieldDisplayName ? this.getFieldDisplayName(field) : field;
+              return reason.includes(fieldName);
+            });
+            
+            if (isHighPriority) {
+              highPriorityReasons.push(reason);
+            } else {
+              otherReasons.push(reason);
+            }
+          });
+          
+          // Build enhanced HTML for match criteria
+          const highPriorityHTML = highPriorityReasons.map(reason => `
+            <div class="grant-details-modal__match-item grant-details-modal__match-item--priority">
+              <div class="grant-details-modal__match-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="grant-details-modal__match-text">${reason}</div>
+            </div>
+          `).join('');
+          
+          const otherReasonsHTML = otherReasons.map(reason => `
+            <div class="grant-details-modal__match-item">
+              <div class="grant-details-modal__match-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="grant-details-modal__match-text">${reason}</div>
+            </div>
+          `).join('');
+          
+          modalMatchList.innerHTML = highPriorityHTML + otherReasonsHTML;
+        }
+      };
+    }
+    
+    // Fix modal close event handlers (with proper null checks)
+    const modal = document.getElementById('match-modal');
+    const modalClose = document.getElementById('modal-close');
+    const modalBack = document.getElementById('modal-back');
+    
+    if (modalClose) {
+      modalClose.addEventListener('click', function() {
+        if (modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
+    
+    if (modalBack) {
+      modalBack.addEventListener('click', function() {
+        if (modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
+    
+    // Fix the click outside modal to close it - with proper null checks
+    document.addEventListener('click', function(event) {
+      if (!modal || !modal.classList.contains('active')) return;
+      
+      const modalContainer = modal.querySelector('.grant-details-modal__container');
+      if (!modalContainer) return;
+      
+      // If click is outside of modal content but modal is active
+      if (!modalContainer.contains(event.target) && 
+          !event.target.closest('.eligibility-checker__match-details')) {
+        modal.classList.remove('active');
+      }
+    });
+  });
+</script>
       
       <!-- Premium lead capture popup -->
       <div class="eligibility-checker__premium-popup" id="premium-popup">
