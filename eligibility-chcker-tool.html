@@ -1380,22 +1380,7 @@
       border-color: var(--white);
     }
     
-    /* Premium lead capture popup */
-    .eligibility-checker__premium-popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
+    
     
     .eligibility-checker__premium-popup.active {
       opacity: 1;
@@ -4898,118 +4883,7 @@
 
 
       
-      <!-- Premium lead capture popup -->
-      <div class="eligibility-checker__premium-popup" id="premium-popup">
-        <div class="eligibility-checker__premium-popup-content">
-          <div class="eligibility-checker__premium-popup-header">
-            <div class="eligibility-checker__premium-popup-header-bg"></div>
-            <div class="eligibility-checker__premium-popup-header-pattern"></div>
-            <button class="eligibility-checker__premium-popup-close" id="premium-popup-close">&times;</button>
-            <div class="eligibility-checker__premium-popup-title-container">
-              <h3 class="eligibility-checker__premium-popup-title">Access Premium Grant Matches</h3>
-            </div>
-          </div>
-          
-          <div class="eligibility-checker__premium-popup-body">
-            <!-- Form state -->
-            <div id="premium-popup-form-container">
-              <h4 class="eligibility-checker__premium-popup-subtitle">Get expert grant assistance</h4>
-              <p class="eligibility-checker__premium-popup-description">
-                Complete the form below to receive personalized expert guidance on premium grant opportunities that match your unique eligibility profile.
-              </p>
-              
-              <div class="eligibility-checker__premium-popup-benefits">
-                <div class="eligibility-checker__premium-popup-benefit">
-                  <div class="eligibility-checker__premium-popup-benefit-icon">
-                    <i class="fas fa-check"></i>
-                  </div>
-                  <div class="eligibility-checker__premium-popup-benefit-text">
-                    Detailed information about additional matching grants
-                  </div>
-                </div>
-                <div class="eligibility-checker__premium-popup-benefit">
-                  <div class="eligibility-checker__premium-popup-benefit-icon">
-                    <i class="fas fa-check"></i>
-                  </div>
-                  <div class="eligibility-checker__premium-popup-benefit-text">
-                    Expert eligibility assessment to confirm your qualification
-                  </div>
-                </div>
-                <div class="eligibility-checker__premium-popup-benefit">
-                  <div class="eligibility-checker__premium-popup-benefit-icon">
-                    <i class="fas fa-check"></i>
-                  </div>
-                  <div class="eligibility-checker__premium-popup-benefit-text">
-                    Personalized guidance on application strategy
-                  </div>
-                </div>
-                <div class="eligibility-checker__premium-popup-benefit">
-                  <div class="eligibility-checker__premium-popup-benefit-icon">
-                    <i class="fas fa-check"></i>
-                  </div>
-                  <div class="eligibility-checker__premium-popup-benefit-text">
-                    Priority support from our grant experts
-                  </div>
-                </div>
-              </div>
-              
-              <form class="eligibility-checker__premium-popup-form" id="premium-popup-form">
-                <div class="eligibility-checker__premium-popup-form-group">
-                  <label class="eligibility-checker__premium-popup-label" for="premium-name">Full Name</label>
-                  <input type="text" id="premium-name" name="premium-name" class="eligibility-checker__premium-popup-input" placeholder="Your name" required>
-                  <div class="eligibility-checker__premium-popup-error">Please enter your name</div>
-                </div>
-                
-                <div class="eligibility-checker__premium-popup-form-group">
-                  <label class="eligibility-checker__premium-popup-label" for="premium-email">Email Address</label>
-                  <input type="email" id="premium-email" name="premium-email" class="eligibility-checker__premium-popup-input" placeholder="your.email@example.com" required>
-                  <div class="eligibility-checker__premium-popup-error">Please enter a valid email address</div>
-                </div>
-                
-                <div class="eligibility-checker__premium-popup-form-group">
-                  <label class="eligibility-checker__premium-popup-label" for="premium-phone">Phone Number (Optional)</label>
-                  <input type="tel" id="premium-phone" name="premium-phone" class="eligibility-checker__premium-popup-input" placeholder="Your phone number">
-                </div>
-                
-                <div class="eligibility-checker__premium-popup-form-group">
-                  <label class="eligibility-checker__premium-popup-label" for="premium-interest">Primary Interest</label>
-                  <select id="premium-interest" name="premium-interest" class="eligibility-checker__premium-popup-select" required>
-                    <option value="" disabled selected>Select your primary interest</option>
-                    <option value="grant_research">Grant research and identification</option>
-                    <option value="grant_writing">Grant writing assistance</option>
-                    <option value="application_support">Application support and review</option>
-                    <option value="full_service">Full-service grant acquisition</option>
-                    <option value="just_exploring">Just exploring options for now</option>
-                  </select>
-                  <div class="eligibility-checker__premium-popup-error">Please select your primary interest</div>
-                </div>
-                
-                <button type="submit" class="eligibility-checker__premium-popup-submit">
-                  <i class="fas fa-unlock"></i> Unlock Premium Grants
-                </button>
-              </form>
-              
-              <p class="eligibility-checker__premium-popup-privacy">
-                By submitting this form, you agree to our <a href="https://grantaura.com/privacy-policy/" target="_blank">Privacy Policy</a>. We'll never share your information without permission.
-              </p>
-            </div>
-            
-            <!-- Success state -->
-            <div class="eligibility-checker__premium-popup-success" id="premium-popup-success">
-              <div class="eligibility-checker__premium-popup-success-icon">
-                <i class="fas fa-check"></i>
-              </div>
-              <h4 class="eligibility-checker__premium-popup-success-title">Request Received!</h4>
-              <p class="eligibility-checker__premium-popup-success-message">
-                Thank you for your interest in our premium grant matches. Our grant experts will review your profile and contact you shortly with personalized recommendations.
-              </p>
-              <button class="eligibility-checker__premium-popup-success-button" id="premium-popup-success-close">
-                <i class="fas fa-check"></i> Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </div>
   
@@ -5862,21 +5736,19 @@ add_shortcode('eligibility_checker', function($atts) {
 [/php]
   
 
-  
-
 <script>
 (function() {
   'use strict';
 
   /**
-   * Enhanced Grant Eligibility Checker
-   * 
-   * Improved matching algorithm that strictly prioritizes:
-   * - Entity type/individual category
-   * - Demographics/focus areas
-   * - Location
-   * - Keywords
-   */
+  * Enhanced Grant Eligibility Checker
+  * 
+  * Improved matching algorithm that strictly prioritizes:
+  * - Entity type/individual category
+  * - Demographics/focus areas
+  * - Location
+  * - Keywords
+  */
   const EligibilityChecker = {
     currentStep: 1,
     maxStep: 3,
@@ -5886,7 +5758,6 @@ add_shortcode('eligibility_checker', function($atts) {
     formSubmitted: false,
     keywordsList: [],
     highPriorityFields: [], // Store high priority fields for matching
-    premiumGrantCount: 0, // Count of premium grants to show
     isAdminMode: false, // Flag for admin mode
     
     /**
@@ -5973,13 +5844,7 @@ add_shortcode('eligibility_checker', function($atts) {
         });
       });
       
-      // Premium grants buttons
-      const unlockPremiumBtn = document.getElementById('unlock-premium-button');
-      if (unlockPremiumBtn) {
-        unlockPremiumBtn.addEventListener('click', () => {
-          this.openPremiumPopup();
-        });
-      }
+      
       
       const scheduleConsultationBtn = document.getElementById('schedule-consultation-button');
       if (scheduleConsultationBtn) {
@@ -5993,30 +5858,7 @@ add_shortcode('eligibility_checker', function($atts) {
         });
       }
       
-      // Premium popup close button
-      const premiumPopupClose = document.getElementById('premium-popup-close');
-      if (premiumPopupClose) {
-        premiumPopupClose.addEventListener('click', () => {
-          document.getElementById('premium-popup').classList.remove('active');
-        });
-      }
       
-      // Premium popup success close button
-      const premiumPopupSuccessClose = document.getElementById('premium-popup-success-close');
-      if (premiumPopupSuccessClose) {
-        premiumPopupSuccessClose.addEventListener('click', () => {
-          document.getElementById('premium-popup').classList.remove('active');
-        });
-      }
-      
-      // Premium popup form submission
-      const premiumPopupForm = document.getElementById('premium-popup-form');
-      if (premiumPopupForm) {
-        premiumPopupForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.submitPremiumLead();
-        });
-      }
       
       // Close modal on escape key press
       document.addEventListener('keydown', (e) => {
@@ -6026,10 +5868,7 @@ add_shortcode('eligibility_checker', function($atts) {
             modal.classList.remove('active');
           }
           
-          const premiumPopup = document.getElementById('premium-popup');
-          if (premiumPopup && premiumPopup.classList.contains('active')) {
-            premiumPopup.classList.remove('active');
-          }
+          
         }
       });
       
@@ -6066,135 +5905,9 @@ add_shortcode('eligibility_checker', function($atts) {
       });
     },
     
-    /**
-     * Open premium lead capture popup
-     */
-    openPremiumPopup() {
-      const popup = document.getElementById('premium-popup');
-      if (popup) {
-        // Reset form state if needed
-        const formContainer = document.getElementById('premium-popup-form-container');
-        const successContainer = document.getElementById('premium-popup-success');
-        
-        if (formContainer && successContainer) {
-          formContainer.style.display = 'block';
-          successContainer.classList.remove('active');
-        }
-        
-        // Show popup
-        popup.classList.add('active');
-      }
-    },
     
-    /**
-     * Submit premium lead form via AJAX
-     */
-    submitPremiumLead() {
-      const form = document.getElementById('premium-popup-form');
-      if (!form) return;
-      
-      // Get form data
-      const name = document.getElementById('premium-name').value;
-      const email = document.getElementById('premium-email').value;
-      const phone = document.getElementById('premium-phone').value;
-      const interest = document.getElementById('premium-interest').value;
-      
-      // Basic validation
-      let isValid = true;
-      
-      // Name validation
-      if (!name.trim()) {
-        const nameGroup = document.getElementById('premium-name').closest('.eligibility-checker__premium-popup-form-group');
-        nameGroup.classList.add('has-error');
-        isValid = false;
-      } else {
-        const nameGroup = document.getElementById('premium-name').closest('.eligibility-checker__premium-popup-form-group');
-        nameGroup.classList.remove('has-error');
-      }
-      
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email.trim() || !emailRegex.test(email)) {
-        const emailGroup = document.getElementById('premium-email').closest('.eligibility-checker__premium-popup-form-group');
-        emailGroup.classList.add('has-error');
-        isValid = false;
-      } else {
-        const emailGroup = document.getElementById('premium-email').closest('.eligibility-checker__premium-popup-form-group');
-        emailGroup.classList.remove('has-error');
-      }
-      
-      // Interest validation
-      if (!interest) {
-        const interestGroup = document.getElementById('premium-interest').closest('.eligibility-checker__premium-popup-form-group');
-        interestGroup.classList.add('has-error');
-        isValid = false;
-      } else {
-        const interestGroup = document.getElementById('premium-interest').closest('.eligibility-checker__premium-popup-form-group');
-        interestGroup.classList.remove('has-error');
-      }
-      
-      if (!isValid) return;
-      
-      // Prepare data for AJAX
-      const submitButton = form.querySelector('button[type="submit"]');
-      if (submitButton) {
-        // Show loading state
-        const originalText = submitButton.innerHTML;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        submitButton.disabled = true;
-        
-        // Create FormData
-        const formData = new FormData();
-        formData.append('action', 'premium_lead_submission');
-        formData.append('nonce', this.premiumLeadNonce);
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('phone', phone);
-        formData.append('interest', interest);
-        formData.append('entity_type', this.entityType);
-        formData.append('entity_details', JSON.stringify(this.entityDetails));
-        
-        // Make AJAX request
-        fetch(ajaxurl, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        })
-        .then(response => response.json())
-        .then(data => {
-          // Reset loading state
-          submitButton.innerHTML = originalText;
-          submitButton.disabled = false;
-          
-          if (data.success) {
-            // Show success message
-            const formContainer = document.getElementById('premium-popup-form-container');
-            const successContainer = document.getElementById('premium-popup-success');
-            
-            if (formContainer && successContainer) {
-              formContainer.style.display = 'none';
-              successContainer.classList.add('active');
-            }
-            
-            // Reset form
-            form.reset();
-          } else {
-            // Show error message
-            alert(data.data.message || 'There was an error processing your request. Please try again.');
-          }
-        })
-        .catch(error => {
-          console.error('Error submitting premium lead:', error);
-          
-          // Reset loading state
-          submitButton.innerHTML = originalText;
-          submitButton.disabled = false;
-          
-          // Show error message
-          alert('There was an error submitting your request. Please try again.');
-        });
-      }
-    },
+    
+    
 
     /**
      * Set up keywords input functionality
@@ -7735,514 +7448,7 @@ add_shortcode('eligibility_checker', function($atts) {
       }
     },
     
-    /**
-     * Generate fallback grants for testing when server methods fail
-     * This ensures users can still see some example results
-     */
-    generateFallbackGrants() {
-      const currentDate = new Date();
-      const oneMonthLater = new Date(currentDate);
-      oneMonthLater.setMonth(currentDate.getMonth() + 1);
-      
-      // Format dates
-      const formatDate = (date) => date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      
-      // Generate grants based on entity type
-      let fallbackGrants = [];
-      
-      // Common grants for all entity types (with different tailoring)
-      const commonGrants = [
-        {
-          id: 1001,
-          title: `${this.entityType === 'for_profit_business' ? 'Small Business' : 
-                    this.entityType === 'nonprofit' ? 'Nonprofit' : 
-                    this.entityType === 'individual' ? 'Individual' : 'Institution'} Innovation Grant`,
-          description: `Supporting innovative projects for ${this.entityType.replace('_', ' ')}s looking to make a difference in their field or community.`,
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$5,000 - $20,000',
-          deadline: formatDate(oneMonthLater),
-          funding_type: 'Grant',
-          organization: 'Innovation Foundation',
-          eligibility: `Open to all ${this.entityType.replace('_', ' ')}s with innovative projects. Must be based in the United States.`,
-          categories: ['Innovation', 'Technology', this.entityType.replace('_', ' ').charAt(0).toUpperCase() + this.entityType.replace('_', ' ').slice(1)],
-          locations: ['United States'],
-          location: 'United States',
-          match_score: 0,
-          match_reasons: []
-        },
-        {
-          id: 1002,
-          title: `Community Impact ${this.entityType === 'for_profit_business' ? 'Business' : 
-                    this.entityType === 'nonprofit' ? 'Organization' : 
-                    this.entityType === 'individual' ? 'Individual' : 'Institution'} Grant`,
-          description: 'Funding for projects that create measurable positive change in local communities.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$2,500 - $15,000',
-          deadline: 'Ongoing',
-          funding_type: 'Grant',
-          organization: 'Community Foundation',
-          eligibility: 'Projects must demonstrate clear community benefit with measurable outcomes.',
-          categories: ['Community Development', 'Social Impact', this.entityType.replace('_', ' ').charAt(0).toUpperCase() + this.entityType.replace('_', ' ').slice(1)],
-          locations: ['Multiple Locations'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: []
-        }
-      ];
-      
-      fallbackGrants = [...commonGrants];
-      
-      // Entity-specific grants
-      switch (this.entityType) {
-        case 'for_profit_business':
-          fallbackGrants.push({
-            id: 2001,
-            title: 'Small Business Growth Grant',
-            description: 'Funding to help small businesses expand operations, hire staff, or develop new products.',
-            permalink: 'https://grantaura.com/apply/',
-            amount: '$10,000 - $50,000',
-            deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 45))),
-            funding_type: 'Grant',
-            organization: 'Business Development Fund',
-            eligibility: 'Small businesses with fewer than 50 employees. Must have been in operation for at least 1 year.',
-            categories: ['Small Business', 'Business Expansion', 'For-profit business'],
-            locations: ['United States'],
-            location: 'United States',
-            match_score: 0,
-            match_reasons: []
-          });
-          
-          if (this.entityDetails.owner_demographics && 
-              (this.entityDetails.owner_demographics.includes('women_owned') || 
-               this.entityDetails.owner_demographics.includes('minority_owned'))) {
-            fallbackGrants.push({
-              id: 2002,
-              title: 'Diversity in Business Grant Program',
-              description: 'Supporting businesses owned by underrepresented groups to foster a more inclusive economy.',
-              permalink: 'https://grantaura.com/apply/',
-              amount: '$15,000 - $25,000',
-              deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 20))),
-              funding_type: 'Grant',
-              organization: 'Economic Equity Initiative',
-              eligibility: 'Businesses that are at least 51% owned by women, minorities, veterans, LGBTQ+ individuals, or people with disabilities.',
-              categories: ['Diversity', 'Equity', 'Inclusion', 'For-profit business'],
-              locations: ['Multiple Locations'],
-              location: 'Multiple Locations',
-              demographic_focus: 'Women, minorities, veterans, LGBTQ+, people with disabilities',
-              match_score: 0,
-              match_reasons: []
-            });
-          }
-          break;
-          
-        case 'nonprofit':
-          fallbackGrants.push({
-            id: 3001,
-            title: 'Nonprofit Capacity Building Grant',
-            description: 'Funding to help nonprofits improve their operational efficiency and effectiveness.',
-            permalink: 'https://grantaura.com/apply/',
-            amount: '$5,000 - $30,000',
-            deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 60))),
-            funding_type: 'Grant',
-            organization: 'Nonprofit Excellence Fund',
-            eligibility: '501(c)(3) organizations looking to strengthen their infrastructure, systems, or staff capabilities.',
-            categories: ['Nonprofit', 'Capacity Building', 'Organizational Development'],
-            locations: ['United States'],
-            location: 'United States',
-            match_score: 0,
-            match_reasons: []
-          });
-          
-          if (this.entityDetails.focus_area) {
-            const focusAreaTitles = {
-              'education': 'Educational Program Grant',
-              'environment': 'Environmental Conservation Grant',
-              'health': 'Health & Wellness Program Grant',
-              'arts': 'Arts & Culture Project Funding',
-              'community': 'Community Development Initiative',
-              'youth': 'Youth Development Program Grant'
-            };
-            
-            if (focusAreaTitles[this.entityDetails.focus_area]) {
-              const focusArea = this.entityDetails.focus_area;
-              fallbackGrants.push({
-                id: 3002,
-                title: focusAreaTitles[focusArea],
-                description: `Supporting nonprofit programs in the field of ${focusArea.replace('_', ' ')}.`,
-                permalink: 'https://grantaura.com/apply/',
-                amount: '$10,000 - $40,000',
-                deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 30))),
-                funding_type: 'Grant',
-                organization: `${focusArea.charAt(0).toUpperCase() + focusArea.slice(1)} Foundation`,
-                eligibility: `Nonprofit organizations with programs focused on ${focusArea.replace('_', ' ')}.`,
-                categories: ['Nonprofit', focusArea.charAt(0).toUpperCase() + focusArea.slice(1)],
-                locations: ['Multiple Locations'],
-                location: 'Multiple Locations',
-                match_score: 0,
-                match_reasons: []
-              });
-            }
-          }
-          break;
-          
-        case 'individual':
-          fallbackGrants.push({
-            id: 4001,
-            title: 'Individual Creative Project Grant',
-            description: 'Funding for individual artists, writers, and creatives working on innovative projects.',
-            permalink: 'https://grantaura.com/apply/',
-            amount: '$1,000 - $10,000',
-            deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 90))),
-            funding_type: 'Grant',
-            organization: 'Arts Foundation',
-            eligibility: 'Individual artists, writers, musicians, filmmakers, and other creative professionals.',
-            categories: ['Individual', 'Arts', 'Creative Projects'],
-            locations: ['United States'],
-            location: 'United States',
-            match_score: 0,
-            match_reasons: []
-          });
-          
-          if (this.entityDetails.individual_type) {
-            const individualTypeTitles = {
-              'artist': 'Artist Development Grant',
-              'student': 'Educational Scholarship',
-              'researcher': 'Independent Research Grant',
-              'entrepreneur': 'Solo Entrepreneur Startup Grant'
-            };
-            
-            if (individualTypeTitles[this.entityDetails.individual_type]) {
-              const indType = this.entityDetails.individual_type;
-              fallbackGrants.push({
-                id: 4002,
-                title: individualTypeTitles[indType],
-                description: `Supporting ${indType}s in developing their work and advancing in their field.`,
-                permalink: 'https://grantaura.com/apply/',
-                amount: indType === 'student' ? '$500 - $5,000' : 
-                         indType === 'researcher' ? '$2,000 - $20,000' :
-                         indType === 'entrepreneur' ? '$5,000 - $25,000' : '$1,000 - $7,500',
-                deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 45))),
-                funding_type: 'Grant',
-                organization: `${indType.charAt(0).toUpperCase() + indType.slice(1)} Support Initiative`,
-                eligibility: `Open to ${indType}s with demonstrated commitment to their field.`,
-                categories: ['Individual', indType.charAt(0).toUpperCase() + indType.slice(1)],
-                locations: ['Multiple Locations'],
-                location: 'Multiple Locations',
-                match_score: 0,
-                match_reasons: []
-              });
-            }
-          }
-          break;
-          
-        case 'institution':
-          fallbackGrants.push({
-            id: 5001,
-            title: 'Institutional Development Grant',
-            description: 'Funding for institutions to enhance facilities, develop programs, or improve services.',
-            permalink: 'https://grantaura.com/apply/',
-            amount: '$25,000 - $100,000',
-            deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 75))),
-            funding_type: 'Grant',
-            organization: 'Institutional Growth Foundation',
-            eligibility: 'Educational, research, healthcare, government, and cultural institutions.',
-            categories: ['Institution', 'Development', 'Capacity Building'],
-            locations: ['United States'],
-            location: 'United States',
-            match_score: 0,
-            match_reasons: []
-          });
-          
-          if (this.entityDetails.institution_type) {
-            const institutionTypeTitles = {
-              'education': 'Educational Institution Enhancement Grant',
-              'research': 'Research Facility Development Fund',
-              'healthcare': 'Healthcare Institution Improvement Grant',
-              'government': 'Government Entity Development Program',
-              'cultural': 'Cultural Institution Support Grant'
-            };
-            
-            if (institutionTypeTitles[this.entityDetails.institution_type]) {
-              const instType = this.entityDetails.institution_type;
-              fallbackGrants.push({
-                id: 5002,
-                title: institutionTypeTitles[instType],
-                description: `Funding to help ${instType} institutions improve facilities, programs, and services.`,
-                permalink: 'https://grantaura.com/apply/',
-                amount: instType === 'government' ? '$50,000 - $250,000' : 
-                         instType === 'research' ? '$25,000 - $150,000' : '$20,000 - $100,000',
-                deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 60))),
-                funding_type: 'Grant',
-                organization: `${instType.charAt(0).toUpperCase() + instType.slice(1)} Excellence Fund`,
-                eligibility: `Open to ${instType} institutions seeking to enhance their capabilities and services.`,
-                categories: ['Institution', instType.charAt(0).toUpperCase() + instType.slice(1)],
-                locations: ['Multiple Locations'],
-                location: 'Multiple Locations',
-                match_score: 0,
-                match_reasons: []
-              });
-            }
-          }
-          break;
-      }
-      
-      // Add keywords-based grant if keywords are provided
-      if (this.entityDetails.keywords && this.entityDetails.keywords.length > 0) {
-        // Take first two keywords for the title
-        const keywordTitle = this.entityDetails.keywords
-          .slice(0, 2)
-          .map(k => k.charAt(0).toUpperCase() + k.slice(1))
-          .join(' & ');
-          
-        fallbackGrants.push({
-          id: 6001,
-          title: `${keywordTitle} Innovation Grant`,
-          description: `Funding for innovative projects related to ${this.entityDetails.keywords.join(', ')}.`,
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$5,000 - $30,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 45))),
-          funding_type: 'Grant',
-          organization: 'Innovation Alliance',
-          eligibility: `Open to all applicants with projects focused on ${this.entityDetails.keywords.join(', ')}.`,
-          categories: [...this.entityDetails.keywords.map(k => k.charAt(0).toUpperCase() + k.slice(1)), 'Innovation'],
-          locations: ['Multiple Locations'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: []
-        });
-      }
-      
-      // Add location-based grant if location is provided
-      if (this.entityDetails.location && this.entityDetails.location !== 'global') {
-        let locationName = this.entityDetails.location;
-        
-        // Check for US state
-        if (this.entityDetails.location === 'united-states' && this.entityDetails.us_state) {
-          locationName = this.entityDetails.us_state.replace('-', ' ');
-          locationName = locationName.charAt(0).toUpperCase() + locationName.slice(1);
-        }
-        
-        fallbackGrants.push({
-          id: 6002,
-          title: `${locationName} ${this.entityType === 'for_profit_business' ? 'Business' : 
-                    this.entityType === 'nonprofit' ? 'Nonprofit' : 
-                    this.entityType === 'individual' ? 'Individual' : 'Institution'} Development Grant`,
-          description: `Supporting ${this.entityType.replace('_', ' ')}s based in ${locationName} with funding for growth and innovation.`,
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$7,500 - $25,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 60))),
-          funding_type: 'Grant',
-          organization: `${locationName} Development Authority`,
-          eligibility: `Must be based in ${locationName} and demonstrate commitment to local economic or social development.`,
-          categories: [locationName, 'Regional Development', this.entityType.replace('_', ' ').charAt(0).toUpperCase() + this.entityType.replace('_', ' ').slice(1)],
-          locations: [locationName],
-          location: locationName,
-          match_score: 0,
-          match_reasons: []
-        });
-      }
-      
-      // Add more grants to create a larger set of options (10+ grants total)
-      const additionalGrants = [
-        {
-          id: 7001,
-          title: 'Digital Transformation Fund',
-          description: 'Supporting organizations in implementing digital solutions to improve operations and services.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$15,000 - $35,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 80))),
-          funding_type: 'Grant',
-          organization: 'Technology Access Foundation',
-          eligibility: 'Open to organizations looking to implement or upgrade their digital systems and processes.',
-          categories: ['Technology', 'Digital Transformation', 'Innovation'],
-          locations: ['United States', 'Canada', 'Global'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: []
-        },
-        {
-          id: 7002,
-          title: 'Sustainable Future Grant',
-          description: 'Funding for projects that promote environmental sustainability and address climate change.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$10,000 - $50,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 90))),
-          funding_type: 'Grant',
-          organization: 'Environmental Solutions Coalition',
-          eligibility: 'Projects must demonstrate clear environmental benefits and sustainable practices.',
-          categories: ['Environment', 'Sustainability', 'Climate Action'],
-          locations: ['Global'],
-          location: 'Global',
-          match_score: 0,
-          match_reasons: []
-        },
-        {
-          id: 7003,
-          title: 'Community Resilience Fund',
-          description: 'Supporting initiatives that strengthen community resilience against economic and social challenges.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$5,000 - $20,000',
-          deadline: 'Ongoing',
-          funding_type: 'Grant',
-          organization: 'Community Resilience Network',
-          eligibility: 'Projects must benefit local communities and demonstrate sustainable impact.',
-          categories: ['Community Development', 'Social Impact', 'Resilience'],
-          locations: ['United States'],
-          location: 'United States',
-          match_score: 0,
-          match_reasons: []
-        },
-        {
-          id: 7004,
-          title: 'Healthcare Innovation Award',
-          description: 'Funding for innovative approaches to healthcare delivery and wellness promotion.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$20,000 - $75,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 100))),
-          funding_type: 'Grant',
-          organization: 'Health Innovation Collaborative',
-          eligibility: 'Open to organizations and individuals working on innovative healthcare solutions.',
-          categories: ['Healthcare', 'Innovation', 'Wellness'],
-          locations: ['United States', 'Canada', 'Global'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: []
-        },
-        {
-          id: 7005,
-          title: 'Workforce Development Initiative',
-          description: 'Supporting programs that prepare individuals for in-demand careers and address skills gaps.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$10,000 - $30,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 75))),
-          funding_type: 'Grant',
-          organization: 'Workforce Alliance',
-          eligibility: 'Programs must demonstrate ability to connect participants with sustainable career opportunities.',
-          categories: ['Workforce Development', 'Education', 'Skills Training'],
-          locations: ['United States'],
-          location: 'United States',
-          match_score: 0,
-          match_reasons: []
-        }
-      ];
-      
-      fallbackGrants = [...fallbackGrants, ...additionalGrants];
-      
-      // Create a set of premium grants that will be shown only in admin mode
-      const premiumGrants = [
-        {
-          id: 8001,
-          title: 'Premium Enterprise Acceleration Grant',
-          description: 'Exclusive funding opportunity for high-growth enterprises with proven business models and market traction.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$75,000 - $150,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 60))),
-          funding_type: 'Grant',
-          organization: 'Enterprise Growth Consortium',
-          eligibility: 'Growing enterprises with established revenue and clear scaling strategy. Comprehensive application process with business plan review.',
-          categories: ['Business Growth', 'Enterprise Development', 'Premium Grant'],
-          locations: ['United States', 'Canada'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        },
-        {
-          id: 8002,
-          title: 'Breakthrough Research & Innovation Fund',
-          description: 'Major funding for groundbreaking research and innovation projects with potential for significant impact.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$50,000 - $250,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 90))),
-          funding_type: 'Grant',
-          organization: 'Advanced Research Institute',
-          eligibility: 'Proven researchers and innovators with well-developed proposals and preliminary data or prototypes.',
-          categories: ['Research', 'Innovation', 'Premium Grant'],
-          locations: ['Global'],
-          location: 'Global',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        },
-        {
-          id: 8003,
-          title: 'Social Impact Venture Fund',
-          description: 'Strategic funding for social enterprises with proven models addressing critical social challenges.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$25,000 - $100,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 75))),
-          funding_type: 'Grant',
-          organization: 'Social Venture Partners',
-          eligibility: 'Social enterprises with demonstrated impact, financial sustainability plan, and clear scaling strategy.',
-          categories: ['Social Enterprise', 'Impact Investing', 'Premium Grant'],
-          locations: ['United States', 'Global'],
-          location: 'Multiple Locations',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        },
-        {
-          id: 8004,
-          title: 'Institutional Excellence Program',
-          description: 'Comprehensive funding for institutional transformation and excellence initiatives.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$100,000 - $500,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 120))),
-          funding_type: 'Grant',
-          organization: 'Institutional Advancement Foundation',
-          eligibility: 'Established institutions with strategic plans for comprehensive advancement and demonstrated leadership capacity.',
-          categories: ['Institutional Development', 'Excellence', 'Premium Grant'],
-          locations: ['United States'],
-          location: 'United States',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        },
-        {
-          id: 8005,
-          title: 'Creative Excellence Award',
-          description: 'Major funding for established creative professionals pursuing ambitious, field-defining projects.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$20,000 - $75,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 100))),
-          funding_type: 'Grant',
-          organization: 'Arts & Culture Trust',
-          eligibility: 'Accomplished creative professionals with significant prior work and international recognition.',
-          categories: ['Arts', 'Culture', 'Creative Excellence', 'Premium Grant'],
-          locations: ['Global'],
-          location: 'Global',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        },
-        {
-          id: 8006,
-          title: 'Nonprofit Transformation Initiative',
-          description: 'Strategic funding for nonprofits undergoing major organizational transformation or expansion.',
-          permalink: 'https://grantaura.com/apply/',
-          amount: '$50,000 - $200,000',
-          deadline: formatDate(new Date(currentDate.setDate(currentDate.getDate() + 90))),
-          funding_type: 'Grant',
-          organization: 'Nonprofit Leadership Consortium',
-          eligibility: 'Established nonprofits with strategic plans for major transformation, strong leadership, and sustainable financial models.',
-          categories: ['Nonprofit', 'Organizational Development', 'Premium Grant'],
-          locations: ['United States'],
-          location: 'United States',
-          match_score: 0,
-          match_reasons: [],
-          isPremium: true
-        }
-      ];
-      
-      // Add premium grants to the list
-      fallbackGrants = [...fallbackGrants, ...premiumGrants];
-      
-      return fallbackGrants;
-    },
+    
     
     /**
      * Show no matches UI with enhanced options for assistance
@@ -8276,191 +7482,167 @@ add_shortcode('eligibility_checker', function($atts) {
      * Strictly prioritizing: Entity type, Demographics/Focus areas, Location, Keywords
      */
     processGrantMatches() {
-      if (!this.grants || this.grants.length === 0) return;
-      
-      console.log('Processing grants with high priority fields:', this.highPriorityFields);
-      
-      // Create a filtered array of grants that match all criteria
-      let filteredGrants = [];
-      
-      // STAGE 1: First pass - strict filtering on ALL high priority fields
-      // This ensures grants matching ALL high priority fields appear at the top
-      for (const grant of this.grants) {
-        if (this.matchesAllHighPriorityFields(grant, this.highPriorityFields)) {
-          filteredGrants.push({...grant, strictMatch: true, priority_match: true});
-        }
+  if (!this.grants || this.grants.length === 0) return;
+  
+  console.log('Processing grants with high priority fields:', this.highPriorityFields);
+  
+  // Create a filtered array of grants that match all criteria
+  let filteredGrants = [];
+  
+  // STAGE 1: First pass - strict filtering on ALL high priority fields
+  // This ensures grants matching ALL high priority fields appear at the top
+  for (const grant of this.grants) {
+    if (this.matchesAllHighPriorityFields(grant, this.highPriorityFields)) {
+      filteredGrants.push({...grant, strictMatch: true, priority_match: true});
+    }
+  }
+  
+  // STAGE 2: If not enough strict matches, look for grants matching SOME high priority fields
+  // (must match at least 2 high priority fields, or all except one)
+  const minimumPriorityMatches = Math.max(2, this.highPriorityFields.length - 1);
+  if (filteredGrants.length < 5) {
+    for (const grant of this.grants) {
+      if (!filteredGrants.some(g => g.id === grant.id) && 
+          this.matchesSomeHighPriorityFields(grant, this.highPriorityFields, minimumPriorityMatches)) {
+        filteredGrants.push({...grant, strictMatch: false, priority_match: true});
+      }
+    }
+  }
+  
+  // STAGE 3: If still not enough matches, try keyword and description text matching
+  if (filteredGrants.length < 5 && (this.entityDetails.keywords?.length > 0 || this.entityDetails.funding_description)) {
+    for (const grant of this.grants) {
+      if (!filteredGrants.some(g => g.id === grant.id) && this.matchesKeywordsOrDescription(grant)) {
+        filteredGrants.push({...grant, strictMatch: false, keywordMatch: true, priority_match: false});
+      }
+    }
+  }
+  
+  // STAGE 4: If still not enough matches, include all grants but with lower scores
+  if (filteredGrants.length < 5) {
+    for (const grant of this.grants) {
+      if (!filteredGrants.some(g => g.id === grant.id)) {
+        filteredGrants.push({...grant, strictMatch: false, priority_match: false});
       }
       
-      // STAGE 2: If not enough strict matches, look for grants matching SOME high priority fields
-      // (must match at least 2 high priority fields, or all except one)
-      const minimumPriorityMatches = Math.max(2, this.highPriorityFields.length - 1);
-      if (filteredGrants.length < 5) {
-        for (const grant of this.grants) {
-          if (!filteredGrants.some(g => g.id === grant.id) && 
-              this.matchesSomeHighPriorityFields(grant, this.highPriorityFields, minimumPriorityMatches)) {
-            filteredGrants.push({...grant, strictMatch: false, priority_match: true});
-          }
-        }
+      // Add at least 5 grants if possible
+      if (filteredGrants.length >= 5) break;
+    }
+  }
+  
+  // Enhanced scoring algorithm with strict priorities
+  filteredGrants = filteredGrants.map(grant => {
+    const scoredGrant = {...grant};
+    let score = 70; // Base score
+    let matchReasons = [];
+    
+    // 1. ENTITY TYPE MATCHING - highest priority
+    if (this.matchesEntityType(scoredGrant)) {
+      score += 15; // High boost for matching entity type
+      matchReasons.push(`Matches ${this.getEntityTypeDisplayName()}`);
+    }
+    
+    // 2. DEMOGRAPHICS/FOCUS AREA MATCHING - second highest priority
+    if (this.matchesDemographicsOrFocus(scoredGrant)) {
+      score += 12;
+      matchReasons.push(this.getDemographicsFocusMatchReason());
+    }
+    
+    // 3. LOCATION MATCHING - third highest priority
+    if (this.matchesLocation(scoredGrant, this.entityDetails.location)) {
+      score += 10;
+      matchReasons.push(`Located in ${this.getLocationDisplayName(this.entityDetails.location)}`);
+    }
+    
+    // 4. KEYWORD MATCHING - fourth highest priority
+    let keywordMatchScore = 0;
+    if (this.entityDetails.keywords && this.entityDetails.keywords.length > 0) {
+      const keywordMatches = this.getKeywordMatches(scoredGrant);
+      keywordMatchScore = Math.min(8, keywordMatches.score);
+      
+      if (keywordMatches.matches.length > 0) {
+        matchReasons.push(`Matches keywords: ${keywordMatches.matches.slice(0, 3).join(', ')}${keywordMatches.matches.length > 3 ? '...' : ''}`);
+      }
+    }
+    score += keywordMatchScore;
+    
+    // Additional matches for remaining high priority fields
+    // HIGH PRIORITY FIELD MATCHING - heavy score influence
+    const fieldMatches = this.getFieldMatches(scoredGrant, this.highPriorityFields);
+    for (const field of this.highPriorityFields) {
+      // Skip fields we've already accounted for
+      if (['entity_type', 'location', 'owner_demographics', 'individual_demographics', 'org_demographics', 'focus_area'].includes(field)) {
+        continue;
       }
       
-      // STAGE 3: If still not enough matches, try keyword and description text matching
-      if (filteredGrants.length < 5 && (this.entityDetails.keywords?.length > 0 || this.entityDetails.funding_description)) {
-        for (const grant of this.grants) {
-          if (!filteredGrants.some(g => g.id === grant.id) && this.matchesKeywordsOrDescription(grant)) {
-            filteredGrants.push({...grant, strictMatch: false, keywordMatch: true, priority_match: false});
-          }
-        }
+      if (fieldMatches[field]) {
+        score += 5;
+        matchReasons.push(`Matches ${this.getFieldDisplayName(field)}`);
+      }
+    }
+    
+    // SECONDARY FIELD MATCHING - moderate score influence
+    // Go through all entity details to find matches beyond high priority
+    for (const [key, value] of Object.entries(this.entityDetails)) {
+      // Skip high priority fields (already counted) and skip keywords/description (counted separately)
+      if (this.highPriorityFields.includes(key) || key === 'keywords' || key === 'funding_description' || key === 'entity_type') {
+        continue;
       }
       
-      // STAGE 4: If still not enough matches, include all grants but with lower scores
-      if (filteredGrants.length < 5) {
-        for (const grant of this.grants) {
-          if (!filteredGrants.some(g => g.id === grant.id)) {
-            filteredGrants.push({...grant, strictMatch: false, priority_match: false});
-          }
-          
-          // Add at least 5 grants if possible
-          if (filteredGrants.length >= 5) break;
-        }
+      if (this.fieldMatchesGrant(key, value, scoredGrant)) {
+        score += 3;
+        matchReasons.push(`Matches ${this.getFieldDisplayName(key)}`);
       }
+    }
+    
+    // DESCRIPTION MATCHING - additional boost for description matches
+    if (this.entityDetails.funding_description) {
+      const descriptionMatches = this.getDescriptionMatches(scoredGrant);
+      const descriptionScore = Math.min(5, descriptionMatches.score);
+      score += descriptionScore;
       
-      // Enhanced scoring algorithm with strict priorities
-      filteredGrants = filteredGrants.map(grant => {
-        const scoredGrant = {...grant};
-        let score = 70; // Base score
-        let matchReasons = [];
-        
-        // 1. ENTITY TYPE MATCHING - highest priority
-        if (this.matchesEntityType(scoredGrant)) {
-          score += 15; // High boost for matching entity type
-          matchReasons.push(`Matches ${this.getEntityTypeDisplayName()}`);
-        }
-        
-        // 2. DEMOGRAPHICS/FOCUS AREA MATCHING - second highest priority
-        if (this.matchesDemographicsOrFocus(scoredGrant)) {
-          score += 12;
-          matchReasons.push(this.getDemographicsFocusMatchReason());
-        }
-        
-        // 3. LOCATION MATCHING - third highest priority
-        if (this.matchesLocation(scoredGrant, this.entityDetails.location)) {
-          score += 10;
-          matchReasons.push(`Located in ${this.getLocationDisplayName(this.entityDetails.location)}`);
-        }
-        
-        // 4. KEYWORD MATCHING - fourth highest priority
-        let keywordMatchScore = 0;
-        if (this.entityDetails.keywords && this.entityDetails.keywords.length > 0) {
-          const keywordMatches = this.getKeywordMatches(scoredGrant);
-          keywordMatchScore = Math.min(8, keywordMatches.score);
-          
-          if (keywordMatches.matches.length > 0) {
-            matchReasons.push(`Matches keywords: ${keywordMatches.matches.slice(0, 3).join(', ')}${keywordMatches.matches.length > 3 ? '...' : ''}`);
-          }
-        }
-        score += keywordMatchScore;
-        
-        // Additional matches for remaining high priority fields
-        // HIGH PRIORITY FIELD MATCHING - heavy score influence
-        const fieldMatches = this.getFieldMatches(scoredGrant, this.highPriorityFields);
-        for (const field of this.highPriorityFields) {
-          // Skip fields we've already accounted for
-          if (['entity_type', 'location', 'owner_demographics', 'individual_demographics', 'org_demographics', 'focus_area'].includes(field)) {
-            continue;
-          }
-          
-          if (fieldMatches[field]) {
-            score += 5;
-            matchReasons.push(`Matches ${this.getFieldDisplayName(field)}`);
-          }
-        }
-        
-        // SECONDARY FIELD MATCHING - moderate score influence
-        // Go through all entity details to find matches beyond high priority
-        for (const [key, value] of Object.entries(this.entityDetails)) {
-          // Skip high priority fields (already counted) and skip keywords/description (counted separately)
-          if (this.highPriorityFields.includes(key) || key === 'keywords' || key === 'funding_description' || key === 'entity_type') {
-            continue;
-          }
-          
-          if (this.fieldMatchesGrant(key, value, scoredGrant)) {
-            score += 3;
-            matchReasons.push(`Matches ${this.getFieldDisplayName(key)}`);
-          }
-        }
-        
-        // DESCRIPTION MATCHING - additional boost for description matches
-        if (this.entityDetails.funding_description) {
-          const descriptionMatches = this.getDescriptionMatches(scoredGrant);
-          const descriptionScore = Math.min(5, descriptionMatches.score);
-          score += descriptionScore;
-          
-          if (descriptionMatches.matches.length > 0 && descriptionScore > 2) {
-            matchReasons.push(`Matches project description terms: ${descriptionMatches.matches.slice(0, 3).join(', ')}${descriptionMatches.matches.length > 3 ? '...' : ''}`);
-          }
-        }
-        
-        // Boost for 'priority_match' grants - these matched at least most high priority fields
-        if (scoredGrant.priority_match) {
-          score += 5;
-        }
-        
-        // Boost for strict matches - these matched ALL high priority fields
-        if (scoredGrant.strictMatch) {
-          score += 7;
-        }
-        
-        // If grant was flagged as search relevant from backend, give small boost
-        if (scoredGrant.search_relevance) {
-          score += 3;
-        }
-        
-        // Add slight randomness to prevent ties (range of -1 to +1)
-        const randomFactor = Math.floor(Math.random() * 3) - 1;
-        score += randomFactor;
-        
-        // Ensure score stays within reasonable bounds
-        score = Math.min(99, Math.max(60, score));
-        
-        // Update the score and match reasons
-        scoredGrant.match_score = Math.round(score);
-        scoredGrant.match_reasons = matchReasons;
-        
-        return scoredGrant;
-      });
-      
-      // Sort grants by match score (highest first)
-      filteredGrants.sort((a, b) => b.match_score - a.match_score);
-      
-      // Separate premium grants from regular grants
-      const regularGrants = filteredGrants.filter(grant => !grant.isPremium);
-      const premiumGrants = filteredGrants.filter(grant => grant.isPremium);
-      
-      // Calculate how many regular grants to show (5-10 grants)
-      const numRegularToShow = Math.min(
-        Math.max(5, Math.floor(regularGrants.length * 0.5)), // At least 5, at most 50% of available grants
-        10 // Maximum 10 free grants
-      );
-      
-      // Update premium grant count for display
-      this.premiumGrantCount = this.isAdminMode ?
-        premiumGrants.length :
-        Math.max(5, filteredGrants.length - numRegularToShow); // At least 5 premium grants or whatever is available
-        
-      // Update premium count in UI
-      const premiumCountElement = document.getElementById('premium-count');
-      if (premiumCountElement) {
-        premiumCountElement.textContent = this.premiumGrantCount;
+      if (descriptionMatches.matches.length > 0 && descriptionScore > 2) {
+        matchReasons.push(`Matches project description terms: ${descriptionMatches.matches.slice(0, 3).join(', ')}${descriptionMatches.matches.length > 3 ? '...' : ''}`);
       }
-      
-      // In admin mode, show all grants. Otherwise, only show the selected number of regular grants
-      this.grants = this.isAdminMode ? 
-        filteredGrants : 
-        regularGrants.slice(0, numRegularToShow);
-      
-      console.log('Processed grants:', this.grants);
-      console.log('Premium grants count:', this.premiumGrantCount);
-    },
+    }
+    
+    // Boost for 'priority_match' grants - these matched at least most high priority fields
+    if (scoredGrant.priority_match) {
+      score += 5;
+    }
+    
+    // Boost for strict matches - these matched ALL high priority fields
+    if (scoredGrant.strictMatch) {
+      score += 7;
+    }
+    
+    // If grant was flagged as search relevant from backend, give small boost
+    if (scoredGrant.search_relevance) {
+      score += 3;
+    }
+    
+    // Add slight randomness to prevent ties (range of -1 to +1)
+    const randomFactor = Math.floor(Math.random() * 3) - 1;
+    score += randomFactor;
+    
+    // Ensure score stays within reasonable bounds
+    score = Math.min(99, Math.max(60, score));
+    
+    // Update the score and match reasons
+    scoredGrant.match_score = Math.round(score);
+    scoredGrant.match_reasons = matchReasons;
+    
+    return scoredGrant;
+  });
+  
+  // Sort grants by match score (highest first)
+  filteredGrants.sort((a, b) => b.match_score - a.match_score);
+  
+  // Show ALL grants - this is the key change from the original code
+  this.grants = filteredGrants;
+  
+  console.log('Processed grants:', this.grants);
+},
     
     /**
      * Get entity type display name for UI
@@ -9548,104 +8730,88 @@ add_shortcode('eligibility_checker', function($atts) {
      * Enhanced with premium teaser section
      */
     renderGrantMatches() {
-      const matchesList = document.getElementById('matches-list');
-      const matchesCount = document.getElementById('matches-count');
-      const noMatches = document.getElementById('no-matches');
-      const premiumSection = document.getElementById('premium-section');
-      
-      if (!matchesList) return;
-      
-      // Clear any existing grant cards
-      matchesList.innerHTML = '';
-      
-      // Update the match count - show total including premium count in admin mode
-      if (matchesCount) {
-        matchesCount.textContent = this.isAdminMode ? 
-          this.grants.length : 
-          (this.grants.length + this.premiumGrantCount);
-      }
-      
-      // Handle no matches case with improved UI
-      if (this.grants.length === 0) {
-        if (noMatches) {
-          noMatches.classList.remove('hidden');
-        }
-        
-        // Hide premium section if no matches
-        if (premiumSection) {
-          premiumSection.style.display = 'none';
-        }
-        
-        return;
-      } else {
-        if (noMatches) {
-          noMatches.classList.add('hidden');
-        }
-        
-        // Show premium section if we have both matches and premium grants
-        if (premiumSection && this.premiumGrantCount > 0) {
-          premiumSection.style.display = 'block';
-        } else if (premiumSection) {
-          premiumSection.style.display = 'none';
-        }
-      }
-      
-      // Group grants by match quality
-      const highMatches = this.grants.filter(g => g.match_score >= 85);
-      const mediumMatches = this.grants.filter(g => g.match_score >= 70 && g.match_score < 85);
-      const lowMatches = this.grants.filter(g => g.match_score < 70);
-      
-      // Render high matches first (if any)
-      if (highMatches.length > 0) {
-        const highMatchHeader = document.createElement('div');
-        highMatchHeader.className = 'eligibility-checker__match-section-header';
-        highMatchHeader.innerHTML = `
-          <h3>Best Matches (${highMatches.length})</h3>
-          <p>These grants closely match your specific criteria</p>
-        `;
-        matchesList.appendChild(highMatchHeader);
-        
-        highMatches.forEach(grant => {
-          const grantElement = this.createGrantCard(grant);
-          matchesList.appendChild(grantElement);
-        });
-      }
-      
-      // Render medium matches next (if any)
-      if (mediumMatches.length > 0) {
-        const mediumMatchHeader = document.createElement('div');
-        mediumMatchHeader.className = 'eligibility-checker__match-section-header';
-        mediumMatchHeader.innerHTML = `
-          <h3>Good Matches (${mediumMatches.length})</h3>
-          <p>These grants partially match your criteria</p>
-        `;
-        matchesList.appendChild(mediumMatchHeader);
-        
-        mediumMatches.forEach(grant => {
-          const grantElement = this.createGrantCard(grant);
-          matchesList.appendChild(grantElement);
-        });
-      }
-      
-      // Render low matches last (if any)
-      if (lowMatches.length > 0) {
-        const lowMatchHeader = document.createElement('div');
-        lowMatchHeader.className = 'eligibility-checker__match-section-header';
-        lowMatchHeader.innerHTML = `
-          <h3>Other Opportunities (${lowMatches.length})</h3>
-          <p>These grants may require review for eligibility</p>
-        `;
-        matchesList.appendChild(lowMatchHeader);
-        
-        lowMatches.forEach(grant => {
-          const grantElement = this.createGrantCard(grant);
-          matchesList.appendChild(grantElement);
-        });
-      }
-      
-      // Add event listeners to grant cards
-      this.setupGrantCardEvents();
-    },
+  const matchesList = document.getElementById('matches-list');
+  const matchesCount = document.getElementById('matches-count');
+  const noMatches = document.getElementById('no-matches');
+  
+  if (!matchesList) return;
+  
+  // Clear any existing grant cards
+  matchesList.innerHTML = '';
+  
+  // Update the match count - show all grants
+  if (matchesCount) {
+    matchesCount.textContent = this.grants.length;
+  }
+  
+  // Handle no matches case with improved UI
+  if (this.grants.length === 0) {
+    if (noMatches) {
+      noMatches.classList.remove('hidden');
+    }
+    return;
+  } else {
+    if (noMatches) {
+      noMatches.classList.add('hidden');
+    }
+  }
+  
+  // Group grants by match quality
+  const highMatches = this.grants.filter(g => g.match_score >= 85);
+  const mediumMatches = this.grants.filter(g => g.match_score >= 70 && g.match_score < 85);
+  const lowMatches = this.grants.filter(g => g.match_score < 70);
+  
+  // Render high matches first (if any)
+  if (highMatches.length > 0) {
+    const highMatchHeader = document.createElement('div');
+    highMatchHeader.className = 'eligibility-checker__match-section-header';
+    highMatchHeader.innerHTML = `
+      <h3>Best Matches (${highMatches.length})</h3>
+      <p>These grants closely match your specific criteria</p>
+    `;
+    matchesList.appendChild(highMatchHeader);
+    
+    highMatches.forEach(grant => {
+      const grantElement = this.createGrantCard(grant);
+      matchesList.appendChild(grantElement);
+    });
+  }
+  
+  // Render medium matches next (if any)
+  if (mediumMatches.length > 0) {
+    const mediumMatchHeader = document.createElement('div');
+    mediumMatchHeader.className = 'eligibility-checker__match-section-header';
+    mediumMatchHeader.innerHTML = `
+      <h3>Good Matches (${mediumMatches.length})</h3>
+      <p>These grants partially match your criteria</p>
+    `;
+    matchesList.appendChild(mediumMatchHeader);
+    
+    mediumMatches.forEach(grant => {
+      const grantElement = this.createGrantCard(grant);
+      matchesList.appendChild(grantElement);
+    });
+  }
+  
+  // Render low matches last (if any)
+  if (lowMatches.length > 0) {
+    const lowMatchHeader = document.createElement('div');
+    lowMatchHeader.className = 'eligibility-checker__match-section-header';
+    lowMatchHeader.innerHTML = `
+      <h3>Other Opportunities (${lowMatches.length})</h3>
+      <p>These grants may require review for eligibility</p>
+    `;
+    matchesList.appendChild(lowMatchHeader);
+    
+    lowMatches.forEach(grant => {
+      const grantElement = this.createGrantCard(grant);
+      matchesList.appendChild(grantElement);
+    });
+  }
+  
+  // Add event listeners to grant cards
+  this.setupGrantCardEvents();
+},
     
     /**
      * Create a single grant card with improved match information
@@ -10005,13 +9171,13 @@ setupGrantCardEvents() {
         const highPriorityHTML = highPriorityReasons.map(reason => 
           `<div class="eligibility-checker__match-criteria-item eligibility-checker__priority-match">
             <i class="fas fa-star"></i>${reason}
-           </div>`
+          </div>`
         ).join('');
         
         const otherReasonsHTML = otherReasons.map(reason => 
           `<div class="eligibility-checker__match-criteria-item">
             <i class="fas fa-check-circle"></i>${reason}
-           </div>`
+          </div>`
         ).join('');
         
         modalMatchList.innerHTML = highPriorityHTML + otherReasonsHTML;
@@ -10544,7 +9710,7 @@ setupGrantCardEvents() {
       
       // Sort all groups by match score
       [veryLargeGrants, largeGrants, mediumLargeGrants, mediumGrants, 
-       smallMediumGrants, smallGrants, microGrants, miniGrants, unknownAmountGrants]
+      smallMediumGrants, smallGrants, microGrants, miniGrants, unknownAmountGrants]
         .forEach(group => group.sort((a, b) => b.match_score - a.match_score));
       
       // Render very large grants
@@ -10819,8 +9985,8 @@ document.addEventListener('click', function(event) {
       
       // Find the grant and populate the modal
       const grant = window.grants && window.grants.find(g => g.id.toString() === grantId) || 
-                   window.EligibilityChecker && window.EligibilityChecker.grants && 
-                   window.EligibilityChecker.grants.find(g => g.id.toString() === grantId);
+                  window.EligibilityChecker && window.EligibilityChecker.grants && 
+                  window.EligibilityChecker.grants.find(g => g.id.toString() === grantId);
       
       if (grant) {
         console.log('Grant found, populating modal'); // Debug log
@@ -10898,4 +10064,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 })();
 </script>
+
 </section>
