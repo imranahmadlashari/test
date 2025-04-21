@@ -3894,16 +3894,7 @@
       position: relative;
     }
 
-    .grant-details-modal__steps-list:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 10px;
-      height: 100%;
-      width: 2px;
-      background: var(--grantaura-gray-200);
-      z-index: 1;
-    }
+   
 
     .grant-details-modal__step-item {
       position: relative;
@@ -3986,7 +3977,7 @@
       background: var(--grantaura-secondary);
       color: white !important;
       font-weight: 600;
-      padding: 0.54375rem 0.75rem;
+      padding: 0.4375rem 0.75rem;
       border-radius: 8px;
       font-size: 0.75rem;
       cursor: pointer;
@@ -4245,9 +4236,7 @@
         padding-left: 32px;
       }
       
-      .grant-details-modal__steps-list:before {
-        left: 12px;
-      }
+     
       
       .grant-details-modal__step-title {
         font-size: 0.9375rem;
@@ -4419,9 +4408,7 @@
         padding-left: 38px;
       }
       
-      .grant-details-modal__steps-list:before {
-        left: 14px;
-      }
+      
     }
   </style>
 
@@ -5873,6 +5860,8 @@ add_shortcode('eligibility_checker', function($atts) {
     return ob_get_clean();
 });
 [/php]
+  
+
   
 
 <script>
