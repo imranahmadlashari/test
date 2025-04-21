@@ -1,605 +1,3 @@
-<section class="gec-hero-section" data-section-id="gec-hero-v1-0">
-  <style>
-    /* gec-hero-section: Styles for the main hero section container */
-    .gec-hero-section {
-      /* Mobile First Styles */
-      padding: var(--grantaura-spacing-md) var(--grantaura-spacing-sm); /* 2rem top/bottom, 1rem left/right for mobile */
-      background: linear-gradient(135deg, var(--grantaura-primary-light) 0%, var(--grantaura-primary) 100%);
-      color: var(--grantaura-white);
-      text-align: center;
-      overflow: hidden; /* Ensures no overflow issues */
-      position: relative; /* Needed for potential future pseudo-elements */
-    }
-
-    /* Tablet and larger screens */
-    @media (min-width: 768px) {
-      .gec-hero-section {
-        padding: var(--grantaura-spacing-lg) var(--grantaura-spacing-md); /* 4rem top/bottom, 2rem left/right */
-        text-align: left; /* Align text left on larger screens */
-      }
-    }
-
-    /* Desktop screens */
-    @media (min-width: 1024px) {
-      .gec-hero-section {
-        padding: var(--grantaura-spacing-xl) var(--grantaura-spacing-lg); /* 6rem top/bottom, 4rem left/right */
-      }
-    }
-  </style>
-
-  <div class="gec-hero-container">
-    <style>
-      /* gec-hero-container: Styles for the content constraint */
-      .gec-hero-container {
-        /* Mobile First Styles */
-        max-width: var(--grantaura-max-width);
-        margin-left: auto;
-        margin-right: auto;
-        position: relative; /* Context for absolute positioning if needed later */
-        z-index: 1; /* Ensure content is above any background elements */
-      }
-
-       /* Tablet and larger screens: Introduce two-column layout possibility */
-       @media (min-width: 768px) {
-        .gec-hero-container {
-           display: flex;
-           align-items: center; /* Vertically align items */
-           gap: var(--grantaura-spacing-md); /* Space between text and potential image/graphic */
-        }
-       }
-    </style>
-
-        <!-- Start of Updated gec-hero-content -->
-    <div class="gec-hero-content">
-  <style>
-    /* gec-hero-content: Styles for the text content wrapper */
-    .gec-hero-content {
-      /* Mobile First Styles */
-      position: relative;
-      padding: 1.5rem 0;
-      z-index: 2;
-    }
-
-    /* Decorative element - subtle purple circle in background */
-    .gec-hero-content::before {
-      content: "";
-      position: absolute;
-      top: -30px;
-      left: -80px;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, rgba(90, 59, 140, 0.2) 0%, rgba(90, 59, 140, 0) 70%);
-      border-radius: 50%;
-      z-index: -1;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    /* Only show decorative elements on larger screens */
-    @media (min-width: 768px) {
-      .gec-hero-content {
-        flex: 1;
-        max-width: 650px;
-        padding: 2rem 0;
-      }
-      
-      .gec-hero-content::before {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Desktop screens */
-    @media (min-width: 1024px) {
-      .gec-hero-content {
-        padding: 2.5rem 0;
-      }
-    }
-  </style>
-
-  <!-- Badge - Small attention grabber -->
-  <!-- Start: Revamped Grantaura Hero Badge -->
-<div class="gec-hero-badge--revamped" data-component-id="gec-hero-badge-revamped-outer">
-  <style>
-    .gec-hero-badge--revamped {
-      /* Mobile First Styles - Outer container for gradient border */
-      display: inline-block; /* Allows inline flow but respects padding */
-      padding: 1.5px; /* Creates space for the gradient border */
-      background: linear-gradient(115deg, var(--grantaura-secondary), var(--grantaura-primary-light));
-      border-radius: var(--grantaura-border-radius-xl); /* Softer, larger radius */
-      transition: var(--grantaura-transition);
-      box-shadow: var(--grantaura-box-shadow-sm);
-      margin-bottom: var(--grantaura-spacing-sm); /* Consistent spacing */
-      cursor: default; /* Indicate it's not clickable unless linked elsewhere */
-    }
-
-    .gec-hero-badge--revamped:hover {
-       transform: translateY(-2px) scale(1.02);
-       box-shadow: var(--grantaura-box-shadow-lg);
-       background: linear-gradient(115deg, var(--grantaura-secondary-light), var(--grantaura-primary)); /* Subtle shift on hover */
-    }
-
-    /* Desktop Styles */
-    @media (min-width: 768px) {
-      .gec-hero-badge--revamped {
-         margin-bottom: var(--grantaura-spacing-md); /* More space on larger screens */
-      }
-    }
-  </style>
-  <div class="gec-hero-badge--revamped__inner" data-component-id="gec-hero-badge-revamped-inner">
-    <style>
-      .gec-hero-badge--revamped__inner {
-        /* Mobile First Styles - Inner container for content */
-        display: inline-flex; /* Use flex for alignment */
-        align-items: center;
-        background-color: var(--grantaura-white);
-        /* Calculate inner radius based on outer radius and border thickness */
-        border-radius: calc(var(--grantaura-border-radius-xl) - 1.5px);
-        padding: var(--grantaura-spacing-xs) 0.8rem; /* Vertical padding smaller than horizontal */
-        transition: var(--grantaura-transition);
-      }
-
-      /* Desktop Styles */
-       @media (min-width: 768px) {
-         .gec-hero-badge--revamped__inner {
-            padding: 0.4rem 1rem; /* Slightly increase padding */
-         }
-       }
-    </style>
-    <span class="gec-hero-badge--revamped__icon" data-component-id="gec-hero-badge-revamped-icon" aria-hidden="true">
-      <style>
-        .gec-hero-badge--revamped__icon {
-          /* Mobile First Styles - CSS Checkmark Icon */
-          display: inline-block;
-          transform: rotate(45deg);
-          height: 0.7rem; /* Base size */
-          width: 0.35rem; /* Base size */
-          border-bottom: 2px solid var(--grantaura-success); /* Use success color for check */
-          border-right: 2px solid var(--grantaura-success);
-          margin-right: 0.6rem; /* Space between icon and text */
-          flex-shrink: 0; /* Prevent icon from shrinking */
-        }
-
-         /* Desktop Styles */
-        @media (min-width: 768px) {
-          .gec-hero-badge--revamped__icon {
-            height: 0.8rem; /* Slightly larger */
-            width: 0.4rem; /* Slightly larger */
-            margin-right: 0.7rem; /* More space */
-          }
-        }
-      </style>
-    </span>
-    <span class="gec-hero-badge--revamped__text" data-component-id="gec-hero-badge-revamped-text">
-      <style>
-        .gec-hero-badge--revamped__text {
-          /* Mobile First Styles - Text */
-          font-size: 0.8rem; /* Slightly smaller, cleaner */
-          font-weight: 600; /* Semi-bold for clarity */
-          color: var(--grantaura-text-dark) !important; /* Ensure high contrast, important if theme overrides */
-          letter-spacing: 0.3px; /* Subtle spacing */
-          line-height: 1.3; /* Ensure text aligns well vertically */
-        }
-
-        /* Desktop Styles */
-         @media (min-width: 768px) {
-           .gec-hero-badge--revamped__text {
-              font-size: 0.9rem; /* Slightly larger */
-           }
-         }
-      </style>
-      Quick Eligibility Check
-    </span>
-  </div>
-</div>
-
-
-  <!-- Main Headline with improved typography and SEO -->
-  <h1 class="gec-hero-headline">
-    <style>
-      /* gec-hero-headline: Styles for the main heading */
-      .gec-hero-headline {
-        /* Mobile First Styles */
-        font-family: 'Poppins', sans-serif;
-        font-size: 2.25rem;
-        font-weight: 800;
-        line-height: 1.2;
-        color: var(--grantaura-white);
-        margin-bottom: var(--grantaura-spacing-sm);
-        position: relative;
-        letter-spacing: -0.5px;
-      }
-
-      /* Circle highlight elements */
-      .gec-hero-headline .gec-hero-highlight {
-        position: relative;
-        display: inline-block;
-        font-weight: 700;
-        z-index: 1;
-      }
-      
-      /* Underline decoration for highlight */
-      .gec-hero-headline .gec-hero-highlight::after {
-    content: "";
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 100%;
-    height: 45px;
-    z-index: -1;
-    border-radius: 4px;
-    background: linear-gradient(to top, var(--grantaura-secondary-light) 45%, transparent 45%);
-}
-
-      /* Tablet and larger screens */
-      @media (min-width: 768px) {
-        .gec-hero-headline {
-          font-size: 2.75rem;
-          margin-bottom: var(--grantaura-spacing-sm);
-        }
-        
-        .gec-hero-headline .gec-hero-highlight::after {
-          height: 52px;
-          bottom: 7px;
-        }
-      }
-
-      /* Desktop screens */
-      @media (min-width: 1024px) {
-        .gec-hero-headline {
-          font-size: 3.5rem;
-        }
-        
-        .gec-hero-headline .gec-hero-highlight::after {
-          height: 52px;
-          bottom: 10px;
-        }
-      }
-    </style>
-    <!-- Improved headline content with better SEO keywords -->
-    Find Grants <span class="gec-hero-highlight">You Qualify For</span><br>
-    In Under 3 Minutes
-  </h1>
-
-  <!-- Stylized Subheadline -->
-  <h2 class="gec-hero-subheadline">
-    <style>
-      .gec-hero-subheadline {
-        /* Mobile First Styles */
-        font-family: 'Inter', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 600;
-        line-height: 1.4;
-        color: var(--grantaura-secondary-light);
-        margin-bottom: var(--grantaura-spacing-sm);
-        max-width: 580px;
-      }
-      
-      @media (min-width: 768px) {
-        .gec-hero-subheadline {
-          font-size: 1.35rem;
-          margin-bottom: var(--grantaura-spacing-sm);
-        }
-      }
-    </style>
-    Access our database of 500+ funding opportunities for businesses, nonprofits & individuals
-  </h2>
-
-  <!-- Improved description with better SEO content -->
-  <p class="gec-hero-description">
-    <style>
-      /* gec-hero-description: Styles for the descriptive text */
-      .gec-hero-description {
-        /* Mobile First Styles */
-        font-family: 'Inter', sans-serif;
-        font-size: 1rem;
-        line-height: 1.7;
-        color: var(--grantaura-gray-100);
-        margin-bottom: var(--grantaura-spacing-md);
-        max-width: 600px;
-      }
-
-      .gec-hero-description strong {
-        color: var(--grantaura-white);
-        font-weight: 600;
-      }
-
-      /* Tablet and larger screens */
-      @media (min-width: 768px) {
-        .gec-hero-description {
-          font-size: 1.05rem;
-          margin-bottom: var(--grantaura-spacing-md);
-        }
-      }
-    </style>
-    Stop wasting hours on grants you don't qualify for. Our expert-designed tool instantly matches your profile with relevant funding opportunities. <strong>Over 300+ successful projects</strong> with a 4.9/5 rating from 185+ reviews prove our expertise in connecting businesses with the right grants.
-  </p>
-
-  <!-- Enhanced CTA with features list -->
-  <div class="gec-hero-cta-group">
-    <style>
-      .gec-hero-cta-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        margin-bottom: var(--grantaura-spacing-md);
-      }
-      
-      @media (min-width: 768px) {
-        .gec-hero-cta-group {
-          flex-direction: row;
-          align-items: center;
-          gap: 2rem;
-        }
-      }
-    </style>
-    
-    <a href="#eligibility-checker__form" class="gec-hero-cta" role="button" aria-label="Start your free grant eligibility check now">
-      <style>
-        /* gec-hero-cta: Styles for the Call to Action button */
-        .gec-hero-cta {
-          /* Mobile First Styles */
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1rem 1.75rem !important;
-          font-family: 'Poppins', sans-serif;
-          font-size: 1.1rem !important;
-          font-weight: 700 !important;
-          color: var(--grantaura-primary-dark) !important;
-          background: var(--grantaura-secondary) !important;
-          background: linear-gradient(135deg, var(--grantaura-secondary) 0%, var(--grantaura-secondary-dark) 100%) !important;
-          border: none !important;
-          border-radius: var(--grantaura-border-radius-lg) !important;
-          text-decoration: none !important;
-          text-align: center;
-          cursor: pointer;
-          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-          position: relative;
-          overflow: hidden;
-          z-index: 1;
-          width: 100%;
-        }
-
-        /* Pseudo-element for hover effect */
-        .gec-hero-cta::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, var(--grantaura-secondary-dark) 0%, var(--grantaura-secondary) 100%) !important;
-          opacity: 0;
-          z-index: -1;
-          transition: opacity 0.3s ease !important;
-        }
-
-        /* Hover and Focus states */
-        .gec-hero-cta:hover,
-        .gec-hero-cta:focus {
-          transform: translateY(-3px);
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-          outline: none !important;
-        }
-        
-        .gec-hero-cta:hover::before,
-        .gec-hero-cta:focus::before {
-          opacity: 1;
-        }
-
-        /* Active state */
-        .gec-hero-cta:active {
-          transform: translateY(-1px);
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        /* Icon styles */
-        .gec-hero-cta-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 0.75rem;
-          background-color: rgba(255, 255, 255, 0.25);
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          font-size: 0.9em;
-          transition: transform 0.3s ease;
-        }
-        
-        .gec-hero-cta:hover .gec-hero-cta-icon {
-          transform: rotate(10deg);
-        }
-
-        /* Tablet and larger screens */
-        @media (min-width: 768px) {
-          .gec-hero-cta {
-            padding: 1.1rem 2.5rem !important;
-            width: auto;
-          }
-        }
-      </style>
-      <!-- Enhanced CTA content -->
-      <span class="gec-hero-cta-icon" aria-hidden="true">
-        <i class="fas fa-check-circle"></i>
-      </span>
-      Check My Eligibility Now
-    </a>
-    
-    <!-- Feature highlights - mobile and desktop friendly -->
-    <ul class="gec-hero-features">
-      <style>
-        .gec-hero-features {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          padding: 0;
-          margin: 0;
-          list-style: none;
-        }
-        
-        .gec-hero-feature-item {
-          display: flex;
-          align-items: center;
-          font-size: 0.95rem;
-          color: var(--grantaura-white);
-        }
-        
-        .gec-hero-feature-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 0.5rem;
-          color: var(--grantaura-secondary);
-          font-size: 0.8rem;
-        }
-        
-        @media (min-width: 768px) {
-          .gec-hero-features {
-            flex-direction: column;
-            gap: 0.75rem;
-          }
-          
-          .gec-hero-feature-item {
-            font-size: 1rem;
-          }
-        }
-      </style>
-      <li class="gec-hero-feature-item">
-        <span class="gec-hero-feature-icon" aria-hidden="true">
-          <i class="fas fa-clock"></i>
-        </span>
-        Takes only 2-3 minutes
-      </li>
-      <li class="gec-hero-feature-item">
-        <span class="gec-hero-feature-icon" aria-hidden="true">
-          <i class="fas fa-check"></i>
-        </span>
-        100% Free, no obligations
-      </li>
-      <li class="gec-hero-feature-item">
-        <span class="gec-hero-feature-icon" aria-hidden="true">
-          <i class="fas fa-shield-alt"></i>
-        </span>
-        Expert-backed results
-      </li>
-    </ul>
-  </div>
-  
-  <!-- Social proof element -->
-  <div class="gec-hero-social-proof">
-    <style>
-      .gec-hero-social-proof {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      
-      .gec-hero-social-proof-title {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--grantaura-gray-300);
-        display: flex;
-        align-items: center;
-      }
-      
-      .gec-hero-social-proof-title::after {
-        content: "";
-        flex-grow: 1;
-        height: 1px;
-        background-color: rgba(255, 255, 255, 0.15);
-        margin-left: 0.75rem;
-      }
-      
-      .gec-hero-social-proof-stars {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        color: var(--grantaura-secondary);
-        font-size: 1rem;
-      }
-      
-      .gec-hero-social-proof-text {
-        font-size: 0.9rem;
-        color: var(--grantaura-gray-200);
-      }
-      
-      .gec-hero-social-proof-number {
-        font-weight: 600;
-        color: var(--grantaura-white);
-      }
-      
-      @media (min-width: 768px) {
-        .gec-hero-social-proof-stars {
-          font-size: 1.1rem;
-        }
-        
-        .gec-hero-social-proof-text {
-          font-size: 0.95rem;
-        }
-      }
-    </style>
-    <span class="gec-hero-social-proof-title">Trusted by businesses nationwide</span>
-    <div class="gec-hero-social-proof-stars" aria-label="4.9 out of 5 star rating">
-      <i class="fas fa-star" aria-hidden="true"></i>
-      <i class="fas fa-star" aria-hidden="true"></i>
-      <i class="fas fa-star" aria-hidden="true"></i>
-      <i class="fas fa-star" aria-hidden="true"></i>
-      <i class="fas fa-star-half-alt" aria-hidden="true"></i>
-    </div>
-    <p class="gec-hero-social-proof-text">
-      <span class="gec-hero-social-proof-number">4.9/5</span> rating from <span class="gec-hero-social-proof-number">185+</span> verified reviews
-    </p>
-  </div>
-</div>
-
-     <!-- Optional: Placeholder for a graphic/image on larger screens -->
-     <div class="gec-hero-visual">
-        <style>
-            /* gec-hero-visual: Styles for optional graphic area */
-            .gec-hero-visual {
-                /* Mobile First Styles: Hidden on mobile */
-                display: none;
-            }
-
-             /* Tablet and larger screens */
-            @media (min-width: 768px) {
-                .gec-hero-visual {
-                    display: flex; /* Show on tablet+ */
-                    align-items: center;
-                    justify-content: center;
-                    flex: 0 0 40%; /* Takes up roughly 40% of the width, adjust as needed */
-                    max-width: 400px; /* Max size of the visual element */
-                    /* Add background or image styles here if needed */
-                    /* Example: background-image: url('...'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 300px; */
-                    /* For now, a simple placeholder background */
-                    /* background-color: rgba(255, 255, 255, 0.1); */
-                    /* border-radius: var(--grantaura-border-radius-xl); */
-                }
-            }
-             /* Desktop screens */
-             @media (min-width: 1024px) {
-                 .gec-hero-visual {
-                     max-width: 500px; /* Allow slightly larger visual on desktop */
-                     /* Example: Maybe add a subtle animation */
-                 }
-             }
-        </style>
-        <!-- Visual Content -->
-        <!-- @integration-point: Replace this comment with an <img> tag or SVG for a relevant visual. -->
-        <!-- Example: <img src="https://grantaura.com/wp-content/uploads/2025/02/results_checklist-png.webp" alt="Illustration showing checklist and results" style="width: 100%; height: auto; max-width: 350px; object-fit: contain;"> -->
-         <!-- For now, let's add one of the abstract images provided as an example -->
-         <img src="https://grantaura.com/wp-content/uploads/2025/02/badge-with-abs-bg-10.webp" alt="Abstract graphic representing achievement or checking" style="width: 100%; height: auto; max-width: 350px; object-fit: contain; border-radius: var(--grantaura-border-radius-lg);">
-
-     </div> <!-- End gec-hero-visual -->
-
-  </div> <!-- End gec-hero-container -->
-
-</section> 
-
 <!-- 
   ENHANCED GRANT ELIGIBILITY ASSESSMENT TOOL
   A precise, intelligent tool that strictly matches users with grants they're eligible for
@@ -4552,7 +3950,7 @@
           
           <div class="grant-details-modal__match-circle" id="match-score-display" aria-label="Match score percentage">
             <div class="pulse-ring"></div>
-            <span class="grant-details-modal__match-score">95%</span>
+            <span class="grant-details-modal__match-score" id="modal-match-score">0%</span>
           </div>
         </div>
       </div>
@@ -4648,6 +4046,1236 @@
   
   
   
+
+
+
+  [php]
+/**
+ * Enhanced Grant Eligibility Checker - PHP Backend
+ * 
+ * This implementation provides advanced grant fetching with multiple fallbacks
+ * for reliable deadline detection and precise matching algorithm
+ */
+
+/**
+ * Function to fetch grant listings from the Directorist plugin.
+ * Retrieves grants and applies strict matching criteria with enhanced deadline detection.
+ */
+if ( ! function_exists( 'get_eligibility_checker_grants' ) ) {
+    function get_eligibility_checker_grants() {
+        $grants = [];
+
+        // Method 1: Use get_posts with WP Query
+        $args = [
+            'post_type'      => 'at_biz_dir',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ];
+        $query_results = get_posts( $args );
+
+        if ( ! empty( $query_results ) ) {
+            foreach ( $query_results as $post ) {
+                setup_postdata( $post );
+                $post_id     = $post->ID;
+                $title       = get_the_title( $post_id );
+                
+                // Use tagline field for the description if available
+                $tagline     = get_post_meta( $post_id, '_tagline', true );
+                $description = ! empty( $tagline )
+                    ? $tagline
+                    : ( ! empty( $post->post_excerpt )
+                        ? $post->post_excerpt
+                        : wp_trim_words( $post->post_content, 30 )
+                    );
+                
+                $permalink   = get_permalink( $post_id );
+
+                // Updated Deadline Detection - use the enhanced function
+                $deadline = get_grant_deadline($post_id);
+                
+                // Check if deadline is expired - skip if it is
+                if ($deadline === 'Expired') {
+                    continue;  // Skip expired grants
+                }
+                
+                // Get amount from price field if available
+                $amount = get_post_meta( $post_id, '_price', true );
+                if (empty($amount)) {
+                    $amount = get_post_meta( $post_id, '_amount', true ) ?: 'Varies';
+                }
+                
+                // Other Custom fields with defaults
+                $eligibility         = get_post_meta( $post_id, '_eligibility', true )         ?: '';
+                $funding_type        = get_post_meta( $post_id, '_funding_type', true )        ?: 'Grant';
+                $application_process = get_post_meta( $post_id, '_application_process', true ) ?: '';
+                $industry_focus      = get_post_meta( $post_id, '_industry_focus', true )      ?: '';
+                $minimum_years       = get_post_meta( $post_id, '_minimum_years', true )       ?: '';
+                $demographic_focus   = get_post_meta( $post_id, '_demographic_focus', true )   ?: '';
+                
+                // Get all meta fields to allow for custom meta field search
+                $all_meta = get_post_meta( $post_id );
+                $meta_combined = '';
+                if (is_array($all_meta)) {
+                    foreach ($all_meta as $meta_key => $meta_value) {
+                        if (is_array($meta_value) && isset($meta_value[0])) {
+                            $meta_combined .= ' ' . $meta_value[0];
+                        }
+                    }
+                }
+
+                // Categories
+                $categories = [];
+                $terms = get_the_terms( $post_id, 'at_biz_dir-category' );
+                if ( $terms && ! is_wp_error( $terms ) ) {
+                    foreach ( $terms as $term ) {
+                        $categories[] = html_entity_decode($term->name);
+                    }
+                }
+
+                // Get all locations instead of just the first one
+                $locations = [];
+                $loc_terms = get_the_terms( $post_id, 'at_biz_dir-location' );
+                if ( $loc_terms && ! is_wp_error( $loc_terms ) ) {
+                    foreach ( $loc_terms as $term ) {
+                        $locations[] = html_entity_decode($term->name);
+                    }
+                }
+                
+                // Use the first location as the primary location for matching
+                $location = !empty($locations) ? $locations[0] : '';
+
+                $grants[] = [
+                    'id'                  => $post_id,
+                    'title'               => html_entity_decode($title),
+                    'description'         => html_entity_decode($description),
+                    'permalink'           => $permalink,
+                    'amount'              => $amount,
+                    'deadline'            => $deadline,
+                    'funding_type'        => $funding_type,
+                    'eligibility'         => html_entity_decode($eligibility),
+                    'application_process' => $application_process,
+                    'industry_focus'      => $industry_focus,
+                    'minimum_years'       => $minimum_years,
+                    'demographic_focus'   => $demographic_focus,
+                    'categories'          => $categories,
+                    'location'            => $location,
+                    'locations'           => $locations, // All locations, not just the first one
+                    'meta_combined'       => $meta_combined,
+                    'content'             => $post->post_content,
+                    'match_score'         => 0,
+                    'match_reasons'       => [],
+                    'priority_match'      => false
+                ];
+            }
+            wp_reset_postdata();
+        }
+
+        // Method 2: Direct DB query fallback if the first method returns no results
+        if ( empty( $grants ) ) {
+            global $wpdb;
+            $posts_table    = $wpdb->prefix . 'posts';
+            $postmeta_table = $wpdb->prefix . 'postmeta';
+
+            $sql = "
+                SELECT p.ID, p.post_title, p.post_excerpt, p.post_content, p.post_date_gmt
+                FROM {$posts_table} p
+                WHERE p.post_type = %s
+                  AND p.post_status = %s
+                ORDER BY p.post_date DESC
+            ";
+            $results = $wpdb->get_results(
+                $wpdb->prepare( $sql, 'at_biz_dir', 'publish' )
+            );
+
+            if ( $results ) {
+                foreach ( $results as $row ) {
+                    $post_id     = $row->ID;
+                    $title       = $row->post_title;
+                    
+                    // Use tagline field for the description if available
+                    $tagline     = get_post_meta( $post_id, '_tagline', true );
+                    $description = ! empty( $tagline )
+                        ? $tagline
+                        : ( ! empty( $row->post_excerpt )
+                            ? $row->post_excerpt
+                            : wp_trim_words( $row->post_content, 30 )
+                        );
+                    
+                    $permalink   = get_permalink( $post_id );
+
+                    // Updated Deadline Detection - use the new function
+                    $deadline = get_grant_deadline($post_id);
+                    
+                    // Skip expired grants
+                    if ($deadline === 'Expired') {
+                        continue;
+                    }
+                    
+                    // Get amount from price field if available
+                    $amount = get_post_meta( $post_id, '_price', true );
+                    if (empty($amount)) {
+                        $amount = get_post_meta( $post_id, '_amount', true ) ?: 'Varies';
+                    }
+                    
+                    // Meta defaults
+                    $meta_vals = [
+                        'eligibility'       => '',
+                        'funding_type'      => 'Grant',
+                        'application_process'=> '',
+                        'industry_focus'    => '',
+                        'minimum_years'     => '',
+                        'demographic_focus' => '',
+                    ];
+                    
+                    $keys = array_map( function( $k ) { return '_' . $k; }, array_keys( $meta_vals ) );
+                    $placeholders = implode( ',', array_fill( 0, count( $keys ), '%s' ) );
+                    $meta_sql = "
+                        SELECT meta_key, meta_value
+                        FROM {$postmeta_table}
+                        WHERE post_id = %d
+                          AND meta_key IN ({$placeholders})
+                    ";
+                    $prepare_args = array_merge( [ $post_id ], $keys );
+                    $meta_rows = $wpdb->get_results(
+                        call_user_func_array( [ $wpdb, 'prepare' ], array_merge( [ $meta_sql ], $prepare_args ) ),
+                        ARRAY_A
+                    );
+                    
+                    if ( $meta_rows ) {
+                        foreach ( $meta_rows as $m ) {
+                            $k = ltrim( $m['meta_key'], '_' );
+                            if ( isset( $meta_vals[ $k ] ) ) {
+                                $meta_vals[ $k ] = html_entity_decode($m['meta_value']);
+                            }
+                        }
+                    }
+                    
+                    // Get all meta for combined search
+                    $all_meta_sql = "
+                        SELECT meta_value
+                        FROM {$postmeta_table}
+                        WHERE post_id = %d
+                    ";
+                    $all_meta_rows = $wpdb->get_results(
+                        $wpdb->prepare($all_meta_sql, $post_id),
+                        ARRAY_A
+                    );
+                    $meta_combined = '';
+                    if ($all_meta_rows) {
+                        foreach ($all_meta_rows as $m) {
+                            $meta_combined .= ' ' . $m['meta_value'];
+                        }
+                    }
+
+                    // Categories
+                    $categories = [];
+                    $term_sql = "
+                        SELECT t.name
+                        FROM {$wpdb->term_relationships} tr
+                        JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                        JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+                        WHERE tr.object_id = %d
+                          AND tt.taxonomy = %s
+                    ";
+                    $term_rows = $wpdb->get_results( $wpdb->prepare( $term_sql, $post_id, 'at_biz_dir-category' ), ARRAY_A );
+                    if ( $term_rows ) {
+                        foreach ( $term_rows as $t ) {
+                            $categories[] = html_entity_decode($t['name']);
+                        }
+                    }
+
+                    // Get all locations
+                    $locations = [];
+                    $loc_sql = "
+                        SELECT t.name
+                        FROM {$wpdb->term_relationships} tr
+                        JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                        JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+                        WHERE tr.object_id = %d
+                          AND tt.taxonomy = %s
+                    ";
+                    $loc_rows = $wpdb->get_results( $wpdb->prepare( $loc_sql, $post_id, 'at_biz_dir-location' ), ARRAY_A );
+                    if ( $loc_rows ) {
+                        foreach ( $loc_rows as $l ) {
+                            $locations[] = html_entity_decode($l['name']);
+                        }
+                    }
+                    
+                    // Use the first location as the primary location for matching
+                    $location = !empty($locations) ? $locations[0] : '';
+
+                    $grants[] = array_merge( [
+                        'id'          => $post_id,
+                        'title'       => html_entity_decode($title),
+                        'description' => html_entity_decode($description),
+                        'permalink'   => $permalink,
+                        'categories'  => $categories,
+                        'location'    => $location,
+                        'locations'   => $locations,
+                        'meta_combined' => $meta_combined,
+                        'content'     => $row->post_content,
+                        'match_score' => 0,
+                        'match_reasons' => [],
+                        'priority_match' => false
+                    ], $meta_vals, ['amount' => $amount, 'deadline' => $deadline] );
+                }
+            }
+        }
+
+        return $grants;
+    }
+}
+
+/**
+ * Enhanced grant deadline detection with multiple fallbacks
+ * 
+ * @param int $post_id The post ID to get deadline for
+ * @return string The deadline date or status message
+ */
+if (!function_exists('get_grant_deadline')) {
+    function get_grant_deadline($post_id) {
+        // Create debug array to log all checks (for admin only)
+        $debug = [];
+        $debug[] = "Checking deadline for post ID: $post_id";
+        
+        // Check all possible variations of the "Never Expires" field
+        $never_expires_variations = [
+            'never_expire', '_never_expires', 'never_expires', '_never_expire',
+            'atbdp_never_expire', '_atbdp_never_expires', 'has_no_expiration', 
+            '_has_no_expiration', 'no_deadline', '_no_deadline', 'rolling_deadline',
+            '_rolling_deadline', 'ongoing', '_ongoing'
+        ];
+        
+        // First check if any "Never Expires" variations are checked
+        foreach ($never_expires_variations as $field) {
+            $value = get_post_meta($post_id, $field, true);
+            $debug[] = "Field '$field' = '$value'";
+            
+            if ($value == '1' || $value === true || $value === 'true' || $value === 'yes' || 
+                $value === 'ongoing' || $value === 'rolling') {
+                $debug[] = "Grant marked as never expires via $field";
+                
+                // Only show debug info to admins if needed
+                if (current_user_can('manage_options') && isset($_GET['debug_deadline'])) {
+                    echo '<pre>' . implode("\n", $debug) . '</pre>';
+                }
+                
+                return 'Ongoing';
+            }
+        }
+        
+        // Check directly for 'Ongoing' or 'Rolling' in the deadline field
+        $deadline_field = get_post_meta($post_id, '_deadline', true);
+        if ($deadline_field === 'Ongoing' || $deadline_field === 'Rolling' || 
+            $deadline_field === 'ongoing' || $deadline_field === 'rolling' ||
+            $deadline_field === 'No Deadline' || $deadline_field === 'None' ||
+            $deadline_field === 'no deadline' || $deadline_field === 'none') {
+            return 'Ongoing';
+        }
+        
+        // Check all possible variations of the expiration date field
+        $expiry_variations = [
+            '_expiry_date', 'expiry_date', 'exp_date', '_exp_date',
+            'atbdp_expiry_date', '_atbdp_expiry_date', 'deadline', '_deadline',
+            'application_deadline', '_application_deadline', 'submission_deadline',
+            '_submission_deadline', 'closing_date', '_closing_date', 'due_date', '_due_date'
+        ];
+        
+        // Try to find a valid date among all possible fields
+        foreach ($expiry_variations as $field) {
+            $value = get_post_meta($post_id, $field, true);
+            $debug[] = "Field '$field' = '$value'";
+            
+            if (!empty($value) && $value !== 'Ongoing' && $value !== 'Rolling') {
+                try {
+                    // Try different date formats
+                    $date = null;
+                    
+                    // Check if it's a timestamp
+                    if (is_numeric($value)) {
+                        $date = new DateTime();
+                        $date->setTimestamp((int)$value);
+                    }
+                    // Try standard date format
+                    else if (strtotime($value) !== false) {
+                        $date = new DateTime($value);
+                    }
+                    // Try to extract date from common formats like "March 31, 2025"
+                    else if (preg_match('/(\w+)\s+(\d{1,2}),?\s+(\d{4})/', $value, $matches)) {
+                        $month = $matches[1];
+                        $day = $matches[2];
+                        $year = $matches[3];
+                        $dateStr = "$month $day, $year";
+                        if (strtotime($dateStr) !== false) {
+                            $date = new DateTime($dateStr);
+                        }
+                    }
+                    // Try to extract date from formats like "31-03-2025" or "31/03/2025"
+                    else if (preg_match('/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $value, $matches)) {
+                        $day = $matches[1];
+                        $month = $matches[2];
+                        $year = $matches[3];
+                        $dateStr = "$year-$month-$day";
+                        if (strtotime($dateStr) !== false) {
+                            $date = new DateTime($dateStr);
+                        }
+                    }
+                    
+                    if ($date) {
+                        $today = new DateTime();
+                        $today->setTime(0, 0, 0);
+                        
+                        // If the date has passed, mark as expired
+                        if ($date < $today) {
+                            return 'Expired';
+                        }
+                        
+                        // Return formatted date
+                        return $date->format('F j, Y');
+                    }
+                } catch (Exception $e) {
+                    $debug[] = "ERROR parsing date: " . $e->getMessage();
+                    // Continue to next field
+                }
+            }
+        }
+        
+        // Look for deadline in content as a last resort
+        $post = get_post($post_id);
+        if ($post && !empty($post->post_content)) {
+            $content = $post->post_content;
+            
+            // Look for common deadline patterns
+            $patterns = [
+                '/deadline:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
+                '/due date:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
+                '/closes on:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
+                '/submit by:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
+                '/applications due:\s*(\w+\s+\d{1,2},?\s+\d{4})/i'
+            ];
+            
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $content, $matches)) {
+                    try {
+                        $dateStr = $matches[1];
+                        $date = new DateTime($dateStr);
+                        
+                        $today = new DateTime();
+                        $today->setTime(0, 0, 0);
+                        
+                        // If the date has passed, mark as expired
+                        if ($date < $today) {
+                            return 'Expired';
+                        }
+                        
+                        // Return formatted date
+                        return $date->format('F j, Y');
+                    } catch (Exception $e) {
+                        $debug[] = "ERROR parsing content date: " . $e->getMessage();
+                        // Continue to next pattern
+                    }
+                }
+            }
+            
+            // Check for "ongoing" or "rolling" mentions in content
+            if (preg_match('/\b(ongoing|rolling|no deadline|open deadline)\b/i', $content)) {
+                return 'Ongoing';
+            }
+        }
+        
+        // Default fallback - assume ongoing 
+        return 'Ongoing';
+    }
+}
+
+/**
+ * Format deadline date to consistent format
+ */
+if ( ! function_exists( 'format_deadline_date' ) ) {
+    function format_deadline_date($date_string) {
+        if (empty($date_string)) {
+            return 'Ongoing';
+        }
+        
+        // Try multiple date formats
+        $timestamp = false;
+        
+        // Format: YYYY-MM-DD or MM/DD/YYYY
+        if (preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/', $date_string) || preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $date_string)) {
+            $timestamp = strtotime($date_string);
+        }
+        // Format: Month Day, Year (e.g., January 15, 2025)
+        elseif (preg_match('/^([a-zA-Z]+)\s+(\d{1,2}),?\s+(\d{4})$/', $date_string, $matches)) {
+            $timestamp = strtotime("{$matches[1]} {$matches[2]}, {$matches[3]}");
+        }
+        
+        if ($timestamp !== false) {
+            return date('F j, Y', $timestamp);
+        }
+        
+        // If parsing fails, return the original string
+        return $date_string;
+    }
+}
+
+
+
+// Output grants to JS
+add_action('wp_footer', function() {
+    $grants = get_eligibility_checker_grants();
+    if ($grants) {
+        echo '<script>window.grantAuraGrants = ' . wp_json_encode($grants) . ';</script>';
+    }
+}, 999);
+
+// AJAX for enhanced grant fetching
+add_action('wp_ajax_get_grants', 'eligibility_checker_get_grants_ajax');
+add_action('wp_ajax_nopriv_get_grants', 'eligibility_checker_get_grants_ajax');
+if (!function_exists('eligibility_checker_get_grants_ajax')) {
+    function eligibility_checker_get_grants_ajax() {
+        check_ajax_referer('grant_checker_nonce', 'nonce');
+        $grants = get_eligibility_checker_grants();
+        $entity_type = isset($_POST['entity_type']) ? sanitize_text_field(wp_unslash($_POST['entity_type'])) : '';
+        $entity_details = isset($_POST['entity_details']) ? json_decode(wp_unslash($_POST['entity_details']), true) : [];
+
+        // Get keywords for text matching
+        $keywords = isset($entity_details['keywords']) ? $entity_details['keywords'] : [];
+        $description = isset($entity_details['funding_description']) ? $entity_details['funding_description'] : '';
+        
+        $search_terms = [];
+        if (!empty($keywords)) {
+            $search_terms = array_merge($search_terms, $keywords);
+        }
+        
+        if (!empty($description)) {
+            // Extract meaningful words from description (remove common words)
+            $desc_words = preg_split('/\s+/', strtolower($description), -1, PREG_SPLIT_NO_EMPTY);
+            $stop_words = array('a', 'an', 'the', 'and', 'or', 'but', 'if', 'then', 'else', 'when', 'at', 'from', 'by', 'for', 'with', 'about', 'to', 'in', 'on', 'that', 'this', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'can', 'may', 'might');
+            $desc_words = array_filter($desc_words, function($word) use ($stop_words) {
+                return !in_array($word, $stop_words) && strlen($word) > 3;
+            });
+            $search_terms = array_merge($search_terms, $desc_words);
+        }
+        
+        // Pre-filter grants to match basic entity type and location 
+        $filtered_grants = [];
+        foreach ($grants as $grant) {
+            // Skip expired grants
+            if ($grant['deadline'] === 'Expired') {
+                continue;
+            }
+            
+            // Basic entity type matching
+            $entity_patterns = get_entity_type_patterns($entity_type);
+            $matchesEntityType = false;
+            
+            // Check categories, title, and description for entity type matches
+            $searchText = '';
+            if (!empty($grant['categories']) && is_array($grant['categories'])) {
+                $searchText .= ' ' . implode(' ', $grant['categories']);
+            }
+            $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . $grant['eligibility'];
+            $searchText = strtolower($searchText);
+            
+            foreach ($entity_patterns as $pattern) {
+                if (strpos($searchText, strtolower($pattern)) !== false) {
+                    $matchesEntityType = true;
+                    break;
+                }
+            }
+            
+            if (!$matchesEntityType) {
+                // Skip grants that clearly don't match the entity type
+                continue;
+            }
+            
+            // Basic location matching
+            if (!empty($entity_details['location'])) {
+                $userLocation = strtolower($entity_details['location']);
+                $userState = !empty($entity_details['us_state']) ? strtolower($entity_details['us_state']) : '';
+                $userCity = !empty($entity_details['city']) ? strtolower($entity_details['city']) : '';
+                
+                // Prepare grant locations
+                $grantLocations = [];
+                if (!empty($grant['locations']) && is_array($grant['locations'])) {
+                    foreach ($grant['locations'] as $loc) {
+                        $grantLocations[] = strtolower($loc);
+                    }
+                } else if (!empty($grant['location'])) {
+                    $grantLocations[] = strtolower($grant['location']);
+                }
+                
+                // Check for global grants
+                $isGlobalGrant = in_array('global', $grantLocations) || 
+                                in_array('worldwide', $grantLocations) || 
+                                in_array('international', $grantLocations);
+                
+                if ($isGlobalGrant) {
+                    // Global grants match all locations
+                    $filtered_grants[] = $grant;
+                    continue;
+                }
+                
+                // US-specific location matching
+                if ($userLocation === 'united-states') {
+                    // Check for nationwide grants
+                    $isNationwideGrant = in_array('united states', $grantLocations) || 
+                                       in_array('united-states', $grantLocations) || 
+                                       in_array('usa', $grantLocations) || 
+                                       in_array('us', $grantLocations) || 
+                                       in_array('nationwide', $grantLocations) || 
+                                       in_array('national', $grantLocations);
+                    
+                    if ($isNationwideGrant) {
+                        $filtered_grants[] = $grant;
+                        continue;
+                    }
+                    
+                    // Check state match if user provided state
+                    if (!empty($userState)) {
+                        $stateMatch = in_array($userState, $grantLocations) || 
+                                     in_array(str_replace('-', ' ', $userState), $grantLocations);
+                        
+                        if ($stateMatch) {
+                            $filtered_grants[] = $grant;
+                            continue;
+                        }
+                        
+                        // Check city match if provided
+                        if (!empty($userCity)) {
+                            $cityMatch = in_array($userCity, $grantLocations) || 
+                                       in_array(str_replace('-', ' ', $userCity), $grantLocations);
+                            
+                            if ($cityMatch) {
+                                $filtered_grants[] = $grant;
+                                continue;
+                            }
+                        }
+                        
+                        // Check if grant is for a specific city that's not user's city
+                        $isSpecificCityGrant = false;
+                        foreach ($grantLocations as $loc) {
+                            // Check if this looks like a city name and not a state or country
+                            if (preg_match('/^[a-zA-Z\s-]+$/', $loc) && 
+                                !is_state_name($loc) && 
+                                !is_country_name($loc)) {
+                                $isSpecificCityGrant = true;
+                                break;
+                            }
+                        }
+                        
+                        if ($isSpecificCityGrant) {
+                            // Skip grants for specific cities that aren't user's city
+                            continue;
+                        }
+                        
+                        // Check if grant is for a different state
+                        $isDifferentStateGrant = false;
+                        foreach ($grantLocations as $loc) {
+                            if (is_state_name($loc) && 
+                                $loc !== $userState && 
+                                str_replace(' ', '-', $loc) !== $userState && 
+                                str_replace('-', ' ', $loc) !== $userState) {
+                                $isDifferentStateGrant = true;
+                                break;
+                            }
+                        }
+                        
+                        if ($isDifferentStateGrant) {
+                            // Skip grants for different states
+                            continue;
+                        }
+                    }
+                } else {
+                    // Non-US country matching
+                    $countryMatch = in_array($userLocation, $grantLocations) || 
+                                   in_array(str_replace('-', ' ', $userLocation), $grantLocations);
+                    
+                    if ($countryMatch) {
+                        $filtered_grants[] = $grant;
+                        continue;
+                    }
+                    
+                    // Check if grant is for a different country
+                    $isDifferentCountryGrant = false;
+                    foreach ($grantLocations as $loc) {
+                        if (is_country_name($loc) && 
+                            $loc !== $userLocation && 
+                            $loc !== 'global' && 
+                            $loc !== 'worldwide' && 
+                            $loc !== 'international') {
+                            $isDifferentCountryGrant = true;
+                            break;
+                        }
+                    }
+                    
+                    if ($isDifferentCountryGrant) {
+                        // Skip grants for different countries
+                        continue;
+                    }
+                }
+                
+                // Fallback: check for location in eligibility or description as a last resort
+                $eligibilityText = strtolower($grant['eligibility'] . ' ' . $grant['description']);
+                
+                // Check for specific location mentions
+                if (!empty($userCity) && strpos($eligibilityText, strtolower($userCity)) !== false) {
+                    $filtered_grants[] = $grant;
+                    continue;
+                }
+                
+                if (!empty($userState) && 
+                    (strpos($eligibilityText, strtolower($userState)) !== false || 
+                     strpos($eligibilityText, strtolower(str_replace('-', ' ', $userState))) !== false)) {
+                    $filtered_grants[] = $grant;
+                    continue;
+                }
+                
+                if (strpos($eligibilityText, strtolower($userLocation)) !== false || 
+                    strpos($eligibilityText, strtolower(str_replace('-', ' ', $userLocation))) !== false) {
+                    $filtered_grants[] = $grant;
+                    continue;
+                }
+                
+                // Check for nationwide/all states mentions for US users
+                if ($userLocation === 'united-states' && 
+                    (strpos($eligibilityText, 'nationwide') !== false || 
+                     strpos($eligibilityText, 'national') !== false || 
+                     strpos($eligibilityText, 'all states') !== false || 
+                     strpos($eligibilityText, 'any state') !== false || 
+                     strpos($eligibilityText, 'united states') !== false || 
+                     strpos($eligibilityText, 'across america') !== false)) {
+                    $filtered_grants[] = $grant;
+                    continue;
+                }
+                
+                // Skip grants that don't match location criteria
+                continue;
+            } else {
+                // If no location is specified, include the grant
+                $filtered_grants[] = $grant;
+            }
+        }
+        
+        // Enhanced demographic matching
+        if (!empty($entity_details)) {
+            $demographicFiltered = [];
+            
+            // Get demographic patterns
+            $demographicPatterns = [];
+            
+            if ($entity_type === 'for_profit_business' && !empty($entity_details['owner_demographics'])) {
+                $demographicPatterns = get_demographic_patterns($entity_details['owner_demographics'], 'business');
+            } 
+            else if ($entity_type === 'individual' && !empty($entity_details['individual_demographics'])) {
+                $demographicPatterns = get_demographic_patterns($entity_details['individual_demographics'], 'individual');
+            }
+            else if ($entity_type === 'nonprofit' && !empty($entity_details['org_demographics'])) {
+                $demographicPatterns = get_demographic_patterns($entity_details['org_demographics'], 'nonprofit');
+            }
+            
+            // If demographic filters were specified, apply them
+            if (!empty($demographicPatterns)) {
+                foreach ($filtered_grants as $grant) {
+                    $searchText = '';
+                    if (!empty($grant['categories']) && is_array($grant['categories'])) {
+                        $searchText .= ' ' . implode(' ', $grant['categories']);
+                    }
+                    $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . $grant['eligibility'];
+                    $searchText = strtolower($searchText);
+                    
+                    $matchesDemographics = false;
+                    foreach ($demographicPatterns as $pattern) {
+                        if (strpos($searchText, strtolower($pattern)) !== false) {
+                            $matchesDemographics = true;
+                            break;
+                        }
+                    }
+                    
+                    if ($matchesDemographics) {
+                        $grant['demographic_match'] = true;
+                        $demographicFiltered[] = $grant;
+                    } else {
+                        // For grants that don't match demographics
+                        // Check if they're explicitly targeted at other demographics
+                        $isIncompatible = false;
+                        
+                        // If the grant explicitly mentions other demographics but not the user's
+                        $otherDemographics = get_other_demographic_patterns($entity_details, $entity_type);
+                        foreach ($otherDemographics as $otherPattern) {
+                            if (strpos($searchText, strtolower($otherPattern)) !== false) {
+                                $isIncompatible = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!$isIncompatible) {
+                            // If not explicitly incompatible, still include it but mark as no demographic match
+                            $grant['demographic_match'] = false;
+                            $demographicFiltered[] = $grant;
+                        }
+                    }
+                }
+                
+                $filtered_grants = $demographicFiltered;
+            }
+        }
+        
+        // Search for additional matches based on keywords if we have too few grants
+        if (count($filtered_grants) < 5 && !empty($search_terms)) {
+            $additional_grants = [];
+            
+            // Try to find more grants based on keywords
+            foreach ($grants as $grant) {
+                // Skip already included grants
+                $alreadyIncluded = false;
+                foreach ($filtered_grants as $included) {
+                    if ($included['id'] === $grant['id']) {
+                        $alreadyIncluded = true;
+                        break;
+                    }
+                }
+                
+                if ($alreadyIncluded) {
+                    continue;
+                }
+                
+                // Skip expired grants
+                if ($grant['deadline'] === 'Expired') {
+                    continue;
+                }
+                
+                // Check keywords match
+                $searchText = '';
+                if (!empty($grant['categories']) && is_array($grant['categories'])) {
+                    $searchText .= ' ' . implode(' ', $grant['categories']);
+                }
+                $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . 
+                              $grant['eligibility'] . ' ' . $grant['content'];
+                $searchText = strtolower($searchText);
+                
+                $keywordMatches = 0;
+                foreach ($search_terms as $term) {
+                    if (strpos($searchText, strtolower($term)) !== false) {
+                        $keywordMatches++;
+                    }
+                }
+                
+                if ($keywordMatches >= 2) {
+                    // Mark as keyword match only
+                    $grant['keyword_match'] = true;
+                    $grant['demographic_match'] = false;
+                    $additional_grants[] = $grant;
+                    
+                    // Limit additional grants to 10
+                    if (count($additional_grants) >= 10) {
+                        break;
+                    }
+                }
+            }
+            
+            // Merge additional grants
+            $filtered_grants = array_merge($filtered_grants, $additional_grants);
+        }
+        
+        wp_send_json_success([
+            'grants'         => $filtered_grants,
+            'entity_type'    => $entity_type,
+            'entity_details' => $entity_details,
+            'search_terms'   => $search_terms,
+            'high_priority_fields' => get_high_priority_fields($entity_type)
+        ]);
+    }
+}
+
+/**
+ * Get entity type patterns for filtering
+ */
+if (!function_exists('get_entity_type_patterns')) {
+    function get_entity_type_patterns($entity_type) {
+        switch ($entity_type) {
+            case 'for_profit_business':
+                return [
+                    'business', 'for-profit', 'company', 'small business', 'startup', 
+                    'entrepreneur', 'for profit', 'business grants', 'business owner',
+                    'grants for for-profit businesses', 'grants for startups'
+                ];
+            case 'nonprofit':
+                return [
+                    'nonprofit', 'non-profit', 'not-for-profit', '501(c)(3)', 'charity', 
+                    'foundation', 'ngo', 'grants for non-profit organizations',
+                    'nonprofit grants', 'community organization'
+                ];
+            case 'individual':
+                return [
+                    'individual', 'person', 'artist', 'student', 'researcher', 'scholar',
+                    'grants for individuals', 'personal grants', 'individual funding'
+                ];
+            case 'institution':
+                return [
+                    'institution', 'organization', 'university', 'college', 'school', 
+                    'hospital', 'museum', 'library', 'grants for institutions',
+                    'grants for educational institutions', 'institutional funding'
+                ];
+            default:
+                return [];
+        }
+    }
+}
+
+/**
+ * Get demographic patterns for filtering
+ */
+if (!function_exists('get_demographic_patterns')) {
+    function get_demographic_patterns($demographics, $entity_type) {
+        $patterns = [];
+        
+        if (empty($demographics)) {
+            return $patterns;
+        }
+        
+        // Handle "none" case separately
+        if (in_array('none', $demographics)) {
+            return $patterns; // No specific demographic patterns to look for
+        }
+        
+        // Business owner demographics
+        if ($entity_type === 'business') {
+            if (in_array('women_owned', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'women-owned', 'women owned', 'female owned', 'women entrepreneur',
+                    'woman-owned', 'female entrepreneur', 'grants for women', 
+                    'grants for women entrepreneurs', 'women'
+                ]);
+            }
+            
+            if (in_array('minority_owned', $demographics) || in_array('bipoc_owned', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'minority-owned', 'minority owned', 'diverse business', 'bipoc owned',
+                    'poc owned', 'diverse owned', 'grants for black-owned businesses',
+                    'grants for minority', 'grants for bipoc-owned businesses', 
+                    'bipoc', 'black owned'
+                ]);
+            }
+            
+            if (in_array('veteran_owned', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'veteran-owned', 'veteran owned', 'veteran entrepreneurs', 
+                    'vet owned', 'grants for veterans', 'veterans', 'military'
+                ]);
+            }
+            
+            if (in_array('disability_owned', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'disability-owned', 'owned by person with disability', 
+                    'disabled owned', 'differently abled owned', 'grants for disabled',
+                    'disability', 'grants for disabled/special persons'
+                ]);
+            }
+            
+            if (in_array('lgbtqia_owned', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'lgbtqia-owned', 'lgbtq owned', 'lgbt owned', 'lgbtqia owned',
+                    'queer owned', 'grants for lgbtqi', 'lgbtq', 'lgbt'
+                ]);
+            }
+            
+            if (in_array('rural_based', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'rural-based', 'rural', 'small town', 'non-urban', 'countryside',
+                    'rural community', 'rural development'
+                ]);
+            }
+        }
+        // Individual demographics
+        else if ($entity_type === 'individual') {
+            if (in_array('woman', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'women', 'woman', 'female', 'girls', 'gender equity', 
+                    'gender equality', 'grants for women', 'women entrepreneurs'
+                ]);
+            }
+            
+            if (in_array('bipoc', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'bipoc', 'people of color', 'minorities', 'black', 'latina', 
+                    'latino', 'hispanic', 'asian', 'african american', 'diversity',
+                    'grants for bipoc', 'grants for black', 'minority'
+                ]);
+            }
+            
+            if (in_array('veteran', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'veteran', 'veterans', 'military', 'service member', 'ex-military',
+                    'former military', 'armed forces', 'grants for veterans'
+                ]);
+            }
+            
+            if (in_array('disability', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'disability', 'disabilities', 'disabled', 'differently abled',
+                    'special needs', 'accessibility', 'grants for disabled',
+                    'grants for disabled/special persons'
+                ]);
+            }
+            
+            if (in_array('lgbtqia', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'lgbtqia', 'lgbtq', 'lgbt', 'gay', 'lesbian', 'transgender',
+                    'non-binary', 'queer', 'sexual orientation', 'grants for lgbtqi'
+                ]);
+            }
+            
+            if (in_array('student', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'student', 'education', 'school', 'college', 'university',
+                    'grants for students', 'scholarship', 'tuition'
+                ]);
+            }
+            
+            if (in_array('low_income', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'low income', 'low-income', 'economically disadvantaged', 'poverty',
+                    'underserved', 'financial hardship'
+                ]);
+            }
+            
+            if (in_array('rural', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'rural', 'small town', 'non-urban', 'countryside', 'farm',
+                    'agricultural community', 'rural development'
+                ]);
+            }
+            
+            if (in_array('first_gen', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'first generation', 'first-generation', 'first gen', 'first-gen',
+                    'first in family'
+                ]);
+            }
+        }
+        // Organization demographics
+        else if ($entity_type === 'nonprofit') {
+            if (in_array('women_led', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'women-led', 'women led', 'female led', 'women executives',
+                    'female leadership', 'grants for women', 'women'
+                ]);
+            }
+            
+            if (in_array('bipoc_led', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'bipoc-led', 'bipoc led', 'diverse leadership', 'minority led',
+                    'diverse led', 'grants for bipoc', 'bipoc'
+                ]);
+            }
+            
+            if (in_array('veteran_led', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'veteran-led', 'veteran led', 'veteran leadership', 'vet led',
+                    'grants for veterans', 'veterans'
+                ]);
+            }
+            
+            if (in_array('disability_led', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'disability-led', 'led by person with disability', 'disabled led',
+                    'grants for disabled', 'disability'
+                ]);
+            }
+            
+            if (in_array('lgbtqia_led', $demographics)) {
+                $patterns = array_merge($patterns, [
+                    'lgbtqia-led', 'lgbtq led', 'lgbt led', 'lgbtqia led', 'queer led',
+                    'grants for lgbtqi', 'lgbtq'
+                ]);
+            }
+        }
+        
+        return array_unique($patterns);
+    }
+}
+
+/**
+ * Get patterns for other demographics (to detect incompatible grants)
+ */
+if (!function_exists('get_other_demographic_patterns')) {
+    function get_other_demographic_patterns($entity_details, $entity_type) {
+        $patterns = [];
+        
+        // For business
+        if ($entity_type === 'for_profit_business' && !empty($entity_details['owner_demographics'])) {
+            $selected = $entity_details['owner_demographics'];
+            
+            // Check for exclusive women-focused grants
+            if (!in_array('women_owned', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for women', 'women-owned only', 'female entrepreneurs only'
+                ]);
+            }
+            
+            // Check for exclusive minority-focused grants
+            if (!in_array('minority_owned', $selected) && !in_array('bipoc_owned', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for minorities', 'bipoc-owned only', 'black-owned only'
+                ]);
+            }
+            
+            // Check for exclusive veteran-focused grants
+            if (!in_array('veteran_owned', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for veterans', 'veteran-owned only', 'military only'
+                ]);
+            }
+            
+            // Check for exclusive disability-focused grants
+            if (!in_array('disability_owned', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for people with disabilities', 'disabled-owned only'
+                ]);
+            }
+            
+            // Check for exclusive LGBTQIA-focused grants
+            if (!in_array('lgbtqia_owned', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for lgbtq', 'lgbtq-owned only', 'queer-owned only'
+                ]);
+            }
+        }
+        // For individuals
+        else if ($entity_type === 'individual' && !empty($entity_details['individual_demographics'])) {
+            $selected = $entity_details['individual_demographics'];
+            
+            // Check for exclusive women-focused grants
+            if (!in_array('woman', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for women', 'women only', 'females only'
+                ]);
+            }
+            
+            // Check for exclusive minority-focused grants
+            if (!in_array('bipoc', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for minorities', 'bipoc only', 'people of color only'
+                ]);
+            }
+            
+            // Check for exclusive veteran-focused grants
+            if (!in_array('veteran', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for veterans', 'veterans only', 'military personnel only'
+                ]);
+            }
+            
+            // Check for exclusive disability-focused grants
+            if (!in_array('disability', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for people with disabilities', 'disabled persons only'
+                ]);
+            }
+            
+            // Check for exclusive LGBTQIA-focused grants
+            if (!in_array('lgbtqia', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for lgbtq', 'lgbtq only', 'queer only'
+                ]);
+            }
+            
+            // Student-specific grants
+            if (!in_array('student', $selected)) {
+                $patterns = array_merge($patterns, [
+                    'exclusively for students', 'students only', 'currently enrolled'
+                ]);
+            }
+        }
+        
+        return array_unique($patterns);
+    }
+}
+
+/**
+ * Helper function to check if a string is a US state name
+ */
+if (!function_exists('is_state_name')) {
+    function is_state_name($str) {
+        $stateNames = [
+            'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 
+            'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 
+            'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 
+            'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 
+            'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 
+            'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 
+            'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 
+            'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 
+            'utah', 'vermont', 'virginia', 'washington', 'west virginia', 
+            'wisconsin', 'wyoming', 'district of columbia'
+        ];
+        
+        // Also include hyphenated versions
+        $hyphenatedStateNames = [];
+        foreach ($stateNames as $state) {
+            $hyphenatedStateNames[] = str_replace(' ', '-', $state);
+        }
+        
+        return in_array(strtolower($str), $stateNames) || 
+               in_array(strtolower($str), $hyphenatedStateNames);
+    }
+}
+
+/**
+ * Helper function to check if a string is a country name
+ */
+if (!function_exists('is_country_name')) {
+    function is_country_name($str) {
+        $countryNames = [
+            'united states', 'united-states', 'usa', 'us', 'u.s.', 'u.s.a.',
+            'canada', 'mexico', 'uk', 'united kingdom', 'australia',
+            'global', 'worldwide', 'international'
+        ];
+        
+        return in_array(strtolower($str), $countryNames);
+    }
+}
+
+/**
+ * Get high priority fields based on entity type
+ */
+if (!function_exists('get_high_priority_fields')) {
+    function get_high_priority_fields($entity_type) {
+        switch ($entity_type) {
+            case 'for_profit_business':
+                return ['entity_type', 'business_type', 'owner_demographics', 'industry', 'location'];
+            case 'nonprofit':
+                return ['entity_type', 'nonprofit_type', 'focus_area', 'org_demographics', 'location'];
+            case 'individual':
+                return ['entity_type', 'individual_type', 'individual_demographics', 'location', 'funding_need'];
+            case 'institution':
+                return ['entity_type', 'institution_type', 'tax_status', 'location', 'funding_purpose'];
+            default:
+                return ['entity_type', 'location'];
+        }
+    }
+}
+
+// Register shortcode
+add_shortcode('eligibility_checker', function($atts) {
+    ob_start();
+    ?>
+    <div class="eligibility-checker-container">
+        <!-- Nonce for security -->
+        <div id="grant-checker-nonce" data-nonce="<?php echo wp_create_nonce('grant_checker_nonce'); ?>"></div>
+        
+        <!-- Enhanced Eligibility Checker will be rendered here -->
+        <div class="eligibility-checker" data-section-id="eligibility-checker">
+            <!-- Content will be dynamically generated by JS -->
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+});
+[/php]
 
 <script>
 (function() {
@@ -8663,164 +9291,170 @@ setupGrantCardEvents() {
   // Set modal content
   modalTitle.textContent = grant.title;
   modalDescription.textContent = grant.description;
+
+  // Update match score in circular display - THIS IS THE KEY FIX
+  const matchScoreDisplay = document.querySelector('#match-score-display .grant-details-modal__match-score');
+  if (matchScoreDisplay) {
+    matchScoreDisplay.textContent = `${grant.match_score}%`;
+  }
       
-      // Format deadline for display with same logic as card
-      let deadlineFormatted = grant.deadline;
-      let deadlineClass = '';
+  // Format deadline for display with same logic as card
+  let deadlineFormatted = grant.deadline;
+  let deadlineClass = '';
+  
+  if (deadlineFormatted !== 'Ongoing') {
+    try {
+      const deadlineDate = new Date(grant.deadline);
+      const today = new Date();
+      const diffTime = deadlineDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      if (deadlineFormatted !== 'Ongoing') {
-        try {
-          const deadlineDate = new Date(grant.deadline);
-          const today = new Date();
-          const diffTime = deadlineDate - today;
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          
-          if (diffDays > 30) {
-            deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-          } else if (diffDays > 14) {
-            deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-            deadlineClass = 'eligibility-checker__deadline-urgent';
-          } else if (diffDays > 0) {
-            deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
-            deadlineClass = 'eligibility-checker__deadline-critical';
-          } else if (diffDays === 0) {
-            deadlineFormatted = `${grant.deadline} (Today)`;
-            deadlineClass = 'eligibility-checker__deadline-critical';
-          } else {
-            deadlineFormatted = `${grant.deadline} (Expired)`;
-            deadlineClass = 'eligibility-checker__deadline-expired';
-          }
-        } catch (e) {
-          console.warn('Could not parse deadline:', e);
-        }
-      }
-      
-      // Format locations for display
-      const locationsDisplay = Array.isArray(grant.locations) && grant.locations.length > 0 
-        ? grant.locations.join(', ') 
-        : (grant.location || 'Multiple Locations');
-      
-      // Set meta information with enhanced styling
-      modalMeta.innerHTML = `
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-dollar-sign"></i> <strong>Amount:</strong> ${grant.amount}
-        </div>
-        
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-calendar-alt"></i> <strong>Deadline:</strong> <span class="${deadlineClass}">${deadlineFormatted}</span>
-        </div>
-        
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-tag"></i> <strong>Type:</strong> ${grant.funding_type || 'Grant'}
-        </div>
-        
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${locationsDisplay}
-        </div>
-        
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-percentage"></i> <strong>Match Score:</strong> ${grant.match_score}%
-        </div>
-        
-        <div class="eligibility-checker__meta-item">
-          <i class="fas fa-info-circle"></i> <strong>Compatibility:</strong> ${this.getCompatibilityMessage(grant.match_score)}
-        </div>
-      `;
-      
-      // Set match criteria with enhanced visual grouping
-      if (grant.match_reasons && grant.match_reasons.length > 0) {
-        // Group match reasons by priority
-        const highPriorityReasons = [];
-        const otherReasons = [];
-        
-        grant.match_reasons.forEach(reason => {
-          // Check if reason contains high priority field terms
-          const isHighPriority = this.highPriorityFields.some(field => {
-            const fieldName = this.getFieldDisplayName(field);
-            return reason.includes(fieldName);
-          });
-          
-          if (isHighPriority) {
-            highPriorityReasons.push(reason);
-          } else {
-            otherReasons.push(reason);
-          }
-        });
-        
-        // Build HTML with visual distinction between high priority matches
-        const highPriorityHTML = highPriorityReasons.map(reason => 
-          `<div class="eligibility-checker__match-criteria-item eligibility-checker__priority-match">
-            <i class="fas fa-star"></i>${reason}
-          </div>`
-        ).join('');
-        
-        const otherReasonsHTML = otherReasons.map(reason => 
-          `<div class="eligibility-checker__match-criteria-item">
-            <i class="fas fa-check-circle"></i>${reason}
-          </div>`
-        ).join('');
-        
-        modalMatchList.innerHTML = highPriorityHTML + otherReasonsHTML;
-        
-        // Show the match criteria section
-        document.getElementById('modal-match-criteria').style.display = 'block';
+      if (diffDays > 30) {
+        deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+      } else if (diffDays > 14) {
+        deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+        deadlineClass = 'eligibility-checker__deadline-urgent';
+      } else if (diffDays > 0) {
+        deadlineFormatted = `${grant.deadline} (${diffDays} days left)`;
+        deadlineClass = 'eligibility-checker__deadline-critical';
+      } else if (diffDays === 0) {
+        deadlineFormatted = `${grant.deadline} (Today)`;
+        deadlineClass = 'eligibility-checker__deadline-critical';
       } else {
-        // Hide the match criteria section if no reasons
-        document.getElementById('modal-match-criteria').style.display = 'none';
+        deadlineFormatted = `${grant.deadline} (Expired)`;
+        deadlineClass = 'eligibility-checker__deadline-expired';
       }
+    } catch (e) {
+      console.warn('Could not parse deadline:', e);
+    }
+  }
+  
+  // Format locations for display
+  const locationsDisplay = Array.isArray(grant.locations) && grant.locations.length > 0 
+    ? grant.locations.join(', ') 
+    : (grant.location || 'Multiple Locations');
+  
+  // Set meta information with enhanced styling
+  modalMeta.innerHTML = `
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-dollar-sign"></i> <strong>Amount:</strong> ${grant.amount}
+    </div>
+    
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-calendar-alt"></i> <strong>Deadline:</strong> <span class="${deadlineClass}">${deadlineFormatted}</span>
+    </div>
+    
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-tag"></i> <strong>Type:</strong> ${grant.funding_type || 'Grant'}
+    </div>
+    
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${locationsDisplay}
+    </div>
+    
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-percentage"></i> <strong>Match Score:</strong> ${grant.match_score}%
+    </div>
+    
+    <div class="eligibility-checker__meta-item">
+      <i class="fas fa-info-circle"></i> <strong>Compatibility:</strong> ${this.getCompatibilityMessage(grant.match_score)}
+    </div>
+  `;
+  
+  // Set match criteria with enhanced visual grouping
+  if (grant.match_reasons && grant.match_reasons.length > 0) {
+    // Group match reasons by priority
+    const highPriorityReasons = [];
+    const otherReasons = [];
+    
+    grant.match_reasons.forEach(reason => {
+      // Check if reason contains high priority field terms
+      const isHighPriority = this.highPriorityFields.some(field => {
+        const fieldName = this.getFieldDisplayName(field);
+        return reason.includes(fieldName);
+      });
       
-      // Set eligibility criteria with better structure
-      let eligibilityHTML = '';
-      if (grant.eligibility) {
-        // If grant has specific eligibility criteria defined
-        const eligibilityCriteria = grant.eligibility.split('\n').filter(line => line.trim() !== '');
-        
-        if (eligibilityCriteria.length > 0) {
-          eligibilityHTML = eligibilityCriteria.map(criteria => 
-            `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}</li>`
-          ).join('');
-        } else {
-          // Try splitting by periods for sentences if no newlines
-          const sentenceEligibility = grant.eligibility.split('.').filter(part => part.trim() !== '');
-          if (sentenceEligibility.length > 1) {
-            eligibilityHTML = sentenceEligibility.map(criteria => 
-              `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}.</li>`
-            ).join('');
-          } else {
-            // Try splitting by commas if no periods
-            const commaEligibility = grant.eligibility.split(',').filter(part => part.trim() !== '');
-            eligibilityHTML = commaEligibility.map(criteria => 
-              `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}</li>`
-            ).join('');
-          }
-        }
+      if (isHighPriority) {
+        highPriorityReasons.push(reason);
+      } else {
+        otherReasons.push(reason);
       }
-      
-      // If no specific eligibility criteria is available or it's empty
-      if (!eligibilityHTML) {
-        // Add a default message
-        eligibilityHTML = `<li class="eligibility-checker__eligibility-item"><i class="fas fa-info-circle"></i> Detailed eligibility criteria available on the grant application page.</li>`;
-        
-        // Add entity-type specific generic criteria based on categories
-        const entityTypeCriteria = this.getEntityTypeEligibilityCriteria(grant.categories);
-        if (entityTypeCriteria.length > 0) {
-          eligibilityHTML += entityTypeCriteria.map(criteria => 
-            `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria}</li>`
-          ).join('');
-        }
+    });
+    
+    // Build HTML with visual distinction between high priority matches
+    const highPriorityHTML = highPriorityReasons.map(reason => 
+      `<div class="eligibility-checker__match-criteria-item eligibility-checker__priority-match">
+        <i class="fas fa-star"></i>${reason}
+      </div>`
+    ).join('');
+    
+    const otherReasonsHTML = otherReasons.map(reason => 
+      `<div class="eligibility-checker__match-criteria-item">
+        <i class="fas fa-check-circle"></i>${reason}
+      </div>`
+    ).join('');
+    
+    modalMatchList.innerHTML = highPriorityHTML + otherReasonsHTML;
+    
+    // Show the match criteria section
+    document.getElementById('modal-match-criteria').style.display = 'block';
+  } else {
+    // Hide the match criteria section if no reasons
+    document.getElementById('modal-match-criteria').style.display = 'none';
+  }
+  
+  // Set eligibility criteria with better structure
+  let eligibilityHTML = '';
+  if (grant.eligibility) {
+    // If grant has specific eligibility criteria defined
+    const eligibilityCriteria = grant.eligibility.split('\n').filter(line => line.trim() !== '');
+    
+    if (eligibilityCriteria.length > 0) {
+      eligibilityHTML = eligibilityCriteria.map(criteria => 
+        `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}</li>`
+      ).join('');
+    } else {
+      // Try splitting by periods for sentences if no newlines
+      const sentenceEligibility = grant.eligibility.split('.').filter(part => part.trim() !== '');
+      if (sentenceEligibility.length > 1) {
+        eligibilityHTML = sentenceEligibility.map(criteria => 
+          `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}.</li>`
+        ).join('');
+      } else {
+        // Try splitting by commas if no periods
+        const commaEligibility = grant.eligibility.split(',').filter(part => part.trim() !== '');
+        eligibilityHTML = commaEligibility.map(criteria => 
+          `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria.trim()}</li>`
+        ).join('');
       }
-      
-      modalEligibility.innerHTML = eligibilityHTML;
-      
-      // Set Apply button link
-      const modalApply = document.getElementById('modal-apply');
-      if (modalApply) {
-        modalApply.href = grant.permalink;
-      }
-      
-      // Show the modal
-      modal.classList.add('active');
-    },
+    }
+  }
+  
+  // If no specific eligibility criteria is available or it's empty
+  if (!eligibilityHTML) {
+    // Add a default message
+    eligibilityHTML = `<li class="eligibility-checker__eligibility-item"><i class="fas fa-info-circle"></i> Detailed eligibility criteria available on the grant application page.</li>`;
+    
+    // Add entity-type specific generic criteria based on categories
+    const entityTypeCriteria = this.getEntityTypeEligibilityCriteria(grant.categories);
+    if (entityTypeCriteria.length > 0) {
+      eligibilityHTML += entityTypeCriteria.map(criteria => 
+        `<li class="eligibility-checker__eligibility-item"><i class="fas fa-check-circle"></i> ${criteria}</li>`
+      ).join('');
+    }
+  }
+  
+  modalEligibility.innerHTML = eligibilityHTML;
+  
+  // Set Apply button link
+  const modalApply = document.getElementById('modal-apply');
+  if (modalApply) {
+    modalApply.href = grant.permalink;
+  }
+  
+  // Show the modal
+  modal.classList.add('active');
+},
     
     /**
      * Get compatibility message based on match score
@@ -9571,6 +10205,13 @@ document.addEventListener('click', function(event) {
       if (grant) {
         console.log('Grant found, populating modal'); // Debug log
         
+        // Update match score in the modal - THE IMPORTANT FIX
+        const matchScoreDisplay = document.querySelector('#match-score-display .grant-details-modal__match-score');
+        if (matchScoreDisplay) {
+          matchScoreDisplay.textContent = `${grant.match_score}%`;
+          console.log('Updated match score display to', grant.match_score);
+        }
+        
         // Set content
         const modalTitle = document.getElementById('modal-title');
         const modalDescription = document.getElementById('modal-description');
@@ -9642,1234 +10283,52 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(testButton);
   }
 });
+// Create a global function to update match score in modal
+window.updateModalMatchScore = function(score) {
+  const scoreElement = document.getElementById('modal-match-score');
+  if (scoreElement) {
+    scoreElement.textContent = score + '%';
+    console.log('Updated modal match score to', score + '%');
+  } else {
+    console.error('Modal match score element not found');
+  }
+};
+
+// Override the original showGrantDetails function to use our global updater
+const originalShowGrantDetails = EligibilityChecker.showGrantDetails;
+EligibilityChecker.showGrantDetails = function(grant) {
+  // Call the original function
+  originalShowGrantDetails.call(this, grant);
+  
+  // Then update the score using our global function
+  window.updateModalMatchScore(grant.match_score);
+};
+
+// Modify all detail button click handlers to also update the score
+document.querySelectorAll('.eligibility-checker__match-details').forEach(button => {
+  button.addEventListener('click', function(e) {
+    const grantId = this.getAttribute('data-grant-id');
+    const grant = EligibilityChecker.grants.find(g => g.id.toString() === grantId);
+    if (grant) {
+      window.updateModalMatchScore(grant.match_score);
+    }
+  });
+});
+
+// Also update on direct modal opening
+document.addEventListener('click', function(event) {
+  const targetButton = event.target.closest('.eligibility-checker__match-details');
+  if (targetButton) {
+    const grantId = targetButton.getAttribute('data-grant-id');
+    const grant = EligibilityChecker.grants && EligibilityChecker.grants.find(g => g.id.toString() === grantId);
+    if (grant) {
+      setTimeout(function() {
+        window.updateModalMatchScore(grant.match_score);
+      }, 100); // Small delay to ensure modal is open
+    }
+  }
+});
 })();
 </script>
-
-  [php]
-/**
- * Enhanced Grant Eligibility Checker - PHP Backend
- * 
- * This implementation provides advanced grant fetching with multiple fallbacks
- * for reliable deadline detection and precise matching algorithm
- */
-
-/**
- * Function to fetch grant listings from the Directorist plugin.
- * Retrieves grants and applies strict matching criteria with enhanced deadline detection.
- */
-if ( ! function_exists( 'get_eligibility_checker_grants' ) ) {
-    function get_eligibility_checker_grants() {
-        $grants = [];
-
-        // Method 1: Use get_posts with WP Query
-        $args = [
-            'post_type'      => 'at_biz_dir',
-            'post_status'    => 'publish',
-            'posts_per_page' => -1,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-        ];
-        $query_results = get_posts( $args );
-
-        if ( ! empty( $query_results ) ) {
-            foreach ( $query_results as $post ) {
-                setup_postdata( $post );
-                $post_id     = $post->ID;
-                $title       = get_the_title( $post_id );
-                
-                // Use tagline field for the description if available
-                $tagline     = get_post_meta( $post_id, '_tagline', true );
-                $description = ! empty( $tagline )
-                    ? $tagline
-                    : ( ! empty( $post->post_excerpt )
-                        ? $post->post_excerpt
-                        : wp_trim_words( $post->post_content, 30 )
-                    );
-                
-                $permalink   = get_permalink( $post_id );
-
-                // Updated Deadline Detection - use the enhanced function
-                $deadline = get_grant_deadline($post_id);
-                
-                // Check if deadline is expired - skip if it is
-                if ($deadline === 'Expired') {
-                    continue;  // Skip expired grants
-                }
-                
-                // Get amount from price field if available
-                $amount = get_post_meta( $post_id, '_price', true );
-                if (empty($amount)) {
-                    $amount = get_post_meta( $post_id, '_amount', true ) ?: 'Varies';
-                }
-                
-                // Other Custom fields with defaults
-                $eligibility         = get_post_meta( $post_id, '_eligibility', true )         ?: '';
-                $funding_type        = get_post_meta( $post_id, '_funding_type', true )        ?: 'Grant';
-                $application_process = get_post_meta( $post_id, '_application_process', true ) ?: '';
-                $industry_focus      = get_post_meta( $post_id, '_industry_focus', true )      ?: '';
-                $minimum_years       = get_post_meta( $post_id, '_minimum_years', true )       ?: '';
-                $demographic_focus   = get_post_meta( $post_id, '_demographic_focus', true )   ?: '';
-                
-                // Get all meta fields to allow for custom meta field search
-                $all_meta = get_post_meta( $post_id );
-                $meta_combined = '';
-                if (is_array($all_meta)) {
-                    foreach ($all_meta as $meta_key => $meta_value) {
-                        if (is_array($meta_value) && isset($meta_value[0])) {
-                            $meta_combined .= ' ' . $meta_value[0];
-                        }
-                    }
-                }
-
-                // Categories
-                $categories = [];
-                $terms = get_the_terms( $post_id, 'at_biz_dir-category' );
-                if ( $terms && ! is_wp_error( $terms ) ) {
-                    foreach ( $terms as $term ) {
-                        $categories[] = html_entity_decode($term->name);
-                    }
-                }
-
-                // Get all locations instead of just the first one
-                $locations = [];
-                $loc_terms = get_the_terms( $post_id, 'at_biz_dir-location' );
-                if ( $loc_terms && ! is_wp_error( $loc_terms ) ) {
-                    foreach ( $loc_terms as $term ) {
-                        $locations[] = html_entity_decode($term->name);
-                    }
-                }
-                
-                // Use the first location as the primary location for matching
-                $location = !empty($locations) ? $locations[0] : '';
-
-                $grants[] = [
-                    'id'                  => $post_id,
-                    'title'               => html_entity_decode($title),
-                    'description'         => html_entity_decode($description),
-                    'permalink'           => $permalink,
-                    'amount'              => $amount,
-                    'deadline'            => $deadline,
-                    'funding_type'        => $funding_type,
-                    'eligibility'         => html_entity_decode($eligibility),
-                    'application_process' => $application_process,
-                    'industry_focus'      => $industry_focus,
-                    'minimum_years'       => $minimum_years,
-                    'demographic_focus'   => $demographic_focus,
-                    'categories'          => $categories,
-                    'location'            => $location,
-                    'locations'           => $locations, // All locations, not just the first one
-                    'meta_combined'       => $meta_combined,
-                    'content'             => $post->post_content,
-                    'match_score'         => 0,
-                    'match_reasons'       => [],
-                    'priority_match'      => false
-                ];
-            }
-            wp_reset_postdata();
-        }
-
-        // Method 2: Direct DB query fallback if the first method returns no results
-        if ( empty( $grants ) ) {
-            global $wpdb;
-            $posts_table    = $wpdb->prefix . 'posts';
-            $postmeta_table = $wpdb->prefix . 'postmeta';
-
-            $sql = "
-                SELECT p.ID, p.post_title, p.post_excerpt, p.post_content, p.post_date_gmt
-                FROM {$posts_table} p
-                WHERE p.post_type = %s
-                  AND p.post_status = %s
-                ORDER BY p.post_date DESC
-            ";
-            $results = $wpdb->get_results(
-                $wpdb->prepare( $sql, 'at_biz_dir', 'publish' )
-            );
-
-            if ( $results ) {
-                foreach ( $results as $row ) {
-                    $post_id     = $row->ID;
-                    $title       = $row->post_title;
-                    
-                    // Use tagline field for the description if available
-                    $tagline     = get_post_meta( $post_id, '_tagline', true );
-                    $description = ! empty( $tagline )
-                        ? $tagline
-                        : ( ! empty( $row->post_excerpt )
-                            ? $row->post_excerpt
-                            : wp_trim_words( $row->post_content, 30 )
-                        );
-                    
-                    $permalink   = get_permalink( $post_id );
-
-                    // Updated Deadline Detection - use the new function
-                    $deadline = get_grant_deadline($post_id);
-                    
-                    // Skip expired grants
-                    if ($deadline === 'Expired') {
-                        continue;
-                    }
-                    
-                    // Get amount from price field if available
-                    $amount = get_post_meta( $post_id, '_price', true );
-                    if (empty($amount)) {
-                        $amount = get_post_meta( $post_id, '_amount', true ) ?: 'Varies';
-                    }
-                    
-                    // Meta defaults
-                    $meta_vals = [
-                        'eligibility'       => '',
-                        'funding_type'      => 'Grant',
-                        'application_process'=> '',
-                        'industry_focus'    => '',
-                        'minimum_years'     => '',
-                        'demographic_focus' => '',
-                    ];
-                    
-                    $keys = array_map( function( $k ) { return '_' . $k; }, array_keys( $meta_vals ) );
-                    $placeholders = implode( ',', array_fill( 0, count( $keys ), '%s' ) );
-                    $meta_sql = "
-                        SELECT meta_key, meta_value
-                        FROM {$postmeta_table}
-                        WHERE post_id = %d
-                          AND meta_key IN ({$placeholders})
-                    ";
-                    $prepare_args = array_merge( [ $post_id ], $keys );
-                    $meta_rows = $wpdb->get_results(
-                        call_user_func_array( [ $wpdb, 'prepare' ], array_merge( [ $meta_sql ], $prepare_args ) ),
-                        ARRAY_A
-                    );
-                    
-                    if ( $meta_rows ) {
-                        foreach ( $meta_rows as $m ) {
-                            $k = ltrim( $m['meta_key'], '_' );
-                            if ( isset( $meta_vals[ $k ] ) ) {
-                                $meta_vals[ $k ] = html_entity_decode($m['meta_value']);
-                            }
-                        }
-                    }
-                    
-                    // Get all meta for combined search
-                    $all_meta_sql = "
-                        SELECT meta_value
-                        FROM {$postmeta_table}
-                        WHERE post_id = %d
-                    ";
-                    $all_meta_rows = $wpdb->get_results(
-                        $wpdb->prepare($all_meta_sql, $post_id),
-                        ARRAY_A
-                    );
-                    $meta_combined = '';
-                    if ($all_meta_rows) {
-                        foreach ($all_meta_rows as $m) {
-                            $meta_combined .= ' ' . $m['meta_value'];
-                        }
-                    }
-
-                    // Categories
-                    $categories = [];
-                    $term_sql = "
-                        SELECT t.name
-                        FROM {$wpdb->term_relationships} tr
-                        JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-                        JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-                        WHERE tr.object_id = %d
-                          AND tt.taxonomy = %s
-                    ";
-                    $term_rows = $wpdb->get_results( $wpdb->prepare( $term_sql, $post_id, 'at_biz_dir-category' ), ARRAY_A );
-                    if ( $term_rows ) {
-                        foreach ( $term_rows as $t ) {
-                            $categories[] = html_entity_decode($t['name']);
-                        }
-                    }
-
-                    // Get all locations
-                    $locations = [];
-                    $loc_sql = "
-                        SELECT t.name
-                        FROM {$wpdb->term_relationships} tr
-                        JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-                        JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-                        WHERE tr.object_id = %d
-                          AND tt.taxonomy = %s
-                    ";
-                    $loc_rows = $wpdb->get_results( $wpdb->prepare( $loc_sql, $post_id, 'at_biz_dir-location' ), ARRAY_A );
-                    if ( $loc_rows ) {
-                        foreach ( $loc_rows as $l ) {
-                            $locations[] = html_entity_decode($l['name']);
-                        }
-                    }
-                    
-                    // Use the first location as the primary location for matching
-                    $location = !empty($locations) ? $locations[0] : '';
-
-                    $grants[] = array_merge( [
-                        'id'          => $post_id,
-                        'title'       => html_entity_decode($title),
-                        'description' => html_entity_decode($description),
-                        'permalink'   => $permalink,
-                        'categories'  => $categories,
-                        'location'    => $location,
-                        'locations'   => $locations,
-                        'meta_combined' => $meta_combined,
-                        'content'     => $row->post_content,
-                        'match_score' => 0,
-                        'match_reasons' => [],
-                        'priority_match' => false
-                    ], $meta_vals, ['amount' => $amount, 'deadline' => $deadline] );
-                }
-            }
-        }
-
-        return $grants;
-    }
-}
-
-/**
- * Enhanced grant deadline detection with multiple fallbacks
- * 
- * @param int $post_id The post ID to get deadline for
- * @return string The deadline date or status message
- */
-if (!function_exists('get_grant_deadline')) {
-    function get_grant_deadline($post_id) {
-        // Create debug array to log all checks (for admin only)
-        $debug = [];
-        $debug[] = "Checking deadline for post ID: $post_id";
-        
-        // Check all possible variations of the "Never Expires" field
-        $never_expires_variations = [
-            'never_expire', '_never_expires', 'never_expires', '_never_expire',
-            'atbdp_never_expire', '_atbdp_never_expires', 'has_no_expiration', 
-            '_has_no_expiration', 'no_deadline', '_no_deadline', 'rolling_deadline',
-            '_rolling_deadline', 'ongoing', '_ongoing'
-        ];
-        
-        // First check if any "Never Expires" variations are checked
-        foreach ($never_expires_variations as $field) {
-            $value = get_post_meta($post_id, $field, true);
-            $debug[] = "Field '$field' = '$value'";
-            
-            if ($value == '1' || $value === true || $value === 'true' || $value === 'yes' || 
-                $value === 'ongoing' || $value === 'rolling') {
-                $debug[] = "Grant marked as never expires via $field";
-                
-                // Only show debug info to admins if needed
-                if (current_user_can('manage_options') && isset($_GET['debug_deadline'])) {
-                    echo '<pre>' . implode("\n", $debug) . '</pre>';
-                }
-                
-                return 'Ongoing';
-            }
-        }
-        
-        // Check directly for 'Ongoing' or 'Rolling' in the deadline field
-        $deadline_field = get_post_meta($post_id, '_deadline', true);
-        if ($deadline_field === 'Ongoing' || $deadline_field === 'Rolling' || 
-            $deadline_field === 'ongoing' || $deadline_field === 'rolling' ||
-            $deadline_field === 'No Deadline' || $deadline_field === 'None' ||
-            $deadline_field === 'no deadline' || $deadline_field === 'none') {
-            return 'Ongoing';
-        }
-        
-        // Check all possible variations of the expiration date field
-        $expiry_variations = [
-            '_expiry_date', 'expiry_date', 'exp_date', '_exp_date',
-            'atbdp_expiry_date', '_atbdp_expiry_date', 'deadline', '_deadline',
-            'application_deadline', '_application_deadline', 'submission_deadline',
-            '_submission_deadline', 'closing_date', '_closing_date', 'due_date', '_due_date'
-        ];
-        
-        // Try to find a valid date among all possible fields
-        foreach ($expiry_variations as $field) {
-            $value = get_post_meta($post_id, $field, true);
-            $debug[] = "Field '$field' = '$value'";
-            
-            if (!empty($value) && $value !== 'Ongoing' && $value !== 'Rolling') {
-                try {
-                    // Try different date formats
-                    $date = null;
-                    
-                    // Check if it's a timestamp
-                    if (is_numeric($value)) {
-                        $date = new DateTime();
-                        $date->setTimestamp((int)$value);
-                    }
-                    // Try standard date format
-                    else if (strtotime($value) !== false) {
-                        $date = new DateTime($value);
-                    }
-                    // Try to extract date from common formats like "March 31, 2025"
-                    else if (preg_match('/(\w+)\s+(\d{1,2}),?\s+(\d{4})/', $value, $matches)) {
-                        $month = $matches[1];
-                        $day = $matches[2];
-                        $year = $matches[3];
-                        $dateStr = "$month $day, $year";
-                        if (strtotime($dateStr) !== false) {
-                            $date = new DateTime($dateStr);
-                        }
-                    }
-                    // Try to extract date from formats like "31-03-2025" or "31/03/2025"
-                    else if (preg_match('/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $value, $matches)) {
-                        $day = $matches[1];
-                        $month = $matches[2];
-                        $year = $matches[3];
-                        $dateStr = "$year-$month-$day";
-                        if (strtotime($dateStr) !== false) {
-                            $date = new DateTime($dateStr);
-                        }
-                    }
-                    
-                    if ($date) {
-                        $today = new DateTime();
-                        $today->setTime(0, 0, 0);
-                        
-                        // If the date has passed, mark as expired
-                        if ($date < $today) {
-                            return 'Expired';
-                        }
-                        
-                        // Return formatted date
-                        return $date->format('F j, Y');
-                    }
-                } catch (Exception $e) {
-                    $debug[] = "ERROR parsing date: " . $e->getMessage();
-                    // Continue to next field
-                }
-            }
-        }
-        
-        // Look for deadline in content as a last resort
-        $post = get_post($post_id);
-        if ($post && !empty($post->post_content)) {
-            $content = $post->post_content;
-            
-            // Look for common deadline patterns
-            $patterns = [
-                '/deadline:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
-                '/due date:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
-                '/closes on:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
-                '/submit by:\s*(\w+\s+\d{1,2},?\s+\d{4})/i',
-                '/applications due:\s*(\w+\s+\d{1,2},?\s+\d{4})/i'
-            ];
-            
-            foreach ($patterns as $pattern) {
-                if (preg_match($pattern, $content, $matches)) {
-                    try {
-                        $dateStr = $matches[1];
-                        $date = new DateTime($dateStr);
-                        
-                        $today = new DateTime();
-                        $today->setTime(0, 0, 0);
-                        
-                        // If the date has passed, mark as expired
-                        if ($date < $today) {
-                            return 'Expired';
-                        }
-                        
-                        // Return formatted date
-                        return $date->format('F j, Y');
-                    } catch (Exception $e) {
-                        $debug[] = "ERROR parsing content date: " . $e->getMessage();
-                        // Continue to next pattern
-                    }
-                }
-            }
-            
-            // Check for "ongoing" or "rolling" mentions in content
-            if (preg_match('/\b(ongoing|rolling|no deadline|open deadline)\b/i', $content)) {
-                return 'Ongoing';
-            }
-        }
-        
-        // Default fallback - assume ongoing 
-        return 'Ongoing';
-    }
-}
-
-/**
- * Format deadline date to consistent format
- */
-if ( ! function_exists( 'format_deadline_date' ) ) {
-    function format_deadline_date($date_string) {
-        if (empty($date_string)) {
-            return 'Ongoing';
-        }
-        
-        // Try multiple date formats
-        $timestamp = false;
-        
-        // Format: YYYY-MM-DD or MM/DD/YYYY
-        if (preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/', $date_string) || preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $date_string)) {
-            $timestamp = strtotime($date_string);
-        }
-        // Format: Month Day, Year (e.g., January 15, 2025)
-        elseif (preg_match('/^([a-zA-Z]+)\s+(\d{1,2}),?\s+(\d{4})$/', $date_string, $matches)) {
-            $timestamp = strtotime("{$matches[1]} {$matches[2]}, {$matches[3]}");
-        }
-        
-        if ($timestamp !== false) {
-            return date('F j, Y', $timestamp);
-        }
-        
-        // If parsing fails, return the original string
-        return $date_string;
-    }
-}
-
-
-
-// Output grants to JS
-add_action('wp_footer', function() {
-    $grants = get_eligibility_checker_grants();
-    if ($grants) {
-        echo '<script>window.grantAuraGrants = ' . wp_json_encode($grants) . ';</script>';
-    }
-}, 999);
-
-// AJAX for enhanced grant fetching
-add_action('wp_ajax_get_grants', 'eligibility_checker_get_grants_ajax');
-add_action('wp_ajax_nopriv_get_grants', 'eligibility_checker_get_grants_ajax');
-if (!function_exists('eligibility_checker_get_grants_ajax')) {
-    function eligibility_checker_get_grants_ajax() {
-        check_ajax_referer('grant_checker_nonce', 'nonce');
-        $grants = get_eligibility_checker_grants();
-        $entity_type = isset($_POST['entity_type']) ? sanitize_text_field(wp_unslash($_POST['entity_type'])) : '';
-        $entity_details = isset($_POST['entity_details']) ? json_decode(wp_unslash($_POST['entity_details']), true) : [];
-
-        // Get keywords for text matching
-        $keywords = isset($entity_details['keywords']) ? $entity_details['keywords'] : [];
-        $description = isset($entity_details['funding_description']) ? $entity_details['funding_description'] : '';
-        
-        $search_terms = [];
-        if (!empty($keywords)) {
-            $search_terms = array_merge($search_terms, $keywords);
-        }
-        
-        if (!empty($description)) {
-            // Extract meaningful words from description (remove common words)
-            $desc_words = preg_split('/\s+/', strtolower($description), -1, PREG_SPLIT_NO_EMPTY);
-            $stop_words = array('a', 'an', 'the', 'and', 'or', 'but', 'if', 'then', 'else', 'when', 'at', 'from', 'by', 'for', 'with', 'about', 'to', 'in', 'on', 'that', 'this', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'can', 'may', 'might');
-            $desc_words = array_filter($desc_words, function($word) use ($stop_words) {
-                return !in_array($word, $stop_words) && strlen($word) > 3;
-            });
-            $search_terms = array_merge($search_terms, $desc_words);
-        }
-        
-        // Pre-filter grants to match basic entity type and location 
-        $filtered_grants = [];
-        foreach ($grants as $grant) {
-            // Skip expired grants
-            if ($grant['deadline'] === 'Expired') {
-                continue;
-            }
-            
-            // Basic entity type matching
-            $entity_patterns = get_entity_type_patterns($entity_type);
-            $matchesEntityType = false;
-            
-            // Check categories, title, and description for entity type matches
-            $searchText = '';
-            if (!empty($grant['categories']) && is_array($grant['categories'])) {
-                $searchText .= ' ' . implode(' ', $grant['categories']);
-            }
-            $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . $grant['eligibility'];
-            $searchText = strtolower($searchText);
-            
-            foreach ($entity_patterns as $pattern) {
-                if (strpos($searchText, strtolower($pattern)) !== false) {
-                    $matchesEntityType = true;
-                    break;
-                }
-            }
-            
-            if (!$matchesEntityType) {
-                // Skip grants that clearly don't match the entity type
-                continue;
-            }
-            
-            // Basic location matching
-            if (!empty($entity_details['location'])) {
-                $userLocation = strtolower($entity_details['location']);
-                $userState = !empty($entity_details['us_state']) ? strtolower($entity_details['us_state']) : '';
-                $userCity = !empty($entity_details['city']) ? strtolower($entity_details['city']) : '';
-                
-                // Prepare grant locations
-                $grantLocations = [];
-                if (!empty($grant['locations']) && is_array($grant['locations'])) {
-                    foreach ($grant['locations'] as $loc) {
-                        $grantLocations[] = strtolower($loc);
-                    }
-                } else if (!empty($grant['location'])) {
-                    $grantLocations[] = strtolower($grant['location']);
-                }
-                
-                // Check for global grants
-                $isGlobalGrant = in_array('global', $grantLocations) || 
-                                in_array('worldwide', $grantLocations) || 
-                                in_array('international', $grantLocations);
-                
-                if ($isGlobalGrant) {
-                    // Global grants match all locations
-                    $filtered_grants[] = $grant;
-                    continue;
-                }
-                
-                // US-specific location matching
-                if ($userLocation === 'united-states') {
-                    // Check for nationwide grants
-                    $isNationwideGrant = in_array('united states', $grantLocations) || 
-                                       in_array('united-states', $grantLocations) || 
-                                       in_array('usa', $grantLocations) || 
-                                       in_array('us', $grantLocations) || 
-                                       in_array('nationwide', $grantLocations) || 
-                                       in_array('national', $grantLocations);
-                    
-                    if ($isNationwideGrant) {
-                        $filtered_grants[] = $grant;
-                        continue;
-                    }
-                    
-                    // Check state match if user provided state
-                    if (!empty($userState)) {
-                        $stateMatch = in_array($userState, $grantLocations) || 
-                                     in_array(str_replace('-', ' ', $userState), $grantLocations);
-                        
-                        if ($stateMatch) {
-                            $filtered_grants[] = $grant;
-                            continue;
-                        }
-                        
-                        // Check city match if provided
-                        if (!empty($userCity)) {
-                            $cityMatch = in_array($userCity, $grantLocations) || 
-                                       in_array(str_replace('-', ' ', $userCity), $grantLocations);
-                            
-                            if ($cityMatch) {
-                                $filtered_grants[] = $grant;
-                                continue;
-                            }
-                        }
-                        
-                        // Check if grant is for a specific city that's not user's city
-                        $isSpecificCityGrant = false;
-                        foreach ($grantLocations as $loc) {
-                            // Check if this looks like a city name and not a state or country
-                            if (preg_match('/^[a-zA-Z\s-]+$/', $loc) && 
-                                !is_state_name($loc) && 
-                                !is_country_name($loc)) {
-                                $isSpecificCityGrant = true;
-                                break;
-                            }
-                        }
-                        
-                        if ($isSpecificCityGrant) {
-                            // Skip grants for specific cities that aren't user's city
-                            continue;
-                        }
-                        
-                        // Check if grant is for a different state
-                        $isDifferentStateGrant = false;
-                        foreach ($grantLocations as $loc) {
-                            if (is_state_name($loc) && 
-                                $loc !== $userState && 
-                                str_replace(' ', '-', $loc) !== $userState && 
-                                str_replace('-', ' ', $loc) !== $userState) {
-                                $isDifferentStateGrant = true;
-                                break;
-                            }
-                        }
-                        
-                        if ($isDifferentStateGrant) {
-                            // Skip grants for different states
-                            continue;
-                        }
-                    }
-                } else {
-                    // Non-US country matching
-                    $countryMatch = in_array($userLocation, $grantLocations) || 
-                                   in_array(str_replace('-', ' ', $userLocation), $grantLocations);
-                    
-                    if ($countryMatch) {
-                        $filtered_grants[] = $grant;
-                        continue;
-                    }
-                    
-                    // Check if grant is for a different country
-                    $isDifferentCountryGrant = false;
-                    foreach ($grantLocations as $loc) {
-                        if (is_country_name($loc) && 
-                            $loc !== $userLocation && 
-                            $loc !== 'global' && 
-                            $loc !== 'worldwide' && 
-                            $loc !== 'international') {
-                            $isDifferentCountryGrant = true;
-                            break;
-                        }
-                    }
-                    
-                    if ($isDifferentCountryGrant) {
-                        // Skip grants for different countries
-                        continue;
-                    }
-                }
-                
-                // Fallback: check for location in eligibility or description as a last resort
-                $eligibilityText = strtolower($grant['eligibility'] . ' ' . $grant['description']);
-                
-                // Check for specific location mentions
-                if (!empty($userCity) && strpos($eligibilityText, strtolower($userCity)) !== false) {
-                    $filtered_grants[] = $grant;
-                    continue;
-                }
-                
-                if (!empty($userState) && 
-                    (strpos($eligibilityText, strtolower($userState)) !== false || 
-                     strpos($eligibilityText, strtolower(str_replace('-', ' ', $userState))) !== false)) {
-                    $filtered_grants[] = $grant;
-                    continue;
-                }
-                
-                if (strpos($eligibilityText, strtolower($userLocation)) !== false || 
-                    strpos($eligibilityText, strtolower(str_replace('-', ' ', $userLocation))) !== false) {
-                    $filtered_grants[] = $grant;
-                    continue;
-                }
-                
-                // Check for nationwide/all states mentions for US users
-                if ($userLocation === 'united-states' && 
-                    (strpos($eligibilityText, 'nationwide') !== false || 
-                     strpos($eligibilityText, 'national') !== false || 
-                     strpos($eligibilityText, 'all states') !== false || 
-                     strpos($eligibilityText, 'any state') !== false || 
-                     strpos($eligibilityText, 'united states') !== false || 
-                     strpos($eligibilityText, 'across america') !== false)) {
-                    $filtered_grants[] = $grant;
-                    continue;
-                }
-                
-                // Skip grants that don't match location criteria
-                continue;
-            } else {
-                // If no location is specified, include the grant
-                $filtered_grants[] = $grant;
-            }
-        }
-        
-        // Enhanced demographic matching
-        if (!empty($entity_details)) {
-            $demographicFiltered = [];
-            
-            // Get demographic patterns
-            $demographicPatterns = [];
-            
-            if ($entity_type === 'for_profit_business' && !empty($entity_details['owner_demographics'])) {
-                $demographicPatterns = get_demographic_patterns($entity_details['owner_demographics'], 'business');
-            } 
-            else if ($entity_type === 'individual' && !empty($entity_details['individual_demographics'])) {
-                $demographicPatterns = get_demographic_patterns($entity_details['individual_demographics'], 'individual');
-            }
-            else if ($entity_type === 'nonprofit' && !empty($entity_details['org_demographics'])) {
-                $demographicPatterns = get_demographic_patterns($entity_details['org_demographics'], 'nonprofit');
-            }
-            
-            // If demographic filters were specified, apply them
-            if (!empty($demographicPatterns)) {
-                foreach ($filtered_grants as $grant) {
-                    $searchText = '';
-                    if (!empty($grant['categories']) && is_array($grant['categories'])) {
-                        $searchText .= ' ' . implode(' ', $grant['categories']);
-                    }
-                    $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . $grant['eligibility'];
-                    $searchText = strtolower($searchText);
-                    
-                    $matchesDemographics = false;
-                    foreach ($demographicPatterns as $pattern) {
-                        if (strpos($searchText, strtolower($pattern)) !== false) {
-                            $matchesDemographics = true;
-                            break;
-                        }
-                    }
-                    
-                    if ($matchesDemographics) {
-                        $grant['demographic_match'] = true;
-                        $demographicFiltered[] = $grant;
-                    } else {
-                        // For grants that don't match demographics
-                        // Check if they're explicitly targeted at other demographics
-                        $isIncompatible = false;
-                        
-                        // If the grant explicitly mentions other demographics but not the user's
-                        $otherDemographics = get_other_demographic_patterns($entity_details, $entity_type);
-                        foreach ($otherDemographics as $otherPattern) {
-                            if (strpos($searchText, strtolower($otherPattern)) !== false) {
-                                $isIncompatible = true;
-                                break;
-                            }
-                        }
-                        
-                        if (!$isIncompatible) {
-                            // If not explicitly incompatible, still include it but mark as no demographic match
-                            $grant['demographic_match'] = false;
-                            $demographicFiltered[] = $grant;
-                        }
-                    }
-                }
-                
-                $filtered_grants = $demographicFiltered;
-            }
-        }
-        
-        // Search for additional matches based on keywords if we have too few grants
-        if (count($filtered_grants) < 5 && !empty($search_terms)) {
-            $additional_grants = [];
-            
-            // Try to find more grants based on keywords
-            foreach ($grants as $grant) {
-                // Skip already included grants
-                $alreadyIncluded = false;
-                foreach ($filtered_grants as $included) {
-                    if ($included['id'] === $grant['id']) {
-                        $alreadyIncluded = true;
-                        break;
-                    }
-                }
-                
-                if ($alreadyIncluded) {
-                    continue;
-                }
-                
-                // Skip expired grants
-                if ($grant['deadline'] === 'Expired') {
-                    continue;
-                }
-                
-                // Check keywords match
-                $searchText = '';
-                if (!empty($grant['categories']) && is_array($grant['categories'])) {
-                    $searchText .= ' ' . implode(' ', $grant['categories']);
-                }
-                $searchText .= ' ' . $grant['title'] . ' ' . $grant['description'] . ' ' . 
-                              $grant['eligibility'] . ' ' . $grant['content'];
-                $searchText = strtolower($searchText);
-                
-                $keywordMatches = 0;
-                foreach ($search_terms as $term) {
-                    if (strpos($searchText, strtolower($term)) !== false) {
-                        $keywordMatches++;
-                    }
-                }
-                
-                if ($keywordMatches >= 2) {
-                    // Mark as keyword match only
-                    $grant['keyword_match'] = true;
-                    $grant['demographic_match'] = false;
-                    $additional_grants[] = $grant;
-                    
-                    // Limit additional grants to 10
-                    if (count($additional_grants) >= 10) {
-                        break;
-                    }
-                }
-            }
-            
-            // Merge additional grants
-            $filtered_grants = array_merge($filtered_grants, $additional_grants);
-        }
-        
-        wp_send_json_success([
-            'grants'         => $filtered_grants,
-            'entity_type'    => $entity_type,
-            'entity_details' => $entity_details,
-            'search_terms'   => $search_terms,
-            'high_priority_fields' => get_high_priority_fields($entity_type)
-        ]);
-    }
-}
-
-/**
- * Get entity type patterns for filtering
- */
-if (!function_exists('get_entity_type_patterns')) {
-    function get_entity_type_patterns($entity_type) {
-        switch ($entity_type) {
-            case 'for_profit_business':
-                return [
-                    'business', 'for-profit', 'company', 'small business', 'startup', 
-                    'entrepreneur', 'for profit', 'business grants', 'business owner',
-                    'grants for for-profit businesses', 'grants for startups'
-                ];
-            case 'nonprofit':
-                return [
-                    'nonprofit', 'non-profit', 'not-for-profit', '501(c)(3)', 'charity', 
-                    'foundation', 'ngo', 'grants for non-profit organizations',
-                    'nonprofit grants', 'community organization'
-                ];
-            case 'individual':
-                return [
-                    'individual', 'person', 'artist', 'student', 'researcher', 'scholar',
-                    'grants for individuals', 'personal grants', 'individual funding'
-                ];
-            case 'institution':
-                return [
-                    'institution', 'organization', 'university', 'college', 'school', 
-                    'hospital', 'museum', 'library', 'grants for institutions',
-                    'grants for educational institutions', 'institutional funding'
-                ];
-            default:
-                return [];
-        }
-    }
-}
-
-/**
- * Get demographic patterns for filtering
- */
-if (!function_exists('get_demographic_patterns')) {
-    function get_demographic_patterns($demographics, $entity_type) {
-        $patterns = [];
-        
-        if (empty($demographics)) {
-            return $patterns;
-        }
-        
-        // Handle "none" case separately
-        if (in_array('none', $demographics)) {
-            return $patterns; // No specific demographic patterns to look for
-        }
-        
-        // Business owner demographics
-        if ($entity_type === 'business') {
-            if (in_array('women_owned', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'women-owned', 'women owned', 'female owned', 'women entrepreneur',
-                    'woman-owned', 'female entrepreneur', 'grants for women', 
-                    'grants for women entrepreneurs', 'women'
-                ]);
-            }
-            
-            if (in_array('minority_owned', $demographics) || in_array('bipoc_owned', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'minority-owned', 'minority owned', 'diverse business', 'bipoc owned',
-                    'poc owned', 'diverse owned', 'grants for black-owned businesses',
-                    'grants for minority', 'grants for bipoc-owned businesses', 
-                    'bipoc', 'black owned'
-                ]);
-            }
-            
-            if (in_array('veteran_owned', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'veteran-owned', 'veteran owned', 'veteran entrepreneurs', 
-                    'vet owned', 'grants for veterans', 'veterans', 'military'
-                ]);
-            }
-            
-            if (in_array('disability_owned', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'disability-owned', 'owned by person with disability', 
-                    'disabled owned', 'differently abled owned', 'grants for disabled',
-                    'disability', 'grants for disabled/special persons'
-                ]);
-            }
-            
-            if (in_array('lgbtqia_owned', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'lgbtqia-owned', 'lgbtq owned', 'lgbt owned', 'lgbtqia owned',
-                    'queer owned', 'grants for lgbtqi', 'lgbtq', 'lgbt'
-                ]);
-            }
-            
-            if (in_array('rural_based', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'rural-based', 'rural', 'small town', 'non-urban', 'countryside',
-                    'rural community', 'rural development'
-                ]);
-            }
-        }
-        // Individual demographics
-        else if ($entity_type === 'individual') {
-            if (in_array('woman', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'women', 'woman', 'female', 'girls', 'gender equity', 
-                    'gender equality', 'grants for women', 'women entrepreneurs'
-                ]);
-            }
-            
-            if (in_array('bipoc', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'bipoc', 'people of color', 'minorities', 'black', 'latina', 
-                    'latino', 'hispanic', 'asian', 'african american', 'diversity',
-                    'grants for bipoc', 'grants for black', 'minority'
-                ]);
-            }
-            
-            if (in_array('veteran', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'veteran', 'veterans', 'military', 'service member', 'ex-military',
-                    'former military', 'armed forces', 'grants for veterans'
-                ]);
-            }
-            
-            if (in_array('disability', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'disability', 'disabilities', 'disabled', 'differently abled',
-                    'special needs', 'accessibility', 'grants for disabled',
-                    'grants for disabled/special persons'
-                ]);
-            }
-            
-            if (in_array('lgbtqia', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'lgbtqia', 'lgbtq', 'lgbt', 'gay', 'lesbian', 'transgender',
-                    'non-binary', 'queer', 'sexual orientation', 'grants for lgbtqi'
-                ]);
-            }
-            
-            if (in_array('student', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'student', 'education', 'school', 'college', 'university',
-                    'grants for students', 'scholarship', 'tuition'
-                ]);
-            }
-            
-            if (in_array('low_income', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'low income', 'low-income', 'economically disadvantaged', 'poverty',
-                    'underserved', 'financial hardship'
-                ]);
-            }
-            
-            if (in_array('rural', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'rural', 'small town', 'non-urban', 'countryside', 'farm',
-                    'agricultural community', 'rural development'
-                ]);
-            }
-            
-            if (in_array('first_gen', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'first generation', 'first-generation', 'first gen', 'first-gen',
-                    'first in family'
-                ]);
-            }
-        }
-        // Organization demographics
-        else if ($entity_type === 'nonprofit') {
-            if (in_array('women_led', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'women-led', 'women led', 'female led', 'women executives',
-                    'female leadership', 'grants for women', 'women'
-                ]);
-            }
-            
-            if (in_array('bipoc_led', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'bipoc-led', 'bipoc led', 'diverse leadership', 'minority led',
-                    'diverse led', 'grants for bipoc', 'bipoc'
-                ]);
-            }
-            
-            if (in_array('veteran_led', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'veteran-led', 'veteran led', 'veteran leadership', 'vet led',
-                    'grants for veterans', 'veterans'
-                ]);
-            }
-            
-            if (in_array('disability_led', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'disability-led', 'led by person with disability', 'disabled led',
-                    'grants for disabled', 'disability'
-                ]);
-            }
-            
-            if (in_array('lgbtqia_led', $demographics)) {
-                $patterns = array_merge($patterns, [
-                    'lgbtqia-led', 'lgbtq led', 'lgbt led', 'lgbtqia led', 'queer led',
-                    'grants for lgbtqi', 'lgbtq'
-                ]);
-            }
-        }
-        
-        return array_unique($patterns);
-    }
-}
-
-/**
- * Get patterns for other demographics (to detect incompatible grants)
- */
-if (!function_exists('get_other_demographic_patterns')) {
-    function get_other_demographic_patterns($entity_details, $entity_type) {
-        $patterns = [];
-        
-        // For business
-        if ($entity_type === 'for_profit_business' && !empty($entity_details['owner_demographics'])) {
-            $selected = $entity_details['owner_demographics'];
-            
-            // Check for exclusive women-focused grants
-            if (!in_array('women_owned', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for women', 'women-owned only', 'female entrepreneurs only'
-                ]);
-            }
-            
-            // Check for exclusive minority-focused grants
-            if (!in_array('minority_owned', $selected) && !in_array('bipoc_owned', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for minorities', 'bipoc-owned only', 'black-owned only'
-                ]);
-            }
-            
-            // Check for exclusive veteran-focused grants
-            if (!in_array('veteran_owned', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for veterans', 'veteran-owned only', 'military only'
-                ]);
-            }
-            
-            // Check for exclusive disability-focused grants
-            if (!in_array('disability_owned', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for people with disabilities', 'disabled-owned only'
-                ]);
-            }
-            
-            // Check for exclusive LGBTQIA-focused grants
-            if (!in_array('lgbtqia_owned', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for lgbtq', 'lgbtq-owned only', 'queer-owned only'
-                ]);
-            }
-        }
-        // For individuals
-        else if ($entity_type === 'individual' && !empty($entity_details['individual_demographics'])) {
-            $selected = $entity_details['individual_demographics'];
-            
-            // Check for exclusive women-focused grants
-            if (!in_array('woman', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for women', 'women only', 'females only'
-                ]);
-            }
-            
-            // Check for exclusive minority-focused grants
-            if (!in_array('bipoc', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for minorities', 'bipoc only', 'people of color only'
-                ]);
-            }
-            
-            // Check for exclusive veteran-focused grants
-            if (!in_array('veteran', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for veterans', 'veterans only', 'military personnel only'
-                ]);
-            }
-            
-            // Check for exclusive disability-focused grants
-            if (!in_array('disability', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for people with disabilities', 'disabled persons only'
-                ]);
-            }
-            
-            // Check for exclusive LGBTQIA-focused grants
-            if (!in_array('lgbtqia', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for lgbtq', 'lgbtq only', 'queer only'
-                ]);
-            }
-            
-            // Student-specific grants
-            if (!in_array('student', $selected)) {
-                $patterns = array_merge($patterns, [
-                    'exclusively for students', 'students only', 'currently enrolled'
-                ]);
-            }
-        }
-        
-        return array_unique($patterns);
-    }
-}
-
-/**
- * Helper function to check if a string is a US state name
- */
-if (!function_exists('is_state_name')) {
-    function is_state_name($str) {
-        $stateNames = [
-            'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 
-            'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 
-            'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 
-            'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 
-            'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 
-            'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 
-            'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 
-            'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 
-            'utah', 'vermont', 'virginia', 'washington', 'west virginia', 
-            'wisconsin', 'wyoming', 'district of columbia'
-        ];
-        
-        // Also include hyphenated versions
-        $hyphenatedStateNames = [];
-        foreach ($stateNames as $state) {
-            $hyphenatedStateNames[] = str_replace(' ', '-', $state);
-        }
-        
-        return in_array(strtolower($str), $stateNames) || 
-               in_array(strtolower($str), $hyphenatedStateNames);
-    }
-}
-
-/**
- * Helper function to check if a string is a country name
- */
-if (!function_exists('is_country_name')) {
-    function is_country_name($str) {
-        $countryNames = [
-            'united states', 'united-states', 'usa', 'us', 'u.s.', 'u.s.a.',
-            'canada', 'mexico', 'uk', 'united kingdom', 'australia',
-            'global', 'worldwide', 'international'
-        ];
-        
-        return in_array(strtolower($str), $countryNames);
-    }
-}
-
-/**
- * Get high priority fields based on entity type
- */
-if (!function_exists('get_high_priority_fields')) {
-    function get_high_priority_fields($entity_type) {
-        switch ($entity_type) {
-            case 'for_profit_business':
-                return ['entity_type', 'business_type', 'owner_demographics', 'industry', 'location'];
-            case 'nonprofit':
-                return ['entity_type', 'nonprofit_type', 'focus_area', 'org_demographics', 'location'];
-            case 'individual':
-                return ['entity_type', 'individual_type', 'individual_demographics', 'location', 'funding_need'];
-            case 'institution':
-                return ['entity_type', 'institution_type', 'tax_status', 'location', 'funding_purpose'];
-            default:
-                return ['entity_type', 'location'];
-        }
-    }
-}
-
-// Register shortcode
-add_shortcode('eligibility_checker', function($atts) {
-    ob_start();
-    ?>
-    <div class="eligibility-checker-container">
-        <!-- Nonce for security -->
-        <div id="grant-checker-nonce" data-nonce="<?php echo wp_create_nonce('grant_checker_nonce'); ?>"></div>
-        
-        <!-- Enhanced Eligibility Checker will be rendered here -->
-        <div class="eligibility-checker" data-section-id="eligibility-checker">
-            <!-- Content will be dynamically generated by JS -->
-        </div>
-    </div>
-    <?php
-    return ob_get_clean();
-});
-[/php]
 </section>
+
