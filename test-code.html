@@ -4428,267 +4428,651 @@ function removeFilterChip(value, container) {
   if (!container) return;
   
   const chip = container.querySelector(`[data-value="${value}"]`);
-  if (chip) {
-    chip.remove();
+    if (chip) chip.remove();
   }
-}
-
-// Debounce utility function to limit search input events
-function debounce(func, wait) {
-  let timeout;
-  return function() {
-    const context = this, args = arguments;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
-  };
-}
-
-// Filter options based on search term
-function filterOptions(container, searchTerm, isLocation = false) {
-  const options = container.querySelectorAll('.grants-filter-checkbox');
-  const term = searchTerm.toLowerCase().trim();
   
-  options.forEach(function(option) {
-    const label = option.querySelector('.grants-filter-option-label').textContent.toLowerCase();
-    const matches = label.includes(term);
-    option.style.display = matches ? '' : 'none';
-  });
-  
-  if (isLocation) {
-    const headers = container.querySelectorAll('.grants-filter-group-header');
-    headers.forEach(function(header) {
-      const groupOptions = header.nextElementSibling;
-      const hasVisibleOptions = Array.from(groupOptions.querySelectorAll('.grants-filter-checkbox')).some(opt => opt.style.display !== 'none');
-      header.style.display = hasVisibleOptions ? '' : 'none';
+  // Update selected chips section based on current filter state
+  function updateSelectedChips(values, group, container) {
+    if (!container) return;
+    
+    // Clear existing chips
+    container.innerHTML = '';
+    
+    // Add a chip for each value
+    values.forEach(function(value) {
+      addFilterChip(value, group, container);
     });
   }
-}
-
-// Update selected chips based on active filter state
-function updateSelectedChips(values, group, container) {
-  if (!container) return;
-  container.innerHTML = '';
-  values.forEach(value => addFilterChip(value, group, container));
-}
-
-// Apply filters to grant cards
-function applyFilters() {
-  showLoading();
   
-  const grantCards = document.querySelectorAll('.g-card');
-  let visibleCount = 0;
-  
-  grantCards.forEach(function(card) {
-    const status = card.dataset.status;
-    const isFeatured = card.dataset.featured === 'true';
-    const amount = card.dataset.amount;
-    const deadlineTimestamp = card.dataset.deadline ? parseInt(card.dataset.deadline, 10) : 0;
-    const locations = card.dataset.locations ? card.dataset.locations.split('|') : [];
-    const categories = card.dataset.categories ? card.dataset.categories.split('|') : [];
-    const eligibleEntities = card.dataset.eligibleEntities ? card.dataset.eligibleEntities.split('|') : [];
+  // Filter options based on search input
+  function filterOptions(container, searchTerm, includeHeaders = false) {
+    if (!container) return;
     
-    const passesStatusFilter = activeFilterState.status.length === 0 || activeFilterState.status.includes(status);
-    const passesFeaturedFilter = activeFilterState.featured.length === 0 || 
-      (activeFilterState.featured.includes('true') && isFeatured) || 
-      (activeFilterState.featured.includes('false') && !isFeatured);
+    const lowerSearchTerm = searchTerm.toLowerCase().trim();
+    let optionsVisible = 0;
     
-    let passesAmountFilter = true;
-    if (amount !== 'varies') {
-      const amountValue = parseInt(amount, 10);
-      if (activeFilterState.amount.min !== null) {
-        passesAmountFilter = passesAmountFilter && amountValue >= activeFilterState.amount.min;
-      }
-      if (activeFilterState.amount.max !== null) {
-        passesAmountFilter = passesAmountFilter && amountValue <= activeFilterState.amount.max;
-      }
-    } else {
-      if ((activeFilterState.amount.min !== null || activeFilterState.amount.max !== null) && !activeFilterState.amount.includeVaries) {
-        passesAmountFilter = false;
-      }
-    }
+    // Get all checkbox options (not group headers)
+    const options = container.querySelectorAll('.grants-filter-checkbox');
     
-    let passesTimeframeFilter = true;
-    if (activeFilterState.timeframe.length > 0 && deadlineTimestamp > 0) {
-      const now = Math.floor(Date.now() / 1000);
-      const dayEnd = now + (24 * 60 * 60);
-      const weekEnd = now + (7 * 24 * 60 * 60);
-      const monthEnd = now + (30 * 24 * 60 * 60);
-      const quarterEnd = now + (90 * 24 * 60 * 60);
+    options.forEach(function(option) {
+      const label = option.querySelector('.grants-filter-option-label');
+      if (!label) return;
       
-      passesTimeframeFilter = activeFilterState.timeframe.some(function(tf) {
-        if (tf === 'today' && deadlineTimestamp <= dayEnd) return true;
-        if (tf === 'week' && deadlineTimestamp <= weekEnd) return true;
-        if (tf === 'month' && deadlineTimestamp <= monthEnd) return true;
-        if (tf === 'quarter' && deadlineTimestamp <= quarterEnd) return true;
-        return false;
+      const text = label.textContent.toLowerCase();
+      const matches = text.includes(lowerSearchTerm);
+      
+      option.style.display = matches ? '' : 'none';
+      
+      if (matches) {
+        optionsVisible++;
+        
+        // Highlight matching text if there's a search term
+        if (lowerSearchTerm && label.innerHTML === label.textContent) {
+          const regex = new RegExp(`(${lowerSearchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+          label.innerHTML = label.textContent.replace(regex, '<span style="background-color:rgba(90,59,140,0.1);font-weight:bold;">$1</span>');
+        }
+      } else if (lowerSearchTerm && label.innerHTML !== label.textContent) {
+        // Reset highlighting if no match
+        label.innerHTML = label.textContent;
+      }
+    });
+    
+    // Handle group headers visibility if included
+    if (includeHeaders) {
+      const headers = container.querySelectorAll('.grants-filter-group-header');
+      
+      // First hide all headers
+      headers.forEach(header => {
+        header.style.display = 'none';
+      });
+      
+      // Then show headers that have visible options
+      options.forEach(option => {
+        if (option.style.display !== 'none') {
+          let prevEl = option.previousElementSibling;
+          while (prevEl) {
+            if (prevEl.classList.contains('grants-filter-group-header')) {
+              prevEl.style.display = '';
+              break;
+            }
+            prevEl = prevEl.previousElementSibling;
+          }
+        }
       });
     }
     
-    const passesEligibleFilter = activeFilterState.eligibleEntities.length === 0 || 
-      activeFilterState.eligibleEntities.some(entity => eligibleEntities.includes(entity));
-    const passesCategoryFilter = activeFilterState.categories.length === 0 || 
-      activeFilterState.categories.some(category => categories.includes(category));
-    const passesLocationFilter = activeFilterState.locations.length === 0 || 
-      activeFilterState.locations.some(location => locations.includes(location));
+    // Show no results message if needed
+    let noResults = container.querySelector('.grants-filter-no-results');
     
-    const isVisible = checkConditions([
-      passesStatusFilter,
-      passesFeaturedFilter,
-      passesAmountFilter,
-      passesTimeframeFilter,
-      passesEligibleFilter,
-      passesCategoryFilter,
-      passesLocationFilter
-    ]);
-    
-    card.style.display = isVisible ? '' : 'none';
-    if (isVisible) visibleCount++;
-  });
-  
-  noFilteredGrants.classList.toggle('active', visibleCount === 0);
-  updateActiveFiltersDisplay();
-  hideLoading();
-}
-
-// Update the display of active filters
-function updateActiveFiltersDisplay() {
-  activeFilters.innerHTML = '';
-  
-  function addActiveFilterChip(label, group, displayValue, filterKey) {
-    const chip = document.createElement('div');
-    chip.className = 'grants-active-filter';
-    chip.innerHTML = `<strong>${label}:</strong> ${displayValue} <button type="button" class="grants-active-filter-remove" aria-label="Remove ${displayValue} from ${label}">×</button>`;
-    
-    chip.querySelector('.grants-active-filter-remove').addEventListener('click', function() {
-      if (group === 'amount') {
-        if (filterKey === 'min') activeFilterState.amount.min = null;
-        else if (filterKey === 'max') activeFilterState.amount.max = null;
-        else if (filterKey === 'includeVaries') activeFilterState.amount.includeVaries = false;
+    if (optionsVisible === 0) {
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'grants-filter-no-results';
+        noResults.innerHTML = `
+          <p>No matches found for "${searchTerm}". Try a different search term.</p>
+        `;
+        container.appendChild(noResults);
       } else {
-        const index = activeFilterState[group].indexOf(filterKey);
-        if (index !== -1) activeFilterState[group].splice(index, 1);
+        noResults.innerHTML = `
+          <p>No matches found for "${searchTerm}". Try a different search term.</p>
+        `;
+        noResults.style.display = '';
       }
-      applyFilters();
-      updateActiveFiltersDisplay();
-    });
-    
-    activeFilters.appendChild(chip);
+    } else if (noResults) {
+      noResults.style.display = 'none';
+    }
   }
   
-  if (activeFilterState.amount.min !== null) addActiveFilterChip('Amount', 'amount', `Min: $${activeFilterState.amount.min.toLocaleString()}`, 'min');
-  if (activeFilterState.amount.max !== null) addActiveFilterChip('Amount', 'amount', `Max: $${activeFilterState.amount.max.toLocaleString()}`, 'max');
-  if (activeFilterState.amount.includeVaries) addActiveFilterChip('Amount', 'amount', 'Include Various Benefits', 'includeVaries');
+  // Handle amount range inputs
+  const amountMin = document.getElementById('amount-min');
+  const amountMax = document.getElementById('amount-max');
+  const amountVaries = document.getElementById('amount-varies');
   
-  const timeframeLabels = { 'today': 'Ending Today', 'week': 'Ending This Week', 'month': 'Ending This Month', 'quarter': 'Ending This Quarter' };
-  activeFilterState.timeframe.forEach(tf => addActiveFilterChip('Timeframe', 'timeframe', timeframeLabels[tf] || tf, tf));
-  activeFilterState.eligibleEntities.forEach(entity => addActiveFilterChip('Eligibility', 'eligibleEntities', entity, entity));
-  activeFilterState.categories.forEach(category => addActiveFilterChip('Category', 'categories', category, category));
-  activeFilterState.locations.forEach(location => addActiveFilterChip('Location', 'locations', location, location));
-  
-  const totalFilters = 
-    (activeFilterState.amount.min !== null ? 1 : 0) +
-    (activeFilterState.amount.max !== null ? 1 : 0) +
-    (activeFilterState.amount.includeVaries ? 1 : 0) +
-    activeFilterState.timeframe.length +
-    activeFilterState.eligibleEntities.length +
-    activeFilterState.categories.length +
-    activeFilterState.locations.length;
-  
-  filterCount.textContent = totalFilters || '';
-  filterCount.classList.toggle('active', totalFilters > 0);
-  activeFilters.classList.toggle('active', totalFilters > 0);
-}
-
-// Reset all filters
-if (filterReset) {
-  filterReset.addEventListener('click', function() {
-    activeFilterState = { 
-      status: [], 
-      featured: [], 
-      amount: { min: null, max: null, includeVaries: false }, 
-      timeframe: [], 
-      eligibleEntities: [], 
-      categories: [], 
-      locations: [] 
-    };
-    document.querySelectorAll('.grants-filter-selected').forEach(container => container.innerHTML = '');
-    document.querySelectorAll('.grants-filter-checkbox input[type="checkbox"]').forEach(checkbox => {
-      checkbox.checked = false;
-      checkbox.closest('.grants-filter-checkbox')?.classList.remove('selected');
+  if (amountMin) {
+    amountMin.addEventListener('input', function() {
+      activeFilterState.amount.min = this.value !== '' ? parseInt(this.value, 10) : null;
+      updateMatchingGrantsCount();
     });
-    document.getElementById('amount-min').value = '';
-    document.getElementById('amount-max').value = '';
-    navigateToStep(1);
-    updateSummaryView();
-    updateMatchingGrantsCount();
-    updateActiveFiltersDisplay();
+  }
+  
+  if (amountMax) {
+    amountMax.addEventListener('input', function() {
+      activeFilterState.amount.max = this.value !== '' ? parseInt(this.value, 10) : null;
+      updateMatchingGrantsCount();
+    });
+  }
+  
+  if (amountVaries) {
+    amountVaries.addEventListener('change', function() {
+      activeFilterState.amount.includeVaries = this.checked;
+      const amountVariesLabel = document.querySelector(`label[for="${amountVaries.id}"]`);
+      if (amountVariesLabel) {
+        amountVariesLabel.classList.toggle('selected', this.checked);
+      }
+      updateMatchingGrantsCount();
+    });
+  }
+  
+  // Handle timeframe filters
+  document.querySelectorAll('input[type="checkbox"][data-filter-group="timeframe"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const value = this.value;
+      const isChecked = this.checked;
+      const label = this.closest('.grants-filter-checkbox');
+      
+      if (label) {
+        label.classList.toggle('selected', isChecked);
+      }
+      
+      if (isChecked) {
+        // Add to active filters
+        if (!activeFilterState.timeframe.includes(value)) {
+          activeFilterState.timeframe.push(value);
+        }
+      } else {
+        // Remove from active filters
+        const index = activeFilterState.timeframe.indexOf(value);
+        if (index !== -1) {
+          activeFilterState.timeframe.splice(index, 1);
+        }
+      }
+      
+      updateMatchingGrantsCount();
+    });
   });
-}
-
-// Reset filters from "no filtered grants" message
-if (resetFiltersBtn) {
-  resetFiltersBtn.addEventListener('click', function() {
-    activeFilterState = { 
-      status: [], 
-      featured: [], 
-      amount: { min: null, max: null, includeVaries: false }, 
-      timeframe: [], 
-      eligibleEntities: [], 
-      categories: [], 
-      locations: [] 
+  
+  // Reset filters
+  if (filterReset) {
+    filterReset.addEventListener('click', function() {
+      resetFilters();
+      updateMatchingGrantsCount();
+    });
+  }
+  
+  // Reset filters from no results message
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', function() {
+      resetFilters();
+      applyFilters();
+    });
+  }
+  
+  // Debounce function to limit how often a function is called
+  function debounce(func, wait) {
+    let timeout;
+    return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        func.apply(context, args);
+      }, wait);
     };
-    document.querySelectorAll('.g-card').forEach(card => card.style.display = '');
-    noFilteredGrants.classList.remove('active');
-    activeFilters.innerHTML = '';
-    filterCount.textContent = '';
-    filterCount.classList.remove('active');
-    updateActiveFiltersDisplay();
-  });
-}
-
-// Event listeners for amount filters
-const amountMinInput = document.getElementById('amount-min');
-const amountMaxInput = document.getElementById('amount-max');
-const includeVariesCheckbox = document.getElementById('amount-varies');
-
-if (amountMinInput) {
-  amountMinInput.addEventListener('input', function() {
-    activeFilterState.amount.min = this.value ? parseInt(this.value, 10) : null;
-    updateMatchingGrantsCount();
-  });
-}
-
-if (amountMaxInput) {
-  amountMaxInput.addEventListener('input', function() {
-    activeFilterState.amount.max = this.value ? parseInt(this.value, 10) : null;
-    updateMatchingGrantsCount();
-  });
-}
-
-if (includeVariesCheckbox) {
-  includeVariesCheckbox.addEventListener('change', function() {
-    activeFilterState.amount.includeVaries = this.checked;
-    updateMatchingGrantsCount();
-  });
-}
-
-// Event listeners for timeframe checkboxes
-const timeframeCheckboxes = document.querySelectorAll('input[name="timeframe"]');
-timeframeCheckboxes.forEach(checkbox => {
-  checkbox.addEventListener('change', function() {
-    const value = this.value;
-    if (this.checked) {
-      if (!activeFilterState.timeframe.includes(value)) activeFilterState.timeframe.push(value);
-    } else {
-      const index = activeFilterState.timeframe.indexOf(value);
-      if (index !== -1) activeFilterState.timeframe.splice(index, 1);
+  }
+  
+  // Reset all filters
+  function resetFilters() {
+    // Reset filter state
+    activeFilterState = {
+      status: [],
+      featured: [],
+      amount: {
+        min: null,
+        max: null,
+        includeVaries: false
+      },
+      timeframe: [],
+      eligibleEntities: [],
+      categories: [],
+      locations: []
+    };
+    
+    // Reset form inputs
+    if (amountMin) amountMin.value = '';
+    if (amountMax) amountMax.value = '';
+    if (amountVaries) amountVaries.checked = false;
+    
+    // Reset checkboxes
+    document.querySelectorAll('input[type="checkbox"][data-filter-group]').forEach(function(checkbox) {
+      checkbox.checked = false;
+      const option = checkbox.closest('.grants-filter-checkbox, .grants-filter-radio');
+      if (option) option.classList.remove('selected');
+    });
+    
+    // Clear selected chips
+    document.querySelectorAll('.grants-filter-selected').forEach(function(container) {
+      container.innerHTML = '';
+    });
+    
+    // Reset filter count
+    if (filterCount) {
+      filterCount.textContent = '';
+      filterCount.classList.remove('active');
     }
-    updateMatchingGrantsCount();
-  });
-});
-
-// Initial setup
-initCountdowns();
+    
+    // Reset filter button
+    if (filterToggle) {
+      filterToggle.classList.remove('active');
+    }
+    
+    // Clear active filters display
+    if (activeFilters) {
+      activeFilters.innerHTML = '';
+      activeFilters.classList.remove('active');
+    }
+    
+    // Update summary view
+    updateSummaryView();
+  }
+  
+  // Apply filters
+  function applyFilters() {
+    showLoading();
+    
+    // Small delay to allow loading state to render
+    setTimeout(function() {
+      // Get all grant cards
+      const grantCards = document.querySelectorAll('.g-card');
+      
+      // Count visible grants
+      let visibleCount = 0;
+      
+      // Check if any filters are active
+      const hasActiveFilters = 
+        activeFilterState.status.length > 0 ||
+        activeFilterState.featured.length > 0 ||
+        activeFilterState.amount.min !== null ||
+        activeFilterState.amount.max !== null ||
+        activeFilterState.amount.includeVaries ||
+        activeFilterState.timeframe.length > 0 ||
+        activeFilterState.eligibleEntities.length > 0 ||
+        activeFilterState.categories.length > 0 ||
+        activeFilterState.locations.length > 0;
+      
+      // Update filter count badge
+      const totalActiveFilters = 
+        activeFilterState.status.length +
+        activeFilterState.featured.length +
+        (activeFilterState.amount.min !== null ? 1 : 0) +
+        (activeFilterState.amount.max !== null ? 1 : 0) +
+        (activeFilterState.amount.includeVaries ? 1 : 0) +
+        activeFilterState.timeframe.length +
+        activeFilterState.eligibleEntities.length +
+        activeFilterState.categories.length +
+        activeFilterState.locations.length;
+      
+      if (filterCount) {
+        if (totalActiveFilters > 0) {
+          filterCount.textContent = totalActiveFilters;
+          filterCount.classList.add('active');
+          filterToggle.classList.add('active');
+        } else {
+          filterCount.textContent = '';
+          filterCount.classList.remove('active');
+          filterToggle.classList.remove('active');
+        }
+      }
+      
+      // Generate active filters display
+      generateActiveFiltersDisplay();
+      
+      // If no filters active, show all grants
+      if (!hasActiveFilters) {
+        grantCards.forEach(function(card) {
+          card.style.display = '';
+          visibleCount++;
+        });
+      } else {
+        // Apply filters to each grant card
+        grantCards.forEach(function(card) {
+          // Get data from card attributes
+          const status = card.dataset.status;
+          const isFeatured = card.dataset.featured === 'true';
+          const amount = card.dataset.amount;
+          const deadlineTimestamp = card.dataset.deadline ? parseInt(card.dataset.deadline, 10) : 0;
+          const locations = card.dataset.locations ? card.dataset.locations.split('|') : [];
+          const categories = card.dataset.categories ? card.dataset.categories.split('|') : [];
+          const eligibleEntities = card.dataset.eligibleEntities ? card.dataset.eligibleEntities.split('|') : [];
+          
+          // Check each filter category
+          const passesStatusFilter = activeFilterState.status.length === 0 || activeFilterState.status.includes(status);
+          
+          const passesFeaturedFilter = activeFilterState.featured.length === 0 || 
+            (activeFilterState.featured.includes('true') && isFeatured) || 
+            (activeFilterState.featured.includes('false') && !isFeatured);
+          
+          // Amount filter logic
+          let passesAmountFilter = true;
+          if (amount !== 'varies') {
+            const amountValue = parseInt(amount, 10);
+            if (activeFilterState.amount.min !== null) {
+              passesAmountFilter = passesAmountFilter && amountValue >= activeFilterState.amount.min;
+            }
+            if (activeFilterState.amount.max !== null) {
+              passesAmountFilter = passesAmountFilter && amountValue <= activeFilterState.amount.max;
+            }
+          } else {
+            // If "varies" and includeVaries is false, and we have min/max filters, this should not pass
+            if ((activeFilterState.amount.min !== null || activeFilterState.amount.max !== null) && !activeFilterState.amount.includeVaries) {
+              passesAmountFilter = false;
+            }
+          }
+          
+          // Time frame filter
+          let passesTimeframeFilter = true;
+          if (activeFilterState.timeframe.length > 0 && deadlineTimestamp > 0) {
+            const now = Math.floor(Date.now() / 1000);
+            const hasToday = activeFilterState.timeframe.includes('today');
+            const hasWeek = activeFilterState.timeframe.includes('week');
+            const hasMonth = activeFilterState.timeframe.includes('month');
+            const hasQuarter = activeFilterState.timeframe.includes('quarter');
+            
+            const dayEnd = now + (24 * 60 * 60);
+            const weekEnd = now + (7 * 24 * 60 * 60);
+            const monthEnd = now + (30 * 24 * 60 * 60);
+            const quarterEnd = now + (90 * 24 * 60 * 60);
+            
+            passesTimeframeFilter = false;
+            
+            if (hasToday && deadlineTimestamp <= dayEnd) {
+              passesTimeframeFilter = true;
+            } else if (hasWeek && deadlineTimestamp <= weekEnd) {
+              passesTimeframeFilter = true;
+            } else if (hasMonth && deadlineTimestamp <= monthEnd) {
+              passesTimeframeFilter = true;
+            } else if (hasQuarter && deadlineTimestamp <= quarterEnd) {
+              passesTimeframeFilter = true;
+            }
+          }
+          
+          // Eligible entities filter
+          const passesEligibleFilter = activeFilterState.eligibleEntities.length === 0 || 
+            activeFilterState.eligibleEntities.some(entity => eligibleEntities.includes(entity));
+          
+          // Categories filter
+          const passesCategoryFilter = activeFilterState.categories.length === 0 || 
+            activeFilterState.categories.some(category => categories.includes(category));
+          
+          // Locations filter
+          const passesLocationFilter = activeFilterState.locations.length === 0 || 
+            activeFilterState.locations.some(location => locations.includes(location));
+          
+          // Combined filter result
+          const isVisible = checkConditions([
+            passesStatusFilter,
+            passesFeaturedFilter,
+            passesAmountFilter,
+            passesTimeframeFilter,
+            passesEligibleFilter,
+            passesCategoryFilter,
+            passesLocationFilter
+          ]);
+          
+          // Update card visibility
+          card.style.display = isVisible ? '' : 'none';
+          
+          if (isVisible) {
+            visibleCount++;
+          }
+        });
+      }
+      
+      // Update result count
+      if (filterResultCount) {
+        if (hasActiveFilters) {
+          filterResultCount.innerHTML = `Showing <strong>${visibleCount}</strong> matching grant${visibleCount !== 1 ? 's' : ''}`;
+        } else {
+          filterResultCount.innerHTML = 'Showing all grants';
+        }
+      }
+      
+      // Show/hide no results message
+      if (noFilteredGrants) {
+        if (visibleCount === 0 && hasActiveFilters) {
+          noFilteredGrants.classList.add('active');
+        } else {
+          noFilteredGrants.classList.remove('active');
+        }
+      }
+      
+      hideLoading();
+    }, 300);
+  }
+  
+  // Generate active filters display for main page
+  function generateActiveFiltersDisplay() {
+    if (!activeFilters) return;
+    
+    // Clear current active filters
+    activeFilters.innerHTML = '';
+    
+    // Track if we have any active filters
+    let hasActiveFilters = false;
+    
+    // Amount filters
+    if (activeFilterState.amount.min !== null) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Min Amount', '$' + activeFilterState.amount.min.toLocaleString(), 'amount', 'min');
+    }
+    
+    if (activeFilterState.amount.max !== null) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Max Amount', '$' + activeFilterState.amount.max.toLocaleString(), 'amount', 'max');
+    }
+    
+    if (activeFilterState.amount.includeVaries) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Amount', 'Include Various Benefits', 'amount', 'varies');
+    }
+    
+    // Timeframe filters
+    activeFilterState.timeframe.forEach(function(timeframe) {
+      hasActiveFilters = true;
+      let timeframeLabel = '';
+      
+      switch(timeframe) {
+        case 'today':
+          timeframeLabel = 'Ending Today';
+          break;
+        case 'week':
+          timeframeLabel = 'Ending This Week';
+          break;
+        case 'month':
+          timeframeLabel = 'Ending This Month';
+          break;
+        case 'quarter':
+          timeframeLabel = 'Ending This Quarter';
+          break;
+      }
+      
+      addActiveFilterTag('Timeframe', timeframeLabel, 'timeframe', timeframe);
+    });
+    
+    // Eligible entities filters
+    activeFilterState.eligibleEntities.forEach(function(entity) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Eligible', entity, 'eligibleEntities', entity);
+    });
+    
+    // Categories filters
+    activeFilterState.categories.forEach(function(category) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Category', category, 'categories', category);
+    });
+    
+    // Locations filters
+    activeFilterState.locations.forEach(function(location) {
+      hasActiveFilters = true;
+      addActiveFilterTag('Location', location, 'locations', location);
+    });
+    
+    // Show/hide active filters container
+    if (hasActiveFilters) {
+      activeFilters.classList.add('active');
+    } else {
+      activeFilters.classList.remove('active');
+    }
+  }
+  
+  // Add active filter tag to main display
+  function addActiveFilterTag(type, value, filterGroup, filterValue) {
+    const tag = document.createElement('div');
+    tag.className = 'grants-active-filter';
+    tag.innerHTML = `
+      <strong>${type}:</strong> ${value}
+      <button type="button" class="grants-active-filter-remove" data-filter-group="${filterGroup}" data-filter-value="${filterValue}" aria-label="Remove ${type} filter: ${value}">×</button>
+    `;
+    activeFilters.appendChild(tag);
+    
+    // Add event listener to remove button
+    const removeBtn = tag.querySelector('.grants-active-filter-remove');
+    removeBtn.addEventListener('click', function() {
+      removeActiveFilter(this.dataset.filterGroup, this.dataset.filterValue);
+    });
+  }
+  
+  // Remove active filter
+  function removeActiveFilter(filterGroup, filterValue) {
+    if (filterGroup === 'amount') {
+      if (filterValue === 'min') {
+        activeFilterState.amount.min = null;
+        if (amountMin) amountMin.value = '';
+      } else if (filterValue === 'max') {
+        activeFilterState.amount.max = null;
+        if (amountMax) amountMax.value = '';
+      } else if (filterValue === 'varies') {
+        activeFilterState.amount.includeVaries = false;
+        if (amountVaries) amountVaries.checked = false;
+        const amountVariesLabel = document.querySelector(`label[for="${amountVaries.id}"]`);
+        if (amountVariesLabel) {
+          amountVariesLabel.classList.remove('selected');
+        }
+      }
+    } else {
+      const index = activeFilterState[filterGroup].indexOf(filterValue);
+      if (index !== -1) {
+        activeFilterState[filterGroup].splice(index, 1);
+        
+        // Uncheck corresponding checkbox
+        const checkbox = document.querySelector(`input[type="checkbox"][data-filter-group="${filterGroup}"][value="${filterValue}"]`);
+        if (checkbox) {
+          checkbox.checked = false;
+          const option = checkbox.closest('.grants-filter-checkbox');
+          if (option) option.classList.remove('selected');
+        }
+        
+        // Remove filter chip from step view
+        let chipContainer;
+        switch(filterGroup) {
+          case 'eligibleEntities':
+            chipContainer = document.getElementById('eligibility-selected');
+            break;
+          case 'categories':
+            chipContainer = document.getElementById('category-selected');
+            break;
+          case 'locations':
+            chipContainer = document.getElementById('location-selected');
+            break;
+        }
+        
+        if (chipContainer) {
+          removeFilterChip(filterValue, chipContainer);
+        }
+      }
+    }
+    
+    // Reapply filters
+    applyFilters();
+  }
+  
+  // Improve performance by loading only currently visible cards
+  function handleIntersection(entries, observer) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        const images = card.querySelectorAll('img[loading="lazy"]');
+        
+        images.forEach(function(img) {
+          // Replace lazy loading with eager for visible cards
+          img.loading = 'eager';
+          
+          // Prefetch next image if available
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+        });
+        
+        // Stop observing this card
+        observer.unobserve(card);
+      }
+    });
+  }
+  
+  // Function to handle intersection for currently visible cards
+  function handleIntersectionForVisible() {
+    const visibleCards = document.querySelectorAll('.g-card[style=""]');
+    visibleCards.forEach(function(card) {
+      const images = card.querySelectorAll('img[loading="lazy"]');
+      
+      images.forEach(function(img) {
+        img.loading = 'eager';
+        
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+      });
+    });
+  }
+  
+  // Set up intersection observer for lazy loading
+  if ('IntersectionObserver' in window) {
+    const cardObserver = new IntersectionObserver(handleIntersection, {
+      rootMargin: '200px', // Load images when they're 200px from entering viewport
+      threshold: 0.1
+    });
+    
+    // Observe all cards
+    document.querySelectorAll('.g-card').forEach(function(card) {
+      cardObserver.observe(card);
+    });
+  } else {
+    // Fallback for browsers without IntersectionObserver support
+    document.querySelectorAll('.g-card img[loading="lazy"]').forEach(function(img) {
+      img.loading = 'eager';
+    });
+  }
+  
+  // Add accessibility improvements
+  function improveAccessibility() {
+    // Make clickable tags accessible via keyboard
+    document.querySelectorAll('.g-card__tag, .g-card__location-link').forEach(function(element) {
+      element.setAttribute('role', 'link');
+      if (!element.getAttribute('tabindex')) {
+        element.setAttribute('tabindex', '0');
+      }
+    });
+    
+    // Make filter steps accessible
+    document.querySelectorAll('.grants-filter-step').forEach(function(step) {
+      step.setAttribute('tabindex', '0');
+      step.setAttribute('role', 'button');
+      
+      step.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigateToStep(parseInt(this.dataset.step, 10));
+        }
+      });
+    });
+  }
+  
+  // Initialize countdowns
+  initCountdowns();
+  
+  // Run accessibility improvements
+  improveAccessibility();
 });
 // ]]>
 </script>
