@@ -1,3 +1,4 @@
+<!-- Grants Listing Section -->
 <section class="grants-listing-section" data-section-id="grants-main-listing">
   <style>
     .grants-listing-section {
@@ -7,33 +8,31 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
       background-color: var(--grantaura-gray-50);
     }
-    
     @media (min-width: 640px) {
-      .grants-listing-section {
-        padding: 1rem;
-      }
-    }
-    
-    @media (min-width: 768px) {
-      .grants-listing-section {
-        padding: 1.5rem;
-        max-width: 96%; /* Further adjusted for medium screens */
-      }
-    }
-    
-    @media (min-width: 1280px) {
-      .grants-listing-section {
-        max-width: 95%; /* Adjusted for large screens */
-      }
-    }
-    
-    @media (min-width: 1600px) {
-      .grants-listing-section {
-        max-width: 90%; /* For very large screens, allow some margin but use more space */
-      }
-    }
+  .grants-listing-section {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .grants-listing-section {
+    padding: 1.5rem;
+    max-width: 96%; /* Further adjusted for medium screens */
+  }
+}
+
+@media (min-width: 1280px) {
+  .grants-listing-section {
+    max-width: 95%; /* Adjusted for large screens */
+  }
+}
+
+@media (min-width: 1600px) {
+  .grants-listing-section {
+    max-width: 90%; /* For very large screens, allow some margin but use more space */
+  }
+}
   </style>
-  
   <div class="grants-container">
     <style>
       .grants-container {
@@ -42,1826 +41,1871 @@
         gap: 1.25rem;
         width: 100%;
       }
-      
-      @media (min-width: 640px) {
-        .grants-container {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.5rem;
-        }
-      }
-      
-      @media (min-width: 1024px) {
-        .grants-container {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.75rem; /* Reduced gap slightly */
-        }
-      }
-      
-      @media (min-width: 1440px) {
-        .grants-container {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1.5rem; /* Further reduced gap for 4 columns */
-        }
-      }
-    </style>
-    
-    [php]
-    // Set up pagination variables
-    $paged = get_query_var('paged') ? get_query_var('paged') : 1;
-    $posts_per_page = 12; // Number of posts to show per page
-    
-    // First, get featured grants
-    $featured_args = array(
-      'post_type' => 'at_biz_dir',
-      'posts_per_page' => -1, // Get all featured posts
-      'meta_query' => array(
-        'relation' => 'OR',
-        // Check for featured meta with value 1
-        array(
-          'key' => 'featured',
-          'value' => array('1', 'yes', 'true', 'on'),
-          'compare' => 'IN',
-        ),
-        // Check for _featured meta with value 1
-        array(
-          'key' => '_featured',
-          'value' => array('1', 'yes', 'true', 'on'),
-          'compare' => 'IN',
-        ),
-      ),
-      'orderby' => 'date',
-      'order' => 'DESC'
-    );
-    
-    // Run query for featured grants
-    $featured_query = new WP_Query($featured_args);
-    $has_featured_posts = $featured_query->have_posts();
-    $featured_post_ids = array();
-    
-    // Store featured post IDs
-    if ($has_featured_posts) {
-      while ($featured_query->have_posts()) {
-        $featured_query->the_post();
-        $featured_post_ids[] = get_the_ID();
-      }
-      wp_reset_postdata();
+  @media (min-width: 640px) {
+    .grants-container {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
     }
+  }
+  
+  @media (min-width: 1024px) {
+    .grants-container {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem; /* Reduced gap slightly */
+    }
+  }
+  
+  @media (min-width: 1440px) {
+    .grants-container {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem; /* Further reduced gap for 4 columns */
+    }
+  }
+</style>
+
+[php]
+// CRITICAL FIX: Check for both 'page' and 'paged' parameters to support homepage pagination
+$is_front_page = is_front_page();
+$page_num = 1;
+
+if ($is_front_page) {
+  // For homepage, check 'page' parameter first
+  $page_var = get_query_var('page');
+  $paged_var = get_query_var('paged');
+  $has_page_var = !empty($page_var);
+  $has_paged_var = !empty($paged_var);
+  
+  if ($has_page_var) {
+    $page_num = $page_var;
+  } else if ($has_paged_var) {
+    $page_num = $paged_var;
+  }
+} else {
+  // For other pages, use 'paged' parameter
+  $paged_var = get_query_var('paged');
+  $has_paged_var = !empty($paged_var);
+  
+  if ($has_paged_var) {
+    $page_num = $paged_var;
+  }
+}
+
+// Ensure we have a valid page number (minimum 1)
+$page_num = max(1, intval($page_num));
+
+// Set up pagination variables
+$paged = $page_num;
+$posts_per_page = 12; // Number of posts to show per page
+
+/* 
+ * NOTE: The rest of the code remains identical to your original code.
+ * For brevity, I'm not including it all here, but you should copy everything
+ * below this point from your existing code.
+ */
+
+// First, get featured grants
+$featured_args = array(
+  'post_type' => 'at_biz_dir',
+  'posts_per_page' => -1, // Get all featured posts
+  'meta_query' => array(
+    'relation' => 'OR',
+    // Check for featured meta with value 1
+    array(
+      'key' => 'featured',
+      'value' => array('1', 'yes', 'true', 'on'),
+      'compare' => 'IN',
+    ),
+    // Check for _featured meta with value 1
+    array(
+      'key' => '_featured',
+      'value' => array('1', 'yes', 'true', 'on'),
+      'compare' => 'IN',
+    ),
+  ),
+  'orderby' => 'date',
+  'order' => 'DESC'
+);
+
+// Run query for featured grants
+$featured_query = new WP_Query($featured_args);
+$has_featured_posts = $featured_query->have_posts();
+$featured_post_ids = array();
+
+// Store featured post IDs
+if ($has_featured_posts) {
+  while ($featured_query->have_posts()) {
+    $featured_query->the_post();
+    $featured_post_ids[] = get_the_ID();
+  }
+  wp_reset_postdata();
+}
+
+// Fallback: If no featured posts found with direct meta keys, 
+// search for any meta key containing 'featured'
+if (empty($featured_post_ids)) {
+  global $wpdb;
+  $query = "
+    SELECT DISTINCT post_id 
+    FROM $wpdb->postmeta 
+    WHERE meta_key LIKE '%featured%' 
+    AND meta_value IN ('1', 'yes', 'true', 'on')
+    AND post_id IN (
+      SELECT ID FROM $wpdb->posts 
+      WHERE post_type = 'at_biz_dir' 
+      AND post_status = 'publish'
+    )
+  ";
+  $fallback_results = $wpdb->get_results($query);
+  
+  $has_fallback_results = !empty($fallback_results);
+  if ($has_fallback_results) {
+    foreach ($fallback_results as $result) {
+      $featured_post_ids[] = $result->post_id;
+    }
+  }
+}
+
+// Get all regular (non-featured) posts to determine statuses
+$regular_args = array(
+  'post_type' => 'at_biz_dir',
+  'posts_per_page' => -1, // Get all posts to sort them
+  'post__not_in' => $featured_post_ids,
+  'orderby' => 'date',
+  'order' => 'DESC'
+);
+
+$regular_query = new WP_Query($regular_args);
+$has_regular_posts = $regular_query->have_posts();
+
+// Arrays to hold active/ongoing and expired grants
+$active_ongoing_posts = array();
+$expired_posts = array();
+
+// Process regular posts to determine status and sort them
+if ($has_regular_posts) {
+  while ($regular_query->have_posts()) {
+    $regular_query->the_post();
+    $post_id = get_the_ID();
+    $post = get_post($post_id);
     
-    // Fallback: If no featured posts found with direct meta keys, 
-    // search for any meta key containing 'featured'
-    if (empty($featured_post_ids)) {
-      global $wpdb;
-      $query = "
-        SELECT DISTINCT post_id 
-        FROM $wpdb->postmeta 
-        WHERE meta_key LIKE '%featured%' 
-        AND meta_value IN ('1', 'yes', 'true', 'on')
-        AND post_id IN (
-          SELECT ID FROM $wpdb->posts 
-          WHERE post_type = 'at_biz_dir' 
-          AND post_status = 'publish'
-        )
-      ";
-      $fallback_results = $wpdb->get_results($query);
+    // Get deadline date
+    $deadline = get_post_meta($post_id, '_custom-date', true);
+    $has_deadline = !empty($deadline);
+    
+    // Determine grant status
+    $status = 'ongoing'; // Default status if no deadline
+    
+    if ($has_deadline) {
+      $current_time = time();
+      $deadline_time = strtotime($deadline);
+      $is_future_deadline = $deadline_time > $current_time;
       
-      $has_fallback_results = !empty($fallback_results);
-      if ($has_fallback_results) {
-        foreach ($fallback_results as $result) {
-          $featured_post_ids[] = $result->post_id;
-        }
-      }
-    }
-    
-    // Get all regular (non-featured) posts to determine statuses
-    $regular_args = array(
-      'post_type' => 'at_biz_dir',
-      'posts_per_page' => -1, // Get all posts to sort them
-      'post__not_in' => $featured_post_ids,
-      'orderby' => 'date',
-      'order' => 'DESC'
-    );
-    
-    $regular_query = new WP_Query($regular_args);
-    $has_regular_posts = $regular_query->have_posts();
-    
-    // Arrays to hold active/ongoing and expired grants
-    $active_ongoing_posts = array();
-    $expired_posts = array();
-    
-    // Process regular posts to determine status and sort them
-    if ($has_regular_posts) {
-      while ($regular_query->have_posts()) {
-        $regular_query->the_post();
-        $post_id = get_the_ID();
-        $post = get_post($post_id);
-        
-        // Get deadline date
-        $deadline = get_post_meta($post_id, '_custom-date', true);
-        $has_deadline = !empty($deadline);
-        
-        // Determine grant status
-        $status = 'ongoing'; // Default status if no deadline
-        
-        if ($has_deadline) {
-          $current_time = time();
-          $deadline_time = strtotime($deadline);
-          $is_future_deadline = $deadline_time > $current_time;
-          
-          if ($is_future_deadline) {
-            $status = 'active';
-          } else {
-            // Get expiration date
-            $expiry_date = get_post_meta($post_id, '_expiry_date', true);
-            $has_expiry_date = !empty($expiry_date);
-            
-            if ($has_expiry_date) {
-              $status = 'expired_with_notice';
-            } else {
-              $status = 'expired_no_notice';
-            }
-          }
-        }
-        
-        // Group posts by status
-        $is_expired = $status == 'expired_with_notice' || $status == 'expired_no_notice';
-        
-        if ($is_expired) {
-          $expired_posts[] = array(
-            'post' => $post,
-            'is_featured' => false,
-            'status' => $status
-          );
-        } else {
-          $active_ongoing_posts[] = array(
-            'post' => $post,
-            'is_featured' => false,
-            'status' => $status
-          );
-        }
-      }
-      wp_reset_postdata();
-    }
-    
-    // Process featured posts to determine their status
-    $featured_active_ongoing = array();
-    $featured_expired = array();
-    
-    foreach ($featured_post_ids as $post_id) {
-      $post = get_post($post_id);
-      $is_valid_post = !empty($post) && $post->post_type === 'at_biz_dir';
-      
-      if ($is_valid_post) {
-        // Get deadline date
-        $deadline = get_post_meta($post_id, '_custom-date', true);
-        $has_deadline = !empty($deadline);
-        
-        // Determine grant status
-        $status = 'ongoing'; // Default status if no deadline
-        
-        if ($has_deadline) {
-          $current_time = time();
-          $deadline_time = strtotime($deadline);
-          $is_future_deadline = $deadline_time > $current_time;
-          
-          if ($is_future_deadline) {
-            $status = 'active';
-          } else {
-            // Get expiration date
-            $expiry_date = get_post_meta($post_id, '_expiry_date', true);
-            $has_expiry_date = !empty($expiry_date);
-            
-            if ($has_expiry_date) {
-              $status = 'expired_with_notice';
-            } else {
-              $status = 'expired_no_notice';
-            }
-          }
-        }
-        
-        // Group featured posts by status
-        $is_expired = $status == 'expired_with_notice' || $status == 'expired_no_notice';
-        
-        if ($is_expired) {
-          $featured_expired[] = array(
-            'post' => $post,
-            'is_featured' => true,
-            'status' => $status
-          );
-        } else {
-          $featured_active_ongoing[] = array(
-            'post' => $post,
-            'is_featured' => true,
-            'status' => $status
-          );
-        }
-      }
-    }
-    
-    // Combine all posts in the desired order
-    $combined_posts = array_merge(
-      $featured_active_ongoing,   // Featured active/ongoing first
-      $featured_expired,          // Featured expired second
-      $active_ongoing_posts,      // Regular active/ongoing third
-      $expired_posts              // Regular expired last
-    );
-    
-    // Apply pagination to combined posts
-    $total_posts = count($combined_posts);
-    $total_pages = ceil($total_posts / $posts_per_page);
-    
-    // Calculate offset for the current page
-    $offset = ($paged - 1) * $posts_per_page;
-    
-    // Get the posts for the current page
-    $current_page_posts = array_slice($combined_posts, $offset, $posts_per_page);
-    
-    // Now we have all posts combined and paginated, display them
-    $has_any_posts = !empty($current_page_posts);
-    
-    if ($has_any_posts) {
-      foreach ($current_page_posts as $post_data) {
-        $post = $post_data['post'];
-        $is_featured = $post_data['is_featured'];
-        $status = isset($post_data['status']) ? $post_data['status'] : 'ongoing';
-        $post_id = $post->ID;
-        
-        // Get basic grant information
-        $title = get_the_title($post_id);
-        $permalink = get_permalink($post_id);
-        
-        // Get excerpt/tagline
-        $tagline = get_post_meta($post_id, 'tagline', true);
-        $is_tagline_empty = empty($tagline);
-        if ($is_tagline_empty) {
-          $tagline = get_the_excerpt($post_id);
-        }
-        
-        // Get amount - use "Varies" or "Various Benefits" instead of N/A
-        $amount = get_post_meta($post_id, '_price', true);
-        $is_amount_empty = empty($amount);
-        if ($is_amount_empty) {
-          $amount_display = 'Various Benefits';
-        } else {
-          $amount_display = '$' . number_format($amount);
-        }
-        
-        // Get deadline date
-        $deadline = get_post_meta($post_id, '_custom-date', true);
-        $has_deadline = !empty($deadline);
-        $deadline_display = $has_deadline ? date('F j, Y', strtotime($deadline)) : 'Ongoing';
-        
+      if ($is_future_deadline) {
+        $status = 'active';
+      } else {
         // Get expiration date
         $expiry_date = get_post_meta($post_id, '_expiry_date', true);
         $has_expiry_date = !empty($expiry_date);
         
-        // Recalculate time remaining for active grants
-        $time_remaining = array(
-          'days' => 0,
-          'hours' => 0,
-          'minutes' => 0,
-          'seconds' => 0,
-          'total_seconds' => 0,
-          'display_type' => 'days' // Default to days
-        );
-        
-        $status_is_active = $status == 'active';
-        $status_is_ongoing = $status == 'ongoing';
-        
-        if ($status_is_active && $has_deadline) {
-          $current_time = time();
-          $deadline_time = strtotime($deadline);
-          $time_diff = $deadline_time - $current_time;
-          
-          // Calculate time components
-          $time_remaining['days'] = floor($time_diff / (60 * 60 * 24));
-          $time_remaining['hours'] = floor(($time_diff % (60 * 60 * 24)) / (60 * 60));
-          $time_remaining['minutes'] = floor(($time_diff % (60 * 60)) / 60);
-          $time_remaining['seconds'] = $time_diff % 60;
-          $time_remaining['total_seconds'] = $time_diff;
-          
-          // Determine display type based on time remaining
-          if ($time_remaining['days'] < 1) {
-            $time_remaining['display_type'] = 'countdown';
-          } else {
-            $time_remaining['display_type'] = 'days';
-          }
-        }
-        
-        // Get status display text and color
-        $status_text = '';
-        $status_color = '';
-        
-        if ($status_is_active) {
-          $status_text = 'Active';
-          $status_color = 'var(--grantaura-success)';
-        } else if ($status_is_ongoing) {
-          $status_text = 'Ongoing';
-          $status_color = 'var(--grantaura-secondary)';
+        if ($has_expiry_date) {
+          $status = 'expired_with_notice';
         } else {
-          $status_text = 'Expired';
-          $status_color = 'var(--grantaura-danger)';
+          $status = 'expired_no_notice';
         }
-        
-        // Get eligible entities
-        $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
-        $is_eligible_entities_not_array = !is_array($eligible_entities);
-        $is_eligible_entities_not_empty = !empty($eligible_entities);
-        
-        if ($is_eligible_entities_not_array && $is_eligible_entities_not_empty) {
-          // Try to unserialize if it's not already an array
-          $eligible_entities = maybe_unserialize($eligible_entities);
-        }
-        
-        // Get featured image - First check for preview image
-        $listing_preview_id = get_post_meta($post_id, 'listing_prv_img', true);
-        $has_preview_image = !empty($listing_preview_id);
-        $featured_image = '';
-        
-        if ($has_preview_image) {
-          $featured_image = wp_get_attachment_image_url($listing_preview_id, 'large');
-        }
-        
-        // If no preview image, check for featured image
-        $has_featured_image = !empty($featured_image);
-        if (!$has_featured_image) {
-          $featured_image = get_the_post_thumbnail_url($post_id, 'large');
-          $has_featured_image = !empty($featured_image);
-        }
-        
-        // If still no image, check gallery/slider images
-        if (!$has_featured_image) {
-          $gallery_ids = get_post_meta($post_id, '_listing_img', true);
-          $is_gallery_ids_array = is_array($gallery_ids);
-          
-          if ($is_gallery_ids_array && !empty($gallery_ids)) {
-            $first_gallery_image = wp_get_attachment_image_url($gallery_ids[0], 'large');
-            if (!empty($first_gallery_image)) {
-              $featured_image = $first_gallery_image;
-              $has_featured_image = true;
-            }
-          }
-        }
-        
-        // Fallback image if no images found
-        if (!$has_featured_image) {
-          $featured_image = 'https://grantaura.com/wp-content/uploads/2024/11/Transparent-bg-deep-Purple-AURA-and-dark-Gold-ff914d-GRANT-1-e1731246494496.png';
-        }
-        
-        // Get locations - store both name and term link
-        $locations = get_the_terms($post_id, 'at_biz_dir-location');
-        $is_locations_valid = is_array($locations) && !empty($locations);
-        $location_data = array();
-        
-        if ($is_locations_valid) {
-          foreach ($locations as $location) {
-            $location_link = get_term_link($location, 'at_biz_dir-location');
-            $is_error = is_wp_error($location_link);
-            if (!$is_error) {
-              $location_data[] = array(
-                'name' => $location->name,
-                'url' => $location_link
-              );
-            }
-          }
-        }
-        
-        // Get categories - store both name and term link
-        $categories = get_the_terms($post_id, 'at_biz_dir-category');
-        $is_categories_valid = is_array($categories) && !empty($categories);
-        $category_data = array();
-        
-        if ($is_categories_valid) {
-          foreach ($categories as $category) {
-            $category_link = get_term_link($category, 'at_biz_dir-category');
-            $is_error = is_wp_error($category_link);
-            if (!$is_error) {
-              $category_data[] = array(
-                'name' => $category->name,
-                'url' => $category_link
-              );
-            }
-          }
-        }
-        
-        // Generate a unique ID for countdown timer
-        $countdown_id = 'g-countdown-' . $post_id;
-        
-        // Add featured class if post is featured
-        $featured_class = $is_featured ? 'g-card--featured' : '';
-        
-        // Output HTML for each grant listing
-        ?>
-        <div class="g-card <?php echo esc_attr($featured_class); ?>" data-grant-id="<?php echo esc_attr($post_id); ?>" <?php if ($status_is_active && $time_remaining['display_type'] == 'countdown') echo 'data-deadline="' . esc_attr($deadline_time) . '"'; ?>>
-          <style>
-            .g-card {
-              display: flex;
-              flex-direction: column;
-              border-radius: var(--grantaura-border-radius-lg);
-              overflow: hidden;
-              background-color: var(--grantaura-white);
-              box-shadow: var(--grantaura-box-shadow);
-              transition: transform 0.3s ease, box-shadow 0.3s ease;
-              border: 1px solid var(--grantaura-gray-400);
-              transform: translateY(0);
-              height: 100%;
-              max-height: none;
-              will-change: transform, box-shadow;
-              position: relative;
-            }
-            
-            .g-card:hover {
-              transform: translateY(-5px);
-              box-shadow: var(--grantaura-box-shadow-xl);
-            }
-            
-            /* Featured card styling - UPDATED VERSION */
-.g-card--featured {
-  position: relative;
-  z-index: 2;
-  border: none !important;
-  overflow: visible !important; /* This is critical to show the border */
+      }
+    }
+    
+    // Group posts by status
+    $is_expired = $status == 'expired_with_notice' || $status == 'expired_no_notice';
+    
+    if ($is_expired) {
+      $expired_posts[] = array(
+        'post' => $post,
+        'is_featured' => false,
+        'status' => $status
+      );
+    } else {
+      $active_ongoing_posts[] = array(
+        'post' => $post,
+        'is_featured' => false,
+        'status' => $status
+      );
+    }
+  }
+  wp_reset_postdata();
 }
 
-.g-card--featured::before {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  right: -3px;
-  bottom: -8px;
-  background: linear-gradient(90deg, 
-    #5A3B8C 0%, 
-    #FFA366 25%, 
-    #FFB888 50%, 
-    #FFA366 75%, 
-    #5A3B8C 100%);
-  border-radius: 1px 1px 15px 15px;
-  z-index: -1;
-  background-size: 300% 300%;
-  box-shadow: 0 0 15px rgba(90, 59, 140, 0.4);
+// Process featured posts to determine their status
+$featured_active_ongoing = array();
+$featured_expired = array();
+
+foreach ($featured_post_ids as $post_id) {
+  $post = get_post($post_id);
+  $is_valid_post = !empty($post) && $post->post_type === 'at_biz_dir';
   
+  if ($is_valid_post) {
+    // Get deadline date
+    $deadline = get_post_meta($post_id, '_custom-date', true);
+    $has_deadline = !empty($deadline);
+    
+    // Determine grant status
+    $status = 'ongoing'; // Default status if no deadline
+    
+    if ($has_deadline) {
+      $current_time = time();
+      $deadline_time = strtotime($deadline);
+      $is_future_deadline = $deadline_time > $current_time;
+      
+      if ($is_future_deadline) {
+        $status = 'active';
+      } else {
+        // Get expiration date
+        $expiry_date = get_post_meta($post_id, '_expiry_date', true);
+        $has_expiry_date = !empty($expiry_date);
+        
+        if ($has_expiry_date) {
+          $status = 'expired_with_notice';
+        } else {
+          $status = 'expired_no_notice';
+        }
+      }
+    }
+    
+    // Group featured posts by status
+    $is_expired = $status == 'expired_with_notice' || $status == 'expired_no_notice';
+    
+    if ($is_expired) {
+      $featured_expired[] = array(
+        'post' => $post,
+        'is_featured' => true,
+        'status' => $status
+      );
+    } else {
+      $featured_active_ongoing[] = array(
+        'post' => $post,
+        'is_featured' => true,
+        'status' => $status
+      );
+    }
+  }
 }
 
+// Combine all posts in the desired order
+$combined_posts = array_merge(
+  $featured_active_ongoing,   // Featured active/ongoing first
+  $featured_expired,          // Featured expired second
+  $active_ongoing_posts,      // Regular active/ongoing third
+  $expired_posts              // Regular expired last
+);
+
+// Apply pagination to combined posts
+$total_posts = count($combined_posts);
+$total_pages = ceil($total_posts / $posts_per_page);
+
+// Calculate offset for the current page
+$offset = ($paged - 1) * $posts_per_page;
+
+// Get the posts for the current page
+$current_page_posts = array_slice($combined_posts, $offset, $posts_per_page);
+
+// Now we have all posts combined and paginated, display them
+$has_any_posts = !empty($current_page_posts);
+
+if ($has_any_posts) {
+  foreach ($current_page_posts as $post_data) {
+    $post = $post_data['post'];
+    $is_featured = $post_data['is_featured'];
+    $status = isset($post_data['status']) ? $post_data['status'] : 'ongoing';
+    $post_id = $post->ID;
+    
+    // Get basic grant information
+    $title = get_the_title($post_id);
+    $permalink = get_permalink($post_id);
+    
+    // Get excerpt/tagline
+    $tagline = get_post_meta($post_id, 'tagline', true);
+    $is_tagline_empty = empty($tagline);
+    if ($is_tagline_empty) {
+      $tagline = get_the_excerpt($post_id);
+    }
+    
+    // Get amount - use "Varies" or "Various Benefits" instead of N/A
+    $amount = get_post_meta($post_id, '_price', true);
+    $is_amount_empty = empty($amount);
+    if ($is_amount_empty) {
+      $amount_display = 'Various Benefits';
+    } else {
+      $amount_display = '$' . number_format($amount);
+    }
+    
+    // Get deadline date
+    $deadline = get_post_meta($post_id, '_custom-date', true);
+    $has_deadline = !empty($deadline);
+    $deadline_display = $has_deadline ? date('F j, Y', strtotime($deadline)) : 'Ongoing';
+    
+    // Get expiration date
+    $expiry_date = get_post_meta($post_id, '_expiry_date', true);
+    $has_expiry_date = !empty($expiry_date);
+    
+    // Recalculate time remaining for active grants
+    $time_remaining = array(
+      'days' => 0,
+      'hours' => 0,
+      'minutes' => 0,
+      'seconds' => 0,
+      'total_seconds' => 0,
+      'display_type' => 'days' // Default to days
+    );
+    
+    $status_is_active = $status == 'active';
+    $status_is_ongoing = $status == 'ongoing';
+    
+    if ($status_is_active && $has_deadline) {
+      $current_time = time();
+      $deadline_time = strtotime($deadline);
+      $time_diff = $deadline_time - $current_time;
+      
+      // Calculate time components
+      $time_remaining['days'] = floor($time_diff / (60 * 60 * 24));
+      $time_remaining['hours'] = floor(($time_diff % (60 * 60 * 24)) / (60 * 60));
+      $time_remaining['minutes'] = floor(($time_diff % (60 * 60)) / 60);
+      $time_remaining['seconds'] = $time_diff % 60;
+      $time_remaining['total_seconds'] = $time_diff;
+      
+      // Determine display type based on time remaining
+      if ($time_remaining['days'] < 1) {
+        $time_remaining['display_type'] = 'countdown';
+      } else {
+        $time_remaining['display_type'] = 'days';
+      }
+    }
+    
+    // Get status display text and color
+    $status_text = '';
+    $status_color = '';
+    
+    if ($status_is_active) {
+      $status_text = 'Active';
+      $status_color = 'var(--grantaura-success)';
+    } else if ($status_is_ongoing) {
+      $status_text = 'Ongoing';
+      $status_color = 'var(--grantaura-secondary)';
+    } else {
+      $status_text = 'Expired';
+      $status_color = 'var(--grantaura-danger)';
+    }
+    
+    // Get eligible entities
+    $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
+    $is_eligible_entities_not_array = !is_array($eligible_entities);
+    $is_eligible_entities_not_empty = !empty($eligible_entities);
+    
+    if ($is_eligible_entities_not_array && $is_eligible_entities_not_empty) {
+      // Try to unserialize if it's not already an array
+      $eligible_entities = maybe_unserialize($eligible_entities);
+    }
+    
+    // Get featured image - First check for preview image
+    $listing_preview_id = get_post_meta($post_id, 'listing_prv_img', true);
+    $has_preview_image = !empty($listing_preview_id);
+    $featured_image = '';
+    
+    if ($has_preview_image) {
+      $featured_image = wp_get_attachment_image_url($listing_preview_id, 'large');
+    }
+    
+    // If no preview image, check for featured image
+    $has_featured_image = !empty($featured_image);
+    if (!$has_featured_image) {
+      $featured_image = get_the_post_thumbnail_url($post_id, 'large');
+      $has_featured_image = !empty($featured_image);
+    }
+    
+    // If still no image, check gallery/slider images
+    if (!$has_featured_image) {
+      $gallery_ids = get_post_meta($post_id, '_listing_img', true);
+      $is_gallery_ids_array = is_array($gallery_ids);
+      
+      if ($is_gallery_ids_array && !empty($gallery_ids)) {
+        $first_gallery_image = wp_get_attachment_image_url($gallery_ids[0], 'large');
+        if (!empty($first_gallery_image)) {
+          $featured_image = $first_gallery_image;
+          $has_featured_image = true;
+        }
+      }
+    }
+    
+    // Fallback image if no images found
+    if (!$has_featured_image) {
+      $featured_image = 'https://grantaura.com/wp-content/uploads/2024/11/Transparent-bg-deep-Purple-AURA-and-dark-Gold-ff914d-GRANT-1-e1731246494496.png';
+    }
+    
+    // Get locations - store both name and term link
+    $locations = get_the_terms($post_id, 'at_biz_dir-location');
+    $is_locations_valid = is_array($locations) && !empty($locations);
+    $location_data = array();
+    
+    if ($is_locations_valid) {
+      foreach ($locations as $location) {
+        $location_link = get_term_link($location, 'at_biz_dir-location');
+        $is_error = is_wp_error($location_link);
+        if (!$is_error) {
+          $location_data[] = array(
+            'name' => $location->name,
+            'url' => $location_link
+          );
+        }
+      }
+    }
+    
+    // Get categories - store both name and term link
+    $categories = get_the_terms($post_id, 'at_biz_dir-category');
+    $is_categories_valid = is_array($categories) && !empty($categories);
+    $category_data = array();
+    
+    if ($is_categories_valid) {
+      foreach ($categories as $category) {
+        $category_link = get_term_link($category, 'at_biz_dir-category');
+        $is_error = is_wp_error($category_link);
+        if (!$is_error) {
+          $category_data[] = array(
+            'name' => $category->name,
+            'url' => $category_link
+          );
+        }
+      }
+    }
+    
+    // Generate a unique ID for countdown timer
+    $countdown_id = 'g-countdown-' . $post_id;
+    
+    // Add featured class if post is featured
+    $featured_class = $is_featured ? 'g-card--featured' : '';
+    
+    // Output HTML for each grant listing
+    ?>
+    <div class="g-card <?php echo esc_attr($featured_class); ?>" data-grant-id="<?php echo esc_attr($post_id); ?>" <?php if ($status_is_active && $time_remaining['display_type'] == 'countdown') echo 'data-deadline="' . esc_attr($deadline_time) . '"'; ?>>
+      <style>
+        .g-card {
+          display: flex;
+          flex-direction: column;
+          border-radius: var(--grantaura-border-radius-lg);
+          overflow: hidden;
+          background-color: var(--grantaura-white);
+          box-shadow: var(--grantaura-box-shadow);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          border: 1px solid var(--grantaura-gray-400);
+          transform: translateY(0);
+          height: 100%;
+          max-height: none;
+          will-change: transform, box-shadow;
+          position: relative;
+        }
+        
+        .g-card:hover {
+          transform: translateY(-5px);
+          box-shadow: var(--grantaura-box-shadow-xl);
+        }
+        
+        /* Featured card styling - UPDATED VERSION */
+.g-card--featured {
+position: relative;
+z-index: 2;
+border: none !important;
+overflow: visible !important; /* This is critical to show the border */
+}
+.g-card--featured::before {
+content: "";
+position: absolute;
+top: -3px;
+left: -3px;
+right: -3px;
+bottom: -8px;
+background: linear-gradient(90deg,
+#5A3B8C 0%,
+#FFA366 25%,
+#FFB888 50%,
+#FFA366 75%,
+#5A3B8C 100%);
+border-radius: 1px 1px 15px 15px;
+z-index: -1;
+background-size: 300% 300%;
+box-shadow: 0 0 15px rgba(90, 59, 140, 0.4);
+}
 @keyframes border-animation {
-  0% { background-position: 0% 0%; }
-  25% { background-position: 100% 0%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 0%; }
+0% { background-position: 0% 0%; }
+25% { background-position: 100% 0%; }
+50% { background-position: 100% 100%; }
+75% { background-position: 0% 100%; }
+100% { background-position: 0% 0%; }
 }
-
 .g-card--featured::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--grantaura-white);
-  border-radius: var(--grantaura-border-radius-lg);
-  z-index: -1;
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: var(--grantaura-white);
+border-radius: var(--grantaura-border-radius-lg);
+z-index: -1;
 }
-
 /* Add this keyframes definition for the border animation */
 @keyframes border-shine {
-  0% {
-    background-position: 100% 0;
-  }
-  100% {
-    background-position: -100% 0;
-  }
+0% {
+background-position: 100% 0;
 }
+100% {
+background-position: -100% 0;
+}
+}
+        @media (prefers-reduced-motion: reduce) {
+          .g-card {
+            transition: none;
+          }
+          .g-card:hover {
+            transform: none;
+          }
+          .g-card--featured::before {
+            animation: none;
+          }
+        }
+      </style>
+      
+      <div class="g-card__img-container">
+        <style>
+          .g-card__img-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 90%; /* Maintain exact 1:1 aspect ratio */
+            overflow: hidden;
+          }
+          
+          /* Crisp image loading effect */
+          .g-card__img-loaded {
+            opacity: 1;
+            transform: scale(1);
+            filter: contrast(1.05);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
+          }
+        
+          
+        
+          
+        
+          
+        </style>
+        
+        <div class="g-card__img-wrapper">
+          <style>
+            .g-card__img-wrapper {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              overflow: hidden;
+              z-index: 1;
+            }
             
-            
-            
-            @media (prefers-reduced-motion: reduce) {
-              .g-card {
-                transition: none;
-              }
-              .g-card:hover {
-                transform: none;
-              }
-              .g-card--featured::before {
-                animation: none;
-              }
+            .g-card__img-wrapper img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+              transform: scale(1);
+              transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+              will-change: transform;
             }
           </style>
           
-          <div class="g-card__img-container">
-            <style>
-              .g-card__img-container {
-                position: relative;
-                width: 100%;
-                padding-bottom: 90%; /* Maintain exact 1:1 aspect ratio */
-                overflow: hidden;
-              }
-              
-              /* Crisp image loading effect */
-              .g-card__img-loaded {
-                opacity: 1;
-                transform: scale(1);
-                filter: contrast(1.05);
-                transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
-              }
-            
-              
-            
-              
-            
-              
-            </style>
-            
-            <div class="g-card__img-wrapper">
-              <style>
-                .g-card__img-wrapper {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 100%;
-                  overflow: hidden;
-                  z-index: 1;
-                }
-                
-                .g-card__img-wrapper img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  display: block;
-                  transform: scale(1);
-                  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-                  will-change: transform;
-                }
-              </style>
-              
-              <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
-                <img 
-                  src="<?php echo esc_url($featured_image); ?>" 
-                  alt="<?php echo esc_attr($title); ?>" 
-                  loading="lazy"
-                  class="g-card__image"
-                  onload="this.classList.add('g-card__img-loaded')"
-                  width="500"
-                  height="500"
-                >
-              </a>
-            </div>
-            
-            <div class="g-card__status-badge" style="background-color: <?php echo esc_attr($status_color); ?>;">
-              <style>
-                .g-card__status-badge {
-                  position: absolute;
-                  top: 12px;
-                  left: 12px;
-                  padding: 6px 14px;
-                  border-radius: 100px;
-                  font-size: clamp(0.65rem, 2.5vw, 0.75rem);
-                  font-weight: 700;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  color: white !important;
-                  z-index: 5;
-                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                  display: flex;
-                  align-items: center;
-                  gap: 5px;
-                  transition: transform 0.3s ease;
-                }
-                
-                
-                .g-card__status-badge::before {
-                  content: "";
-                  display: inline-block;
-                  width: 6px;
-                  height: 6px;
-                  border-radius: 50%;
-                  background-color: rgba(255, 255, 255, 0.8);
-                  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-                  animation: pulse 2s infinite;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-success)"]::before {
-                  animation: pulse-success 2s infinite;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-secondary)"]::before {
-                  animation: none;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-danger)"]::before {
-                  animation: none;
-                  background-color: rgba(255, 255, 255, 0.6);
-                  box-shadow: none;
-                }
-                
-                @keyframes pulse {
-                  0% {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
-                  }
-                  70% {
-                    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
-                  }
-                  100% {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-                  }
-                }
-                
-                @keyframes pulse-success {
-                  0% {
-                    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-                  }
-                  70% {
-                    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
-                  }
-                  100% {
-                    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-                  }
-                }
-                
-                /* Mobile optimizations */
-                @media (max-width: 640px) {
-                  .g-card__status-badge {
-                    top: 10px;
-                    left: 10px;
-                    padding: 5px 12px;
-                  }
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__status-badge::before {
-                    animation: none !important;
-                  }
-                  
-                  .g-card:hover .g-card__status-badge {
-                    transform: none;
-                  }
-                }
-              </style>
-              <?php echo esc_html($status_text); ?>
-            </div>
-            
-            <?php if ($is_featured): ?>
-            <div class="g-card__featured-badge">
-              <style>
-                .g-card__featured-badge {
-                  position: absolute;
-                  right: -8px;
-                  top: 18vw;
-                  z-index: 20;
-                  transform-origin: top right;
-                }
-                
-                .g-card__featured-badge-inner {
-                  background: linear-gradient(135deg, #FFD700, #FFA500);
-                  color: #000;
-                  font-weight: 700;
-                  font-size: 0.75rem;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  padding: 6px 8px 6px 12px;
-                  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-                  position: relative;
-                  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
-                  display: flex;
-                  align-items: center;
-                  gap: 4px;
-                }
-                
-                .g-card__featured-badge-inner::before {
-                  content: "";
-                  position: absolute;
-                  bottom: -8px;
-                  right: 0;
-                  width: 8px;
-                  height: 8px;
-                  background: #A67C00;
-                  clip-path: polygon(0 0, 100% 0, 100% 100%);
-                }
-                
-                .g-card__featured-badge-inner svg {
-                  width: 14px;
-                  height: 14px;
-                  color: #000;
-                  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-                }
-                
-                .g-card__featured-badge-shine {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: linear-gradient(
-                    45deg,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.5) 50%,
-                    rgba(255, 255, 255, 0) 100%
-                  );
-                  background-size: 200% 200%;
-                  animation: shine 2s ease-in-out infinite;
-                }
-                
-                @keyframes shine {
-                  0% {
-                    background-position: -100% -100%;
-                  }
-                  100% {
-                    background-position: 100% 100%;
-                  }
-                }
-                
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__featured-badge-shine {
-                    animation: none;
-                  }
-                }
-              </style>
-              <div class="g-card__featured-badge-inner">
-                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2l2.2 6.6h7.1l-5.7 4.2 2.2 6.6-5.8-4.2-5.7 4.2 2.2-6.6-5.8-4.2h7.1z"/>
-                </svg>
-                Featured
-                <div class="g-card__featured-badge-shine"></div>
-              </div>
-            </div>
-            <?php endif; ?>
-            
-            <?php if ($status_is_active): ?>
-            <div class="g-card__countdown-wrapper">
-              <style>
-                .g-card__countdown-wrapper {
-                  position: absolute;
-                  top: 12px;
-                  right: 12px;
-                  z-index: 5;
-                }
-                
-                .g-card__countdown {
-                  background: rgba(90, 59, 140, 0.95);
-                  backdrop-filter: blur(5px);
-                  -webkit-backdrop-filter: blur(5px);
-                  border-radius: 3px;
-                  padding: 8px 10px;
-                  color: white;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  gap: 5px;
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-                  border: 1px solid rgba(255, 255, 255, 0.15);
-                  transition: transform 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__countdown {
-                  transform: translateY(-2px);
-                }
-                
-                .g-card__countdown-label {
-                  font-size: 0.55rem;
-                  text-transform: uppercase;
-                  opacity: 0.85;
-                  margin-right: 0.25rem;
-                  letter-spacing: 0.5px;
-                }
-                
-                .g-card__countdown-unit {
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  position: relative;
-                }
-                
-                .g-card__countdown-unit:not(:last-child)::after {
-                  content: ":";
-                  position: absolute;
-                  right: -4px;
-                  top: 2px;
-                  color: rgba(255, 255, 255, 0.7);
-                  font-weight: 700;
-                }
-                
-                .g-card__countdown-number {
-                  font-size: clamp(0.80rem, 2vw, 0.75rem);
-                  font-weight: 700;
-                  background: rgba(255, 255, 255, 0.15);
-                  border-radius: 6px;
-                  min-width: clamp(1.8rem, 6vw, 2rem);
-                  text-align: center;
-                  padding: 2px 4px;
-                  position: relative;
-                  overflow: hidden;
-                }
-                
-                /* Pulse effect for seconds */
-                .g-card__countdown-unit:last-child .g-card__countdown-number {
-                  position: relative;
-                }
-                
-                .g-card__countdown-unit:last-child .g-card__countdown-number::after {
-                  content: "";
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: rgba(255, 163, 102, 0.85);
-                  opacity: 0;
-                  animation: pulse-countdown 1s infinite;
-                }
-                
-                @keyframes pulse-countdown {
-                  0% {
-                    opacity: 0;
-                  }
-                  50% {
-                    opacity: 1;
-                  }
-                  100% {
-                    opacity: 0;
-                  }
-                }
-                
-                .g-card__countdown-label-unit {
-                  font-size: 0.6rem;
-                  text-transform: uppercase;
-                  margin-top: 2px;
-                  color: rgba(255, 255, 255, 0.8);
-                  letter-spacing: 0.5px;
-                }
-                
-                .g-card__deadline-days {
-                  background: rgba(90, 59, 140, 0.95);
-                  backdrop-filter: blur(5px);
-                  -webkit-backdrop-filter: blur(5px);
-                  border-radius: 3px;
-                  padding: 6px 10px;
-                  color: white;
-                  display: flex;
-                  align-items: center;
-                  font-weight: 600;
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-                  border: 1px solid rgba(255, 255, 255, 0.15);
-                  transition: transform 0.3s ease;
-                  gap: 5px;
-                }
-                
-                .g-card:hover .g-card__deadline-days {
-                  transform: translateY(-2px);
-                }
-                
-                .g-card__deadline-days-num {
-                  font-size: clamp(0.75rem, 2vw, 1rem);
-                  font-weight: 800;
-                  background: rgba(255, 255, 255, 0.15);
-                  border-radius: 6px;
-                  min-width: 1.8rem;
-                  text-align: center;
-                  padding: 2px 6px;
-                  color: var(--grantaura-secondary-light);
-                }
-                
-                /* Adjust position for featured cards */
-                .g-card--featured .g-card__countdown-wrapper {
-                  right: 12px;
-                }
-                
-                /* Mobile optimizations */
-                @media (max-width: 640px) {
-                  .g-card__countdown-wrapper {
-                    top: 10px;
-                    right: 10px;
-                  }
-                  
-                  .g-card__countdown, 
-                  .g-card__deadline-days {
-                    padding: 4px 6px;
-                  }
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__countdown-unit:last-child .g-card__countdown-number::after {
-                    animation: none;
-                  }
-                  
-                  .g-card:hover .g-card__countdown,
-                  .g-card:hover .g-card__deadline-days {
-                    transform: none;
-                  }
-                }
-              </style>
-              
-              <?php if ($time_remaining['display_type'] == 'countdown'): ?>
-              <div class="g-card__countdown" id="<?php echo esc_attr($countdown_id); ?>" data-deadline="<?php echo esc_attr($deadline_time); ?>">
-                <div class="g-card__countdown-unit">
-                  <div class="g-card__countdown-number" data-hours><?php echo sprintf('%02d', $time_remaining['hours']); ?></div>
-                  <div class="g-card__countdown-label-unit">Hrs</div>
-                </div>
-                
-                <div class="g-card__countdown-unit">
-                  <div class="g-card__countdown-number" data-minutes><?php echo sprintf('%02d', $time_remaining['minutes']); ?></div>
-                  <div class="g-card__countdown-label-unit">Min</div>
-                </div>
-                
-                <div class="g-card__countdown-unit">
-                  <div class="g-card__countdown-number" data-seconds><?php echo sprintf('%02d', $time_remaining['seconds']); ?></div>
-                  <div class="g-card__countdown-label-unit">Sec</div>
-                </div>
-              </div>
-              <?php else: ?>
-              <div class="g-card__deadline-days">
-                <span class="g-card__deadline-days-num"><?php echo $time_remaining['days']; ?></span>
-                <span>Days Left</span>
-              </div>
-              <?php endif; ?>
-            </div>
-            <?php endif; ?>
-            
-            <div class="g-card__gradient-overlay">
-              <style>
-                .g-card__gradient-overlay {
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  height: 55%;
-                  background: linear-gradient(to top, 
-                    rgba(17, 24, 39, 0.98) 30%, 
-                    rgba(90, 59, 140, 0.90) 45%,
-                    rgba(90, 59, 140, 0.65) 65%, 
-                    rgba(90, 59, 140, 0.2) 85%,
-                    rgba(90, 59, 140, 0) 100%);
-                  z-index: 3;
-                  pointer-events: none;
-                  border-radius: 0 0 12px 12px;
-                  mix-blend-mode: multiply;
-                }
-                
-                /* Add subtle lighting effect on the gradient */
-                .g-card__gradient-overlay::after {
-                  content: "";
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  height: 60%;
-                  background: linear-gradient(135deg, 
-                    rgba(255, 163, 102, 0.25) 0%, 
-                    rgba(90, 59, 140, 0) 50%,
-                    rgba(255, 163, 102, 0.15) 100%);
-                  z-index: 1;
-                  opacity: 0;
-                  transition: opacity 0.5s ease;
-                }
-                
-                
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card:hover .g-card__gradient-overlay::after {
-                    transition: none;
-                  }
-                }
-              </style>
-            </div>
-            
-            <h2 class="g-card__title">
-              <style>
-                .g-card__title {
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  z-index: 4;
-                  padding: 1.25rem 1.25rem 1.5rem;
-                  margin: 0;
-                  font-size: clamp(1.1rem, 5vw, 1.35rem);
-                  font-weight: 700;
-                  line-height: 1.3;
-                  color: white !important;
-                  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-                  transition: transform 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__title {
-                  transform: translateY(-5px);
-                }
-                
-                .g-card__title a {
-                  color: white !important;
-                  text-decoration: none !important;
-                  transition: var(--grantaura-transition);
-                  display: block;
-                  width: 100%;
-                  position: relative;
-                  padding-left: 0;
-                  overflow: hidden;
-                }
-                
-                .g-card__title a:hover {
-                  color: var(--grantaura-secondary-light) !important;
-                }
-                
-                /* Hover underline effect */
-                .g-card__title a::after {
-                  content: "";
-                  position: absolute;
-                  bottom: -5px;
-                  left: 0;
-                  width: 0;
-                  height: 2px;
-                  background: var(--grantaura-secondary);
-                  transition: width 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__title a::after {
-                  width: 40px;
-                }
-                
-                /* Add subtle enhancement to first letter */
-                .g-card__title a::first-letter {
-                  font-size: 110%;
-                  color: var(--grantaura-secondary-light);
-                }
-                
-                /* Special styling for featured titles */
-                .g-card--featured .g-card__title a::first-letter {
-                  color: #FFD700;
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card:hover .g-card__title {
-                    transform: none;
-                  }
-                  
-                  .g-card:hover .g-card__title a::after {
-                    transition: none;
-                  }
-                }
-              </style>
-              
-              <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
-                <?php echo esc_html($title); ?>
-              </a>
-            </h2>
-            
-            <!-- Accessibility features -->
-            <div class="g-card__img-accessibility" aria-hidden="true">
-              <style>
-                .g-card__img-accessibility {
-                  position: absolute;
-                  width: 1px;
-                  height: 1px;
-                  padding: 0;
-                  margin: -1px;
-                  overflow: hidden;
-                  clip: rect(0, 0, 0, 0);
-                  white-space: nowrap;
-                  border-width: 0;
-                }
-              </style>
-              <div class="g-card__screen-reader-info">
-                <p>Grant: <?php echo esc_html($title); ?></p>
-                <p>Status: <?php echo esc_html($status_text); ?></p>
-                <?php if ($is_featured): ?>
-                  <p>Featured Grant</p>
-                <?php endif; ?>
-                <?php if ($status_is_active && $has_deadline): ?>
-                  <p>Deadline: <?php echo esc_html($deadline_display); ?></p>
-                <?php endif; ?>
-                <p>Amount: <?php echo esc_html($amount_display); ?></p>
-              </div>
-            </div>
-          </div>
-
-          <div class="g-card__content">
-            <style>
-              .g-card__content {
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-                padding: clamp(0.75rem, 3vw, 1.25rem);
-                height: auto;
-                overflow: visible;
-              }
-              
-              
-            </style>
-            
-            <div class="g-card__amount">
-              <style>
-                .g-card__amount {
-                  font-size: clamp(1.1rem, 4vw, 1.3rem);
-                  font-weight: 700;
-                  position: relative;
-                  padding: 0.25rem 0;
-                  margin-bottom: 0.75rem;
-                  color: var(--grantaura-primary);
-                }
-                
-                .g-card__amount::before {
-                  content: "";
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 2px;
-                  background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary-dark));
-                  opacity: 0.2;
-                }
-                
-                /* Enhanced styling for featured card amounts */
-                .g-card--featured .g-card__amount {
-                  color: var(--grantaura-primary-dark);
-                }
-                
-                .g-card--featured .g-card__amount::before {
-                  background: linear-gradient(90deg, var(--grantaura-primary-dark), #FFD700);
-                  opacity: 0.3;
-                  height: 3px;
-                }
-              </style>
-              
-              <?php echo esc_html($amount_display); ?>
-            </div>
-            
-            <div class="g-card__deadline-info">
-              <style>
-                .g-card__deadline-info {
-                  display: flex;
-                  align-items: center;
-                  font-size: clamp(0.8rem, 3vw, 0.85rem);
-                  color: var(--grantaura-gray-700);
-                  margin-bottom: 0.75rem;
-                  gap: 0.5rem;
-                }
-                
-                .g-card__deadline-info svg {
-                  color: var(--grantaura-primary);
-                  flex-shrink: 0;
-                  width: clamp(14px, 4vw, 16px);
-                  height: clamp(14px, 4vw, 16px);
-                }
-                
-                .g-card__deadline-info strong {
-                  font-weight: 600;
-                  margin-right: 0.25rem;
-                  color: var(--grantaura-gray-800);
-                }
-                
-                .g-card__deadline-value {
-                  font-weight: 500;
-                }
-                
-                .g-card__deadline-value--ongoing {
-                  color: var(--grantaura-secondary-dark);
-                  font-weight: 600;
-                }
-                
-                .g-card__deadline-value--expired {
-                  color: var(--grantaura-danger);
-                  font-weight: 500;
-                }
-                
-                /* Enhanced styling for featured deadlines */
-                .g-card--featured .g-card__deadline-info svg {
-                  color: var(--grantaura-primary-dark);
-                }
-              </style>
-              
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              
-              <div>
-                <strong>Deadline:</strong>
-                <span class="g-card__deadline-value <?php echo $status_is_ongoing ? 'g-card__deadline-value--ongoing' : ($status_is_active ? '' : 'g-card__deadline-value--expired'); ?>">
-                  <?php echo esc_html($deadline_display); ?>
-                </span>
-              </div>
-            </div>
-            
-            <div class="g-card__excerpt">
-              <style>
-                .g-card__excerpt {
-                  margin-bottom: 1rem;
-                  font-size: clamp(0.8rem, 3vw, 0.9rem);
-                  color: var(--grantaura-gray-600);
-                  line-height: 1.6;
-                  overflow: hidden;
-                  position: relative;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 3;
-                  -webkit-box-orient: vertical;
-                  max-height: 4.8em; /* Approximately 3 lines */
-                }
-                
-                .g-card__excerpt::first-letter {
-                  font-size: 1.1em;
-                  font-weight: 500;
-                  color: var(--grantaura-primary);
-                }
-                
-                /* Enhanced styling for featured excerpts */
-                .g-card--featured .g-card__excerpt {
-                  color: var(--grantaura-gray-700);
-                }
-                
-                .g-card--featured .g-card__excerpt::first-letter {
-                  color: var(--grantaura-primary-dark);
-                  font-weight: 600;
-                }
-              </style>
-              
-              <?php echo esc_html($tagline); ?>
-            </div>
-            
-            <div class="g-card__meta">
-              <style>
-                .g-card__meta {
-                  display: grid;
-                  grid-template-columns: 1fr;
-                  gap: 0.75rem;
-                  margin-top: auto;
-                  position: relative;
-                }
-                
-                .g-card__meta::before {
-                  content: "";
-                  position: absolute;
-                  top: -10px;
-                  left: 0;
-                  right: 0;
-                  height: 1px;
-                  background: linear-gradient(90deg, var(--grantaura-gray-300), transparent);
-                }
-                
-                .g-card__meta-item {
-                  display: flex;
-                  align-items: center;
-                  font-size: clamp(0.75rem, 3vw, 0.85rem);
-                  color: var(--grantaura-gray-700);
-                  gap: 0.35rem;
-                  flex-wrap: wrap;
-                }
-                
-                .g-card__meta-item svg {
-                  color: var(--grantaura-primary);
-                  flex-shrink: 0;
-                  width: clamp(14px, 4vw, 16px);
-                  height: clamp(14px, 4vw, 16px);
-                }
-                
-                .g-card__meta-item strong {
-                  font-weight: 600;
-                  margin-right: 0.25rem;
-                  color: var(--grantaura-gray-800);
-                }
-                
-                /* Location links styling */
-                .g-card__location-link {
-                  color: var(--grantaura-gray-700) !important;
-                  text-decoration: none !important;
-                  transition: color 0.2s ease;
-                  display: inline-block;
-                }
-                
-                .g-card__location-link:hover {
-                  color: var(--grantaura-primary) !important;
-                  text-decoration: underline !important;
-                }
-                
-                .g-card__location-list {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.25rem;
-                }
-                
-                .g-card__location-more {
-                  display: inline-flex;
-                  color: var(--grantaura-secondary-dark);
-                  font-weight: 500;
-                  font-size: 0.75rem;
-                  margin-left: 0.25rem;
-                }
-                
-                /* Responsive location display */
-                .g-card__location-item--extra {
-                  display: none;
-                }
-                
-                @media (min-width: 768px) {
-                  .g-card__location-item--extra-md {
-                    display: inline;
-                  }
-                  
-                  .g-card__location-more--mobile {
-                    display: none;
-                  }
-                  
-                  .g-card__location-more--tablet {
-                    display: inline-flex;
-                  }
-                }
-                
-                @media (min-width: 1024px) {
-                  .g-card__location-item--extra-lg {
-                    display: inline;
-                  }
-                  
-                  .g-card__location-more--tablet {
-                    display: none;
-                  }
-                  
-                  .g-card__location-more--desktop {
-                    display: inline-flex;
-                  }
-                }
-                
-                .g-card__tags {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.5rem;
-                  margin-top: 0.75rem;
-                }
-                
-                .g-card__tag {
-                  font-size: 0.75rem;
-                  padding: 3px 10px;
-                  background-color: var(--grantaura-gray-100);
-                  border-radius: 20px;
-                  color: var(--grantaura-gray-700) !important;
-                  border: 1px solid var(--grantaura-gray-200);
-                  transition: var(--grantaura-transition);
-                  text-decoration: none !important;
-                  display: inline-block;
-                }
-                
-                .g-card__tag:hover {
-                  background-color: var(--grantaura-primary-light);
-                  color: white !important;
-                  border-color: var(--grantaura-primary-light);
-                }
-                
-                .g-card__tag--more {
-                  background: var(--grantaura-gray-200);
-                  color: var(--grantaura-gray-800) !important;
-                  cursor: default;
-                }
-                
-                .g-card__tag--more:hover {
-                  background: var(--grantaura-gray-200);
-                  color: var(--grantaura-gray-800) !important;
-                  border-color: var(--grantaura-gray-200);
-                }
-                
-                /* Responsive category tag display */
-                .g-card__tag--extra {
-                  display: none;
-                }
-                
-                @media (min-width: 768px) {
-                  .g-card__tag--extra-md {
-                    display: inline-block;
-                  }
-                  
-                  .g-card__tag--more-mobile {
-                    display: none;
-                  }
-                  
-                  .g-card__tag--more-tablet {
-                    display: inline-block;
-                  }
-                }
-                
-                @media (min-width: 1024px) {
-                  .g-card__tag--extra-lg {
-                    display: inline-block;
-                  }
-                  
-                  .g-card__tag--more-tablet {
-                    display: none;
-                  }
-                  
-                  .g-card__tag--more-desktop {
-                    display: inline-block;
-                  }
-                }
-                
-                /* Enhanced styling for featured meta */
-                .g-card--featured .g-card__meta::before {
-                  background: linear-gradient(90deg, var(--grantaura-primary-light), transparent);
-                  opacity: 0.3;
-                }
-                
-                .g-card--featured .g-card__meta-item svg {
-                  color: var(--grantaura-primary-dark);
-                }
-                
-                .g-card--featured .g-card__tag {
-                  border-color: var(--grantaura-primary-light);
-                  background-color: rgba(90, 59, 140, 0.05);
-                }
-
-.g-card--featured .g-card__tag:hover {
-color: var(--grantaura-secondary-dark) !important;
-background-color: var(--grantaura-primary-light);
-}
-              </style>
-              
-              <?php if (!empty($location_data)): ?>
-              <div class="g-card__meta-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <strong>Location:</strong> 
-                <div class="g-card__location-list">
-                  <?php 
-                  $location_count = count($location_data);
-                  $mobile_limit = 2;
-                  $tablet_limit = 4;
-                  $desktop_limit = 6;
-                  
-                  foreach ($location_data as $index => $location):
-                    // Determine which responsive class to use
-                    $extra_class = '';
-                    if ($index >= $mobile_limit) {
-                      $extra_class = 'g-card__location-item--extra';
-                      if ($index < $tablet_limit) {
-                        $extra_class .= ' g-card__location-item--extra-md';
-                      } else if ($index < $desktop_limit) {
-                        $extra_class .= ' g-card__location-item--extra-md g-card__location-item--extra-lg';
-                      }
-                    }
-                    
-                    // Output comma for items after the first
-                    if ($index > 0) {
-                      echo ($index < $mobile_limit || $extra_class) ? '<span class="' . $extra_class . '">, </span>' : '';
-                    }
-                    
-                    // Output the location link with appropriate class
-                    echo '<a href="' . esc_url($location['url']) . '" class="g-card__location-link ' . $extra_class . '">' . esc_html($location['name']) . '</a>';
-                  endforeach;
-                  
-                  // Show "+X more" indicators for different screen sizes
-                  if ($location_count > $mobile_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--mobile">+' . ($location_count - $mobile_limit) . ' more</span>';
-                  }
-                  
-                  if ($location_count > $tablet_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--tablet g-card__location-item--extra g-card__location-item--extra-md">+' . ($location_count - $tablet_limit) . ' more</span>';
-                  }
-                  
-                  if ($location_count > $desktop_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--desktop g-card__location-item--extra g-card__location-item--extra-md g-card__location-item--extra-lg">+' . ($location_count - $desktop_limit) . ' more</span>';
-                  }
-                  ?>
-                </div>
-              </div>
-              <?php endif; ?>
-              
-              <?php if (!empty($eligible_entities) && is_array($eligible_entities)): ?>
-              <div class="g-card__meta-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                <strong>Eligible:</strong> 
-                <div class="g-card__location-list">
-                  <?php 
-                  $entity_count = count($eligible_entities);
-                  $mobile_limit = 2;
-                  $tablet_limit = 4;
-                  $desktop_limit = 6;
-                  
-                  foreach ($eligible_entities as $index => $entity):
-                    // Determine which responsive class to use
-                    $extra_class = '';
-                    if ($index >= $mobile_limit) {
-                      $extra_class = 'g-card__location-item--extra';
-                      if ($index < $tablet_limit) {
-                        $extra_class .= ' g-card__location-item--extra-md';
-                      } else if ($index < $desktop_limit) {
-                        $extra_class .= ' g-card__location-item--extra-md g-card__location-item--extra-lg';
-                      }
-                    }
-                    
-                    // Output comma for items after the first
-                    if ($index > 0) {
-                      echo ($index < $mobile_limit || $extra_class) ? '<span class="' . $extra_class . '">, </span>' : '';
-                    }
-                    
-                    // Output the entity with appropriate class - not linking as we don't have entity archive pages
-                    echo '<span class="' . $extra_class . '">' . esc_html($entity) . '</span>';
-                  endforeach;
-                  
-                  // Show "+X more" indicators for different screen sizes
-                  if ($entity_count > $mobile_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--mobile">+' . ($entity_count - $mobile_limit) . ' more</span>';
-                  }
-                  
-                  if ($entity_count > $tablet_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--tablet g-card__location-item--extra g-card__location-item--extra-md">+' . ($entity_count - $tablet_limit) . ' more</span>';
-                  }
-                  
-                  if ($entity_count > $desktop_limit) {
-                    echo '<span class="g-card__location-more g-card__location-more--desktop g-card__location-item--extra g-card__location-item--extra-md g-card__location-item--extra-lg">+' . ($entity_count - $desktop_limit) . ' more</span>';
-                  }
-                  ?>
-                </div>
-              </div>
-              <?php endif; ?>
-              
-              <?php if (!empty($category_data)): ?>
-              <div class="g-card__tags">
-                <?php 
-                $category_count = count($category_data);
-                $mobile_limit = 2;
-                $tablet_limit = 4;
-                $desktop_limit = 6;
-                
-                foreach ($category_data as $index => $category):
-                  // Determine which responsive class to use
-                  $extra_class = '';
-                  if ($index >= $mobile_limit) {
-                    $extra_class = 'g-card__tag--extra';
-                    if ($index < $tablet_limit) {
-                      $extra_class .= ' g-card__tag--extra-md';
-                    } else if ($index < $desktop_limit) {
-                      $extra_class .= ' g-card__tag--extra-md g-card__tag--extra-lg';
-                    }
-                  }
-                  
-                  // Output category link
-                  echo '<a href="' . esc_url($category['url']) . '" class="g-card__tag ' . $extra_class . '">' . esc_html($category['name']) . '</a>';
-                endforeach;
-                
-                // Show "+X more" indicators for different screen sizes
-                if ($category_count > $mobile_limit) {
-                  echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-mobile">+' . ($category_count - $mobile_limit) . ' more</span>';
-                }
-                
-                if ($category_count > $tablet_limit) {
-                  echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-tablet g-card__tag--extra g-card__tag--extra-md">+' . ($category_count - $tablet_limit) . ' more</span>';
-                }
-                
-                if ($category_count > $desktop_limit) {
-                  echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-desktop g-card__tag--extra g-card__tag--extra-md g-card__tag--extra-lg">+' . ($category_count - $desktop_limit) . ' more</span>';
-                }
-                ?>
-              </div>
-              <?php endif; ?>
-            </div>
-          </div>
+          <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
+            <img 
+              src="<?php echo esc_url($featured_image); ?>" 
+              alt="<?php echo esc_attr($title); ?>" 
+              loading="lazy"
+              class="g-card__image"
+              onload="this.classList.add('g-card__img-loaded')"
+              width="500"
+              height="500"
+            >
+          </a>
         </div>
-        <?php
-      }
-      
-      // Calculate the total number of posts and pages for pagination
-      $has_multiple_pages = $total_pages > 1;
-      
-      if ($has_multiple_pages) {
-        ?>
-        <div class="g-pagination">
+        
+        <div class="g-card__status-badge" style="background-color: <?php echo esc_attr($status_color); ?>;">
           <style>
-            .g-pagination {
-              grid-column: 1 / -1;
-              display: flex;
-              justify-content: center;
-              margin-top: 2.5rem;
-              margin-bottom: 4.5rem;
-              padding-top: 1.5rem;
-              border-top: 1px solid var(--grantaura-gray-200);
-              position: relative;
-            }
-            
-            .g-pagination::before {
-              content: "";
+            .g-card__status-badge {
               position: absolute;
-              top: -2px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 60px;
-              height: 3px;
-              background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
-            }
-            
-            .g-pagination__list {
-              display: flex;
-              list-style: none;
-              padding: 0;
-              margin: 0;
-              gap: clamp(0.2rem, 1vw, 0.35rem);
-              flex-wrap: wrap;
-              justify-content: center;
-            }
-            
-            .g-pagination__item a,
-            .g-pagination__item span {
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              min-width: clamp(2rem, 6vw, 2.25rem);
-              height: clamp(2rem, 6vw, 2.25rem);
-              padding: 0 clamp(0.5rem, 2vw, 0.75rem);
-              border-radius: var(--grantaura-border-radius-sm);
-              font-size: clamp(0.8rem, 3vw, 0.9rem);
-              font-weight: 500;
-              text-decoration: none !important;
-              transition: var(--grantaura-transition);
-            }
-            
-            .g-pagination__item a {
-              background-color: var(--grantaura-gray-100);
-              color: var(--grantaura-gray-700) !important;
-              border: 1px solid var(--grantaura-gray-200);
-            }
-            
-            .g-pagination__item a:hover {
-              background-color: var(--grantaura-primary-light);
+              top: 12px;
+              left: 12px;
+              padding: 6px 14px;
+              border-radius: 100px;
+              font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
               color: white !important;
-              border-color: var(--grantaura-primary-light);
+              z-index: 5;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+              display: flex;
+              align-items: center;
+              gap: 5px;
+              transition: transform 0.3s ease;
             }
             
-            .g-pagination__item--current span {
-              background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
-              color: white;
-              box-shadow: 0 3px 6px rgba(90, 59, 140, 0.2);
+            
+            .g-card__status-badge::before {
+              content: "";
+              display: inline-block;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              background-color: rgba(255, 255, 255, 0.8);
+              box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+              animation: pulse 2s infinite;
             }
             
-            .g-pagination__item--prev a,
-            .g-pagination__item--next a {
+            .g-card__status-badge[style*="var(--grantaura-success)"]::before {
+              animation: pulse-success 2s infinite;
+            }
+            
+            .g-card__status-badge[style*="var(--grantaura-secondary)"]::before {
+              animation: none;
+            }
+            
+            .g-card__status-badge[style*="var(--grantaura-danger)"]::before {
+              animation: none;
+              background-color: rgba(255, 255, 255, 0.6);
+              box-shadow: none;
+            }
+            
+            @keyframes pulse {
+              0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+              }
+              70% {
+                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
+              }
+              100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+              }
+            }
+            
+            @keyframes pulse-success {
+              0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+              }
+              70% {
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+              }
+              100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+              }
+            }
+            
+            /* Mobile optimizations */
+            @media (max-width: 640px) {
+              .g-card__status-badge {
+                top: 10px;
+                left: 10px;
+                padding: 5px 12px;
+              }
+            }
+            
+            /* Reduce motion based on user preference */
+            @media (prefers-reduced-motion: reduce) {
+              .g-card__status-badge::before {
+                animation: none !important;
+              }
+              
+              .g-card:hover .g-card__status-badge {
+                transform: none;
+              }
+            }
+          </style>
+          <?php echo esc_html($status_text); ?>
+        </div>
+        
+        <?php if ($is_featured): ?>
+        <div class="g-card__featured-badge">
+          <style>
+            .g-card__featured-badge {
+              position: absolute;
+              right: -8px;
+              top: 18vw;
+              z-index: 20;
+              transform-origin: top right;
+            }
+            
+            .g-card__featured-badge-inner {
+              background: linear-gradient(135deg, #FFD700, #FFA500);
+              color: #000;
+              font-weight: 700;
+              font-size: 0.75rem;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              padding: 6px 8px 6px 12px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+              position: relative;
+              clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
               display: flex;
               align-items: center;
               gap: 4px;
             }
             
+            .g-card__featured-badge-inner::before {
+              content: "";
+              position: absolute;
+              bottom: -8px;
+              right: 0;
+              width: 8px;
+              height: 8px;
+              background: #A67C00;
+              clip-path: polygon(0 0, 100% 0, 100% 100%);
+            }
+            
+            .g-card__featured-badge-inner svg {
+              width: 14px;
+              height: 14px;
+              color: #000;
+              filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+            }
+            
+            .g-card__featured-badge-shine {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0) 100%
+              );
+              background-size: 200% 200%;
+              animation: shine 2s ease-in-out infinite;
+            }
+            
+            @keyframes shine {
+              0% {
+                background-position: -100% -100%;
+              }
+              100% {
+                background-position: 100% 100%;
+              }
+            }
+            
+            @media (prefers-reduced-motion: reduce) {
+              .g-card__featured-badge-shine {
+                animation: none;
+              }
+            }
+          </style>
+          <div class="g-card__featured-badge-inner">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2l2.2 6.6h7.1l-5.7 4.2 2.2 6.6-5.8-4.2-5.7 4.2 2.2-6.6-5.8-4.2h7.1z"/>
+            </svg>
+            Featured
+            <div class="g-card__featured-badge-shine"></div>
+          </div>
+        </div>
+        <?php endif; ?>
+        
+        <?php if ($status_is_active): ?>
+        <div class="g-card__countdown-wrapper">
+          <style>
+            .g-card__countdown-wrapper {
+              position: absolute;
+              top: 12px;
+              right: 12px;
+              z-index: 5;
+            }
+            
+            .g-card__countdown {
+              background: rgba(90, 59, 140, 0.95);
+              backdrop-filter: blur(5px);
+              -webkit-backdrop-filter: blur(5px);
+              border-radius: 3px;
+              padding: 8px 10px;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 5px;
+              box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+              border: 1px solid rgba(255, 255, 255, 0.15);
+              transition: transform 0.3s ease;
+            }
+            
+            .g-card:hover .g-card__countdown {
+              transform: translateY(-2px);
+            }
+            
+            .g-card__countdown-label {
+              font-size: 0.55rem;
+              text-transform: uppercase;
+              opacity: 0.85;
+              margin-right: 0.25rem;
+              letter-spacing: 0.5px;
+            }
+            
+            .g-card__countdown-unit {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+            }
+            
+            .g-card__countdown-unit:not(:last-child)::after {
+              content: ":";
+              position: absolute;
+              right: -4px;
+              top: 2px;
+              color: rgba(255, 255, 255, 0.7);
+              font-weight: 700;
+            }
+            
+            .g-card__countdown-number {
+              font-size: clamp(0.80rem, 2vw, 0.75rem);
+              font-weight: 700;
+              background: rgba(255, 255, 255, 0.15);
+              border-radius: 6px;
+              min-width: clamp(1.8rem, 6vw, 2rem);
+              text-align: center;
+              padding: 2px 4px;
+              position: relative;
+              overflow: hidden;
+            }
+            
+            /* Pulse effect for seconds */
+            .g-card__countdown-unit:last-child .g-card__countdown-number {
+              position: relative;
+            }
+            
+            .g-card__countdown-unit:last-child .g-card__countdown-number::after {
+              content: "";
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: rgba(255, 163, 102, 0.85);
+              opacity: 0;
+              animation: pulse-countdown 1s infinite;
+            }
+            
+            @keyframes pulse-countdown {
+              0% {
+                opacity: 0;
+              }
+              50% {
+                opacity: 1;
+              }
+              100% {
+                opacity: 0;
+              }
+            }
+            
+            .g-card__countdown-label-unit {
+              font-size: 0.6rem;
+              text-transform: uppercase;
+              margin-top: 2px;
+              color: rgba(255, 255, 255, 0.8);
+              letter-spacing: 0.5px;
+            }
+            
+            .g-card__deadline-days {
+              background: rgba(90, 59, 140, 0.95);
+              backdrop-filter: blur(5px);
+              -webkit-backdrop-filter: blur(5px);
+              border-radius: 3px;
+              padding: 6px 10px;
+              color: white;
+              display: flex;
+              align-items: center;
+              font-weight: 600;
+              box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+              border: 1px solid rgba(255, 255, 255, 0.15);
+              transition: transform 0.3s ease;
+              gap: 5px;
+            }
+            
+            .g-card:hover .g-card__deadline-days {
+              transform: translateY(-2px);
+            }
+            
+            .g-card__deadline-days-num {
+              font-size: clamp(0.75rem, 2vw, 1rem);
+              font-weight: 800;
+              background: rgba(255, 255, 255, 0.15);
+              border-radius: 6px;
+              min-width: 1.8rem;
+              text-align: center;
+              padding: 2px 6px;
+              color: var(--grantaura-secondary-light);
+            }
+            
+            /* Adjust position for featured cards */
+            .g-card--featured .g-card__countdown-wrapper {
+              right: 12px;
+            }
+            
+            /* Mobile optimizations */
             @media (max-width: 640px) {
-              .g-pagination__list {
-                padding: 0 0.5rem;
+              .g-card__countdown-wrapper {
+                top: 10px;
+                right: 10px;
               }
               
-              .g-pagination__item--prev a,
-              .g-pagination__item--next a {
-                padding: 0 0.5rem;
+              .g-card__countdown, 
+              .g-card__deadline-days {
+                padding: 4px 6px;
+              }
+            }
+            
+            /* Reduce motion based on user preference */
+            @media (prefers-reduced-motion: reduce) {
+              .g-card__countdown-unit:last-child .g-card__countdown-number::after {
+                animation: none;
               }
               
-              .g-pagination__item--prev svg,
-              .g-pagination__item--next svg {
-                width: 14px;
-                height: 14px;
+              .g-card:hover .g-card__countdown,
+              .g-card:hover .g-card__deadline-days {
+                transform: none;
               }
             }
           </style>
           
-          <ul class="g-pagination__list">
-            <?php
-            $current_page = max(1, get_query_var('paged'));
-            $is_not_first_page = $current_page > 1;
+          <?php if ($time_remaining['display_type'] == 'countdown'): ?>
+          <div class="g-card__countdown" id="<?php echo esc_attr($countdown_id); ?>" data-deadline="<?php echo esc_attr($deadline_time); ?>">
+            <div class="g-card__countdown-unit">
+              <div class="g-card__countdown-number" data-hours><?php echo sprintf('%02d', $time_remaining['hours']); ?></div>
+              <div class="g-card__countdown-label-unit">Hrs</div>
+            </div>
             
-            // Previous page
-            if ($is_not_first_page) {
-              echo '<li class="g-pagination__item g-pagination__item--prev">
-                      <a href="' . esc_url(get_pagenum_link($current_page - 1)) . '">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
-                        Prev
-                      </a>
-                    </li>';
+            <div class="g-card__countdown-unit">
+              <div class="g-card__countdown-number" data-minutes><?php echo sprintf('%02d', $time_remaining['minutes']); ?></div>
+              <div class="g-card__countdown-label-unit">Min</div>
+            </div>
+            
+            <div class="g-card__countdown-unit">
+              <div class="g-card__countdown-number" data-seconds><?php echo sprintf('%02d', $time_remaining['seconds']); ?></div>
+              <div class="g-card__countdown-label-unit">Sec</div>
+            </div>
+          </div>
+          <?php else: ?>
+          <div class="g-card__deadline-days">
+            <span class="g-card__deadline-days-num"><?php echo $time_remaining['days']; ?></span>
+            <span>Days Left</span>
+          </div>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
+        
+        <div class="g-card__gradient-overlay">
+          <style>
+            .g-card__gradient-overlay {
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              height: 55%;
+              background: linear-gradient(to top, 
+                rgba(17, 24, 39, 0.98) 30%, 
+                rgba(90, 59, 140, 0.90) 45%,
+                rgba(90, 59, 140, 0.65) 65%, 
+                rgba(90, 59, 140, 0.2) 85%,
+                rgba(90, 59, 140, 0) 100%);
+              z-index: 3;
+              pointer-events: none;
+              border-radius: 0 0 12px 12px;
+              mix-blend-mode: multiply;
             }
             
-            // Page numbers
-            $start_page = max(1, $current_page - 2);
-            $end_page = min($start_page + 4, $total_pages);
-            $is_start_page_after_first = $start_page > 1;
+            /* Add subtle lighting effect on the gradient */
+            .g-card__gradient-overlay::after {
+              content: "";
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              height: 60%;
+              background: linear-gradient(135deg, 
+                rgba(255, 163, 102, 0.25) 0%, 
+                rgba(90, 59, 140, 0) 50%,
+                rgba(255, 163, 102, 0.15) 100%);
+              z-index: 1;
+              opacity: 0;
+              transition: opacity 0.5s ease;
+            }
             
-            if ($is_start_page_after_first) {
-              echo '<li class="g-pagination__item">
-                      <a href="' . esc_url(get_pagenum_link(1)) . '">1</a>
-                    </li>';
-                    
-              $is_gap_needed = $start_page > 2;
-              if ($is_gap_needed) {
-                echo '<li class="g-pagination__item g-pagination__item--dots">
-                        <span>...</span>
-                      </li>';
+            
+            
+            /* Reduce motion based on user preference */
+            @media (prefers-reduced-motion: reduce) {
+              .g-card:hover .g-card__gradient-overlay::after {
+                transition: none;
               }
             }
-            
-            for ($i = $start_page; $i <= $end_page; $i++) {
-              $is_current = $i == $current_page;
-              if ($is_current) {
-                echo '<li class="g-pagination__item g-pagination__item--current">
-                        <span>' . $i . '</span>
-                      </li>';
-              } else {
-                echo '<li class="g-pagination__item">
-                        <a href="' . esc_url(get_pagenum_link($i)) . '">' . $i . '</a>
-                      </li>';
-              }
+          </style>
+        </div>
+        
+        <h2 class="g-card__title">
+          <style>
+            .g-card__title {
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              z-index: 4;
+              padding: 1.25rem 1.25rem 1.5rem;
+              margin: 0;
+              font-size: clamp(1.1rem, 5vw, 1.35rem);
+              font-weight: 700;
+              line-height: 1.3;
+              color: white !important;
+              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+              transition: transform 0.3s ease;
             }
             
-            $is_end_before_last = $end_page < $total_pages;
-            if ($is_end_before_last) {
-              $is_gap_needed = $end_page < $total_pages - 1;
-              if ($is_gap_needed) {
-                echo '<li class="g-pagination__item g-pagination__item--dots">
-                        <span>...</span>
-                      </li>';
+            .g-card:hover .g-card__title {
+              transform: translateY(-5px);
+            }
+            
+            .g-card__title a {
+              color: white !important;
+              text-decoration: none !important;
+              transition: var(--grantaura-transition);
+              display: block;
+              width: 100%;
+              position: relative;
+              padding-left: 0;
+              overflow: hidden;
+            }
+            
+            .g-card__title a:hover {
+              color: var(--grantaura-secondary-light) !important;
+            }
+            
+            /* Hover underline effect */
+            .g-card__title a::after {
+              content: "";
+              position: absolute;
+              bottom: -5px;
+              left: 0;
+              width: 0;
+              height: 2px;
+              background: var(--grantaura-secondary);
+              transition: width 0.3s ease;
+            }
+            
+            .g-card:hover .g-card__title a::after {
+              width: 40px;
+            }
+            
+            /* Add subtle enhancement to first letter */
+            .g-card__title a::first-letter {
+              font-size: 110%;
+              color: var(--grantaura-secondary-light);
+            }
+            
+            /* Special styling for featured titles */
+            .g-card--featured .g-card__title a::first-letter {
+              color: #FFD700;
+            }
+            
+            /* Reduce motion based on user preference */
+            @media (prefers-reduced-motion: reduce) {
+              .g-card:hover .g-card__title {
+                transform: none;
               }
               
-              echo '<li class="g-pagination__item">
-                      <a href="' . esc_url(get_pagenum_link($total_pages)) . '">' . $total_pages . '</a>
-                    </li>';
+              .g-card:hover .g-card__title a::after {
+                transition: none;
+              }
             }
-            
-            // Next page
-            $is_not_last_page = $current_page < $total_pages;
-            if ($is_not_last_page) {
-              echo '<li class="g-pagination__item g-pagination__item--next">
-                      <a href="' . esc_url(get_pagenum_link($current_page + 1)) . '">
-                        Next
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </a>
-                    </li>';
+          </style>
+          
+          <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
+            <?php echo esc_html($title); ?>
+          </a>
+        </h2>
+        
+        <!-- Accessibility features -->
+        <div class="g-card__img-accessibility" aria-hidden="true">
+          <style>
+            .g-card__img-accessibility {
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              padding: 0;
+              margin: -1px;
+              overflow: hidden;
+              clip: rect(0, 0, 0, 0);
+              white-space: nowrap;
+              border-width: 0;
             }
-            ?>
-          </ul>
+          </style>
+          <div class="g-card__screen-reader-info">
+            <p>Grant: <?php echo esc_html($title); ?></p>
+            <p>Status: <?php echo esc_html($status_text); ?></p>
+            <?php if ($is_featured): ?>
+              <p>Featured Grant</p>
+            <?php endif; ?>
+            <?php if ($status_is_active && $has_deadline): ?>
+              <p>Deadline: <?php echo esc_html($deadline_display); ?></p>
+            <?php endif; ?>
+            <p>Amount: <?php echo esc_html($amount_display); ?></p>
+          </div>
         </div>
-        <?php
-      }
-    } else {
-      // No grants found
-      ?>
-      <div class="no-grants-message">
+      </div>
+
+      <div class="g-card__content">
         <style>
-          .no-grants-message {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 4rem 1.5rem;
-            background-color: var(--grantaura-gray-50);
-            border-radius: var(--grantaura-border-radius);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--grantaura-gray-200);
+          .g-card__content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: clamp(0.75rem, 3vw, 1.25rem);
+            height: auto;
+            overflow: visible;
           }
           
-          .no-grants-message::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
-          }
           
-          .no-grants-message h3 {
-            font-size: clamp(1.5rem, 5vw, 1.75rem);
-            margin-bottom: 1.25rem;
-            color: var(--grantaura-gray-800);
-            position: relative;
-            display: inline-block;
-          }
-          
-          .no-grants-message h3::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            bottom: -10px;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 3px;
-            background-color: var(--grantaura-primary-light);
-          }
-          
-          .no-grants-message p {
-            font-size: clamp(0.95rem, 4vw, 1.1rem);
-            color: var(--grantaura-gray-600);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-          }
         </style>
         
-        <h3>No Grants Available</h3>
-        <p>We're currently updating our grants database. Please check back soon for new grant opportunities, or contact us to learn about our custom grant research services.</p>
+        <div class="g-card__amount">
+          <style>
+            .g-card__amount {
+              font-size: clamp(1.1rem, 4vw, 1.3rem);
+              font-weight: 700;
+              position: relative;
+              padding: 0.25rem 0;
+              margin-bottom: 0.75rem;
+              color: var(--grantaura-primary);
+            }
+            
+            .g-card__amount::before {
+              content: "";
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary-dark));
+              opacity: 0.2;
+            }
+            
+            /* Enhanced styling for featured card amounts */
+            .g-card--featured .g-card__amount {
+              color: var(--grantaura-primary-dark);
+            }
+            
+            .g-card--featured .g-card__amount::before {
+              background: linear-gradient(90deg, var(--grantaura-primary-dark), #FFD700);
+              opacity: 0.3;
+              height: 3px;
+            }
+          </style>
+          
+          <?php echo esc_html($amount_display); ?>
+        </div>
+        
+        <div class="g-card__deadline-info">
+          <style>
+            .g-card__deadline-info {
+              display: flex;
+              align-items: center;
+              font-size: clamp(0.8rem, 3vw, 0.85rem);
+              color: var(--grantaura-gray-700);
+              margin-bottom: 0.75rem;
+              gap: 0.5rem;
+            }
+            
+            .g-card__deadline-info svg {
+              color: var(--grantaura-primary);
+              flex-shrink: 0;
+              width: clamp(14px, 4vw, 16px);
+              height: clamp(14px, 4vw, 16px);
+            }
+            
+            .g-card__deadline-info strong {
+              font-weight: 600;
+              margin-right: 0.25rem;
+              color: var(--grantaura-gray-800);
+            }
+            
+            .g-card__deadline-value {
+              font-weight: 500;
+            }
+            
+            .g-card__deadline-value--ongoing {
+              color: var(--grantaura-secondary-dark);
+              font-weight: 600;
+            }
+            
+            .g-card__deadline-value--expired {
+              color: var(--grantaura-danger);
+              font-weight: 500;
+            }
+            
+            /* Enhanced styling for featured deadlines */
+            .g-card--featured .g-card__deadline-info svg {
+              color: var(--grantaura-primary-dark);
+            }
+          </style>
+          
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          
+          <div>
+            <strong>Deadline:</strong>
+            <span class="g-card__deadline-value <?php echo $status_is_ongoing ? 'g-card__deadline-value--ongoing' : ($status_is_active ? '' : 'g-card__deadline-value--expired'); ?>">
+              <?php echo esc_html($deadline_display); ?>
+            </span>
+          </div>
+        </div>
+        
+        <div class="g-card__excerpt">
+          <style>
+            .g-card__excerpt {
+              margin-bottom: 1rem;
+              font-size: clamp(0.8rem, 3vw, 0.9rem);
+              color: var(--grantaura-gray-600);
+              line-height: 1.6;
+              overflow: hidden;
+              position: relative;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              max-height: 4.8em; /* Approximately 3 lines */
+            }
+            
+            .g-card__excerpt::first-letter {
+              font-size: 1.1em;
+              font-weight: 500;
+              color: var(--grantaura-primary);
+            }
+            
+            /* Enhanced styling for featured excerpts */
+            .g-card--featured .g-card__excerpt {
+              color: var(--grantaura-gray-700);
+            }
+            
+            .g-card--featured .g-card__excerpt::first-letter {
+              color: var(--grantaura-primary-dark);
+              font-weight: 600;
+            }
+          </style>
+          
+          <?php echo esc_html($tagline); ?>
+        </div>
+        
+        <div class="g-card__meta">
+          <style>
+            .g-card__meta {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 0.75rem;
+              margin-top: auto;
+              position: relative;
+            }
+            
+            .g-card__meta::before {
+              content: "";
+              position: absolute;
+              top: -10px;
+              left: 0;
+              right: 0;
+              height: 1px;
+              background: linear-gradient(90deg, var(--grantaura-gray-300), transparent);
+            }
+            
+            .g-card__meta-item {
+              display: flex;
+              align-items: center;
+              font-size: clamp(0.75rem, 3vw, 0.85rem);
+              color: var(--grantaura-gray-700);
+              gap: 0.35rem;
+              flex-wrap: wrap;
+            }
+            
+            .g-card__meta-item svg {
+              color: var(--grantaura-primary);
+              flex-shrink: 0;
+              width: clamp(14px, 4vw, 16px);
+              height: clamp(14px, 4vw, 16px);
+            }
+            
+            .g-card__meta-item strong {
+              font-weight: 600;
+              margin-right: 0.25rem;
+              color: var(--grantaura-gray-800);
+            }
+            
+            /* Location links styling */
+            .g-card__location-link {
+              color: var(--grantaura-gray-700) !important;
+              text-decoration: none !important;
+              transition: color 0.2s ease;
+              display: inline-block;
+            }
+            
+            .g-card__location-link:hover {
+              color: var(--grantaura-primary) !important;
+              text-decoration: underline !important;
+            }
+            
+            .g-card__location-list {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.25rem;
+            }
+            
+            .g-card__location-more {
+              display: inline-flex;
+              color: var(--grantaura-secondary-dark);
+              font-weight: 500;
+              font-size: 0.75rem;
+              margin-left: 0.25rem;
+            }
+            
+            /* Responsive location display */
+            .g-card__location-item--extra {
+              display: none;
+            }
+            
+            @media (min-width: 768px) {
+              .g-card__location-item--extra-md {
+                display: inline;
+              }
+              
+              .g-card__location-more--mobile {
+                display: none;
+              }
+              
+              .g-card__location-more--tablet {
+                display: inline-flex;
+              }
+            }
+            
+            @media (min-width: 1024px) {
+              .g-card__location-item--extra-lg {
+                display: inline;
+              }
+              
+              .g-card__location-more--tablet {
+                display: none;
+              }
+              
+              .g-card__location-more--desktop {
+                display: inline-flex;
+              }
+            }
+            
+            .g-card__tags {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+              margin-top: 0.75rem;
+            }
+            
+            .g-card__tag {
+              font-size: 0.75rem;
+              padding: 3px 10px;
+              background-color: var(--grantaura-gray-100);
+              border-radius: 20px;
+              color: var(--grantaura-gray-700) !important;
+              border: 1px solid var(--grantaura-gray-200);
+              transition: var(--grantaura-transition);
+              text-decoration: none !important;
+              display: inline-block;
+            }
+            
+            .g-card__tag:hover {
+              background-color: var(--grantaura-primary-light);
+              color: white !important;
+              border-color: var(--grantaura-primary-light);
+            }
+            
+            .g-card__tag--more {
+              background: var(--grantaura-gray-200);
+              color: var(--grantaura-gray-800) !important;
+              cursor: default;
+            }
+            
+            .g-card__tag--more:hover {
+              background: var(--grantaura-gray-200);
+              color: var(--grantaura-gray-800) !important;
+              border-color: var(--grantaura-gray-200);
+            }
+            
+            /* Responsive category tag display */
+            .g-card__tag--extra {
+              display: none;
+            }
+            
+            @media (min-width: 768px) {
+              .g-card__tag--extra-md {
+                display: inline-block;
+              }
+              
+              .g-card__tag--more-mobile {
+                display: none;
+              }
+              
+              .g-card__tag--more-tablet {
+                display: inline-block;
+              }
+            }
+            
+            @media (min-width: 1024px) {
+              .g-card__tag--extra-lg {
+                display: inline-block;
+              }
+              
+              .g-card__tag--more-tablet {
+                display: none;
+              }
+              
+              .g-card__tag--more-desktop {
+                display: inline-block;
+              }
+            }
+            
+            /* Enhanced styling for featured meta */
+            .g-card--featured .g-card__meta::before {
+              background: linear-gradient(90deg, var(--grantaura-primary-light), transparent);
+              opacity: 0.3;
+            }
+            
+            .g-card--featured .g-card__meta-item svg {
+              color: var(--grantaura-primary-dark);
+            }
+            
+            .g-card--featured .g-card__tag {
+              border-color: var(--grantaura-primary-light);
+              background-color: rgba(90, 59, 140, 0.05);
+            }
+.g-card--featured .g-card__tag {
+color: var(--grantaura-secondary-dark) !important;
+background-color: var(--grantaura-primary-light);
+}
+</style>
+          <?php if (!empty($location_data)): ?>
+          <div class="g-card__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <strong>Location:</strong> 
+            <div class="g-card__location-list">
+              <?php 
+              $location_count = count($location_data);
+              $mobile_limit = 2;
+              $tablet_limit = 4;
+              $desktop_limit = 6;
+              
+              foreach ($location_data as $index => $location):
+                // Determine which responsive class to use
+                $extra_class = '';
+                if ($index >= $mobile_limit) {
+                  $extra_class = 'g-card__location-item--extra';
+                  if ($index < $tablet_limit) {
+                    $extra_class .= ' g-card__location-item--extra-md';
+                  } else if ($index < $desktop_limit) {
+                    $extra_class .= ' g-card__location-item--extra-md g-card__location-item--extra-lg';
+                  }
+                }
+                
+                // Output comma for items after the first
+                if ($index > 0) {
+                  echo ($index < $mobile_limit || $extra_class) ? '<span class="' . $extra_class . '">, </span>' : '';
+                }
+                
+                // Output the location link with appropriate class
+                echo '<a href="' . esc_url($location['url']) . '" class="g-card__location-link ' . $extra_class . '">' . esc_html($location['name']) . '</a>';
+              endforeach;
+              
+              // Show "+X more" indicators for different screen sizes
+              if ($location_count > $mobile_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--mobile">+' . ($location_count - $mobile_limit) . ' more</span>';
+              }
+              
+              if ($location_count > $tablet_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--tablet g-card__location-item--extra g-card__location-item--extra-md">+' . ($location_count - $tablet_limit) . ' more</span>';
+              }
+              
+              if ($location_count > $desktop_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--desktop g-card__location-item--extra g-card__location-item--extra-md g-card__location-item--extra-lg">+' . ($location_count - $desktop_limit) . ' more</span>';
+              }
+              ?>
+            </div>
+          </div>
+          <?php endif; ?>
+          
+          <?php if (!empty($eligible_entities) && is_array($eligible_entities)): ?>
+          <div class="g-card__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <strong>Eligible:</strong> 
+            <div class="g-card__location-list">
+              <?php 
+              $entity_count = count($eligible_entities);
+              $mobile_limit = 2;
+              $tablet_limit = 4;
+              $desktop_limit = 6;
+              
+              foreach ($eligible_entities as $index => $entity):
+                // Determine which responsive class to use
+                $extra_class = '';
+                if ($index >= $mobile_limit) {
+                  $extra_class = 'g-card__location-item--extra';
+                  if ($index < $tablet_limit) {
+                    $extra_class .= ' g-card__location-item--extra-md';
+                  } else if ($index < $desktop_limit) {
+                    $extra_class .= ' g-card__location-item--extra-md g-card__location-item--extra-lg';
+                  }
+                }
+                
+                // Output comma for items after the first
+                if ($index > 0) {
+                  echo ($index < $mobile_limit || $extra_class) ? '<span class="' . $extra_class . '">, </span>' : '';
+                }
+                
+                // Output the entity with appropriate class - not linking as we don't have entity archive pages
+                echo '<span class="' . $extra_class . '">' . esc_html($entity) . '</span>';
+              endforeach;
+              
+              // Show "+X more" indicators for different screen sizes
+              if ($entity_count > $mobile_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--mobile">+' . ($entity_count - $mobile_limit) . ' more</span>';
+              }
+              
+              if ($entity_count > $tablet_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--tablet g-card__location-item--extra g-card__location-item--extra-md">+' . ($entity_count - $tablet_limit) . ' more</span>';
+              }
+              
+              if ($entity_count > $desktop_limit) {
+                echo '<span class="g-card__location-more g-card__location-more--desktop g-card__location-item--extra g-card__location-item--extra-md g-card__location-item--extra-lg">+' . ($entity_count - $desktop_limit) . ' more</span>';
+              }
+              ?>
+            </div>
+          </div>
+          <?php endif; ?>
+          
+          <?php if (!empty($category_data)): ?>
+          <div class="g-card__tags">
+            <?php 
+            $category_count = count($category_data);
+            $mobile_limit = 2;
+            $tablet_limit = 4;
+            $desktop_limit = 6;
+            
+            foreach ($category_data as $index => $category):
+              // Determine which responsive class to use
+              $extra_class = '';
+              if ($index >= $mobile_limit) {
+                $extra_class = 'g-card__tag--extra';
+                if ($index < $tablet_limit) {
+                  $extra_class .= ' g-card__tag--extra-md';
+                } else if ($index < $desktop_limit) {
+                  $extra_class .= ' g-card__tag--extra-md g-card__tag--extra-lg';
+                }
+              }
+              
+              // Output category link
+              echo '<a href="' . esc_url($category['url']) . '" class="g-card__tag ' . $extra_class . '">' . esc_html($category['name']) . '</a>';
+            endforeach;
+            
+            // Show "+X more" indicators for different screen sizes
+            if ($category_count > $mobile_limit) {
+              echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-mobile">+' . ($category_count - $mobile_limit) . ' more</span>';
+            }
+            
+            if ($category_count > $tablet_limit) {
+              echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-tablet g-card__tag--extra g-card__tag--extra-md">+' . ($category_count - $tablet_limit) . ' more</span>';
+            }
+            
+            if ($category_count > $desktop_limit) {
+              echo '<span class="g-card__tag g-card__tag--more g-card__tag--more-desktop g-card__tag--extra g-card__tag--extra-md g-card__tag--extra-lg">+' . ($category_count - $desktop_limit) . ' more</span>';
+            }
+            ?>
+          </div>
+          <?php endif; ?>
+        </div>
       </div>
-      <?php
-    }
-    [/php]
+    </div>
+    <?php
+  }
+  
+  // Calculate the total number of posts and pages for pagination
+  $has_multiple_pages = $total_pages > 1;
+  
+  if ($has_multiple_pages) {
+    ?>
+    <div class="g-pagination">
+      <style>
+        .g-pagination {
+          grid-column: 1 / -1;
+          display: flex;
+          justify-content: center;
+          margin-top: 2.5rem;
+          margin-bottom: 4.5rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--grantaura-gray-200);
+          position: relative;
+        }
+        
+        .g-pagination::before {
+          content: "";
+          position: absolute;
+          top: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60px;
+          height: 3px;
+          background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
+        }
+        
+        .g-pagination__list {
+          display: flex;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          gap: clamp(0.2rem, 1vw, 0.35rem);
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .g-pagination__item a,
+        .g-pagination__item span {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: clamp(2rem, 6vw, 2.25rem);
+          height: clamp(2rem, 6vw, 2.25rem);
+          padding: 0 clamp(0.5rem, 2vw, 0.75rem);
+          border-radius: var(--grantaura-border-radius-sm);
+          font-size: clamp(0.8rem, 3vw, 0.9rem);
+          font-weight: 500;
+          text-decoration: none !important;
+          transition: var(--grantaura-transition);
+        }
+        
+        .g-pagination__item a {
+          background-color: var(--grantaura-gray-100);
+          color: var(--grantaura-gray-700) !important;
+          border: 1px solid var(--grantaura-gray-200);
+        }
+        
+        .g-pagination__item a:hover {
+          background-color: var(--grantaura-primary-light);
+          color: white !important;
+          border-color: var(--grantaura-primary-light);
+        }
+        
+        .g-pagination__item--current span {
+          background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
+          color: white;
+          box-shadow: 0 3px 6px rgba(90, 59, 140, 0.2);
+        }
+        
+        .g-pagination__item--prev a,
+        .g-pagination__item--next a {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        
+        @media (max-width: 640px) {
+          .g-pagination__list {
+            padding: 0 0.5rem;
+          }
+          
+          .g-pagination__item--prev a,
+          .g-pagination__item--next a {
+            padding: 0 0.5rem;
+          }
+          
+          .g-pagination__item--prev svg,
+          .g-pagination__item--next svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      </style>
+      
+      <ul class="g-pagination__list">
+        <?php
+        $current_page = $paged; // Use our updated pagination variable
+        $is_not_first_page = $current_page > 1;
+        
+        // Previous page
+        if ($is_not_first_page) {
+          // Generate pagination link based on whether we're on the front page or not
+          $prev_link = $is_front_page ? get_home_url() . ($current_page > 2 ? '/page/' . ($current_page - 1) : '') : get_pagenum_link($current_page - 1);
+          
+          echo '<li class="g-pagination__item g-pagination__item--prev">
+                  <a href="' . esc_url($prev_link) . '">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Prev
+                  </a>
+                </li>';
+        }
+        
+        // Page numbers
+        $start_page = max(1, $current_page - 2);
+        $end_page = min($start_page + 4, $total_pages);
+        $is_start_page_after_first = $start_page > 1;
+        
+        if ($is_start_page_after_first) {
+          // First page link
+          $first_link = $is_front_page ? get_home_url() : get_pagenum_link(1);
+          
+          echo '<li class="g-pagination__item">
+                  <a href="' . esc_url($first_link) . '">1</a>
+                </li>';
+                
+          $is_gap_needed = $start_page > 2;
+          if ($is_gap_needed) {
+            echo '<li class="g-pagination__item g-pagination__item--dots">
+                    <span>...</span>
+                  </li>';
+          }
+        }
+        
+        for ($i = $start_page; $i <= $end_page; $i++) {
+          $is_current = $i == $current_page;
+          
+          if ($is_current) {
+            echo '<li class="g-pagination__item g-pagination__item--current">
+                    <span>' . $i . '</span>
+                  </li>';
+          } else {
+            // Generate page link based on whether we're on the front page and which page number
+            $page_link = $is_front_page ? 
+              ($i === 1 ? get_home_url() : get_home_url() . '/page/' . $i) : 
+              get_pagenum_link($i);
+            
+            echo '<li class="g-pagination__item">
+                    <a href="' . esc_url($page_link) . '">' . $i . '</a>
+                  </li>';
+          }
+        }
+        
+        $is_end_before_last = $end_page < $total_pages;
+        if ($is_end_before_last) {
+          $is_gap_needed = $end_page < $total_pages - 1;
+          if ($is_gap_needed) {
+            echo '<li class="g-pagination__item g-pagination__item--dots">
+                    <span>...</span>
+                  </li>';
+          }
+          
+          // Last page link
+          $last_link = $is_front_page ? 
+            get_home_url() . '/page/' . $total_pages : 
+            get_pagenum_link($total_pages);
+          
+          echo '<li class="g-pagination__item">
+                  <a href="' . esc_url($last_link) . '">' . $total_pages . '</a>
+                </li>';
+        }
+        
+        // Next page
+        $is_not_last_page = $current_page < $total_pages;
+        if ($is_not_last_page) {
+          // Generate next page link
+          $next_link = $is_front_page ? 
+            get_home_url() . '/page/' . ($current_page + 1) : 
+            get_pagenum_link($current_page + 1);
+          
+          echo '<li class="g-pagination__item g-pagination__item--next">
+                  <a href="' . esc_url($next_link) . '">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </a>
+                </li>';
+        }
+        ?>
+      </ul>
+    </div>
+    <?php
+  }
+} else {
+  // No grants found
+  ?>
+  <div class="no-grants-message">
+    <style>
+      .no-grants-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 1.5rem;
+        background-color: var(--grantaura-gray-50);
+        border-radius: var(--grantaura-border-radius);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--grantaura-gray-200);
+      }
+      
+      .no-grants-message::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
+      }
+      
+      .no-grants-message h3 {
+        font-size: clamp(1.5rem, 5vw, 1.75rem);
+        margin-bottom: 1.25rem;
+        color: var(--grantaura-gray-800);
+        position: relative;
+        display: inline-block;
+      }
+      
+      .no-grants-message h3::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -10px;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 3px;
+        background-color: var(--grantaura-primary-light);
+      }
+      
+      .no-grants-message p {
+        font-size: clamp(0.95rem, 4vw, 1.1rem);
+        color: var(--grantaura-gray-600);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+    </style>
+    
+    <h3>No Grants Available</h3>
+    <p>We're currently updating our grants database. Please check back soon for new grant opportunities, or contact us to learn about our custom grant research services.</p>
+  </div>
+  <?php
+}
+[/php]
   </div>
 </section>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Function to check if values in an array are all true - safer alternative to && operator
