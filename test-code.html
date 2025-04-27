@@ -449,7 +449,7 @@
       
       .grants-filter-range-inputs input {
         width: 100%;
-        padding: 0.6rem 0.75rem;
+        padding: 0.6rem 0.75rem !important;
         border: 1px solid var(--grantaura-gray-300);
         border-radius: var(--grantaura-border-radius-sm);
         font-size: 0.9rem;
@@ -475,7 +475,7 @@
       
       .grants-filter-search input {
         width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        padding: 0.75rem 1rem 0.75rem 2.5rem !important;
         border: 1px solid var(--grantaura-gray-300);
         border-radius: var(--grantaura-border-radius);
         font-size: 0.9rem;
@@ -636,6 +636,38 @@
       .grants-filter-result-count strong {
         color: var(--grantaura-primary);
       }
+
+      /* Group headers for locations and categories */
+      .grants-filter-group-header {
+        padding: 0.75rem 0.5rem 0.25rem;
+        background-color: var(--grantaura-gray-50);
+        border-bottom: 1px solid var(--grantaura-gray-200);
+        margin-bottom: 0.5rem;
+      }
+      
+      .grants-filter-group-header h5 {
+        margin: 0;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--grantaura-primary-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .grants-filter-subitem {
+        padding-left: 1.5rem;
+        position: relative;
+      }
+      
+      .grants-filter-subitem::before {
+        content: "└";
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--grantaura-gray-400);
+        font-size: 0.75rem;
+      }
       
       /* Active filters display */
       .grants-active-filters {
@@ -700,7 +732,7 @@
       .grants-active-filter:hover {
         background-color: var(--grantaura-gray-200);
       }
-      
+
       /* Loading state */
       .grants-filter-loading {
         display: none;
@@ -794,6 +826,32 @@
         font-size: 0.85rem;
         color: var(--grantaura-gray-600);
         margin-top: 0.25rem;
+      }
+      
+      /* See more/less button for grouped options */
+      .grants-filter-toggle-more {
+        display: inline-block;
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--grantaura-primary);
+        cursor: pointer;
+        font-weight: 500;
+        text-decoration: none !important;
+        border-bottom: 1px dashed var(--grantaura-primary-light);
+        transition: var(--grantaura-transition);
+      }
+      
+      .grants-filter-toggle-more:hover {
+        color: var(--grantaura-primary-dark);
+        border-bottom-color: var(--grantaura-primary-dark);
+      }
+      
+      .grants-filter-toggle-more-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        margin-right: 0.25rem;
       }
       
       /* Responsive adjustments */
@@ -1020,6 +1078,7 @@
               <div class="grants-filter-option-content">
                 <span class="grants-filter-option-label">Ending Today</span>
                 <p class="grants-filter-option-description">Grants with deadlines within the next 24 hours</p>
+                <span class="grants-filter-option-count" data-dynamic-count="timeframe-today">0</span>
               </div>
             </label>
             
@@ -1028,6 +1087,7 @@
               <div class="grants-filter-option-content">
                 <span class="grants-filter-option-label">Ending This Week</span>
                 <p class="grants-filter-option-description">Grants with deadlines in the next 7 days</p>
+                <span class="grants-filter-option-count" data-dynamic-count="timeframe-week">0</span>
               </div>
             </label>
             
@@ -1036,6 +1096,7 @@
               <div class="grants-filter-option-content">
                 <span class="grants-filter-option-label">Ending This Month</span>
                 <p class="grants-filter-option-description">Grants with deadlines in the next 30 days</p>
+                <span class="grants-filter-option-count" data-dynamic-count="timeframe-month">0</span>
               </div>
             </label>
             
@@ -1044,6 +1105,7 @@
               <div class="grants-filter-option-content">
                 <span class="grants-filter-option-label">Ending This Quarter</span>
                 <p class="grants-filter-option-description">Grants with deadlines in the next 90 days</p>
+                <span class="grants-filter-option-count" data-dynamic-count="timeframe-quarter">0</span>
               </div>
             </label>
           </div>
@@ -1062,7 +1124,7 @@
             <input type="text" id="eligibility-search" placeholder="Search eligible entities..." aria-label="Search eligible entities">
           </div>
           
-          <div id="eligibility-loading" class="grants-filter-loading active">
+          <div id="eligibility-loading" class="grants-filter-loading">
             <div class="grants-filter-loading-spinner"></div>
           </div>
           
@@ -1086,7 +1148,7 @@
             <input type="text" id="category-search" placeholder="Search categories..." aria-label="Search categories">
           </div>
           
-          <div id="category-loading" class="grants-filter-loading active">
+          <div id="category-loading" class="grants-filter-loading">
             <div class="grants-filter-loading-spinner"></div>
           </div>
           
@@ -1110,7 +1172,7 @@
             <input type="text" id="location-search" placeholder="Search locations..." aria-label="Search locations">
           </div>
           
-          <div id="location-loading" class="grants-filter-loading active">
+          <div id="location-loading" class="grants-filter-loading">
             <div class="grants-filter-loading-spinner"></div>
           </div>
           
@@ -1351,6 +1413,240 @@
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
       }
+      
+      /* Card styles from existing design */
+      .g-card {
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--grantaura-border-radius-lg);
+        overflow: hidden;
+        background-color: var(--grantaura-white);
+        box-shadow: var(--grantaura-box-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--grantaura-gray-300);
+        transform: translateY(0);
+        height: 100%;
+        max-height: none;
+        will-change: transform, box-shadow;
+        position: relative;
+      }
+      
+      .g-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--grantaura-box-shadow-xl);
+      }
+      
+      /* Featured card styling - UPDATED VERSION */
+      .g-card--featured {
+        position: relative;
+        z-index: 2;
+        border: none !important;
+        overflow: visible !important; /* This is critical to show the border */
+      }
+      
+      .g-card--featured::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -8px;
+        background: linear-gradient(90deg, 
+          #5A3B8C 0%, 
+          #FFA366 25%, 
+          #FFB888 50%, 
+          #FFA366 75%, 
+          #5A3B8C 100%);
+        border-radius: 1px 1px 15px 15px;
+        z-index: -1;
+        background-size: 300% 300%;
+        box-shadow: 0 0 15px rgba(90, 59, 140, 0.4);
+        animation: border-animation 6s ease infinite;
+      }
+      
+      @keyframes border-animation {
+        0% { background-position: 0% 0%; }
+        25% { background-position: 100% 0%; }
+        50% { background-position: 100% 100%; }
+        75% { background-position: 0% 100%; }
+        100% { background-position: 0% 0%; }
+      }
+      
+      .g-card--featured::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--grantaura-white);
+        border-radius: var(--grantaura-border-radius-lg);
+        z-index: -1;
+      }
+      
+      /* Add this keyframes definition for the border animation */
+      @keyframes border-shine {
+        0% {
+          background-position: 100% 0;
+        }
+        100% {
+          background-position: -100% 0;
+        }
+      }
+      
+      .g-card__img-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 90%; /* Maintain exact 1:1 aspect ratio */
+        overflow: hidden;
+      }
+      
+      /* Crisp image loading effect */
+      .g-card__img-loaded {
+        opacity: 1;
+        transform: scale(1);
+        filter: contrast(1.05);
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
+      }
+      
+      .g-card__img-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+      }
+      
+      .g-card__img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1);
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        will-change: transform;
+      }
+      
+      .g-card__gradient-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 55%;
+        background: linear-gradient(to top, 
+          rgba(17, 24, 39, 0.98) 30%, 
+          rgba(90, 59, 140, 0.90) 45%,
+          rgba(90, 59, 140, 0.65) 65%, 
+          rgba(90, 59, 140, 0.2) 85%,
+          rgba(90, 59, 140, 0) 100%);
+        z-index: 3;
+        pointer-events: none;
+        border-radius: 0 0 12px 12px;
+        mix-blend-mode: multiply;
+      }
+      
+      .g-pagination {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        margin-top: 2.5rem;
+        margin-bottom: 4.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--grantaura-gray-200);
+        position: relative;
+      }
+      
+      .g-pagination::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
+      }
+      
+      .g-pagination__list {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: clamp(0.2rem, 1vw, 0.35rem);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .g-pagination__item a,
+      .g-pagination__item span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: clamp(2rem, 6vw, 2.25rem);
+        height: clamp(2rem, 6vw, 2.25rem);
+        padding: 0 clamp(0.5rem, 2vw, 0.75rem);
+        border-radius: var(--grantaura-border-radius-sm);
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
+        font-weight: 500;
+        text-decoration: none !important;
+        transition: var(--grantaura-transition);
+      }
+      
+      .g-pagination__item a {
+        background-color: var(--grantaura-gray-100);
+        color: var(--grantaura-gray-700) !important;
+        border: 1px solid var(--grantaura-gray-200);
+      }
+      
+      .g-pagination__item a:hover {
+        background-color: var(--grantaura-primary-light);
+        color: white !important;
+        border-color: var(--grantaura-primary-light);
+      }
+      
+      .g-pagination__item--current span {
+        background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
+        color: white;
+        box-shadow: 0 3px 6px rgba(90, 59, 140, 0.2);
+      }
+      
+      .g-pagination__item--prev a,
+      .g-pagination__item--next a {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      @media (prefers-reduced-motion: reduce) {
+        .g-card {
+          transition: none;
+        }
+        .g-card:hover {
+          transform: none;
+        }
+        .g-card--featured::before {
+          animation: none;
+        }
+      }
+      
+      @media (max-width: 640px) {
+        .g-pagination__list {
+          padding: 0 0.5rem;
+        }
+        
+        .g-pagination__item--prev a,
+        .g-pagination__item--next a {
+          padding: 0 0.5rem;
+        }
+        
+        .g-pagination__item--prev svg,
+        .g-pagination__item--next svg {
+          width: 14px;
+          height: 14px;
+        }
+      }
     </style>
     <!-- No Filtered Grants Message -->
     <div class="no-filtered-grants" id="no-filtered-grants">
@@ -1364,6 +1660,80 @@
     </div>
     
     [php]
+    // Custom function to extract predefined eligibility options
+    function get_predefined_eligibility_options() {
+        // Predefined set of eligibility options as requested
+        return array(
+            'Businesses' => 0,
+            'Startups' => 0,
+            'Nonprofits' => 0,
+            'Individuals' => 0,
+            'Artists' => 0,
+            'Group' => 0,
+            'LGBTQ+' => 0,
+            'Black People' => 0,
+            'Asian Americans' => 0,
+            'Women' => 0,
+            'Military Veterans' => 0,
+            'Disabled/Special Persons' => 0,
+            'Students' => 0,
+            'Family' => 0,
+            'Project' => 0,
+            'Scientists' => 0,
+            'Minority' => 0,
+            'Youth' => 0,
+            'Educational Institutions' => 0,
+            'Community Development Financial Institutions (CDFIs)' => 0
+        );
+    }
+
+    // Function to extract location hierarchy from the HTML DIV
+    function extract_location_hierarchy() {
+        // This function will extract the location hierarchy from the WordPress location taxonomy
+        global $wpdb;
+        
+        // Get all terms from the at_biz_dir-location taxonomy
+        $query = "
+            SELECT t.term_id, t.name, t.slug, tt.parent
+            FROM {$wpdb->terms} AS t
+            INNER JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id
+            WHERE tt.taxonomy = 'at_biz_dir-location'
+            ORDER BY tt.parent ASC, t.name ASC
+        ";
+        
+        $locations = $wpdb->get_results($query);
+        
+        $location_hierarchy = array();
+        $location_parents = array();
+        
+        // First pass - build a map of parent-child relationships
+        foreach ($locations as $location) {
+            if (!isset($location_hierarchy[$location->term_id])) {
+                $location_hierarchy[$location->term_id] = array(
+                    'id' => $location->term_id,
+                    'name' => $location->name,
+                    'slug' => $location->slug,
+                    'parent' => $location->parent,
+                    'children' => array(),
+                    'count' => 0
+                );
+            }
+            
+            if ($location->parent > 0) {
+                $location_parents[$location->term_id] = $location->parent;
+            }
+        }
+        
+        // Second pass - build the hierarchy
+        foreach ($location_parents as $child_id => $parent_id) {
+            if (isset($location_hierarchy[$parent_id]) && isset($location_hierarchy[$child_id])) {
+                $location_hierarchy[$parent_id]['children'][] = $child_id;
+            }
+        }
+        
+        return $location_hierarchy;
+    }
+
     // Set up pagination variables
     $paged = get_query_var('paged') ? get_query_var('paged') : 1;
     $posts_per_page = 12; // Number of posts to show per page
@@ -1446,6 +1816,42 @@
     $active_ongoing_posts = array();
     $expired_posts = array();
     
+    // Get predefined eligibility options
+    $predefined_eligibility = get_predefined_eligibility_options();
+    
+    // Extract location hierarchy
+    $location_hierarchy = extract_location_hierarchy();
+    
+    // Initialize count arrays for categories, locations, and eligibility
+    $all_categories = array();
+    $all_locations = array();
+    $all_eligible_entities = $predefined_eligibility;
+    
+    // Store data for filter relationships
+    $filter_relationships = array(
+        'grants' => array(),
+        'amount_ranges' => array(
+            'ranges' => array(),
+            'varies' => array()
+        ),
+        'timeframes' => array(
+            'today' => array(),
+            'week' => array(),
+            'month' => array(),
+            'quarter' => array()
+        ),
+        'eligibility' => array(),
+        'categories' => array(),
+        'locations' => array()
+    );
+    
+    // Store deadline timeframes
+    $current_time = time();
+    $today_end = $current_time + (24 * 60 * 60);
+    $week_end = $current_time + (7 * 24 * 60 * 60);
+    $month_end = $current_time + (30 * 24 * 60 * 60);
+    $quarter_end = $current_time + (90 * 24 * 60 * 60);
+    
     // Process regular posts to determine status and sort them
     if ($has_regular_posts) {
       while ($regular_query->have_posts()) {
@@ -1461,12 +1867,25 @@
         $status = 'ongoing'; // Default status if no deadline
         
         if ($has_deadline) {
-          $current_time = time();
           $deadline_time = strtotime($deadline);
           $is_future_deadline = $deadline_time > $current_time;
           
           if ($is_future_deadline) {
             $status = 'active';
+            
+            // Add to timeframe tracking
+            if ($deadline_time <= $today_end) {
+                $filter_relationships['timeframes']['today'][] = $post_id;
+            }
+            if ($deadline_time <= $week_end) {
+                $filter_relationships['timeframes']['week'][] = $post_id;
+            }
+            if ($deadline_time <= $month_end) {
+                $filter_relationships['timeframes']['month'][] = $post_id;
+            }
+            if ($deadline_time <= $quarter_end) {
+                $filter_relationships['timeframes']['quarter'][] = $post_id;
+            }
           } else {
             // Get expiration date
             $expiry_date = get_post_meta($post_id, '_expiry_date', true);
@@ -1496,6 +1915,116 @@
             'status' => $status
           );
         }
+        
+        // Process filter relationships
+        $filter_relationships['grants'][$post_id] = array(
+            'status' => $status,
+            'is_featured' => false,
+            'eligibility' => array(),
+            'categories' => array(),
+            'locations' => array(),
+            'amount' => '',
+            'deadline' => $has_deadline ? $deadline_time : null
+        );
+        
+        // Get amount and track it
+        $amount = get_post_meta($post_id, '_price', true);
+        $is_amount_empty = empty($amount);
+        if ($is_amount_empty) {
+            $filter_relationships['amount_ranges']['varies'][] = $post_id;
+            $filter_relationships['grants'][$post_id]['amount'] = 'varies';
+        } else {
+            $amount_value = intval($amount);
+            $filter_relationships['grants'][$post_id]['amount'] = $amount_value;
+            
+            // Determine amount range
+            $range_key = 'range_' . floor($amount_value / 10000) * 10000;
+            if (!isset($filter_relationships['amount_ranges']['ranges'][$range_key])) {
+                $filter_relationships['amount_ranges']['ranges'][$range_key] = array();
+            }
+            $filter_relationships['amount_ranges']['ranges'][$range_key][] = $post_id;
+        }
+        
+        // Process eligibility
+        $eligibility = get_post_meta($post_id, 'custom-checkbox', true);
+        $valid_eligibility = array();
+        
+        if (is_array($eligibility) && !empty($eligibility)) {
+            foreach ($eligibility as $entity) {
+                $entity = trim($entity);
+                
+                // Map old labels to new ones if needed
+                if ($entity == 'Females') $entity = 'Women';
+                if ($entity == 'Veterans') $entity = 'Military Veterans';
+                if ($entity == 'African Americans') $entity = 'Black People';
+                if ($entity == 'Disabled') $entity = 'Disabled/Special Persons';
+                
+                if (isset($all_eligible_entities[$entity])) {
+                    $all_eligible_entities[$entity]++;
+                    $valid_eligibility[] = $entity;
+                    
+                    // Add to filter relationships
+                    if (!isset($filter_relationships['eligibility'][$entity])) {
+                        $filter_relationships['eligibility'][$entity] = array();
+                    }
+                    $filter_relationships['eligibility'][$entity][] = $post_id;
+                }
+            }
+        }
+        
+        $filter_relationships['grants'][$post_id]['eligibility'] = $valid_eligibility;
+        
+        // Process categories
+        $categories = get_the_terms($post_id, 'at_biz_dir-category');
+        if (is_array($categories) && !empty($categories)) {
+            foreach ($categories as $category) {
+                if (!isset($all_categories[$category->name])) {
+                    $all_categories[$category->name] = array(
+                        'count' => 1,
+                        'slug' => $category->slug
+                    );
+                } else {
+                    $all_categories[$category->name]['count']++;
+                }
+                
+                $filter_relationships['grants'][$post_id]['categories'][] = $category->name;
+                
+                // Add to filter relationships
+                if (!isset($filter_relationships['categories'][$category->name])) {
+                    $filter_relationships['categories'][$category->name] = array();
+                }
+                $filter_relationships['categories'][$category->name][] = $post_id;
+            }
+        }
+        
+        // Process locations
+        $locations = get_the_terms($post_id, 'at_biz_dir-location');
+        if (is_array($locations) && !empty($locations)) {
+            foreach ($locations as $location) {
+                if (!isset($all_locations[$location->name])) {
+                    $all_locations[$location->name] = array(
+                        'count' => 1,
+                        'slug' => $location->slug,
+                        'term_id' => $location->term_id
+                    );
+                } else {
+                    $all_locations[$location->name]['count']++;
+                }
+                
+                // Update location hierarchy counts
+                if (isset($location_hierarchy[$location->term_id])) {
+                    $location_hierarchy[$location->term_id]['count']++;
+                }
+                
+                $filter_relationships['grants'][$post_id]['locations'][] = $location->name;
+                
+                // Add to filter relationships
+                if (!isset($filter_relationships['locations'][$location->name])) {
+                    $filter_relationships['locations'][$location->name] = array();
+                }
+                $filter_relationships['locations'][$location->name][] = $post_id;
+            }
+        }
       }
       wp_reset_postdata();
     }
@@ -1512,17 +2041,29 @@
         // Get deadline date
         $deadline = get_post_meta($post_id, '_custom-date', true);
         $has_deadline = !empty($deadline);
-        
-        // Determine grant status
+    // Determine grant status
         $status = 'ongoing'; // Default status if no deadline
         
         if ($has_deadline) {
-          $current_time = time();
           $deadline_time = strtotime($deadline);
           $is_future_deadline = $deadline_time > $current_time;
           
           if ($is_future_deadline) {
             $status = 'active';
+            
+            // Add to timeframe tracking
+            if ($deadline_time <= $today_end) {
+                $filter_relationships['timeframes']['today'][] = $post_id;
+            }
+            if ($deadline_time <= $week_end) {
+                $filter_relationships['timeframes']['week'][] = $post_id;
+            }
+            if ($deadline_time <= $month_end) {
+                $filter_relationships['timeframes']['month'][] = $post_id;
+            }
+            if ($deadline_time <= $quarter_end) {
+                $filter_relationships['timeframes']['quarter'][] = $post_id;
+            }
           } else {
             // Get expiration date
             $expiry_date = get_post_meta($post_id, '_expiry_date', true);
@@ -1536,7 +2077,7 @@
           }
         }
         
-        // Group featured posts by status
+        // Group posts by status
         $is_expired = $status == 'expired_with_notice' || $status == 'expired_no_notice';
         
         if ($is_expired) {
@@ -1551,6 +2092,116 @@
             'is_featured' => true,
             'status' => $status
           );
+        }
+        
+        // Process filter relationships for featured posts
+        $filter_relationships['grants'][$post_id] = array(
+            'status' => $status,
+            'is_featured' => true,
+            'eligibility' => array(),
+            'categories' => array(),
+            'locations' => array(),
+            'amount' => '',
+            'deadline' => $has_deadline ? $deadline_time : null
+        );
+        
+        // Get amount and track it
+        $amount = get_post_meta($post_id, '_price', true);
+        $is_amount_empty = empty($amount);
+        if ($is_amount_empty) {
+            $filter_relationships['amount_ranges']['varies'][] = $post_id;
+            $filter_relationships['grants'][$post_id]['amount'] = 'varies';
+        } else {
+            $amount_value = intval($amount);
+            $filter_relationships['grants'][$post_id]['amount'] = $amount_value;
+            
+            // Determine amount range
+            $range_key = 'range_' . floor($amount_value / 10000) * 10000;
+            if (!isset($filter_relationships['amount_ranges']['ranges'][$range_key])) {
+                $filter_relationships['amount_ranges']['ranges'][$range_key] = array();
+            }
+            $filter_relationships['amount_ranges']['ranges'][$range_key][] = $post_id;
+        }
+        
+        // Process eligibility
+        $eligibility = get_post_meta($post_id, 'custom-checkbox', true);
+        $valid_eligibility = array();
+        
+        if (is_array($eligibility) && !empty($eligibility)) {
+            foreach ($eligibility as $entity) {
+                $entity = trim($entity);
+                
+                // Map old labels to new ones if needed
+                if ($entity == 'Females') $entity = 'Women';
+                if ($entity == 'Veterans') $entity = 'Military Veterans';
+                if ($entity == 'African Americans') $entity = 'Black People';
+                if ($entity == 'Disabled') $entity = 'Disabled/Special Persons';
+                
+                if (isset($all_eligible_entities[$entity])) {
+                    $all_eligible_entities[$entity]++;
+                    $valid_eligibility[] = $entity;
+                    
+                    // Add to filter relationships
+                    if (!isset($filter_relationships['eligibility'][$entity])) {
+                        $filter_relationships['eligibility'][$entity] = array();
+                    }
+                    $filter_relationships['eligibility'][$entity][] = $post_id;
+                }
+            }
+        }
+        
+        $filter_relationships['grants'][$post_id]['eligibility'] = $valid_eligibility;
+        
+        // Process categories
+        $categories = get_the_terms($post_id, 'at_biz_dir-category');
+        if (is_array($categories) && !empty($categories)) {
+            foreach ($categories as $category) {
+                if (!isset($all_categories[$category->name])) {
+                    $all_categories[$category->name] = array(
+                        'count' => 1,
+                        'slug' => $category->slug
+                    );
+                } else {
+                    $all_categories[$category->name]['count']++;
+                }
+                
+                $filter_relationships['grants'][$post_id]['categories'][] = $category->name;
+                
+                // Add to filter relationships
+                if (!isset($filter_relationships['categories'][$category->name])) {
+                    $filter_relationships['categories'][$category->name] = array();
+                }
+                $filter_relationships['categories'][$category->name][] = $post_id;
+            }
+        }
+        
+        // Process locations
+        $locations = get_the_terms($post_id, 'at_biz_dir-location');
+        if (is_array($locations) && !empty($locations)) {
+            foreach ($locations as $location) {
+                if (!isset($all_locations[$location->name])) {
+                    $all_locations[$location->name] = array(
+                        'count' => 1,
+                        'slug' => $location->slug,
+                        'term_id' => $location->term_id
+                    );
+                } else {
+                    $all_locations[$location->name]['count']++;
+                }
+                
+                // Update location hierarchy counts
+                if (isset($location_hierarchy[$location->term_id])) {
+                    $location_hierarchy[$location->term_id]['count']++;
+                }
+                
+                $filter_relationships['grants'][$post_id]['locations'][] = $location->name;
+                
+                // Add to filter relationships
+                if (!isset($filter_relationships['locations'][$location->name])) {
+                    $filter_relationships['locations'][$location->name] = array();
+                }
+                $filter_relationships['locations'][$location->name][] = $post_id;
+            }
         }
       }
     }
@@ -1577,10 +2228,25 @@
     $has_any_posts = !empty($current_page_posts);
     
     // Create arrays to store unique filter values
-    $all_categories = array();
-    $all_locations = array();
-    $all_eligible_entities = array();
     $grant_data_json = array();
+    
+    // Store timeframe counts
+    $timeframe_counts = array(
+        'today' => count($filter_relationships['timeframes']['today']),
+        'week' => count($filter_relationships['timeframes']['week']),
+        'month' => count($filter_relationships['timeframes']['month']),
+        'quarter' => count($filter_relationships['timeframes']['quarter'])
+    );
+    
+    // Process location hierarchy to properly assign parent-child relationships
+    $processed_location_hierarchy = array();
+    
+    foreach ($location_hierarchy as $term_id => $location_data) {
+        if ($location_data['parent'] == 0) {
+            // This is a top-level location
+            $processed_location_hierarchy[$term_id] = $location_data;
+        }
+    }
     
     if ($has_any_posts) {
       foreach ($current_page_posts as $post_data) {
@@ -1669,109 +2335,15 @@
           $status_color = 'var(--grantaura-danger)';
         }
         
-        // Enhanced eligible entities fetching with multiple fallbacks
-        $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
-        $is_eligible_entities_not_array = !is_array($eligible_entities);
-        $is_eligible_entities_not_empty = !empty($eligible_entities);
+        // Get eligibility data from the predefined structure 
+        $eligible_entities = array();
+        $raw_eligibility = get_post_meta($post_id, 'custom-checkbox', true);
         
-        // Fallback 1: Try to unserialize if it's not already an array
-        if ($is_eligible_entities_not_array && $is_eligible_entities_not_empty) {
-          $eligible_entities = maybe_unserialize($eligible_entities);
-        }
-        
-        // Fallback 2: Check for alternate meta key names if still not an array
-        if (!is_array($eligible_entities) || empty($eligible_entities)) {
-          $alternate_keys = array(
-            'eligibility', '_eligibility', 'eligible_entities', '_eligible_entities',
-            'entity', '_entity', 'entities', '_entities', 'eligible', '_eligible',
-            'who_can_apply', '_who_can_apply', 'applicants', '_applicants'
-          );
-          
-          foreach ($alternate_keys as $alt_key) {
-            $alt_value = get_post_meta($post_id, $alt_key, true);
-            if (!empty($alt_value)) {
-              if (!is_array($alt_value)) {
-                $alt_value = maybe_unserialize($alt_value);
-              }
-              
-              if (is_array($alt_value) && !empty($alt_value)) {
-                $eligible_entities = $alt_value;
-                break;
-              }
-            }
-          }
-        }
-        
-        // Fallback 3: Search in post content for eligibility information
-        if (!is_array($eligible_entities) || empty($eligible_entities)) {
-          $content = $post->post_content;
-          $eligibility_patterns = array(
-            '/eligib\w+\s*(?::|for|to)\s*((?:[^,.]+,\s*)*[^,.]+)/i',
-            '/who\s*can\s*apply\s*(?::|for|to)\s*((?:[^,.]+,\s*)*[^,.]+)/i',
-            '/available\s*(?:to|for)\s*((?:[^,.]+,\s*)*[^,.]+)/i'
-          );
-          
-          foreach ($eligibility_patterns as $pattern) {
-            if (preg_match($pattern, $content, $matches)) {
-              if (!empty($matches[1])) {
-                $entities_str = $matches[1];
-                $extracted_entities = array_map('trim', explode(',', $entities_str));
-                if (!empty($extracted_entities)) {
-                  $eligible_entities = $extracted_entities;
-                  break;
-                }
-              }
-            }
-          }
-        }
-        
-        // Fallback 4: Check for eligibility in categories
-        if (!is_array($eligible_entities) || empty($eligible_entities)) {
-          $cats = get_the_terms($post_id, 'at_biz_dir-category');
-          if (is_array($cats) && !empty($cats)) {
-            $extracted_entities = array();
-            
-            foreach ($cats as $cat) {
-              if (strpos(strtolower($cat->name), 'grant') !== false && 
-                  (strpos(strtolower($cat->name), 'for') !== false || 
-                   strpos(strtolower($cat->name), 'to') !== false)) {
-                // Extract entity from "Grants for X" or "Grants to X"
-                $name_parts = explode(' for ', strtolower($cat->name));
-                if (count($name_parts) > 1) {
-                  $extracted_entities[] = ucwords($name_parts[1]);
-                  continue;
-                }
-                
-                $name_parts = explode(' to ', strtolower($cat->name));
-                if (count($name_parts) > 1) {
-                  $extracted_entities[] = ucwords($name_parts[1]);
-                }
-              }
-            }
-            
-            if (!empty($extracted_entities)) {
-              $eligible_entities = $extracted_entities;
-            }
-          }
-        }
-        
-        // Fallback 5: Default entities if all else fails
-        if (!is_array($eligible_entities) || empty($eligible_entities)) {
-          $eligible_entities = array('All Applicants');
-        }
-        
-        // Collect all eligible entities for filter
-        if (is_array($eligible_entities) && !empty($eligible_entities)) {
-          foreach ($eligible_entities as $entity) {
-            $entity = trim($entity);
-            if (!empty($entity)) {
-              if (!isset($all_eligible_entities[$entity])) {
-                $all_eligible_entities[$entity] = 1;
-              } else {
-                $all_eligible_entities[$entity]++;
-              }
-            }
-          }
+        if (is_array($raw_eligibility) && !empty($raw_eligibility)) {
+            $eligible_entities = $raw_eligibility;
+        } else {
+            // Default if nothing is specified
+            $eligible_entities = array('All Applicants');
         }
         
         // Get featured image - First check for preview image
@@ -1819,143 +2391,13 @@
           $featured_image = 'https://grantaura.com/wp-content/uploads/2024/11/Transparent-bg-deep-Purple-AURA-and-dark-Gold-ff914d-GRANT-1-e1731246494496.png';
         }
         
-        // Enhanced locations fetching with fallbacks
+        // Get locations data from taxonomy
         $locations = get_the_terms($post_id, 'at_biz_dir-location');
         $is_locations_valid = is_array($locations) && !empty($locations);
         $location_data = array();
         $location_names = array(); // For JSON data
         
-        if (!$is_locations_valid) {
-          // Fallback 1: Check for location in custom fields
-          $location_meta_keys = array(
-            'location', '_location', 'locations', '_locations', 
-            'grant_location', '_grant_location', 'area', '_area', 
-            'region', '_region', 'country', '_country', 'state', '_state'
-          );
-          
-          foreach ($location_meta_keys as $meta_key) {
-            $meta_location = get_post_meta($post_id, $meta_key, true);
-            if (!empty($meta_location)) {
-              // Handle both string and array values
-              if (is_array($meta_location)) {
-                foreach ($meta_location as $loc) {
-                  if (!empty($loc)) {
-                    $location_data[] = array(
-                      'name' => $loc,
-                      'url' => '#',
-                      'slug' => sanitize_title($loc)
-                    );
-                    $location_names[] = $loc;
-                    
-                    // Add to all locations for filter
-                    if (!isset($all_locations[$loc])) {
-                      $all_locations[$loc] = array(
-                        'count' => 1,
-                        'slug' => sanitize_title($loc)
-                      );
-                    } else {
-                      $all_locations[$loc]['count']++;
-                    }
-                  }
-                }
-              } else {
-                // Split by commas if it's a string
-                $location_parts = explode(',', $meta_location);
-                foreach ($location_parts as $loc) {
-                  $loc = trim($loc);
-                  if (!empty($loc)) {
-                    $location_data[] = array(
-                      'name' => $loc,
-                      'url' => '#',
-                      'slug' => sanitize_title($loc)
-                    );
-                    $location_names[] = $loc;
-                    
-                    // Add to all locations for filter
-                    if (!isset($all_locations[$loc])) {
-                      $all_locations[$loc] = array(
-                        'count' => 1,
-                        'slug' => sanitize_title($loc)
-                      );
-                    } else {
-                      $all_locations[$loc]['count']++;
-                    }
-                  }
-                }
-              }
-              
-              if (!empty($location_data)) {
-                break; // Stop once we've found locations
-              }
-            }
-          }
-          
-          // Fallback 2: Check title or content for location information
-          if (empty($location_data)) {
-            $title_content = $title . ' ' . $post->post_content;
-            $common_locations = array(
-              'Global', 'Worldwide', 'United States', 'USA', 'U.S.', 'Canada', 'UK', 'Europe',
-              'Australia', 'Africa', 'Asia', 'Latin America', 'South America', 'North America'
-            );
-            
-            // US States
-            $us_states = array(
-              'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
-              'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 
-              'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
-              'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 
-              'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 
-              'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 
-              'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 
-              'Wisconsin', 'Wyoming'
-            );
-            
-            $locations_to_check = array_merge($common_locations, $us_states);
-            
-            foreach ($locations_to_check as $loc) {
-              // Check for whole word match
-              if (preg_match('/\b' . preg_quote($loc, '/') . '\b/i', $title_content)) {
-                $location_data[] = array(
-                  'name' => $loc,
-                  'url' => '#',
-                  'slug' => sanitize_title($loc)
-                );
-                $location_names[] = $loc;
-                
-                // Add to all locations for filter
-                if (!isset($all_locations[$loc])) {
-                  $all_locations[$loc] = array(
-                    'count' => 1,
-                    'slug' => sanitize_title($loc)
-                  );
-                } else {
-                  $all_locations[$loc]['count']++;
-                }
-              }
-            }
-          }
-          
-          // Fallback 3: Default to Global if still empty
-          if (empty($location_data)) {
-            $default_location = 'Global';
-            $location_data[] = array(
-              'name' => $default_location,
-              'url' => '#',
-              'slug' => sanitize_title($default_location)
-            );
-            $location_names[] = $default_location;
-            
-            // Add to all locations for filter
-            if (!isset($all_locations[$default_location])) {
-              $all_locations[$default_location] = array(
-                'count' => 1,
-                'slug' => sanitize_title($default_location)
-              );
-            } else {
-              $all_locations[$default_location]['count']++;
-            }
-          }
-        } else {
+        if ($is_locations_valid) {
           // Process locations from taxonomy
           foreach ($locations as $location) {
             $location_link = get_term_link($location, 'at_biz_dir-location');
@@ -1967,148 +2409,25 @@
                 'slug' => $location->slug
               );
               $location_names[] = $location->name;
-              
-              // Add to all locations for filter
-              if (!isset($all_locations[$location->name])) {
-                $all_locations[$location->name] = array(
-                  'count' => 1,
-                  'slug' => $location->slug
-                );
-              } else {
-                $all_locations[$location->name]['count']++;
-              }
             }
           }
+        } else {
+          // Fallback if no locations found
+          $location_data[] = array(
+            'name' => 'Global',
+            'url' => get_term_link('global', 'at_biz_dir-location'),
+            'slug' => 'global'
+          );
+          $location_names[] = 'Global';
         }
         
-        // Enhanced categories fetching with fallbacks
+        // Get categories data from taxonomy
         $categories = get_the_terms($post_id, 'at_biz_dir-category');
         $is_categories_valid = is_array($categories) && !empty($categories);
         $category_data = array();
         $category_names = array(); // For JSON data
         
-        if (!$is_categories_valid) {
-          // Fallback 1: Check for categories in custom fields
-          $category_meta_keys = array(
-            'category', '_category', 'categories', '_categories', 
-            'grant_category', '_grant_category', 'type', '_type', 
-            'segment', '_segment', 'industry', '_industry'
-          );
-          
-          foreach ($category_meta_keys as $meta_key) {
-            $meta_category = get_post_meta($post_id, $meta_key, true);
-            if (!empty($meta_category)) {
-              // Handle both string and array values
-              if (is_array($meta_category)) {
-                foreach ($meta_category as $cat) {
-                  if (!empty($cat)) {
-                    $category_data[] = array(
-                      'name' => $cat,
-                      'url' => '#',
-                      'slug' => sanitize_title($cat)
-                    );
-                    $category_names[] = $cat;
-                    
-                    // Add to all categories for filter
-                    if (!isset($all_categories[$cat])) {
-                      $all_categories[$cat] = array(
-                        'count' => 1,
-                        'slug' => sanitize_title($cat)
-                      );
-                    } else {
-                      $all_categories[$cat]['count']++;
-                    }
-                  }
-                }
-              } else {
-                // Split by commas if it's a string
-                $category_parts = explode(',', $meta_category);
-                foreach ($category_parts as $cat) {
-                  $cat = trim($cat);
-                  if (!empty($cat)) {
-                    $category_data[] = array(
-                      'name' => $cat,
-                      'url' => '#',
-                      'slug' => sanitize_title($cat)
-                    );
-                    $category_names[] = $cat;
-                    
-                    // Add to all categories for filter
-                    if (!isset($all_categories[$cat])) {
-                      $all_categories[$cat] = array(
-                        'count' => 1,
-                        'slug' => sanitize_title($cat)
-                      );
-                    } else {
-                      $all_categories[$cat]['count']++;
-                    }
-                  }
-                }
-              }
-              
-              if (!empty($category_data)) {
-                break; // Stop once we've found categories
-              }
-            }
-          }
-          
-          // Fallback 2: Extract from title
-          if (empty($category_data)) {
-            // Common prefixes in grant category titles
-            $prefixes = array(
-              'Grants for ', 'Funding for ', 'Support for ', 
-              'Grants to ', 'Funding to ', 'Support to '
-            );
-            
-            foreach ($prefixes as $prefix) {
-              if (stripos($title, $prefix) === 0) {
-                $cat_name = trim(str_ireplace($prefix, '', $title));
-                if (!empty($cat_name)) {
-                  $category_data[] = array(
-                    'name' => "Grants for " . $cat_name,
-                    'url' => '#',
-                    'slug' => sanitize_title("grants-for-" . $cat_name)
-                  );
-                  $category_names[] = "Grants for " . $cat_name;
-                  
-                  // Add to all categories for filter
-                  $full_cat_name = "Grants for " . $cat_name;
-                  if (!isset($all_categories[$full_cat_name])) {
-                    $all_categories[$full_cat_name] = array(
-                      'count' => 1,
-                      'slug' => sanitize_title("grants-for-" . $cat_name)
-                    );
-                  } else {
-                    $all_categories[$full_cat_name]['count']++;
-                  }
-                  
-                  break;
-                }
-              }
-            }
-          }
-          
-          // Fallback 3: Default category if still empty
-          if (empty($category_data)) {
-            $default_category = 'General Grants';
-            $category_data[] = array(
-              'name' => $default_category,
-              'url' => '#',
-              'slug' => sanitize_title($default_category)
-            );
-            $category_names[] = $default_category;
-            
-            // Add to all categories for filter
-            if (!isset($all_categories[$default_category])) {
-              $all_categories[$default_category] = array(
-                'count' => 1,
-                'slug' => sanitize_title($default_category)
-              );
-            } else {
-              $all_categories[$default_category]['count']++;
-            }
-          }
-        } else {
+        if ($is_categories_valid) {
           // Process categories from taxonomy
           foreach ($categories as $category) {
             $category_link = get_term_link($category, 'at_biz_dir-category');
@@ -2120,18 +2439,16 @@
                 'slug' => $category->slug
               );
               $category_names[] = $category->name;
-              
-              // Add to all categories for filter
-              if (!isset($all_categories[$category->name])) {
-                $all_categories[$category->name] = array(
-                  'count' => 1,
-                  'slug' => $category->slug
-                );
-              } else {
-                $all_categories[$category->name]['count']++;
-              }
             }
           }
+        } else {
+          // Fallback if no categories found
+          $category_data[] = array(
+            'name' => 'General Grants',
+            'url' => '#',
+            'slug' => 'general-grants'
+          );
+          $category_names[] = 'General Grants';
         }
         
         // Store data for JavaScript filtering
@@ -2177,139 +2494,686 @@
              data-eligible-entities="<?php echo esc_attr(is_array($eligible_entities) ? implode('|', $eligible_entities) : ''); ?>"
              <?php if ($status_is_active && $time_remaining['display_type'] == 'countdown') echo 'data-countdown-time="' . esc_attr($deadline_time) . '"'; ?>>
           <style>
-            .g-card {
+            .g-card__status-badge {
+              position: absolute;
+              top: 12px;
+              left: 12px;
+              padding: 6px 14px;
+              border-radius: 100px;
+              font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              color: white !important;
+              z-index: 5;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
               display: flex;
-              flex-direction: column;
-              border-radius: var(--grantaura-border-radius-lg);
-              overflow: hidden;
-              background-color: var(--grantaura-white);
-              box-shadow: var(--grantaura-box-shadow);
-              transition: transform 0.3s ease, box-shadow 0.3s ease;
-              border: 1px solid var(--grantaura-gray-300);
-              transform: translateY(0);
-              height: 100%;
-              max-height: none;
-              will-change: transform, box-shadow;
+              align-items: center;
+              gap: 5px;
+              transition: transform 0.3s ease;
+            }
+            
+            .g-card__status-badge::before {
+              content: "";
+              display: inline-block;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              background-color: rgba(255, 255, 255, 0.8);
+              box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+              animation: pulse 2s infinite;
+            }
+            
+            .g-card__status-badge[style*="var(--grantaura-success)"]::before {
+              animation: pulse-success 2s infinite;
+            }
+            
+            .g-card__status-badge[style*="var(--grantaura-secondary)"]::before {
+              animation: none;
+            }
+            
+            .g-card__status-badge[style*="var(--grantaura-danger)"]::before {
+              animation: none;
+              background-color: rgba(255, 255, 255, 0.6);
+              box-shadow: none;
+            }
+            
+            @keyframes pulse {
+              0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+              }
+              70% {
+                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
+              }
+              100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+              }
+            }
+            
+            @keyframes pulse-success {
+              0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+              }
+              70% {
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+              }
+              100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+              }
+            }
+            
+            .g-card__featured-badge {
+              position: absolute;
+              right: -8px;
+              top: 18vw;
+              z-index: 20;
+              transform-origin: top right;
+            }
+            
+            .g-card__featured-badge-inner {
+              background: linear-gradient(135deg, #FFD700, #FFA500);
+              color: #000;
+              font-weight: 700;
+              font-size: 0.75rem;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              padding: 6px 8px 6px 12px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
               position: relative;
+              clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
+              display: flex;
+              align-items: center;
+              gap: 4px;
             }
             
-            .g-card:hover {
-              transform: translateY(-5px);
-              box-shadow: var(--grantaura-box-shadow-xl);
-            }
-            
-            /* Featured card styling - UPDATED VERSION */
-            .g-card--featured {
-              position: relative;
-              z-index: 2;
-              border: none !important;
-              overflow: visible !important; /* This is critical to show the border */
-            }
-            
-            .g-card--featured::before {
+            .g-card__featured-badge-inner::before {
               content: "";
               position: absolute;
-              top: -3px;
-              left: -3px;
-              right: -3px;
               bottom: -8px;
-              background: linear-gradient(90deg, 
-                #5A3B8C 0%, 
-                #FFA366 25%, 
-                #FFB888 50%, 
-                #FFA366 75%, 
-                #5A3B8C 100%);
-              border-radius: 1px 1px 15px 15px;
-              z-index: -1;
-              background-size: 300% 300%;
-              box-shadow: 0 0 15px rgba(90, 59, 140, 0.4);
-              animation: border-animation 6s ease infinite;
+              right: 0;
+              width: 8px;
+              height: 8px;
+              background: #A67C00;
+              clip-path: polygon(0 0, 100% 0, 100% 100%);
             }
             
-            @keyframes border-animation {
-              0% { background-position: 0% 0%; }
-              25% { background-position: 100% 0%; }
-              50% { background-position: 100% 100%; }
-              75% { background-position: 0% 100%; }
-              100% { background-position: 0% 0%; }
+            .g-card__featured-badge-inner svg {
+              width: 14px;
+              height: 14px;
+              color: #000;
+              filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
             }
             
-            .g-card--featured::after {
+            .g-card__featured-badge-shine {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0) 100%
+              );
+              background-size: 200% 200%;
+              animation: shine 2s ease-in-out infinite;
+            }
+            
+            @keyframes shine {
+              0% {
+                background-position: -100% -100%;
+              }
+              100% {
+                background-position: 100% 100%;
+              }
+            }
+            
+            .g-card__countdown-wrapper {
+              position: absolute;
+              top: 12px;
+              right: 12px;
+              z-index: 5;
+            }
+            
+            .g-card__countdown {
+              background: rgba(90, 59, 140, 0.95);
+              backdrop-filter: blur(5px);
+              -webkit-backdrop-filter: blur(5px);
+              border-radius: 3px;
+              padding: 8px 10px;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 5px;
+              box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+              border: 1px solid rgba(255, 255, 255, 0.15);
+              transition: transform 0.3s ease;
+            }
+            
+            .g-card:hover .g-card__countdown {
+              transform: translateY(-2px);
+            }
+            
+            .g-card__countdown-label {
+              font-size: 0.55rem;
+              text-transform: uppercase;
+              opacity: 0.85;
+              margin-right: 0.25rem;
+              letter-spacing: 0.5px;
+            }
+            
+            .g-card__countdown-unit {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+            }
+            
+            .g-card__countdown-unit:not(:last-child)::after {
+              content: ":";
+              position: absolute;
+              right: -4px;
+              top: 2px;
+              color: rgba(255, 255, 255, 0.7);
+              font-weight: 700;
+            }
+            
+            .g-card__countdown-number {
+              font-size: clamp(0.80rem, 2vw, 0.75rem);
+              font-weight: 700;
+              background: rgba(255, 255, 255, 0.15);
+              border-radius: 6px;
+              min-width: clamp(1.8rem, 6vw, 2rem);
+              text-align: center;
+              padding: 2px 4px;
+              position: relative;
+              overflow: hidden;
+            }
+            
+            .g-card__countdown-unit:last-child .g-card__countdown-number {
+              position: relative;
+            }
+            
+            .g-card__countdown-unit:last-child .g-card__countdown-number::after {
               content: "";
               position: absolute;
               top: 0;
               left: 0;
               right: 0;
               bottom: 0;
-              background: var(--grantaura-white);
-              border-radius: var(--grantaura-border-radius-lg);
-              z-index: -1;
+              background: rgba(255, 163, 102, 0.85);
+              opacity: 0;
+              animation: pulse-countdown 1s infinite;
             }
             
-            /* Add this keyframes definition for the border animation */
-            @keyframes border-shine {
+            @keyframes pulse-countdown {
               0% {
-                background-position: 100% 0;
+                opacity: 0;
+              }
+              50% {
+                opacity: 1;
               }
               100% {
-                background-position: -100% 0;
+                opacity: 0;
+              }
+            }
+            
+            .g-card__countdown-label-unit {
+              font-size: 0.6rem;
+              text-transform: uppercase;
+              margin-top: 2px;
+              color: rgba(255, 255, 255, 0.8);
+              letter-spacing: 0.5px;
+            }
+            
+            .g-card__deadline-days {
+              background: rgba(90, 59, 140, 0.95);
+              backdrop-filter: blur(5px);
+              -webkit-backdrop-filter: blur(5px);
+              border-radius: 3px;
+              padding: 6px 10px;
+              color: white;
+              display: flex;
+              align-items: center;
+              font-weight: 600;
+              box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+              border: 1px solid rgba(255, 255, 255, 0.15);
+              transition: transform 0.3s ease;
+              gap: 5px;
+            }
+            
+            .g-card:hover .g-card__deadline-days {
+              transform: translateY(-2px);
+            }
+            
+            .g-card__deadline-days-num {
+              font-size: clamp(0.75rem, 2vw, 1rem);
+              font-weight: 800;
+              background: rgba(255, 255, 255, 0.15);
+              border-radius: 6px;
+              min-width: 1.8rem;
+              text-align: center;
+              padding: 2px 6px;
+              color: var(--grantaura-secondary-light);
+            }
+            
+            .g-card__title {
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              z-index: 4;
+              padding: 1.25rem 1.25rem 1.5rem;
+              margin: 0;
+              font-size: clamp(1.1rem, 5vw, 1.35rem);
+              font-weight: 700;
+              line-height: 1.3;
+              color: white !important;
+              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+              transition: transform 0.3s ease;
+            }
+            
+            .g-card:hover .g-card__title {
+              transform: translateY(-5px);
+            }
+            
+            .g-card__title a {
+              color: white !important;
+              text-decoration: none !important;
+              transition: var(--grantaura-transition);
+              display: block;
+              width: 100%;
+              position: relative;
+              padding-left: 0;
+              overflow: hidden;
+            }
+            
+            .g-card__title a:hover {
+              color: var(--grantaura-secondary-light) !important;
+            }
+            
+            .g-card__title a::after {
+              content: "";
+              position: absolute;
+              bottom: -5px;
+              left: 0;
+              width: 0;
+              height: 2px;
+              background: var(--grantaura-secondary);
+              transition: width 0.3s ease;
+            }
+            
+            .g-card:hover .g-card__title a::after {
+              width: 40px;
+            }
+            
+            .g-card__title a::first-letter {
+              font-size: 110%;
+              color: var(--grantaura-secondary-light);
+            }
+            
+            .g-card--featured .g-card__title a::first-letter {
+              color: #FFD700;
+            }
+            
+            .g-card__img-accessibility {
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              padding: 0;
+              margin: -1px;
+              overflow: hidden;
+              clip: rect(0, 0, 0, 0);
+              white-space: nowrap;
+              border-width: 0;
+            }
+            
+            .g-card__content {
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              padding: clamp(0.75rem, 3vw, 1.25rem);
+              height: auto;
+              overflow: visible;
+            }
+            
+            .g-card__amount {
+              font-size: clamp(1.1rem, 4vw, 1.3rem);
+              font-weight: 700;
+              position: relative;
+              padding: 0.25rem 0;
+              margin-bottom: 0.75rem;
+              color: var(--grantaura-primary);
+            }
+            
+            .g-card__amount::before {
+              content: "";
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary-dark));
+              opacity: 0.2;
+            }
+            
+            .g-card--featured .g-card__amount {
+              color: var(--grantaura-primary-dark);
+            }
+            
+            .g-card--featured .g-card__amount::before {
+              background: linear-gradient(90deg, var(--grantaura-primary-dark), #FFD700);
+              opacity: 0.3;
+              height: 3px;
+            }
+            
+            .g-card__deadline-info {
+              display: flex;
+              align-items: center;
+              font-size: clamp(0.8rem, 3vw, 0.85rem);
+              color: var(--grantaura-gray-700);
+              margin-bottom: 0.75rem;
+              gap: 0.5rem;
+            }
+            
+            .g-card__deadline-info svg {
+              color: var(--grantaura-primary);
+              flex-shrink: 0;
+              width: clamp(14px, 4vw, 16px);
+              height: clamp(14px, 4vw, 16px);
+            }
+            
+            .g-card__deadline-info strong {
+              font-weight: 600;
+              margin-right: 0.25rem;
+              color: var(--grantaura-gray-800);
+            }
+            
+            .g-card__deadline-value {
+              font-weight: 500;
+            }
+            
+            .g-card__deadline-value--ongoing {
+              color: var(--grantaura-secondary-dark);
+              font-weight: 600;
+            }
+            
+            .g-card__deadline-value--expired {
+              color: var(--grantaura-danger);
+              font-weight: 500;
+            }
+            
+            .g-card--featured .g-card__deadline-info svg {
+              color: var(--grantaura-primary-dark);
+            }
+            
+            .g-card__excerpt {
+              margin-bottom: 1rem;
+              font-size: clamp(0.8rem, 3vw, 0.9rem);
+              color: var(--grantaura-gray-600);
+              line-height: 1.6;
+              overflow: hidden;
+              position: relative;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              max-height: 4.8em; /* Approximately 3 lines */
+            }
+            
+            .g-card__excerpt::first-letter {
+              font-size: 1.1em;
+              font-weight: 500;
+              color: var(--grantaura-primary);
+            }
+            
+            .g-card--featured .g-card__excerpt {
+              color: var(--grantaura-gray-700);
+            }
+            
+            .g-card--featured .g-card__excerpt::first-letter {
+              color: var(--grantaura-primary-dark);
+              font-weight: 600;
+            }
+            
+            .g-card__meta {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 0.75rem;
+              margin-top: auto;
+              position: relative;
+            }
+            
+            .g-card__meta::before {
+              content: "";
+              position: absolute;
+              top: -10px;
+              left: 0;
+              right: 0;
+              height: 1px;
+              background: linear-gradient(90deg, var(--grantaura-gray-300), transparent);
+            }
+            
+            .g-card__meta-item {
+              display: flex;
+              align-items: center;
+              font-size: clamp(0.75rem, 3vw, 0.85rem);
+              color: var(--grantaura-gray-700);
+              gap: 0.35rem;
+              flex-wrap: wrap;
+            }
+            
+            .g-card__meta-item svg {
+              color: var(--grantaura-primary);
+              flex-shrink: 0;
+              width: clamp(14px, 4vw, 16px);
+              height: clamp(14px, 4vw, 16px);
+            }
+            
+            .g-card__meta-item strong {
+              font-weight: 600;
+              margin-right: 0.25rem;
+              color: var(--grantaura-gray-800);
+            }
+            
+            .g-card__location-link {
+              color: var(--grantaura-gray-700) !important;
+              text-decoration: none !important;
+              transition: color 0.2s ease;
+              display: inline-block;
+            }
+            
+            .g-card__location-link:hover {
+              color: var(--grantaura-primary) !important;
+              text-decoration: underline !important;
+            }
+            
+            .g-card__location-list {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.25rem;
+            }
+            
+            .g-card__location-more {
+              display: inline-flex;
+              color: var(--grantaura-secondary-dark);
+              font-weight: 500;
+              font-size: 0.75rem;
+              margin-left: 0.25rem;
+            }
+            
+            .g-card__location-item--extra {
+              display: none;
+            }
+            
+            @media (min-width: 768px) {
+              .g-card__location-item--extra-md {
+                display: inline;
+              }
+              
+              .g-card__location-more--mobile {
+                display: none;
+              }
+              
+              .g-card__location-more--tablet {
+                display: inline-flex;
+              }
+            }
+            
+            @media (min-width: 1024px) {
+              .g-card__location-item--extra-lg {
+                display: inline;
+              }
+              
+              .g-card__location-more--tablet {
+                display: none;
+              }
+              
+              .g-card__location-more--desktop {
+                display: inline-flex;
+              }
+            }
+            
+            .g-card__tags {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+              margin-top: 0.75rem;
+            }
+            
+            .g-card__tag {
+              font-size: 0.75rem;
+              padding: 3px 10px;
+              background-color: var(--grantaura-gray-100);
+              border-radius: 20px;
+              color: var(--grantaura-gray-700) !important;
+              border: 1px solid var(--grantaura-gray-200);
+              transition: var(--grantaura-transition);
+              text-decoration: none !important;
+              display: inline-block;
+            }
+            
+            .g-card__tag:hover {
+              background-color: var(--grantaura-primary-light);
+              color: white !important;
+              border-color: var(--grantaura-primary-light);
+            }
+            
+            .g-card__tag--more {
+              background: var(--grantaura-gray-200);
+              color: var(--grantaura-gray-800) !important;
+              cursor: default;
+            }
+            
+            .g-card__tag--more:hover {
+              background: var(--grantaura-gray-200);
+              color: var(--grantaura-gray-800) !important;
+              border-color: var(--grantaura-gray-200);
+            }
+            
+            .g-card__tag--extra {
+              display: none;
+            }
+            
+            @media (min-width: 768px) {
+              .g-card__tag--extra-md {
+                display: inline-block;
+              }
+              
+              .g-card__tag--more-mobile {
+                display: none;
+              }
+              
+              .g-card__tag--more-tablet {
+                display: inline-block;
+              }
+            }
+            
+            @media (min-width: 1024px) {
+              .g-card__tag--extra-lg {
+                display: inline-block;
+              }
+              
+              .g-card__tag--more-tablet {
+                display: none;
+              }
+              
+              .g-card__tag--more-desktop {
+                display: inline-block;
+              }
+            }
+            
+            .g-card--featured .g-card__meta::before {
+              background: linear-gradient(90deg, var(--grantaura-primary-light), transparent);
+              opacity: 0.3;
+            }
+            
+            .g-card--featured .g-card__meta-item svg {
+              color: var(--grantaura-primary-dark);
+            }
+            
+            .g-card--featured .g-card__tag {
+              border-color: var(--grantaura-primary-light);
+              background-color: rgba(90, 59, 140, 0.05);
+            }
+            .g-card--featured .g-card__tag:hover {
+              color: white !important;
+              background-color: var(--grantaura-primary-light);
+            }
+            
+            @media (max-width: 640px) {
+              .g-card__status-badge {
+                top: 10px;
+                left: 10px;
+                padding: 5px 12px;
+              }
+              
+              .g-card__countdown-wrapper {
+                top: 10px;
+                right: 10px;
+              }
+              
+              .g-card__countdown, 
+              .g-card__deadline-days {
+                padding: 4px 6px;
               }
             }
             
             @media (prefers-reduced-motion: reduce) {
-              .g-card {
-                transition: none;
+              .g-card__status-badge::before {
+                animation: none !important;
               }
-              .g-card:hover {
+              
+              .g-card:hover .g-card__status-badge {
                 transform: none;
               }
-              .g-card--featured::before {
+              
+              .g-card__countdown-unit:last-child .g-card__countdown-number::after {
+                animation: none;
+              }
+              
+              .g-card:hover .g-card__countdown,
+              .g-card:hover .g-card__deadline-days {
+                transform: none;
+              }
+              
+              .g-card:hover .g-card__title {
+                transform: none;
+              }
+              
+              .g-card:hover .g-card__title a::after {
+                transition: none;
+              }
+              
+              .g-card__featured-badge-shine {
                 animation: none;
               }
             }
           </style>
           
           <div class="g-card__img-container">
-            <style>
-              .g-card__img-container {
-                position: relative;
-                width: 100%;
-                padding-bottom: 90%; /* Maintain exact 1:1 aspect ratio */
-                overflow: hidden;
-              }
-              
-              /* Crisp image loading effect */
-              .g-card__img-loaded {
-                opacity: 1;
-                transform: scale(1);
-                filter: contrast(1.05);
-                transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
-              }
-            </style>
-            
             <div class="g-card__img-wrapper">
-              <style>
-                .g-card__img-wrapper {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 100%;
-                  overflow: hidden;
-                  z-index: 1;
-                }
-                
-                .g-card__img-wrapper img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  display: block;
-                  transform: scale(1);
-                  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-                  will-change: transform;
-                }
-              </style>
-              
               <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
                 <img 
                   src="<?php echo esc_url($featured_image); ?>" 
@@ -2324,175 +3188,11 @@
             </div>
             
             <div class="g-card__status-badge" style="background-color: <?php echo esc_attr($status_color); ?>;">
-              <style>
-                .g-card__status-badge {
-                  position: absolute;
-                  top: 12px;
-                  left: 12px;
-                  padding: 6px 14px;
-                  border-radius: 100px;
-                  font-size: clamp(0.65rem, 2.5vw, 0.75rem);
-                  font-weight: 700;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  color: white !important;
-                  z-index: 5;
-                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                  display: flex;
-                  align-items: center;
-                  gap: 5px;
-                  transition: transform 0.3s ease;
-                }
-                
-                
-                .g-card__status-badge::before {
-                  content: "";
-                  display: inline-block;
-                  width: 6px;
-                  height: 6px;
-                  border-radius: 50%;
-                  background-color: rgba(255, 255, 255, 0.8);
-                  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-                  animation: pulse 2s infinite;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-success)"]::before {
-                  animation: pulse-success 2s infinite;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-secondary)"]::before {
-                  animation: none;
-                }
-                
-                .g-card__status-badge[style*="var(--grantaura-danger)"]::before {
-                  animation: none;
-                  background-color: rgba(255, 255, 255, 0.6);
-                  box-shadow: none;
-                }
-                
-                @keyframes pulse {
-                  0% {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
-                  }
-                  70% {
-                    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
-                  }
-                  100% {
-                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-                  }
-                }
-                
-                @keyframes pulse-success {
-                  0% {
-                    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-                  }
-                  70% {
-                    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
-                  }
-                  100% {
-                    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-                  }
-                }
-                
-                /* Mobile optimizations */
-                @media (max-width: 640px) {
-                  .g-card__status-badge {
-                    top: 10px;
-                    left: 10px;
-                    padding: 5px 12px;
-                  }
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__status-badge::before {
-                    animation: none !important;
-                  }
-                  
-                  .g-card:hover .g-card__status-badge {
-                    transform: none;
-                  }
-                }
-              </style>
               <?php echo esc_html($status_text); ?>
             </div>
             
             <?php if ($is_featured): ?>
             <div class="g-card__featured-badge">
-              <style>
-                .g-card__featured-badge {
-                  position: absolute;
-                  right: -8px;
-                  top: 18vw;
-                  z-index: 20;
-                  transform-origin: top right;
-                }
-                
-                .g-card__featured-badge-inner {
-                  background: linear-gradient(135deg, #FFD700, #FFA500);
-                  color: #000;
-                  font-weight: 700;
-                  font-size: 0.75rem;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  padding: 6px 8px 6px 12px;
-                  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-                  position: relative;
-                  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
-                  display: flex;
-                  align-items: center;
-                  gap: 4px;
-                }
-                
-                .g-card__featured-badge-inner::before {
-                  content: "";
-                  position: absolute;
-                  bottom: -8px;
-                  right: 0;
-                  width: 8px;
-                  height: 8px;
-                  background: #A67C00;
-                  clip-path: polygon(0 0, 100% 0, 100% 100%);
-                }
-                
-                .g-card__featured-badge-inner svg {
-                  width: 14px;
-                  height: 14px;
-                  color: #000;
-                  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-                }
-                
-                .g-card__featured-badge-shine {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: linear-gradient(
-                    45deg,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.5) 50%,
-                    rgba(255, 255, 255, 0) 100%
-                  );
-                  background-size: 200% 200%;
-                  animation: shine 2s ease-in-out infinite;
-                }
-                
-                @keyframes shine {
-                  0% {
-                    background-position: -100% -100%;
-                  }
-                  100% {
-                    background-position: 100% 100%;
-                  }
-                }
-                
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__featured-badge-shine {
-                    animation: none;
-                  }
-                }
-              </style>
               <div class="g-card__featured-badge-inner">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2l2.2 6.6h7.1l-5.7 4.2 2.2 6.6-5.8-4.2-5.7 4.2 2.2-6.6-5.8-4.2h7.1z"/>
@@ -2505,169 +3205,6 @@
             
             <?php if ($status_is_active): ?>
             <div class="g-card__countdown-wrapper">
-              <style>
-                .g-card__countdown-wrapper {
-                  position: absolute;
-                  top: 12px;
-                  right: 12px;
-                  z-index: 5;
-                }
-                
-                .g-card__countdown {
-                  background: rgba(90, 59, 140, 0.95);
-                  backdrop-filter: blur(5px);
-                  -webkit-backdrop-filter: blur(5px);
-                  border-radius: 3px;
-                  padding: 8px 10px;
-                  color: white;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  gap: 5px;
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-                  border: 1px solid rgba(255, 255, 255, 0.15);
-                  transition: transform 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__countdown {
-                  transform: translateY(-2px);
-                }
-                
-                .g-card__countdown-label {
-                  font-size: 0.55rem;
-                  text-transform: uppercase;
-                  opacity: 0.85;
-                  margin-right: 0.25rem;
-                  letter-spacing: 0.5px;
-                }
-                
-                .g-card__countdown-unit {
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  position: relative;
-                }
-                
-                .g-card__countdown-unit:not(:last-child)::after {
-                  content: ":";
-                  position: absolute;
-                  right: -4px;
-                  top: 2px;
-                  color: rgba(255, 255, 255, 0.7);
-                  font-weight: 700;
-                }
-                
-                .g-card__countdown-number {
-                  font-size: clamp(0.80rem, 2vw, 0.75rem);
-                  font-weight: 700;
-                  background: rgba(255, 255, 255, 0.15);
-                  border-radius: 6px;
-                  min-width: clamp(1.8rem, 6vw, 2rem);
-                  text-align: center;
-                  padding: 2px 4px;
-                  position: relative;
-                  overflow: hidden;
-                }
-                
-                /* Pulse effect for seconds */
-                .g-card__countdown-unit:last-child .g-card__countdown-number {
-                  position: relative;
-                }
-                
-                .g-card__countdown-unit:last-child .g-card__countdown-number::after {
-                  content: "";
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: rgba(255, 163, 102, 0.85);
-                  opacity: 0;
-                  animation: pulse-countdown 1s infinite;
-                }
-                
-                @keyframes pulse-countdown {
-                  0% {
-                    opacity: 0;
-                  }
-                  50% {
-                    opacity: 1;
-                  }
-                  100% {
-                    opacity: 0;
-                  }
-                }
-                
-                .g-card__countdown-label-unit {
-                  font-size: 0.6rem;
-                  text-transform: uppercase;
-                  margin-top: 2px;
-                  color: rgba(255, 255, 255, 0.8);
-                  letter-spacing: 0.5px;
-                }
-                
-                .g-card__deadline-days {
-                  background: rgba(90, 59, 140, 0.95);
-                  backdrop-filter: blur(5px);
-                  -webkit-backdrop-filter: blur(5px);
-                  border-radius: 3px;
-                  padding: 6px 10px;
-                  color: white;
-                  display: flex;
-                  align-items: center;
-                  font-weight: 600;
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-                  border: 1px solid rgba(255, 255, 255, 0.15);
-                  transition: transform 0.3s ease;
-                  gap: 5px;
-                }
-                
-                .g-card:hover .g-card__deadline-days {
-                  transform: translateY(-2px);
-                }
-                
-                .g-card__deadline-days-num {
-                  font-size: clamp(0.75rem, 2vw, 1rem);
-                  font-weight: 800;
-                  background: rgba(255, 255, 255, 0.15);
-                  border-radius: 6px;
-                  min-width: 1.8rem;
-                  text-align: center;
-                  padding: 2px 6px;
-                  color: var(--grantaura-secondary-light);
-                }
-                
-                /* Adjust position for featured cards */
-                .g-card--featured .g-card__countdown-wrapper {
-                  right: 12px;
-                }
-                
-                /* Mobile optimizations */
-                @media (max-width: 640px) {
-                  .g-card__countdown-wrapper {
-                    top: 10px;
-                    right: 10px;
-                  }
-                  
-                  .g-card__countdown, 
-                  .g-card__deadline-days {
-                    padding: 4px 6px;
-                  }
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card__countdown-unit:last-child .g-card__countdown-number::after {
-                    animation: none;
-                  }
-                  
-                  .g-card:hover .g-card__countdown,
-                  .g-card:hover .g-card__deadline-days {
-                    transform: none;
-                  }
-                }
-              </style>
-              
               <?php if ($time_remaining['display_type'] == 'countdown'): ?>
               <div class="g-card__countdown" id="<?php echo esc_attr($countdown_id); ?>" data-deadline="<?php echo esc_attr($deadline_time); ?>">
                 <div class="g-card__countdown-unit">
@@ -2694,128 +3231,9 @@
             </div>
             <?php endif; ?>
             
-            <div class="g-card__gradient-overlay">
-              <style>
-                .g-card__gradient-overlay {
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  height: 55%;
-                  background: linear-gradient(to top, 
-                    rgba(17, 24, 39, 0.98) 30%, 
-                    rgba(90, 59, 140, 0.90) 45%,
-                    rgba(90, 59, 140, 0.65) 65%, 
-                    rgba(90, 59, 140, 0.2) 85%,
-                    rgba(90, 59, 140, 0) 100%);
-                  z-index: 3;
-                  pointer-events: none;
-                  border-radius: 0 0 12px 12px;
-                  mix-blend-mode: multiply;
-                }
-                
-                /* Add subtle lighting effect on the gradient */
-                .g-card__gradient-overlay::after {
-                  content: "";
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  height: 60%;
-                  background: linear-gradient(135deg, 
-                    rgba(255, 163, 102, 0.25) 0%, 
-                    rgba(90, 59, 140, 0) 50%,
-                    rgba(255, 163, 102, 0.15) 100%);
-                  z-index: 1;
-                  opacity: 0;
-                  transition: opacity 0.5s ease;
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card:hover .g-card__gradient-overlay::after {
-                    transition: none;
-                  }
-                }
-              </style>
-            </div>
+            <div class="g-card__gradient-overlay"></div>
             
             <h2 class="g-card__title">
-              <style>
-                .g-card__title {
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  z-index: 4;
-                  padding: 1.25rem 1.25rem 1.5rem;
-                  margin: 0;
-                  font-size: clamp(1.1rem, 5vw, 1.35rem);
-                  font-weight: 700;
-                  line-height: 1.3;
-                  color: white !important;
-                  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-                  transition: transform 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__title {
-                  transform: translateY(-5px);
-                }
-                
-                .g-card__title a {
-                  color: white !important;
-                  text-decoration: none !important;
-                  transition: var(--grantaura-transition);
-                  display: block;
-                  width: 100%;
-                  position: relative;
-                  padding-left: 0;
-                  overflow: hidden;
-                }
-                
-                .g-card__title a:hover {
-                  color: var(--grantaura-secondary-light) !important;
-                }
-                
-                /* Hover underline effect */
-                .g-card__title a::after {
-                  content: "";
-                  position: absolute;
-                  bottom: -5px;
-                  left: 0;
-                  width: 0;
-                  height: 2px;
-                  background: var(--grantaura-secondary);
-                  transition: width 0.3s ease;
-                }
-                
-                .g-card:hover .g-card__title a::after {
-                  width: 40px;
-                }
-                
-                /* Add subtle enhancement to first letter */
-                .g-card__title a::first-letter {
-                  font-size: 110%;
-                  color: var(--grantaura-secondary-light);
-                }
-                
-                /* Special styling for featured titles */
-                .g-card--featured .g-card__title a::first-letter {
-                  color: #FFD700;
-                }
-                
-                /* Reduce motion based on user preference */
-                @media (prefers-reduced-motion: reduce) {
-                  .g-card:hover .g-card__title {
-                    transform: none;
-                  }
-                  
-                  .g-card:hover .g-card__title a::after {
-                    transition: none;
-                  }
-                }
-              </style>
-              
               <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($title); ?>" aria-label="View details of <?php echo esc_attr($title); ?>">
                 <?php echo esc_html($title); ?>
               </a>
@@ -2823,19 +3241,6 @@
             
             <!-- Accessibility features -->
             <div class="g-card__img-accessibility" aria-hidden="true">
-              <style>
-                .g-card__img-accessibility {
-                  position: absolute;
-                  width: 1px;
-                  height: 1px;
-                  padding: 0;
-                  margin: -1px;
-                  overflow: hidden;
-                  clip: rect(0, 0, 0, 0);
-                  white-space: nowrap;
-                  border-width: 0;
-                }
-              </style>
               <div class="g-card__screen-reader-info">
                 <p>Grant: <?php echo esc_html($title); ?></p>
                 <p>Status: <?php echo esc_html($status_text); ?></p>
@@ -2850,98 +3255,11 @@
             </div>
           </div>
           <div class="g-card__content">
-            <style>
-              .g-card__content {
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-                padding: clamp(0.75rem, 3vw, 1.25rem);
-                height: auto;
-                overflow: visible;
-              }
-            </style>
-            
             <div class="g-card__amount">
-              <style>
-                .g-card__amount {
-                  font-size: clamp(1.1rem, 4vw, 1.3rem);
-                  font-weight: 700;
-                  position: relative;
-                  padding: 0.25rem 0;
-                  margin-bottom: 0.75rem;
-                  color: var(--grantaura-primary);
-                }
-                
-                .g-card__amount::before {
-                  content: "";
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 2px;
-                  background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary-dark));
-                  opacity: 0.2;
-                }
-                
-                /* Enhanced styling for featured card amounts */
-                .g-card--featured .g-card__amount {
-                  color: var(--grantaura-primary-dark);
-                }
-                
-                .g-card--featured .g-card__amount::before {
-                  background: linear-gradient(90deg, var(--grantaura-primary-dark), #FFD700);
-                  opacity: 0.3;
-                  height: 3px;
-                }
-              </style>
-              
               <?php echo esc_html($amount_display); ?>
             </div>
             
             <div class="g-card__deadline-info">
-              <style>
-                .g-card__deadline-info {
-                  display: flex;
-                  align-items: center;
-                  font-size: clamp(0.8rem, 3vw, 0.85rem);
-                  color: var(--grantaura-gray-700);
-                  margin-bottom: 0.75rem;
-                  gap: 0.5rem;
-                }
-                
-                .g-card__deadline-info svg {
-                  color: var(--grantaura-primary);
-                  flex-shrink: 0;
-                  width: clamp(14px, 4vw, 16px);
-                  height: clamp(14px, 4vw, 16px);
-                }
-                
-                .g-card__deadline-info strong {
-                  font-weight: 600;
-                  margin-right: 0.25rem;
-                  color: var(--grantaura-gray-800);
-                }
-                
-                .g-card__deadline-value {
-                  font-weight: 500;
-                }
-                
-                .g-card__deadline-value--ongoing {
-                  color: var(--grantaura-secondary-dark);
-                  font-weight: 600;
-                }
-                
-                .g-card__deadline-value--expired {
-                  color: var(--grantaura-danger);
-                  font-weight: 500;
-                }
-                
-                /* Enhanced styling for featured deadlines */
-                .g-card--featured .g-card__deadline-info svg {
-                  color: var(--grantaura-primary-dark);
-                }
-              </style>
-              
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
@@ -2956,232 +3274,10 @@
             </div>
             
             <div class="g-card__excerpt">
-              <style>
-                .g-card__excerpt {
-                  margin-bottom: 1rem;
-                  font-size: clamp(0.8rem, 3vw, 0.9rem);
-                  color: var(--grantaura-gray-600);
-                  line-height: 1.6;
-                  overflow: hidden;
-                  position: relative;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 3;
-                  -webkit-box-orient: vertical;
-                  max-height: 4.8em; /* Approximately 3 lines */
-                }
-                
-                .g-card__excerpt::first-letter {
-                  font-size: 1.1em;
-                  font-weight: 500;
-                  color: var(--grantaura-primary);
-                }
-                
-                /* Enhanced styling for featured excerpts */
-                .g-card--featured .g-card__excerpt {
-                  color: var(--grantaura-gray-700);
-                }
-                
-                .g-card--featured .g-card__excerpt::first-letter {
-                  color: var(--grantaura-primary-dark);
-                  font-weight: 600;
-                }
-              </style>
-              
               <?php echo esc_html($tagline); ?>
             </div>
             
             <div class="g-card__meta">
-              <style>
-                .g-card__meta {
-                  display: grid;
-                  grid-template-columns: 1fr;
-                  gap: 0.75rem;
-                  margin-top: auto;
-                  position: relative;
-                }
-                
-                .g-card__meta::before {
-                  content: "";
-                  position: absolute;
-                  top: -10px;
-                  left: 0;
-                  right: 0;
-                  height: 1px;
-                  background: linear-gradient(90deg, var(--grantaura-gray-300), transparent);
-                }
-                
-                .g-card__meta-item {
-                  display: flex;
-                  align-items: center;
-                  font-size: clamp(0.75rem, 3vw, 0.85rem);
-                  color: var(--grantaura-gray-700);
-                  gap: 0.35rem;
-                  flex-wrap: wrap;
-                }
-                
-                .g-card__meta-item svg {
-                  color: var(--grantaura-primary);
-                  flex-shrink: 0;
-                  width: clamp(14px, 4vw, 16px);
-                  height: clamp(14px, 4vw, 16px);
-                }
-                
-                .g-card__meta-item strong {
-                  font-weight: 600;
-                  margin-right: 0.25rem;
-                  color: var(--grantaura-gray-800);
-                }
-                
-                /* Location links styling */
-                .g-card__location-link {
-                  color: var(--grantaura-gray-700) !important;
-                  text-decoration: none !important;
-                  transition: color 0.2s ease;
-                  display: inline-block;
-                }
-                
-                .g-card__location-link:hover {
-                  color: var(--grantaura-primary) !important;
-                  text-decoration: underline !important;
-                }
-                
-                .g-card__location-list {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.25rem;
-                }
-                
-                .g-card__location-more {
-                  display: inline-flex;
-                  color: var(--grantaura-secondary-dark);
-                  font-weight: 500;
-                  font-size: 0.75rem;
-                  margin-left: 0.25rem;
-                }
-                
-                /* Responsive location display */
-                .g-card__location-item--extra {
-                  display: none;
-                }
-                
-                @media (min-width: 768px) {
-                  .g-card__location-item--extra-md {
-                    display: inline;
-                  }
-                  
-                  .g-card__location-more--mobile {
-                    display: none;
-                  }
-                  
-                  .g-card__location-more--tablet {
-                    display: inline-flex;
-                  }
-                }
-                
-                @media (min-width: 1024px) {
-                  .g-card__location-item--extra-lg {
-                    display: inline;
-                  }
-                  
-                  .g-card__location-more--tablet {
-                    display: none;
-                  }
-                  
-                  .g-card__location-more--desktop {
-                    display: inline-flex;
-                  }
-                }
-                
-                .g-card__tags {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.5rem;
-                  margin-top: 0.75rem;
-                }
-                
-                .g-card__tag {
-                  font-size: 0.75rem;
-                  padding: 3px 10px;
-                  background-color: var(--grantaura-gray-100);
-                  border-radius: 20px;
-                  color: var(--grantaura-gray-700) !important;
-                  border: 1px solid var(--grantaura-gray-200);
-                  transition: var(--grantaura-transition);
-                  text-decoration: none !important;
-                  display: inline-block;
-                }
-                
-                .g-card__tag:hover {
-                  background-color: var(--grantaura-primary-light);
-                  color: white !important;
-                  border-color: var(--grantaura-primary-light);
-                }
-                
-                .g-card__tag--more {
-                  background: var(--grantaura-gray-200);
-                  color: var(--grantaura-gray-800) !important;
-                  cursor: default;
-                }
-                
-                .g-card__tag--more:hover {
-                  background: var(--grantaura-gray-200);
-                  color: var(--grantaura-gray-800) !important;
-                  border-color: var(--grantaura-gray-200);
-                }
-                
-                /* Responsive category tag display */
-                .g-card__tag--extra {
-                  display: none;
-                }
-                
-                @media (min-width: 768px) {
-                  .g-card__tag--extra-md {
-                    display: inline-block;
-                  }
-                  
-                  .g-card__tag--more-mobile {
-                    display: none;
-                  }
-                  
-                  .g-card__tag--more-tablet {
-                    display: inline-block;
-                  }
-                }
-                
-                @media (min-width: 1024px) {
-                  .g-card__tag--extra-lg {
-                    display: inline-block;
-                  }
-                  
-                  .g-card__tag--more-tablet {
-                    display: none;
-                  }
-                  
-                  .g-card__tag--more-desktop {
-                    display: inline-block;
-                  }
-                }
-                
-                /* Enhanced styling for featured meta */
-                .g-card--featured .g-card__meta::before {
-                  background: linear-gradient(90deg, var(--grantaura-primary-light), transparent);
-                  opacity: 0.3;
-                }
-                
-                .g-card--featured .g-card__meta-item svg {
-                  color: var(--grantaura-primary-dark);
-                }
-                
-                .g-card--featured .g-card__tag {
-                  border-color: var(--grantaura-primary-light);
-                  background-color: rgba(90, 59, 140, 0.05);
-                }
-                .g-card--featured .g-card__tag:hover {
-                  color: white !important;
-                  background-color: var(--grantaura-primary-light);
-                }
-              </style>
-              
               <?php if (!empty($location_data)): ?>
               <div class="g-card__meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3333,18 +3429,21 @@
         <?php
       }
       
-      // Store all filter data in a global JS variable for client-side filtering
+      // Store all filter data in JavaScript
       ?>
       <script type="text/javascript">
       // <![CDATA[
         // Store grant data for client-side filtering
         var grantauraGrantsData = <?php echo json_encode($grant_data_json); ?>;
         
-        // Store available filter options
+        // Store available filter options with counts
         var grantauraFilterOptions = {
           categories: <?php echo json_encode($all_categories); ?>,
           locations: <?php echo json_encode($all_locations); ?>,
-          eligibleEntities: <?php echo json_encode($all_eligible_entities); ?>
+          eligibleEntities: <?php echo json_encode($all_eligible_entities); ?>,
+          timeframes: <?php echo json_encode($timeframe_counts); ?>,
+          locationHierarchy: <?php echo json_encode($location_hierarchy); ?>,
+          filterRelationships: <?php echo json_encode($filter_relationships); ?>
         };
       // ]]>
       </script>
@@ -3355,98 +3454,7 @@
       
       if ($has_multiple_pages) {
         ?>
-        <div class="g-pagination">
-          <style>
-            .g-pagination {
-              grid-column: 1 / -1;
-              display: flex;
-              justify-content: center;
-              margin-top: 2.5rem;
-              margin-bottom: 4.5rem;
-              padding-top: 1.5rem;
-              border-top: 1px solid var(--grantaura-gray-200);
-              position: relative;
-            }
-            
-            .g-pagination::before {
-              content: "";
-              position: absolute;
-              top: -2px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 60px;
-              height: 3px;
-              background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
-            }
-            
-            .g-pagination__list {
-              display: flex;
-              list-style: none;
-              padding: 0;
-              margin: 0;
-              gap: clamp(0.2rem, 1vw, 0.35rem);
-              flex-wrap: wrap;
-              justify-content: center;
-            }
-            
-            .g-pagination__item a,
-            .g-pagination__item span {
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              min-width: clamp(2rem, 6vw, 2.25rem);
-              height: clamp(2rem, 6vw, 2.25rem);
-              padding: 0 clamp(0.5rem, 2vw, 0.75rem);
-              border-radius: var(--grantaura-border-radius-sm);
-              font-size: clamp(0.8rem, 3vw, 0.9rem);
-              font-weight: 500;
-              text-decoration: none !important;
-              transition: var(--grantaura-transition);
-            }
-            
-            .g-pagination__item a {
-              background-color: var(--grantaura-gray-100);
-              color: var(--grantaura-gray-700) !important;
-              border: 1px solid var(--grantaura-gray-200);
-            }
-            
-            .g-pagination__item a:hover {
-              background-color: var(--grantaura-primary-light);
-              color: white !important;
-              border-color: var(--grantaura-primary-light);
-            }
-            
-            .g-pagination__item--current span {
-              background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
-              color: white;
-              box-shadow: 0 3px 6px rgba(90, 59, 140, 0.2);
-            }
-            
-            .g-pagination__item--prev a,
-            .g-pagination__item--next a {
-              display: flex;
-              align-items: center;
-              gap: 4px;
-            }
-            
-            @media (max-width: 640px) {
-              .g-pagination__list {
-                padding: 0 0.5rem;
-              }
-              
-              .g-pagination__item--prev a,
-              .g-pagination__item--next a {
-                padding: 0 0.5rem;
-              }
-              
-              .g-pagination__item--prev svg,
-              .g-pagination__item--next svg {
-                width: 14px;
-                height: 14px;
-              }
-            }
-          </style>
-          
+        <div class="g-pagination" id="g-pagination">
           <ul class="g-pagination__list">
             <?php
             $current_page = max(1, get_query_var('paged'));
@@ -3661,6 +3669,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const noFilteredGrants = document.getElementById('no-filtered-grants');
   const grantsContainer = document.getElementById('grants-container');
   const grantsContainerLoading = document.getElementById('grants-container-loading');
+  const paginationContainer = document.getElementById('g-pagination');
   
   // Step navigation elements
   const filterSteps = document.querySelectorAll('.grants-filter-step');
@@ -3734,6 +3743,7 @@ document.addEventListener('DOMContentLoaded', function() {
       populateEligibilityOptions();
       populateCategoryOptions();
       populateLocationOptions();
+      updateTimeframeCounts();
       
       // Hide loading states
       document.getElementById('eligibility-loading').classList.remove('active');
@@ -3742,10 +3752,122 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
   }
   
+  // Update timeframe count indicators
+  function updateTimeframeCounts() {
+    if (!window.grantauraFilterOptions || !window.grantauraFilterOptions.timeframes) return;
+    
+    const timeframes = window.grantauraFilterOptions.timeframes;
+    const filterRelationships = window.grantauraFilterOptions.filterRelationships;
+    
+    // Get counts for each timeframe option
+    let countToday = timeframes.today;
+    let countWeek = timeframes.week;
+    let countMonth = timeframes.month;
+    let countQuarter = timeframes.quarter;
+    
+    // Apply filtering based on other selected filters
+    if (activeFilterState.eligibleEntities.length > 0 || 
+        activeFilterState.categories.length > 0 || 
+        activeFilterState.locations.length > 0 ||
+        activeFilterState.amount.min !== null ||
+        activeFilterState.amount.max !== null ||
+        activeFilterState.amount.includeVaries) {
+      
+      // Get eligible grants based on current filter state
+      const eligibleGrants = getEligibleGrantIds();
+      
+      // Update counts
+      if (filterRelationships) {
+        countToday = filterRelationships.timeframes.today.filter(id => eligibleGrants.includes(id)).length;
+        countWeek = filterRelationships.timeframes.week.filter(id => eligibleGrants.includes(id)).length;
+        countMonth = filterRelationships.timeframes.month.filter(id => eligibleGrants.includes(id)).length;
+        countQuarter = filterRelationships.timeframes.quarter.filter(id => eligibleGrants.includes(id)).length;
+      }
+    }
+    
+    // Update count displays
+    document.querySelector('[data-dynamic-count="timeframe-today"]').textContent = countToday;
+    document.querySelector('[data-dynamic-count="timeframe-week"]').textContent = countWeek;
+    document.querySelector('[data-dynamic-count="timeframe-month"]').textContent = countMonth;
+    document.querySelector('[data-dynamic-count="timeframe-quarter"]').textContent = countQuarter;
+  }
+  
+  // Helper function to get eligible grant ids based on current filter state
+  function getEligibleGrantIds() {
+    if (!window.grantauraFilterOptions || !window.grantauraFilterOptions.filterRelationships) return [];
+    
+    const relationships = window.grantauraFilterOptions.filterRelationships;
+    const grants = relationships.grants;
+    let eligibleIds = Object.keys(grants).map(Number);
+    
+    // Apply amount filtering
+    if (activeFilterState.amount.min !== null || activeFilterState.amount.max !== null) {
+      eligibleIds = eligibleIds.filter(id => {
+        const grant = grants[id];
+        if (grant.amount === 'varies') {
+          return activeFilterState.amount.includeVaries;
+        }
+        
+        const amount = parseInt(grant.amount, 10);
+        let passes = true;
+        
+        if (activeFilterState.amount.min !== null) {
+          passes = passes && amount >= activeFilterState.amount.min;
+        }
+        
+        if (activeFilterState.amount.max !== null) {
+          passes = passes && amount <= activeFilterState.amount.max;
+        }
+        
+        return passes;
+      });
+    } else if (activeFilterState.amount.includeVaries) {
+      // If only "includeVaries" is selected without min/max, we need to do nothing special
+      // as we want to include all grants
+    }
+    
+    // Apply eligibility filtering
+    if (activeFilterState.eligibleEntities.length > 0) {
+      eligibleIds = eligibleIds.filter(id => {
+        const grant = grants[id];
+        return activeFilterState.eligibleEntities.some(entity => grant.eligibility.includes(entity));
+      });
+    }
+    
+    // Apply category filtering
+    if (activeFilterState.categories.length > 0) {
+      eligibleIds = eligibleIds.filter(id => {
+        const grant = grants[id];
+        return activeFilterState.categories.some(category => grant.categories.includes(category));
+      });
+    }
+    
+    // Apply location filtering
+    if (activeFilterState.locations.length > 0) {
+      eligibleIds = eligibleIds.filter(id => {
+        const grant = grants[id];
+        return activeFilterState.locations.some(location => grant.locations.includes(location));
+      });
+    }
+    
+    return eligibleIds;
+  }
+  
   // Navigate between steps
   function navigateToStep(step) {
     // Validate step
     if (step < 1 || step > filterSteps.length) return;
+    
+    // Update relevant counts as we navigate between steps
+    if (step === 3) { // Going to eligibility step
+      updateEligibilityCounts();
+    } else if (step === 4) { // Going to categories step
+      updateCategoryCounts();
+    } else if (step === 5) { // Going to locations step
+      updateLocationCounts();
+    } else if (step === 2) { // Going to timeframe step
+      updateTimeframeCounts();
+    }
     
     // Update current step
     currentStep = step;
@@ -3782,6 +3904,111 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       filterNext.textContent = 'Next';
     }
+  }
+  
+  // Update eligibility counts based on other selected filters
+  function updateEligibilityCounts() {
+    if (!window.grantauraFilterOptions || !window.grantauraFilterOptions.filterRelationships) return;
+    
+    const eligibilityOptions = document.querySelectorAll('input[name="eligibleEntities"]');
+    const relationships = window.grantauraFilterOptions.filterRelationships;
+    
+    // Get eligible grants based on current filter state (excluding eligibility)
+    const currentEligibility = [...activeFilterState.eligibleEntities];
+    activeFilterState.eligibleEntities = [];
+    const eligibleGrants = getEligibleGrantIds();
+    activeFilterState.eligibleEntities = currentEligibility;
+    
+    // Update eligibility counts
+    eligibilityOptions.forEach(option => {
+      const entity = option.value;
+      const entityOption = option.closest('.grants-filter-checkbox');
+      const countElement = entityOption.querySelector('.grants-filter-option-count');
+      
+      if (countElement && relationships.eligibility[entity]) {
+        const filteredCount = relationships.eligibility[entity].filter(id => eligibleGrants.includes(Number(id))).length;
+        countElement.textContent = filteredCount;
+        
+        // If count is zero, disable the option
+        if (filteredCount === 0 && !option.checked) {
+          entityOption.classList.add('disabled');
+          option.disabled = true;
+        } else {
+          entityOption.classList.remove('disabled');
+          option.disabled = false;
+        }
+      }
+    });
+  }
+  
+  // Update category counts based on other selected filters
+  function updateCategoryCounts() {
+    if (!window.grantauraFilterOptions || !window.grantauraFilterOptions.filterRelationships) return;
+    
+    const categoryOptions = document.querySelectorAll('input[name="categories"]');
+    const relationships = window.grantauraFilterOptions.filterRelationships;
+    
+    // Get eligible grants based on current filter state (excluding categories)
+    const currentCategories = [...activeFilterState.categories];
+    activeFilterState.categories = [];
+    const eligibleGrants = getEligibleGrantIds();
+    activeFilterState.categories = currentCategories;
+    
+    // Update category counts
+    categoryOptions.forEach(option => {
+      const category = option.value;
+      const categoryOption = option.closest('.grants-filter-checkbox');
+      const countElement = categoryOption.querySelector('.grants-filter-option-count');
+      
+      if (countElement && relationships.categories[category]) {
+        const filteredCount = relationships.categories[category].filter(id => eligibleGrants.includes(Number(id))).length;
+        countElement.textContent = filteredCount;
+        
+        // If count is zero, disable the option
+        if (filteredCount === 0 && !option.checked) {
+          categoryOption.classList.add('disabled');
+          option.disabled = true;
+        } else {
+          categoryOption.classList.remove('disabled');
+          option.disabled = false;
+        }
+      }
+    });
+  }
+  
+  // Update location counts based on other selected filters
+  function updateLocationCounts() {
+    if (!window.grantauraFilterOptions || !window.grantauraFilterOptions.filterRelationships) return;
+    
+    const locationOptions = document.querySelectorAll('input[name="locations"]');
+    const relationships = window.grantauraFilterOptions.filterRelationships;
+    
+    // Get eligible grants based on current filter state (excluding locations)
+    const currentLocations = [...activeFilterState.locations];
+    activeFilterState.locations = [];
+    const eligibleGrants = getEligibleGrantIds();
+    activeFilterState.locations = currentLocations;
+    
+    // Update location counts
+    locationOptions.forEach(option => {
+      const location = option.value;
+      const locationOption = option.closest('.grants-filter-checkbox');
+      const countElement = locationOption.querySelector('.grants-filter-option-count');
+      
+      if (countElement && relationships.locations[location]) {
+        const filteredCount = relationships.locations[location].filter(id => eligibleGrants.includes(Number(id))).length;
+        countElement.textContent = filteredCount;
+        
+        // If count is zero, disable the option
+        if (filteredCount === 0 && !option.checked) {
+          locationOption.classList.add('disabled');
+          option.disabled = true;
+        } else {
+          locationOption.classList.remove('disabled');
+          option.disabled = false;
+        }
+      }
+    });
   }
   
   // Step navigation - next button
@@ -4031,9 +4258,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const entities = grantauraFilterOptions.eligibleEntities;
     eligibilityOptions.innerHTML = '';
     
-    // Sort entities by count (descending)
+    // Sort entities alphabetically
     const sortedEntities = Object.entries(entities)
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([entity, count]) => ({ entity, count }));
     
     // Create option for each entity
@@ -4082,6 +4309,11 @@ document.addEventListener('DOMContentLoaded', function() {
           removeFilterChip(item.entity, eligibilitySelected);
         }
         
+        // Update subsequent filter options based on this selection
+        updateCategoryCounts();
+        updateLocationCounts();
+        updateTimeframeCounts();
+        
         // Update matching grants count
         updateMatchingGrantsCount();
       });
@@ -4099,6 +4331,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (activeFilterState.eligibleEntities.length > 0) {
       updateSelectedChips(activeFilterState.eligibleEntities, 'eligibleEntities', eligibilitySelected);
     }
+    
+    // Show active filter counts
+    updateEligibilityCounts();
   }
   
   // Populate category options
@@ -4120,7 +4355,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const categories = grantauraFilterOptions.categories;
     categoryOptions.innerHTML = '';
     
-    // Sort categories by name
+    // Sort categories alphabetically
     const sortedCategories = Object.entries(categories)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([category, data]) => ({ 
@@ -4175,6 +4410,11 @@ document.addEventListener('DOMContentLoaded', function() {
           removeFilterChip(item.category, categorySelected);
         }
         
+        // Update other filter options counts
+        updateEligibilityCounts();
+        updateLocationCounts();
+        updateTimeframeCounts();
+        
         // Update matching grants count
         updateMatchingGrantsCount();
       });
@@ -4192,6 +4432,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (activeFilterState.categories.length > 0) {
       updateSelectedChips(activeFilterState.categories, 'categories', categorySelected);
     }
+    
+    // Show active filter counts
+    updateCategoryCounts();
   }
   
   // Populate location options
@@ -4211,169 +4454,300 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     const locations = grantauraFilterOptions.locations;
+    const locationHierarchy = grantauraFilterOptions.locationHierarchy || {};
     locationOptions.innerHTML = '';
     
-    // Organize locations into groups
-    const locationGroups = {
-      'Global': [],
-      'Regions': [],
-      'Countries': [],
-      'US States': [],
-      'US Cities/Counties': [],
-      'Other': []
-    };
+    // Group locations by parent-child relationship
+    const parentToChildren = {};
+    const topLevelLocations = [];
     
-    // Helper to determine location type
-    function getLocationType(location) {
-      if (location.toLowerCase() === 'global' || location.toLowerCase() === 'worldwide') {
-        return 'Global';
+    // First identify the top-level locations and create parent-child mapping
+    Object.entries(locationHierarchy).forEach(([id, data]) => {
+      const termId = parseInt(id, 10);
+      if (data.parent === 0) {
+        topLevelLocations.push({
+          id: termId,
+          name: data.name,
+          slug: data.slug,
+          count: data.count
+        });
       }
       
-      const regions = ['africa', 'asia', 'europe', 'north america', 'south america', 'latin america', 'caribbean', 'middle east', 'oceania'];
-      if (regions.includes(location.toLowerCase())) {
-        return 'Regions';
+      if (data.children && data.children.length > 0) {
+        parentToChildren[termId] = data.children.map(childId => parseInt(childId, 10));
       }
-      
-      const countries = ['united states', 'usa', 'u.s.', 'canada', 'uk', 'united kingdom', 'mexico', 'brazil', 'colombia', 'peru', 'chile'];
-      if (countries.includes(location.toLowerCase())) {
-        return 'Countries';
-      }
-      
-      const usStates = [
-        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 
-        'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 
-        'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 'mississippi', 
-        'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey', 'new mexico', 
-        'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 
-        'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 
-        'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
-      ];
-      
-      if (usStates.includes(location.toLowerCase())) {
-        return 'US States';
-      }
-      
-      // Check if it contains "county" or is a known city
-      if (location.toLowerCase().includes('county') || 
-          location.toLowerCase().includes('city') || 
-          ['atlanta', 'austin', 'boston', 'chicago', 'cincinnati', 'dallas', 'denver', 'detroit', 
-           'los angeles', 'miami', 'new york city', 'philadelphia', 'phoenix', 'portland', 
-           'san francisco', 'seattle', 'washington dc'].includes(location.toLowerCase())) {
-        return 'US Cities/Counties';
-      }
-      
-      return 'Other';
-    }
-    
-    // Sort locations and group them
-    Object.entries(locations).forEach(([location, data]) => {
-      const type = getLocationType(location);
-      locationGroups[type].push({
-        location,
-        count: data.count,
-        slug: data.slug
-      });
     });
     
-    // Sort locations within groups
-    Object.keys(locationGroups).forEach(group => {
-      locationGroups[group].sort((a, b) => a.location.localeCompare(b.location));
+    // Sort top level locations alphabetically with Global first
+    topLevelLocations.sort((a, b) => {
+      if (a.name === 'Global') return -1;
+      if (b.name === 'Global') return 1;
+      return a.name.localeCompare(b.name);
     });
     
-    // Create a container for each group
-    Object.keys(locationGroups).forEach(group => {
-      if (locationGroups[group].length === 0) return;
+    // Function to create location option element
+    function createLocationOption(location, isChild = false) {
+      const option = document.createElement('label');
+      option.className = isChild ? 'grants-filter-checkbox grants-filter-subitem' : 'grants-filter-checkbox';
+      option.htmlFor = `location-${location.slug}`;
+      option.innerHTML = `
+        <input type="checkbox" id="location-${location.slug}" name="locations" value="${location.name}" data-filter-group="locations" data-location-id="${location.id}">
+        <div class="grants-filter-option-content">
+          <span class="grants-filter-option-label">${location.name}</span>
+          <span class="grants-filter-option-count">${location.count}</span>
+        </div>
+      `;
       
-      // Add group header
-      const groupHeader = document.createElement('div');
-      groupHeader.className = 'grants-filter-group-header';
-      groupHeader.innerHTML = `<h5>${group}</h5>`;
-      locationOptions.appendChild(groupHeader);
+      // Check if this location is already selected
+      const checkbox = option.querySelector('input[type="checkbox"]');
+      if (activeFilterState.locations.includes(location.name)) {
+        checkbox.checked = true;
+        option.classList.add('selected');
+      }
       
-      // Add locations in this group
-      locationGroups[group].forEach(item => {
-        const option = document.createElement('label');
-        option.className = 'grants-filter-checkbox';
-        option.htmlFor = `location-${item.slug}`;
-        option.innerHTML = `
-          <input type="checkbox" id="location-${item.slug}" name="locations" value="${item.location}" data-filter-group="locations">
-          <div class="grants-filter-option-content">
-            <span class="grants-filter-option-label">${item.location}</span>
-            <span class="grants-filter-option-count">${item.count}</span>
-          </div>
-        `;
+      // Add event listener
+      checkbox.addEventListener('change', function() {
+        option.classList.toggle('selected', this.checked);
         
-        locationOptions.appendChild(option);
-        
-        // Add event listener
-        const checkbox = option.querySelector('input[type="checkbox"]');
-        
-        // Check if this location is already selected
-        if (activeFilterState.locations.includes(item.location)) {
-          checkbox.checked = true;
-          option.classList.add('selected');
-        }
-        
-        checkbox.addEventListener('change', function() {
-          option.classList.toggle('selected', this.checked);
-          
-          if (this.checked) {
-            // Add to filter state
-            if (!activeFilterState.locations.includes(item.location)) {
-              activeFilterState.locations.push(item.location);
-            }
-            
-            // Add chip to selected section
-            addFilterChip(item.location, 'locations', locationSelected);
-          } else {
-            // Remove from filter state
-            const index = activeFilterState.locations.indexOf(item.location);
-            if (index !== -1) {
-              activeFilterState.locations.splice(index, 1);
-            }
-            
-            // Remove chip from selected section
-            removeFilterChip(item.location, locationSelected);
+        if (this.checked) {
+          // Add to filter state
+          if (!activeFilterState.locations.includes(location.name)) {
+            activeFilterState.locations.push(location.name);
           }
           
-          // Update matching grants count
-          updateMatchingGrantsCount();
-        });
+          // Add chip to selected section
+          addFilterChip(location.name, 'locations', locationSelected);
+        } else {
+          // Remove from filter state
+          const index = activeFilterState.locations.indexOf(location.name);
+          if (index !== -1) {
+            activeFilterState.locations.splice(index, 1);
+          }
+          
+          // Remove chip from selected section
+          removeFilterChip(location.name, locationSelected);
+        }
+        
+        // Update other filter options counts
+        updateEligibilityCounts();
+        updateCategoryCounts();
+        updateTimeframeCounts();
+        
+        // Update matching grants count
+        updateMatchingGrantsCount();
       });
+      
+      return option;
+    }
+    
+    // Process each top-level location and its children
+    topLevelLocations.forEach(location => {
+      // Create group header for top-level location
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'grants-filter-group-header';
+      groupHeader.innerHTML = `<h5>${location.name}</h5>`;
+      locationOptions.appendChild(groupHeader);
+      
+      // Add the top-level location itself
+      const locationOption = createLocationOption(location);
+      locationOptions.appendChild(locationOption);
+      
+      // Process children if any
+      if (parentToChildren[location.id]) {
+        const childIds = parentToChildren[location.id];
+        
+        // Sort children alphabetically
+        const childLocations = childIds
+          .map(id => locationHierarchy[id])
+          .filter(data => data) // Ensure we have valid data
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(data => ({
+            id: data.id,
+            name: data.name,
+            slug: data.slug,
+            count: data.count
+          }));
+        
+        // Add child locations
+        childLocations.forEach(childLocation => {
+          const childOption = createLocationOption(childLocation, true);
+          locationOptions.appendChild(childOption);
+          
+          // Process grandchildren if any
+          if (parentToChildren[childLocation.id]) {
+            const grandchildIds = parentToChildren[childLocation.id];
+            
+            // Sort grandchildren alphabetically
+            const grandchildLocations = grandchildIds
+              .map(id => locationHierarchy[id])
+              .filter(data => data) // Ensure we have valid data
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(data => ({
+                id: data.id,
+                name: data.name,
+                slug: data.slug,
+                count: data.count
+              }));
+            
+            // Add grandchild locations with double indentation
+            grandchildLocations.forEach(grandchildLocation => {
+              const grandchildOption = document.createElement('label');
+              grandchildOption.className = 'grants-filter-checkbox grants-filter-subitem grants-filter-subitem-level2';
+              grandchildOption.style.paddingLeft = '3rem'; // Additional indentation
+              grandchildOption.htmlFor = `location-${grandchildLocation.slug}`;
+              grandchildOption.innerHTML = `
+                <input type="checkbox" id="location-${grandchildLocation.slug}" name="locations" value="${grandchildLocation.name}" data-filter-group="locations" data-location-id="${grandchildLocation.id}">
+                <div class="grants-filter-option-content">
+                  <span class="grants-filter-option-label">${grandchildLocation.name}</span>
+                  <span class="grants-filter-option-count">${grandchildLocation.count}</span>
+                </div>
+              `;
+              
+              // Check if this location is already selected
+              const checkbox = grandchildOption.querySelector('input[type="checkbox"]');
+              if (activeFilterState.locations.includes(grandchildLocation.name)) {
+                checkbox.checked = true;
+                grandchildOption.classList.add('selected');
+              }
+              
+              // Add same event listener as other locations
+              checkbox.addEventListener('change', function() {
+                grandchildOption.classList.toggle('selected', this.checked);
+                
+                if (this.checked) {
+                  if (!activeFilterState.locations.includes(grandchildLocation.name)) {
+                    activeFilterState.locations.push(grandchildLocation.name);
+                  }
+                  addFilterChip(grandchildLocation.name, 'locations', locationSelected);
+                } else {
+                  const index = activeFilterState.locations.indexOf(grandchildLocation.name);
+                  if (index !== -1) {
+                    activeFilterState.locations.splice(index, 1);
+                  }
+                  removeFilterChip(grandchildLocation.name, locationSelected);
+                }
+                
+                updateEligibilityCounts();
+                updateCategoryCounts();
+                updateTimeframeCounts();
+                updateMatchingGrantsCount();
+              });
+              
+              locationOptions.appendChild(grandchildOption);
+            });
+          }
+        });
+      }
     });
     
     // Add search functionality
     const locationSearch = document.getElementById('location-search');
     if (locationSearch) {
       locationSearch.addEventListener('input', debounce(function() {
-        filterOptions(locationOptions, this.value, true);
+        filterOptionsHierarchy(locationOptions, this.value);
       }, 200));
     }
-    
-    // Add styles for group headers
-    const style = document.createElement('style');
-    style.textContent = `
-      .grants-filter-group-header {
-        padding: 0.75rem 0.5rem 0.25rem;
-        background-color: var(--grantaura-gray-50);
-        border-bottom: 1px solid var(--grantaura-gray-200);
-        margin-bottom: 0.5rem;
-      }
-      
-      .grants-filter-group-header h5 {
-        margin: 0;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--grantaura-primary-dark);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-    `;
-    document.head.appendChild(style);
     
     // If there are already selected items, show them
     if (activeFilterState.locations.length > 0) {
       updateSelectedChips(activeFilterState.locations, 'locations', locationSelected);
+    }
+    
+    // Show active filter counts
+    updateLocationCounts();
+  }
+  
+  // Filter hierarchical options (like locations) based on search term
+  function filterOptionsHierarchy(container, searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    
+    // First, hide all group headers and show them only if they have visible children
+    const groupHeaders = container.querySelectorAll('.grants-filter-group-header');
+    groupHeaders.forEach(header => {
+      header.style.display = 'none';
+    });
+    
+    // Process all option elements
+    const options = container.querySelectorAll('.grants-filter-checkbox');
+    let lastVisibleHeader = null;
+    
+    options.forEach(option => {
+      const label = option.querySelector('.grants-filter-option-label').textContent.toLowerCase();
+      const matches = label.includes(term);
+      
+      if (matches || term === '') {
+        option.style.display = '';
+        
+        // Find the preceding header and make it visible
+        let currentElement = option.previousElementSibling;
+        while (currentElement && !currentElement.classList.contains('grants-filter-group-header')) {
+          currentElement = currentElement.previousElementSibling;
+        }
+        
+        if (currentElement && currentElement.classList.contains('grants-filter-group-header')) {
+          currentElement.style.display = '';
+          lastVisibleHeader = currentElement;
+        }
+      } else {
+        option.style.display = 'none';
+      }
+    });
+    
+    // If no options match, show a message
+    const visibleOptions = Array.from(options).filter(opt => opt.style.display !== 'none');
+    if (visibleOptions.length === 0 && term !== '') {
+      // Create or update "no results" message
+      let noResults = container.querySelector('.grants-filter-no-results');
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'grants-filter-no-results';
+        noResults.innerHTML = `<p>No locations match "${searchTerm}". Try a different search term.</p>`;
+        container.appendChild(noResults);
+      } else {
+        noResults.innerHTML = `<p>No locations match "${searchTerm}". Try a different search term.</p>`;
+        noResults.style.display = 'block';
+      }
+    } else {
+      // Hide "no results" message if it exists
+      const noResults = container.querySelector('.grants-filter-no-results');
+      if (noResults) {
+        noResults.style.display = 'none';
+      }
+    }
+  }
+  
+  // Filter options based on search term
+  function filterOptions(container, searchTerm) {
+    const options = container.querySelectorAll('.grants-filter-checkbox');
+    const term = searchTerm.toLowerCase().trim();
+    let hasVisibleOptions = false;
+    
+    options.forEach(function(option) {
+      const label = option.querySelector('.grants-filter-option-label').textContent.toLowerCase();
+      const matches = label.includes(term);
+      option.style.display = matches ? '' : 'none';
+      if (matches) hasVisibleOptions = true;
+    });
+    
+    // If no options match, show a message
+    if (!hasVisibleOptions && term !== '') {
+      // Create or update "no results" message
+      let noResults = container.querySelector('.grants-filter-no-results');
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'grants-filter-no-results';
+        noResults.innerHTML = `<p>No matches found for "${searchTerm}". Try a different search term.</p>`;
+        container.appendChild(noResults);
+      } else {
+        noResults.innerHTML = `<p>No matches found for "${searchTerm}". Try a different search term.</p>`;
+        noResults.style.display = 'block';
+      }
+    } else {
+      // Hide "no results" message if it exists
+      const noResults = container.querySelector('.grants-filter-no-results');
+      if (noResults) {
+        noResults.style.display = 'none';
+      }
     }
   }
   
@@ -4416,6 +4790,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
       
+      // Update filter option counts
+      updateEligibilityCounts();
+      updateCategoryCounts();
+      updateLocationCounts();
+      updateTimeframeCounts();
+      
       // Update matching grants count
       updateMatchingGrantsCount();
     });
@@ -4424,655 +4804,396 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Remove a filter chip from the selected section
-function removeFilterChip(value, container) {
-  if (!container) return;
-  
-  const chip = container.querySelector(`[data-value="${value}"]`);
-    if (chip) chip.remove();
+  function removeFilterChip(value, container) {
+    if (!container) return;
+    
+    const chip = container.querySelector(`[data-value="${value}"]`);
+    if (chip) {
+      chip.remove();
+    }
   }
   
-  // Update selected chips section based on current filter state
+  // Update selected chips based on active filter state
   function updateSelectedChips(values, group, container) {
     if (!container) return;
-    
-    // Clear existing chips
     container.innerHTML = '';
-    
-    // Add a chip for each value
-    values.forEach(function(value) {
-      addFilterChip(value, group, container);
-    });
+    values.forEach(value => addFilterChip(value, group, container));
   }
   
-  // Filter options based on search input
-  function filterOptions(container, searchTerm, includeHeaders = false) {
-    if (!container) return;
+  // Debounce utility function to limit search input events
+  function debounce(func, wait) {
+    let timeout;
+    return function() {
+      const context = this, args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+  }
+  
+  // Apply filters to the grants list and update pagination
+  function applyFilters() {
+    showLoading();
     
-    const lowerSearchTerm = searchTerm.toLowerCase().trim();
-    let optionsVisible = 0;
+    // Get all grant cards
+    const grantCards = document.querySelectorAll('.g-card');
+    let visibleCards = [];
     
-    // Get all checkbox options (not group headers)
-    const options = container.querySelectorAll('.grants-filter-checkbox');
-    
-    options.forEach(function(option) {
-      const label = option.querySelector('.grants-filter-option-label');
-      if (!label) return;
+    grantCards.forEach(function(card) {
+      // Get data from card attributes
+      const status = card.dataset.status;
+      const isFeatured = card.dataset.featured === 'true';
+      const amount = card.dataset.amount;
+      const deadlineTimestamp = card.dataset.deadline ? parseInt(card.dataset.deadline, 10) : 0;
+      const locations = card.dataset.locations ? card.dataset.locations.split('|') : [];
+      const categories = card.dataset.categories ? card.dataset.categories.split('|') : [];
+      const eligibleEntities = card.dataset.eligibleEntities ? card.dataset.eligibleEntities.split('|') : [];
       
-      const text = label.textContent.toLowerCase();
-      const matches = text.includes(lowerSearchTerm);
+      // Check each filter category
+      const passesStatusFilter = activeFilterState.status.length === 0 || activeFilterState.status.includes(status);
       
-      option.style.display = matches ? '' : 'none';
+      const passesFeaturedFilter = activeFilterState.featured.length === 0 || 
+        (activeFilterState.featured.includes('true') && isFeatured) || 
+        (activeFilterState.featured.includes('false') && !isFeatured);
       
-      if (matches) {
-        optionsVisible++;
-        
-        // Highlight matching text if there's a search term
-        if (lowerSearchTerm && label.innerHTML === label.textContent) {
-          const regex = new RegExp(`(${lowerSearchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-          label.innerHTML = label.textContent.replace(regex, '<span style="background-color:rgba(90,59,140,0.1);font-weight:bold;">$1</span>');
+      // Amount filter logic
+      let passesAmountFilter = true;
+      if (amount !== 'varies') {
+        const amountValue = parseInt(amount, 10);
+        if (activeFilterState.amount.min !== null) {
+          passesAmountFilter = passesAmountFilter && amountValue >= activeFilterState.amount.min;
         }
-      } else if (lowerSearchTerm && label.innerHTML !== label.textContent) {
-        // Reset highlighting if no match
-        label.innerHTML = label.textContent;
+        if (activeFilterState.amount.max !== null) {
+          passesAmountFilter = passesAmountFilter && amountValue <= activeFilterState.amount.max;
+        }
+      } else {
+        // If "varies" and includeVaries is false, and we have min/max filters, this should not pass
+        if ((activeFilterState.amount.min !== null || activeFilterState.amount.max !== null) && !activeFilterState.amount.includeVaries) {
+          passesAmountFilter = false;
+        }
+      }
+      
+      // Time frame filter
+      let passesTimeframeFilter = true;
+      if (activeFilterState.timeframe.length > 0 && deadlineTimestamp > 0) {
+        const now = Math.floor(Date.now() / 1000);
+        const hasToday = activeFilterState.timeframe.includes('today');
+        const hasWeek = activeFilterState.timeframe.includes('week');
+        const hasMonth = activeFilterState.timeframe.includes('month');
+        const hasQuarter = activeFilterState.timeframe.includes('quarter');
+        
+        const dayEnd = now + (24 * 60 * 60);
+        const weekEnd = now + (7 * 24 * 60 * 60);
+        const monthEnd = now + (30 * 24 * 60 * 60);
+        const quarterEnd = now + (90 * 24 * 60 * 60);
+        
+        passesTimeframeFilter = false;
+        
+        if (hasToday && deadlineTimestamp <= dayEnd) {
+          passesTimeframeFilter = true;
+        } else if (hasWeek && deadlineTimestamp <= weekEnd) {
+          passesTimeframeFilter = true;
+        } else if (hasMonth && deadlineTimestamp <= monthEnd) {
+          passesTimeframeFilter = true;
+        } else if (hasQuarter && deadlineTimestamp <= quarterEnd) {
+          passesTimeframeFilter = true;
+        }
+      }
+      
+      // Eligible entities filter
+      const passesEligibleFilter = activeFilterState.eligibleEntities.length === 0 || 
+        activeFilterState.eligibleEntities.some(entity => eligibleEntities.includes(entity));
+      
+      // Categories filter
+      const passesCategoryFilter = activeFilterState.categories.length === 0 || 
+        activeFilterState.categories.some(category => categories.includes(category));
+      
+      // Locations filter
+      const passesLocationFilter = activeFilterState.locations.length === 0 || 
+        activeFilterState.locations.some(location => locations.includes(location));
+      
+      // Combined filter result
+      const isVisible = checkConditions([
+        passesStatusFilter,
+        passesFeaturedFilter,
+        passesAmountFilter,
+        passesTimeframeFilter,
+        passesEligibleFilter,
+        passesCategoryFilter,
+        passesLocationFilter
+      ]);
+      
+      // Update card visibility
+      card.style.display = isVisible ? '' : 'none';
+      
+      if (isVisible) {
+        visibleCards.push(card);
       }
     });
     
-    // Handle group headers visibility if included
-    if (includeHeaders) {
-      const headers = container.querySelectorAll('.grants-filter-group-header');
+    // Update no grants message
+    noFilteredGrants.classList.toggle('active', visibleCards.length === 0);
+    
+    // Update pagination if needed
+    updatePagination(visibleCards.length);
+    
+    // Update active filters display
+    updateActiveFiltersDisplay();
+    
+    hideLoading();
+  }
+  
+  // Update pagination based on filtered grants
+  function updatePagination(visibleCount) {
+    if (!paginationContainer) return;
+    
+    // If there are active filters and we need pagination
+    if (visibleCount > 0 && visibleCount < grantauraGrantsData.length) {
+      // For client-side filtering, we'll hide the server-side pagination
+      // as we're now showing a different set of results
+      paginationContainer.style.display = 'none';
+    } else {
+      // Show server-side pagination when no filters are active
+      paginationContainer.style.display = '';
+    }
+  }
+  
+  // Update the display of active filters
+  function updateActiveFiltersDisplay() {
+    activeFilters.innerHTML = '';
+    
+    function addActiveFilterChip(label, group, displayValue, filterKey) {
+      const chip = document.createElement('div');
+      chip.className = 'grants-active-filter';
+      chip.innerHTML = `<strong>${label}:</strong> ${displayValue} <button type="button" class="grants-active-filter-remove" aria-label="Remove ${displayValue} from ${label}">×</button>`;
       
-      // First hide all headers
-      headers.forEach(header => {
-        header.style.display = 'none';
-      });
-      
-      // Then show headers that have visible options
-      options.forEach(option => {
-        if (option.style.display !== 'none') {
-          let prevEl = option.previousElementSibling;
-          while (prevEl) {
-            if (prevEl.classList.contains('grants-filter-group-header')) {
-              prevEl.style.display = '';
-              break;
+      chip.querySelector('.grants-active-filter-remove').addEventListener('click', function() {
+        if (group === 'amount') {
+          if (filterKey === 'min') activeFilterState.amount.min = null;
+          else if (filterKey === 'max') activeFilterState.amount.max = null;
+          else if (filterKey === 'includeVaries') activeFilterState.amount.includeVaries = false;
+        } else {
+          const index = activeFilterState[group].indexOf(filterKey);
+          if (index !== -1) activeFilterState[group].splice(index, 1);
+        }
+        applyFilters();
+        updateActiveFiltersDisplay();
+        
+        // Update the checkboxes in the filter panel
+        if (group !== 'amount') {
+          const checkbox = document.querySelector(`input[type="checkbox"][name="${group}"][value="${filterKey}"]`);
+          if (checkbox) {
+            checkbox.checked = false;
+            const optionEl = checkbox.closest('.grants-filter-checkbox');
+            if (optionEl) {
+              optionEl.classList.remove('selected');
             }
-            prevEl = prevEl.previousElementSibling;
+          }
+        } else if (group === 'amount' && filterKey === 'includeVaries') {
+          const checkbox = document.getElementById('amount-varies');
+          if (checkbox) checkbox.checked = false;
+        } else if (group === 'amount' && filterKey === 'min') {
+          const input = document.getElementById('amount-min');
+          if (input) input.value = '';
+        } else if (group === 'amount' && filterKey === 'max') {
+          const input = document.getElementById('amount-max');
+          if (input) input.value = '';
+        }
+        
+        // Update the related items in the filter panel
+        const selected = document.getElementById(`${group}-selected`);
+        if (selected) {
+          if (group === 'amount') {
+            // For amount, rebuild the entire selected section
+            selected.innerHTML = '';
+            if (activeFilterState.amount.min !== null) {
+              addFilterChip(`Min: $${activeFilterState.amount.min.toLocaleString()}`, 'amount', selected);
+            }
+            if (activeFilterState.amount.max !== null) {
+              addFilterChip(`Max: $${activeFilterState.amount.max.toLocaleString()}`, 'amount', selected);
+            }
+            if (activeFilterState.amount.includeVaries) {
+              addFilterChip('Include Various Benefits', 'amount', selected);
+            }
+          } else {
+            // For other groups, remove the specific chip
+            removeFilterChip(filterKey, selected);
           }
         }
+        
+        // Update counts for other filter options
+        updateEligibilityCounts();
+        updateCategoryCounts();
+        updateLocationCounts();
+        updateTimeframeCounts();
       });
+      
+      activeFilters.appendChild(chip);
     }
     
-    // Show no results message if needed
-    let noResults = container.querySelector('.grants-filter-no-results');
+    if (activeFilterState.amount.min !== null) addActiveFilterChip('Amount', 'amount', `Min: $${activeFilterState.amount.min.toLocaleString()}`, 'min');
+    if (activeFilterState.amount.max !== null) addActiveFilterChip('Amount', 'amount', `Max: $${activeFilterState.amount.max.toLocaleString()}`, 'max');
+    if (activeFilterState.amount.includeVaries) addActiveFilterChip('Amount', 'amount', 'Include Various Benefits', 'includeVaries');
     
-    if (optionsVisible === 0) {
-      if (!noResults) {
-        noResults = document.createElement('div');
-        noResults.className = 'grants-filter-no-results';
-        noResults.innerHTML = `
-          <p>No matches found for "${searchTerm}". Try a different search term.</p>
-        `;
-        container.appendChild(noResults);
-      } else {
-        noResults.innerHTML = `
-          <p>No matches found for "${searchTerm}". Try a different search term.</p>
-        `;
-        noResults.style.display = '';
-      }
-    } else if (noResults) {
-      noResults.style.display = 'none';
-    }
+    const timeframeLabels = { 'today': 'Ending Today', 'week': 'Ending This Week', 'month': 'Ending This Month', 'quarter': 'Ending This Quarter' };
+    activeFilterState.timeframe.forEach(tf => addActiveFilterChip('Timeframe', 'timeframe', timeframeLabels[tf] || tf, tf));
+    activeFilterState.eligibleEntities.forEach(entity => addActiveFilterChip('Eligibility', 'eligibleEntities', entity, entity));
+    activeFilterState.categories.forEach(category => addActiveFilterChip('Category', 'categories', category, category));
+    activeFilterState.locations.forEach(location => addActiveFilterChip('Location', 'locations', location, location));
+    
+    const totalFilters = 
+      (activeFilterState.amount.min !== null ? 1 : 0) +
+      (activeFilterState.amount.max !== null ? 1 : 0) +
+      (activeFilterState.amount.includeVaries ? 1 : 0) +
+      activeFilterState.timeframe.length +
+      activeFilterState.eligibleEntities.length +
+      activeFilterState.categories.length +
+      activeFilterState.locations.length;
+    
+    filterCount.textContent = totalFilters || '';
+    filterCount.classList.toggle('active', totalFilters > 0);
+    activeFilters.classList.toggle('active', totalFilters > 0);
   }
   
-  // Handle amount range inputs
-  const amountMin = document.getElementById('amount-min');
-  const amountMax = document.getElementById('amount-max');
-  const amountVaries = document.getElementById('amount-varies');
+  // Reset all filters
+  if (filterReset) {
+    filterReset.addEventListener('click', function() {
+      resetAllFilters();
+    });
+  }
   
-  if (amountMin) {
-    amountMin.addEventListener('input', function() {
-      activeFilterState.amount.min = this.value !== '' ? parseInt(this.value, 10) : null;
+  // Reset filters from "no filtered grants" message
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', function() {
+      resetAllFilters();
+      noFilteredGrants.classList.remove('active');
+    });
+  }
+  
+  function resetAllFilters() {
+    activeFilterState = { 
+      status: [], 
+      featured: [], 
+      amount: { min: null, max: null, includeVaries: false }, 
+      timeframe: [], 
+      eligibleEntities: [], 
+      categories: [], 
+      locations: [] 
+    };
+    
+    // Reset all form inputs
+    document.querySelectorAll('.grants-filter-selected').forEach(container => container.innerHTML = '');
+    document.querySelectorAll('.grants-filter-checkbox input[type="checkbox"]').forEach(checkbox => {
+      checkbox.checked = false;
+      checkbox.closest('.grants-filter-checkbox')?.classList.remove('selected');
+    });
+    document.getElementById('amount-min').value = '';
+    document.getElementById('amount-max').value = '';
+    
+    // Show all grants
+    document.querySelectorAll('.g-card').forEach(card => card.style.display = '');
+    
+    // Update UI
+    filterCount.textContent = '';
+    filterCount.classList.remove('active');
+    activeFilters.innerHTML = '';
+    activeFilters.classList.remove('active');
+    
+    // Make sure pagination is visible
+    if (paginationContainer) {
+      paginationContainer.style.display = '';
+    }
+    
+    // Navigate back to first step
+    navigateToStep(1);
+    
+    // Update summary and counts
+    updateSummaryView();
+    updateMatchingGrantsCount();
+    updateActiveFiltersDisplay();
+    
+    // Refresh filter counts
+    updateEligibilityCounts();
+    updateCategoryCounts();
+    updateLocationCounts();
+    updateTimeframeCounts();
+  }
+  
+  // Event listeners for amount filters
+  const amountMinInput = document.getElementById('amount-min');
+  const amountMaxInput = document.getElementById('amount-max');
+  const includeVariesCheckbox = document.getElementById('amount-varies');
+  
+  if (amountMinInput) {
+    amountMinInput.addEventListener('input', function() {
+      activeFilterState.amount.min = this.value ? parseInt(this.value, 10) : null;
+      updateEligibilityCounts();
+      updateCategoryCounts();
+      updateLocationCounts();
+      updateTimeframeCounts();
       updateMatchingGrantsCount();
     });
   }
   
-  if (amountMax) {
-    amountMax.addEventListener('input', function() {
-      activeFilterState.amount.max = this.value !== '' ? parseInt(this.value, 10) : null;
+  if (amountMaxInput) {
+    amountMaxInput.addEventListener('input', function() {
+      activeFilterState.amount.max = this.value ? parseInt(this.value, 10) : null;
+      updateEligibilityCounts();
+      updateCategoryCounts();
+      updateLocationCounts();
+      updateTimeframeCounts();
       updateMatchingGrantsCount();
     });
   }
   
-  if (amountVaries) {
-    amountVaries.addEventListener('change', function() {
+  if (includeVariesCheckbox) {
+    includeVariesCheckbox.addEventListener('change', function() {
       activeFilterState.amount.includeVaries = this.checked;
-      const amountVariesLabel = document.querySelector(`label[for="${amountVaries.id}"]`);
-      if (amountVariesLabel) {
-        amountVariesLabel.classList.toggle('selected', this.checked);
-      }
+      updateEligibilityCounts();
+      updateCategoryCounts();
+      updateLocationCounts();
+      updateTimeframeCounts();
       updateMatchingGrantsCount();
     });
   }
   
-  // Handle timeframe filters
-  document.querySelectorAll('input[type="checkbox"][data-filter-group="timeframe"]').forEach(function(checkbox) {
+  // Event listeners for timeframe checkboxes
+  const timeframeCheckboxes = document.querySelectorAll('input[name="timeframe"]');
+  timeframeCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       const value = this.value;
-      const isChecked = this.checked;
-      const label = this.closest('.grants-filter-checkbox');
-      
-      if (label) {
-        label.classList.toggle('selected', isChecked);
-      }
-      
-      if (isChecked) {
-        // Add to active filters
-        if (!activeFilterState.timeframe.includes(value)) {
-          activeFilterState.timeframe.push(value);
-        }
+      if (this.checked) {
+        if (!activeFilterState.timeframe.includes(value)) activeFilterState.timeframe.push(value);
       } else {
-        // Remove from active filters
         const index = activeFilterState.timeframe.indexOf(value);
-        if (index !== -1) {
-          activeFilterState.timeframe.splice(index, 1);
-        }
+        if (index !== -1) activeFilterState.timeframe.splice(index, 1);
       }
       
+      updateEligibilityCounts();
+      updateCategoryCounts();
+      updateLocationCounts();
       updateMatchingGrantsCount();
     });
   });
   
-  // Reset filters
-  if (filterReset) {
-    filterReset.addEventListener('click', function() {
-      resetFilters();
-      updateMatchingGrantsCount();
-    });
-  }
-  
-  // Reset filters from no results message
-  if (resetFiltersBtn) {
-    resetFiltersBtn.addEventListener('click', function() {
-      resetFilters();
-      applyFilters();
-    });
-  }
-  
-  // Debounce function to limit how often a function is called
-  function debounce(func, wait) {
-    let timeout;
-    return function() {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        func.apply(context, args);
-      }, wait);
-    };
-  }
-  
-  // Reset all filters
-  function resetFilters() {
-    // Reset filter state
-    activeFilterState = {
-      status: [],
-      featured: [],
-      amount: {
-        min: null,
-        max: null,
-        includeVaries: false
-      },
-      timeframe: [],
-      eligibleEntities: [],
-      categories: [],
-      locations: []
-    };
-    
-    // Reset form inputs
-    if (amountMin) amountMin.value = '';
-    if (amountMax) amountMax.value = '';
-    if (amountVaries) amountVaries.checked = false;
-    
-    // Reset checkboxes
-    document.querySelectorAll('input[type="checkbox"][data-filter-group]').forEach(function(checkbox) {
-      checkbox.checked = false;
-      const option = checkbox.closest('.grants-filter-checkbox, .grants-filter-radio');
-      if (option) option.classList.remove('selected');
-    });
-    
-    // Clear selected chips
-    document.querySelectorAll('.grants-filter-selected').forEach(function(container) {
-      container.innerHTML = '';
-    });
-    
-    // Reset filter count
-    if (filterCount) {
-      filterCount.textContent = '';
-      filterCount.classList.remove('active');
-    }
-    
-    // Reset filter button
-    if (filterToggle) {
-      filterToggle.classList.remove('active');
-    }
-    
-    // Clear active filters display
-    if (activeFilters) {
-      activeFilters.innerHTML = '';
-      activeFilters.classList.remove('active');
-    }
-    
-    // Update summary view
-    updateSummaryView();
-  }
-  
-  // Apply filters
-  function applyFilters() {
-    showLoading();
-    
-    // Small delay to allow loading state to render
-    setTimeout(function() {
-      // Get all grant cards
-      const grantCards = document.querySelectorAll('.g-card');
-      
-      // Count visible grants
-      let visibleCount = 0;
-      
-      // Check if any filters are active
-      const hasActiveFilters = 
-        activeFilterState.status.length > 0 ||
-        activeFilterState.featured.length > 0 ||
-        activeFilterState.amount.min !== null ||
-        activeFilterState.amount.max !== null ||
-        activeFilterState.amount.includeVaries ||
-        activeFilterState.timeframe.length > 0 ||
-        activeFilterState.eligibleEntities.length > 0 ||
-        activeFilterState.categories.length > 0 ||
-        activeFilterState.locations.length > 0;
-      
-      // Update filter count badge
-      const totalActiveFilters = 
-        activeFilterState.status.length +
-        activeFilterState.featured.length +
-        (activeFilterState.amount.min !== null ? 1 : 0) +
-        (activeFilterState.amount.max !== null ? 1 : 0) +
-        (activeFilterState.amount.includeVaries ? 1 : 0) +
-        activeFilterState.timeframe.length +
-        activeFilterState.eligibleEntities.length +
-        activeFilterState.categories.length +
-        activeFilterState.locations.length;
-      
-      if (filterCount) {
-        if (totalActiveFilters > 0) {
-          filterCount.textContent = totalActiveFilters;
-          filterCount.classList.add('active');
-          filterToggle.classList.add('active');
-        } else {
-          filterCount.textContent = '';
-          filterCount.classList.remove('active');
-          filterToggle.classList.remove('active');
-        }
-      }
-      
-      // Generate active filters display
-      generateActiveFiltersDisplay();
-      
-      // If no filters active, show all grants
-      if (!hasActiveFilters) {
-        grantCards.forEach(function(card) {
-          card.style.display = '';
-          visibleCount++;
-        });
-      } else {
-        // Apply filters to each grant card
-        grantCards.forEach(function(card) {
-          // Get data from card attributes
-          const status = card.dataset.status;
-          const isFeatured = card.dataset.featured === 'true';
-          const amount = card.dataset.amount;
-          const deadlineTimestamp = card.dataset.deadline ? parseInt(card.dataset.deadline, 10) : 0;
-          const locations = card.dataset.locations ? card.dataset.locations.split('|') : [];
-          const categories = card.dataset.categories ? card.dataset.categories.split('|') : [];
-          const eligibleEntities = card.dataset.eligibleEntities ? card.dataset.eligibleEntities.split('|') : [];
-          
-          // Check each filter category
-          const passesStatusFilter = activeFilterState.status.length === 0 || activeFilterState.status.includes(status);
-          
-          const passesFeaturedFilter = activeFilterState.featured.length === 0 || 
-            (activeFilterState.featured.includes('true') && isFeatured) || 
-            (activeFilterState.featured.includes('false') && !isFeatured);
-          
-          // Amount filter logic
-          let passesAmountFilter = true;
-          if (amount !== 'varies') {
-            const amountValue = parseInt(amount, 10);
-            if (activeFilterState.amount.min !== null) {
-              passesAmountFilter = passesAmountFilter && amountValue >= activeFilterState.amount.min;
-            }
-            if (activeFilterState.amount.max !== null) {
-              passesAmountFilter = passesAmountFilter && amountValue <= activeFilterState.amount.max;
-            }
-          } else {
-            // If "varies" and includeVaries is false, and we have min/max filters, this should not pass
-            if ((activeFilterState.amount.min !== null || activeFilterState.amount.max !== null) && !activeFilterState.amount.includeVaries) {
-              passesAmountFilter = false;
-            }
-          }
-          
-          // Time frame filter
-          let passesTimeframeFilter = true;
-          if (activeFilterState.timeframe.length > 0 && deadlineTimestamp > 0) {
-            const now = Math.floor(Date.now() / 1000);
-            const hasToday = activeFilterState.timeframe.includes('today');
-            const hasWeek = activeFilterState.timeframe.includes('week');
-            const hasMonth = activeFilterState.timeframe.includes('month');
-            const hasQuarter = activeFilterState.timeframe.includes('quarter');
-            
-            const dayEnd = now + (24 * 60 * 60);
-            const weekEnd = now + (7 * 24 * 60 * 60);
-            const monthEnd = now + (30 * 24 * 60 * 60);
-            const quarterEnd = now + (90 * 24 * 60 * 60);
-            
-            passesTimeframeFilter = false;
-            
-            if (hasToday && deadlineTimestamp <= dayEnd) {
-              passesTimeframeFilter = true;
-            } else if (hasWeek && deadlineTimestamp <= weekEnd) {
-              passesTimeframeFilter = true;
-            } else if (hasMonth && deadlineTimestamp <= monthEnd) {
-              passesTimeframeFilter = true;
-            } else if (hasQuarter && deadlineTimestamp <= quarterEnd) {
-              passesTimeframeFilter = true;
-            }
-          }
-          
-          // Eligible entities filter
-          const passesEligibleFilter = activeFilterState.eligibleEntities.length === 0 || 
-            activeFilterState.eligibleEntities.some(entity => eligibleEntities.includes(entity));
-          
-          // Categories filter
-          const passesCategoryFilter = activeFilterState.categories.length === 0 || 
-            activeFilterState.categories.some(category => categories.includes(category));
-          
-          // Locations filter
-          const passesLocationFilter = activeFilterState.locations.length === 0 || 
-            activeFilterState.locations.some(location => locations.includes(location));
-          
-          // Combined filter result
-          const isVisible = checkConditions([
-            passesStatusFilter,
-            passesFeaturedFilter,
-            passesAmountFilter,
-            passesTimeframeFilter,
-            passesEligibleFilter,
-            passesCategoryFilter,
-            passesLocationFilter
-          ]);
-          
-          // Update card visibility
-          card.style.display = isVisible ? '' : 'none';
-          
-          if (isVisible) {
-            visibleCount++;
-          }
-        });
-      }
-      
-      // Update result count
-      if (filterResultCount) {
-        if (hasActiveFilters) {
-          filterResultCount.innerHTML = `Showing <strong>${visibleCount}</strong> matching grant${visibleCount !== 1 ? 's' : ''}`;
-        } else {
-          filterResultCount.innerHTML = 'Showing all grants';
-        }
-      }
-      
-      // Show/hide no results message
-      if (noFilteredGrants) {
-        if (visibleCount === 0 && hasActiveFilters) {
-          noFilteredGrants.classList.add('active');
-        } else {
-          noFilteredGrants.classList.remove('active');
-        }
-      }
-      
-      hideLoading();
-    }, 300);
-  }
-  
-  // Generate active filters display for main page
-  function generateActiveFiltersDisplay() {
-    if (!activeFilters) return;
-    
-    // Clear current active filters
-    activeFilters.innerHTML = '';
-    
-    // Track if we have any active filters
-    let hasActiveFilters = false;
-    
-    // Amount filters
-    if (activeFilterState.amount.min !== null) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Min Amount', '$' + activeFilterState.amount.min.toLocaleString(), 'amount', 'min');
-    }
-    
-    if (activeFilterState.amount.max !== null) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Max Amount', '$' + activeFilterState.amount.max.toLocaleString(), 'amount', 'max');
-    }
-    
-    if (activeFilterState.amount.includeVaries) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Amount', 'Include Various Benefits', 'amount', 'varies');
-    }
-    
-    // Timeframe filters
-    activeFilterState.timeframe.forEach(function(timeframe) {
-      hasActiveFilters = true;
-      let timeframeLabel = '';
-      
-      switch(timeframe) {
-        case 'today':
-          timeframeLabel = 'Ending Today';
-          break;
-        case 'week':
-          timeframeLabel = 'Ending This Week';
-          break;
-        case 'month':
-          timeframeLabel = 'Ending This Month';
-          break;
-        case 'quarter':
-          timeframeLabel = 'Ending This Quarter';
-          break;
-      }
-      
-      addActiveFilterTag('Timeframe', timeframeLabel, 'timeframe', timeframe);
-    });
-    
-    // Eligible entities filters
-    activeFilterState.eligibleEntities.forEach(function(entity) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Eligible', entity, 'eligibleEntities', entity);
-    });
-    
-    // Categories filters
-    activeFilterState.categories.forEach(function(category) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Category', category, 'categories', category);
-    });
-    
-    // Locations filters
-    activeFilterState.locations.forEach(function(location) {
-      hasActiveFilters = true;
-      addActiveFilterTag('Location', location, 'locations', location);
-    });
-    
-    // Show/hide active filters container
-    if (hasActiveFilters) {
-      activeFilters.classList.add('active');
-    } else {
-      activeFilters.classList.remove('active');
-    }
-  }
-  
-  // Add active filter tag to main display
-  function addActiveFilterTag(type, value, filterGroup, filterValue) {
-    const tag = document.createElement('div');
-    tag.className = 'grants-active-filter';
-    tag.innerHTML = `
-      <strong>${type}:</strong> ${value}
-      <button type="button" class="grants-active-filter-remove" data-filter-group="${filterGroup}" data-filter-value="${filterValue}" aria-label="Remove ${type} filter: ${value}">×</button>
-    `;
-    activeFilters.appendChild(tag);
-    
-    // Add event listener to remove button
-    const removeBtn = tag.querySelector('.grants-active-filter-remove');
-    removeBtn.addEventListener('click', function() {
-      removeActiveFilter(this.dataset.filterGroup, this.dataset.filterValue);
-    });
-  }
-  
-  // Remove active filter
-  function removeActiveFilter(filterGroup, filterValue) {
-    if (filterGroup === 'amount') {
-      if (filterValue === 'min') {
-        activeFilterState.amount.min = null;
-        if (amountMin) amountMin.value = '';
-      } else if (filterValue === 'max') {
-        activeFilterState.amount.max = null;
-        if (amountMax) amountMax.value = '';
-      } else if (filterValue === 'varies') {
-        activeFilterState.amount.includeVaries = false;
-        if (amountVaries) amountVaries.checked = false;
-        const amountVariesLabel = document.querySelector(`label[for="${amountVaries.id}"]`);
-        if (amountVariesLabel) {
-          amountVariesLabel.classList.remove('selected');
-        }
-      }
-    } else {
-      const index = activeFilterState[filterGroup].indexOf(filterValue);
-      if (index !== -1) {
-        activeFilterState[filterGroup].splice(index, 1);
-        
-        // Uncheck corresponding checkbox
-        const checkbox = document.querySelector(`input[type="checkbox"][data-filter-group="${filterGroup}"][value="${filterValue}"]`);
-        if (checkbox) {
-          checkbox.checked = false;
-          const option = checkbox.closest('.grants-filter-checkbox');
-          if (option) option.classList.remove('selected');
-        }
-        
-        // Remove filter chip from step view
-        let chipContainer;
-        switch(filterGroup) {
-          case 'eligibleEntities':
-            chipContainer = document.getElementById('eligibility-selected');
-            break;
-          case 'categories':
-            chipContainer = document.getElementById('category-selected');
-            break;
-          case 'locations':
-            chipContainer = document.getElementById('location-selected');
-            break;
-        }
-        
-        if (chipContainer) {
-          removeFilterChip(filterValue, chipContainer);
-        }
-      }
-    }
-    
-    // Reapply filters
-    applyFilters();
-  }
-  
-  // Improve performance by loading only currently visible cards
-  function handleIntersection(entries, observer) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        const card = entry.target;
-        const images = card.querySelectorAll('img[loading="lazy"]');
-        
-        images.forEach(function(img) {
-          // Replace lazy loading with eager for visible cards
-          img.loading = 'eager';
-          
-          // Prefetch next image if available
-          if (img.dataset.src) {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-          }
-        });
-        
-        // Stop observing this card
-        observer.unobserve(card);
-      }
-    });
-  }
-  
-  // Function to handle intersection for currently visible cards
+  // Utility function to handle lazy loading for visible images
   function handleIntersectionForVisible() {
-    const visibleCards = document.querySelectorAll('.g-card[style=""]');
-    visibleCards.forEach(function(card) {
-      const images = card.querySelectorAll('img[loading="lazy"]');
-      
-      images.forEach(function(img) {
-        img.loading = 'eager';
-        
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-        }
-      });
-    });
-  }
-  
-  // Set up intersection observer for lazy loading
-  if ('IntersectionObserver' in window) {
-    const cardObserver = new IntersectionObserver(handleIntersection, {
-      rootMargin: '200px', // Load images when they're 200px from entering viewport
-      threshold: 0.1
-    });
+    const images = document.querySelectorAll('.g-card__image');
     
-    // Observe all cards
-    document.querySelectorAll('.g-card').forEach(function(card) {
-      cardObserver.observe(card);
-    });
-  } else {
-    // Fallback for browsers without IntersectionObserver support
-    document.querySelectorAll('.g-card img[loading="lazy"]').forEach(function(img) {
-      img.loading = 'eager';
-    });
-  }
-  
-  // Add accessibility improvements
-  function improveAccessibility() {
-    // Make clickable tags accessible via keyboard
-    document.querySelectorAll('.g-card__tag, .g-card__location-link').forEach(function(element) {
-      element.setAttribute('role', 'link');
-      if (!element.getAttribute('tabindex')) {
-        element.setAttribute('tabindex', '0');
+    images.forEach(img => {
+      if (img.closest('.g-card').style.display !== 'none') {
+        if (!img.complete) {
+          img.addEventListener('load', function() {
+            this.classList.add('g-card__img-loaded');
+          });
+        } else {
+          img.classList.add('g-card__img-loaded');
+        }
       }
     });
-    
-    // Make filter steps accessible
-    document.querySelectorAll('.grants-filter-step').forEach(function(step) {
-      step.setAttribute('tabindex', '0');
-      step.setAttribute('role', 'button');
-      
-      step.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          navigateToStep(parseInt(this.dataset.step, 10));
-        }
-      });
-    });
   }
   
-  // Initialize countdowns
+  // Initial setup
   initCountdowns();
-  
-  // Run accessibility improvements
-  improveAccessibility();
 });
 // ]]>
 </script>
