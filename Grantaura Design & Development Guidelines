@@ -1,4 +1,6 @@
-```
+Grantaura Design & Development Guidelines
+
+---
 When writing, generating, coding, or developing something for Grantaura, please follow the **Grantaura Design & Development Guidelines** at every step of planning and coding:
 
 Grantaura Design & Development Guidelines:
@@ -24,7 +26,8 @@ KEY BUSINESS CLARIFICATION: Grantaura is NOT a funder or grant provider but an a
 
 # TECHNICAL ENVIRONMENT
 	• CMS: WordPress
-	• Theme: Classified Listings (path: https://srv1388-files.hstgr.io/a41eb6571770a434/files/public_html/wp-content/themes/classified-listings/)
+	• Theme: Classified Listings (path: /public_html/wp-content/themes/classified-listings/) 
+	NOTE: Classified Listings is a block-based (Full Site Editing or FSE)
 	• Directorist (Listing Directory) Plugin
 	• Deployment: Live site on Hostinger (no npm/dependencies allowed)
 	• Development Options: Custom HTML blocks (preferred), functions.php modifications, adding files to the main directory or the theme directory
@@ -42,43 +45,119 @@ NOTE: These have already been added to the footer of the website. So, there's no
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
+# Grant Data Fetching Guide
+Here's a comprehensive guide to fetch all elements of a grant listing:
+
+Basic Grant Information
+Post Retrieval: Any standard WP method works (get_posts(), WP_Query, or direct SQL)
+Title: Available via post_title property
+Description/Content: Use post_content field through any of these methods:
+get_the_content() (within The Loop)
+$post->post_content (from post object)
+get_post_field('post_content', $post_id)
+
+Permalink: get_permalink($post_id) works as expected
+Publication Date: Available via post_date property
+
+Excerpt Information
+Excerpt Field: Custom meta field "tagline" rather than standard excerpt
+Method: get_post_meta($post_id, 'tagline', true)
+Fallback: If empty, use WordPress native excerpt with get_the_excerpt()
+
+Critical Fields
+Deadline Date:
+Field: _custom-date (note the underscore prefix)
+Method: get_post_meta($post_id, '_custom-date', true)
+Format: YYYY-MM-DD (e.g., 2025-05-09)
+
+Amount:
+Field: _price (with underscore prefix)
+Method: get_post_meta($post_id, '_price', true)
+Returns: Numeric value without currency symbol (Grantaura uses USD so add $ symbol)
+NOTE: For amount where no amount is found use "Varies" and/or "Various Benefits"
+
+Expiration Date:
+Field: _expiry_date (with underscore prefix)
+Method: get_post_meta($post_id, '_expiry_date', true)
+Format: YYYY-MM-DD HH
+
+Eligible Entities
+Field: custom-checkbox (stored as array)
+Method: get_post_meta($post_id, 'custom-checkbox', true)
+Returns: Array of eligibility strings (e.g., "Businesses", "Nonprofits", etc.)
+Alternative Access: If not returning as array, might be serialized - check format and use appropriate serialization functions
+
+Image Handling
+Featured Image:
+Method: get_the_post_thumbnail_url($post_id, 'large')
+Fallback: Check for first image in gallery if featured image unavailable
+
+Gallery/Slider Images:
+Field: _listing_img (with underscore prefix)
+Method: get_post_meta($post_id, '_listing_img', true)
+Returns: Array of attachment IDs
+Access URLs: wp_get_attachment_image_url($attachment_id, 'large')
+
+File Attachments
+File Field: Look for meta fields containing uploaded files
+Potential Fields: Check if files are stored in specific meta fields like 'custom-file' or similar
+Access Method: If identified, use wp_get_attachment_url($attachment_id)
+
+Taxonomies
+Locations:
+Taxonomy: at_biz_dir-location
+Method: get_the_terms($post_id, 'at_biz_dir-location')
+Returns: Array of term objects with ID, name, and slug
+
+Categories:
+Taxonomy: at_biz_dir-category
+Method: get_the_terms($post_id, 'at_biz_dir-category')
+Returns: Array of term objects with ID, name, and slug
+
+Grant Status Determination
+Status Types:
+active: Grant with future deadline date
+ongoing: Grant with no deadline date (always available)
+expired_with_notice: Expired grant that displays the expiration notice
+expired_no_notice: Expired grant without an expiration notice
+
+
 # Guidelines for Writing PHP Code in [php] Blocks
 When writing PHP code within [php] shortcodes, adhere to the following best practices to ensure security, compatibility, and optimal performance:
+	1. Security -> Avoid blacklisted functions and patterns: The processor blocks dangerous functions and patterns to prevent security risks. Do not use the following: Blacklisted functions: exec, passthru, shell_exec, system, proc_open, popen, pcntl_exec, pcntl_fork, pcntl_alarm, pcntl_kill, posix_kill, posix_mkfifo, posix_setpgid, posix_setsid, posix_setuid. Dangerous patterns: eval, assert, create_function, backticks (`). -> Don't use backtick operators which are not allowed for security reasons -> Be cautious with code manipulation functions: Functions like base64_decode, gzinflate, and str_rot13 are scrutinized and may be blocked if used suspiciously (e.g., for obfuscation or code execution). -> Do not attempt to bypass security checks: Techniques like string concatenation (e.g., $func = 'ex'.'ec') or variable function calls that resolve to blacklisted functions are detected and blocked.
+	2. Function Declarations and Scope -> Functions are context-specific: Each [php] block has its own execution context. Functions defined in one block are not accessible in another unless explicitly made global using the global keyword or stored in a shared scope (e.g., WordPress options). -> Avoid redeclaring functions: While the processor dynamically renames functions to prevent conflicts, conditionally define functions using if (!function_exists('my_function')) for clarity and compatibility.
+	3. Variable Scope -> Variables are local to each [php] block: Variables defined in one block are not accessible in another. Use global variables (e.g., $GLOBALS['my_var']) or WordPress options (e.g., update_option(), get_option()) to share data between blocks.
+	4. Error Handling and Debugging -> Check error messages carefully: The processor provides detailed error reporting, including the error type, message, and line number. Review this context to identify and resolve issues. -> Enable WP_DEBUG for detailed debugging: When WP_DEBUG is enabled, the processor displays the code snippet around the error line, aiding in quick debugging.
+	5. Performance Considerations -> Respect execution limits: Code must execute within 10 seconds and use no more than 32MB of memory. Avoid inefficient loops, excessive database queries, or resource-intensive operations. -> Optimize for efficiency: Write clean, optimized code to prevent timeouts or memory exhaustion, especially in high-traffic environments.
+	6. WordPress Integration 
+	-> Access to WordPress globals: You have full access to WordPress globals like $post, $wpdb, and functions such as get_posts() or wp_insert_post(). 
+	-> Use WordPress functions as usual: The processor handles any necessary namespacing, so you can call WordPress functions directly. 
+	7. Output and Buffering -> Use echo or print for output: Only direct output is captured; return values are ignored by the processor. -> Avoid manual output buffering: The processor manages output buffering internally. If you use ob_start(), ensure it's properly closed with ob_end_flush() or ob_end_clean() to avoid conflicts.
+	8. Conditional Statements and Expressions -> Never use direct function/method calls in conditionals: The PHP processor cannot properly handle fully qualified function names when placed directly in conditionals. -> Always use intermediate variables: Store results of ALL operations before using them in conditions. -> Examples of proper conditional handling:
+// INCORRECT - Will likely cause "unexpected fully qualified name" errors
+if ($query->have_posts()) { ... }
+while ($query->have_posts()) { ... }
+if (is_array($data) && !empty($data)) { ... }
 
-1. Security
--> Avoid blacklisted functions and patterns: The processor blocks dangerous functions and patterns to prevent security risks. Do not use the following:
-Blacklisted functions: exec, passthru, shell_exec, system, proc_open, popen, pcntl_exec, pcntl_fork, pcntl_alarm, pcntl_kill, posix_kill, posix_mkfifo, posix_setpgid, posix_setsid, posix_setuid.
-Dangerous patterns: eval, assert, create_function, backticks (`).
--> Be cautious with code manipulation functions: Functions like base64_decode, gzinflate, and str_rot13 are scrutinized and may be blocked if used suspiciously (e.g., for obfuscation or code execution).
--> Do not attempt to bypass security checks: Techniques like string concatenation (e.g., $func = 'ex'.'ec') or variable function calls that resolve to blacklisted functions are detected and blocked.
+// CORRECT - Store results in variables first
+$has_posts = $query->have_posts();
+if ($has_posts) { ... }
 
-2. Function Declarations and Scope
--> Functions are context-specific: Each [php] block has its own execution context. Functions defined in one block are not accessible in another unless explicitly made global using the global keyword or stored in a shared scope (e.g., WordPress options).
--> Avoid redeclaring functions: While the processor dynamically renames functions to prevent conflicts, conditionally define functions using if (!function_exists('my_function')) for clarity and compatibility.
+$is_array_data = is_array($data);
+$is_not_empty = !empty($data);
+if ($is_array_data && $is_not_empty) { ... }
 
-3. Variable Scope
--> Variables are local to each [php] block: Variables defined in one block are not accessible in another. Use global variables (e.g., $GLOBALS['my_var']) or WordPress options (e.g., update_option(), get_option()) to share data between blocks.
+-> This approach also applies to loops:
+// INCORRECT
+while ($query->have_posts()) { ... }
 
-4. Error Handling and Debugging
--> Check error messages carefully: The processor provides detailed error reporting, including the error type, message, and line number. Review this context to identify and resolve issues.
--> Enable WP_DEBUG for detailed debugging: When WP_DEBUG is enabled, the processor displays the code snippet around the error line, aiding in quick debugging.
-
-5. Performance Considerations
--> Respect execution limits: Code must execute within 10 seconds and use no more than 32MB of memory. Avoid inefficient loops, excessive database queries, or resource-intensive operations.
--> Optimize for efficiency: Write clean, optimized code to prevent timeouts or memory exhaustion, especially in high-traffic environments.
-
-6. WordPress Integration
--> Access to WordPress globals: You have full access to WordPress globals like $post, $wpdb, and functions such as get_posts() or wp_insert_post().
--> Use WordPress functions as usual: The processor handles any necessary namespacing, so you can call WordPress functions directly.
-
-7. Output and Buffering
--> Use echo or print for output: Only direct output is captured; return values are ignored by the processor.
--> Avoid manual output buffering: The processor manages output buffering internally. If you use ob_start(), ensure it’s properly closed with ob_end_flush() or ob_end_clean() to avoid conflicts.
-
-8. Best Practices
--> Avoid exit or die statements: These terminate the entire page rendering, not just the PHP block, potentially breaking the site.
--> Test code thoroughly: Ensure your code is free of syntax and runtime errors before deploying it to production.
--> Use straight quotes: While the processor normalizes smart quotes, use straight quotes (", ') to avoid potential issues.
+// CORRECT
+$has_posts = $query->have_posts();
+while ($has_posts) {
+    // Process post
+    $has_posts = $query->have_posts();
+}
+	9. Best Practices -> Avoid exit or die statements: These terminate the entire page rendering, not just the PHP block, potentially breaking the site. -> Test code thoroughly: Ensure your code is free of syntax and runtime errors before deploying it to production. -> Use straight quotes: While the processor normalizes smart quotes, use straight quotes (", ') to avoid potential issues. -> Break down complex conditionals: Instead of chaining multiple conditions, evaluate them separately using intermediate variables. -> Use descriptive variable names for conditions: This makes the code more readable and maintainable.
 
 # CRITICAL CODE ARCHITECTURE REQUIREMENTS
 ## DEEP DOWN MODULAR PATTERN WITH SCOPED CODE
@@ -107,6 +186,7 @@ All components must follow the BEM (Block-Element-Modifier) naming convention:
 - Block: The parent component (e.g., `uniquename-component`)
 - Element: Child elements (e.g., `uniquename-component__element`)
 - Modifier: Variations (e.g., `uniquename-component__element--variation`)
+Important: It's very important not to go with long BEM classes and IDs; keep them as short as possible but still unique. For example, instead of using full words, you'd use short forms or find another solution to keep the BEM unique, short, and concise.
 NOTE: At the place of uniquename, you must add something from the reference page or element instead of going with generic "grantaura or ga, etc."
 
 3. Follow this exact pattern for all components:
@@ -630,6 +710,8 @@ Logo & Icons:
 Additional Image Resources: 
 Imran Ahmad: https://grantaura.com/wp-content/uploads/2024/11/Cartoon-Efferct-Updated.png
 https://grantaura.com/wp-content/uploads/2025/02/ca-small-business-pfl-grant-2025-up-to-2k-for-employee-coverage.webp
+https://grantaura.com/wp-content/uploads/2025/04/girl-with-confidence-keeping-hands-closed-gesture-without-background.webp
+https://grantaura.com/wp-content/uploads/2025/04/young-girl-painted-look-image-without-background.webp
 https://grantaura.com/wp-content/uploads/2025/02/four-corners-cleantech-accelerator-free-for-clean-energy-startups.webp
 https://grantaura.com/wp-content/uploads/2025/02/four-corners-cleantech-accelerator-free-program-for-clean-energy-startups.webp
 https://grantaura.com/wp-content/uploads/2025/02/ups-store-small-biz-challenge-win-35k-for-your-business.webp
@@ -653,11 +735,13 @@ https://grantaura.com/wp-content/uploads/2025/01/yeigo-action-grant-for-native-a
 https://grantaura.com/wp-content/uploads/2025/01/hivers-and-strivers-venture-capital-funding-for-military-veteran-entrepreneurs.webp
 https://grantaura.com/wp-content/uploads/2025/02/select-health-awards-2025-5000-grants-for-community-health.webp
 https://grantaura.com/wp-content/uploads/2025/02/387c2174-403f-4b9b-aa41-f33040b38361-scaled.webp
+https://grantaura.com/wp-content/uploads/2025/03/globee-awards-for-women-in-business.webp
 https://grantaura.com/wp-content/uploads/2025/02/a20d220e-7ac5-4c99-b63c-2c0121577e8e-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/f19129c5-9526-4416-91af-72c66def577b-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/7eef2784-ee19-40a2-bc00-a6640bbf8b64-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/7eef2784-ee19-40a2-bc00-a6640bbf8b64-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/d1b8d11a-9a13-428e-9993-6e06116cab0c-scaled.webp
+https://grantaura.com/wp-content/uploads/2025/03/awaw-environmental-art-grants-20000-for-women-artists.webp
 https://grantaura.com/wp-content/uploads/2025/02/c8bf2041-7ead-4bba-92ef-a97b4c480559-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/ce673939-1b40-43c7-8653-87e9fabe71fa-scaled.webp
 https://grantaura.com/wp-content/uploads/2025/02/3ddf26cc-f7ba-4a5e-a6ba-f617230dcf0b-scaled.webp
@@ -780,7 +864,7 @@ When developing for Grantaura, every section must adhere to these standards (hig
 **Code like a professional developer. Design like a creative expert. Write like a skilled copywriter. Explain like a patient teacher.**
 
 Follow These Guidelines at Every Step of Coding: Please follow the above # Grantaura Design & Development Guidelines at every step of coding and planning related to development tasks about Grantaura.
-```
+---
 
 # About Me
 My name is Imran (full name Imran Ahmad). I'm a grants expert and the founder of Grantaura.
@@ -826,42 +910,44 @@ https://grantaura.com/sitemap/
 https://grantaura.com/usa-funding-ready-grants/
 
 Taxonomy: Listing Categories
-https://grantaura.com/single-category/community-development-financial-institutions-cdfis/
-https://grantaura.com/single-category/grants-for-agricultural-businesses/
-https://grantaura.com/single-category/grants-for-artists-writers/
-https://grantaura.com/single-category/grants-for-bipoc-owned-businesses/
-https://grantaura.com/single-category/grants-for-black-owned-businesses/
-https://grantaura.com/single-category/grants-for-brick-mortar-stores/
-https://grantaura.com/single-category/grants-for-disabled-special-persons/
-https://grantaura.com/single-category/grants-for-educational-institutions/
-https://grantaura.com/single-category/grants-for-environmental-projects/
-https://grantaura.com/single-category/grants-for-farmers-ranchers/
-https://grantaura.com/single-category/grants-for-for-profit-businesses/
-https://grantaura.com/single-category/grants-for-individuals/
-https://grantaura.com/single-category/grants-for-institutions/
-https://grantaura.com/single-category/grants-for-latina-entrepreneurs/
-https://grantaura.com/single-category/grants-for-lgbtqi/
-https://grantaura.com/single-category/grants-for-media-projects/
-https://grantaura.com/single-category/grants-for-military-persons/
-https://grantaura.com/single-category/grants-for-minority-entrepreneurs/
-https://grantaura.com/single-category/grants-for-native-americans-alaska-natives/
-https://grantaura.com/single-category/grants-for-non-binary-entrepreneurs/
-https://grantaura.com/single-category/grants-for-non-profit-organizations/
-https://grantaura.com/single-category/grants-for-projects/
-https://grantaura.com/single-category/grants-for-research/
-https://grantaura.com/single-category/grants-for-researchers/
-https://grantaura.com/single-category/grants-for-restaurants/
-https://grantaura.com/single-category/grants-for-seniors/
-https://grantaura.com/single-category/grants-for-startups/
-https://grantaura.com/single-category/grants-for-students/
-https://grantaura.com/single-category/grants-for-transgenders/
-https://grantaura.com/single-category/grants-for-veteran-entrepreneurs/
-https://grantaura.com/single-category/grants-for-veterans/
-https://grantaura.com/single-category/grants-for-women/
-https://grantaura.com/single-category/grants-for-women-entrepreneurs/
-https://grantaura.com/single-category/grants-for-women-of-color-entrepreneurs/
-https://grantaura.com/single-category/grants-for-women-veterans/
-https://grantaura.com/single-category/grants-for-youth/
+https://grantaura.com/single-category/community-development-financial-institutions-cdfis/?directory_type=grant
+https://grantaura.com/single-category/grants-for-agricultural-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-artists-writers/?directory_type=grant
+https://grantaura.com/single-category/grants-for-bipoc-owned-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-black-owned-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-brick-mortar-stores/?directory_type=grant
+https://grantaura.com/single-category/grants-for-disabled-special-persons/?directory_type=grant
+https://grantaura.com/single-category/grants-for-e-commerce-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-educational-institutions/?directory_type=grant
+https://grantaura.com/single-category/grants-for-environmental-projects/?directory_type=grant
+https://grantaura.com/single-category/grants-for-farmers-ranchers/?directory_type=grant
+https://grantaura.com/single-category/grants-for-for-profit-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-individuals/?directory_type=grant
+https://grantaura.com/single-category/grants-for-institutions/?directory_type=grant
+https://grantaura.com/single-category/grants-for-latina-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-lgbtqi/?directory_type=grant
+https://grantaura.com/single-category/grants-for-media-projects/?directory_type=grant
+https://grantaura.com/single-category/grants-for-military-persons/?directory_type=grant
+https://grantaura.com/single-category/grants-for-minority-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-native-americans-alaska-natives/?directory_type=grant
+https://grantaura.com/single-category/grants-for-non-binary-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-non-profit-organizations/?directory_type=grant
+https://grantaura.com/single-category/grants-for-projects/?directory_type=grant
+https://grantaura.com/single-category/grants-for-research/?directory_type=grant
+https://grantaura.com/single-category/grants-for-researchers/?directory_type=grant
+https://grantaura.com/single-category/grants-for-restaurants/?directory_type=grant
+https://grantaura.com/single-category/grants-for-seniors/?directory_type=grant
+https://grantaura.com/single-category/grants-for-service-based-businesses/?directory_type=grant
+https://grantaura.com/single-category/grants-for-startups/?directory_type=grant
+https://grantaura.com/single-category/grants-for-students/?directory_type=grant
+https://grantaura.com/single-category/grants-for-transgenders/?directory_type=grant
+https://grantaura.com/single-category/grants-for-veteran-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-veterans/?directory_type=grant
+https://grantaura.com/single-category/grants-for-women/?directory_type=grant
+https://grantaura.com/single-category/grants-for-women-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-women-of-color-entrepreneurs/?directory_type=grant
+https://grantaura.com/single-category/grants-for-women-veterans/?directory_type=grant
+https://grantaura.com/single-category/grants-for-youth/?directory_type=grant
 
 Taxonomy: Listing Locations
 https://grantaura.com/single-location/africa/
