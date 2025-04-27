@@ -10,33 +10,33 @@
       display: flex;
       justify-content: flex-end;
     }
-    
+
     @media (min-width: 640px) {
       .grants-filter-section {
         padding: 1rem;
       }
     }
-    
+
     @media (min-width: 768px) {
       .grants-filter-section {
         padding: 1.5rem;
         max-width: 96%;
       }
     }
-    
+
     @media (min-width: 1280px) {
       .grants-filter-section {
         max-width: 95%;
       }
     }
-    
+
     @media (min-width: 1600px) {
       .grants-filter-section {
         max-width: 90%;
       }
     }
   </style>
-  
+
   <!-- Filter Button -->
   <button id="grants-filter-button" class="grants-filter-button" aria-label="Filter Grants" aria-expanded="false" aria-controls="grants-filter-popup">
     <style>
@@ -58,7 +58,7 @@
         overflow: hidden;
         z-index: 1;
       }
-      
+
       .grants-filter-button::before {
         content: "";
         position: absolute;
@@ -71,36 +71,36 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      
+
       .grants-filter-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(90, 59, 140, 0.3);
       }
-      
+
       .grants-filter-button:hover::before {
         opacity: 1;
       }
-      
+
       .grants-filter-button:focus {
         outline: none;
         box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.3);
       }
-      
+
       .grants-filter-button svg {
         width: 18px;
         height: 18px;
         transition: transform 0.3s ease;
       }
-      
+
       .grants-filter-button:hover svg {
         transform: rotate(90deg);
       }
-      
+
       /* Active state with counter */
       .grants-filter-button.has-active-filters {
         padding-right: 2.5rem;
       }
-      
+
       .grants-filter-button .filter-count {
         position: absolute;
         right: 10px;
@@ -119,31 +119,31 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      
+
       .grants-filter-button.has-active-filters .filter-count {
         opacity: 1;
       }
-      
+
       @media (max-width: 640px) {
         .grants-filter-button {
           padding: 0.6rem 1rem;
           font-size: 0.85rem;
         }
-        
+
         .grants-filter-button svg {
           width: 16px;
           height: 16px;
         }
       }
     </style>
-    
+
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
     </svg>
     Filter Grants
     <span class="filter-count">0</span>
   </button>
-  
+
   <!-- Filter Popup -->
   <div id="grants-filter-popup" class="grants-filter-popup" aria-hidden="true">
     <style>
@@ -165,12 +165,12 @@
         transition: opacity 0.3s ease, visibility 0.3s ease;
         overflow: hidden;
       }
-      
+
       .grants-filter-popup.active {
         opacity: 1;
         visibility: visible;
       }
-      
+
       .grants-filter-popup .filter-popup-content {
         background-color: white;
         border-radius: var(--grantaura-border-radius-lg);
@@ -185,12 +185,12 @@
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         border: 1px solid var(--grantaura-gray-200);
       }
-      
+
       .grants-filter-popup.active .filter-popup-content {
         transform: translateY(0);
         opacity: 1;
       }
-      
+
       .filter-popup-header {
         display: flex;
         align-items: center;
@@ -202,7 +202,7 @@
         background: white;
         z-index: 10;
       }
-      
+
       .filter-popup-title {
         font-size: 1.2rem;
         font-weight: 600;
@@ -212,13 +212,13 @@
         align-items: center;
         gap: 8px;
       }
-      
+
       .filter-popup-title svg {
         width: 20px;
         height: 20px;
         color: var(--grantaura-primary);
       }
-      
+
       .filter-popup-close {
         background: none;
         border: none;
@@ -232,21 +232,21 @@
         border-radius: 50%;
         transition: all 0.3s ease;
       }
-      
+
       .filter-popup-close:hover {
         background-color: var(--grantaura-gray-100);
         color: var(--grantaura-primary);
       }
-      
+
       .filter-popup-close svg {
         width: 20px;
         height: 20px;
       }
-      
+
       .filter-popup-body {
         padding: 1.5rem;
       }
-      
+
       .filter-popup-footer {
         display: flex;
         justify-content: space-between;
@@ -257,7 +257,7 @@
         background: white;
         z-index: 10;
       }
-      
+
       .filter-results-count {
         font-size: 0.9rem;
         color: var(--grantaura-gray-600);
@@ -265,17 +265,17 @@
         align-items: center;
         gap: 5px;
       }
-      
+
       .filter-results-count strong {
         color: var(--grantaura-primary);
         font-weight: 600;
       }
-      
+
       .filter-buttons {
         display: flex;
         gap: 10px;
       }
-      
+
       .filter-reset-btn {
         padding: 0.6rem 1rem;
         border: 1px solid var(--grantaura-gray-300);
@@ -287,12 +287,12 @@
         cursor: pointer;
         transition: all 0.3s ease;
       }
-      
+
       .filter-reset-btn:hover {
         background-color: var(--grantaura-gray-100);
         border-color: var(--grantaura-gray-400);
       }
-      
+
       .filter-apply-btn {
         padding: 0.6rem 1.25rem;
         background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
@@ -307,41 +307,41 @@
         align-items: center;
         gap: 8px;
       }
-      
+
       .filter-apply-btn:hover {
         box-shadow: 0 4px 8px rgba(90, 59, 140, 0.3);
         transform: translateY(-1px);
       }
-      
+
       .filter-apply-btn svg {
         width: 16px;
         height: 16px;
       }
-      
+
       /* For very small mobile screens */
       @media (max-width: 480px) {
         .filter-popup-header {
           padding: 0.75rem 1rem;
         }
-        
+
         .filter-popup-title {
           font-size: 1rem;
         }
-        
+
         .filter-popup-body {
           padding: 1rem;
         }
-        
+
         .filter-popup-footer {
           padding: 0.75rem 1rem;
           flex-direction: column;
           gap: 10px;
         }
-        
+
         .filter-buttons {
           width: 100%;
         }
-        
+
         .filter-reset-btn,
         .filter-apply-btn {
           flex: 1;
@@ -349,7 +349,7 @@
         }
       }
     </style>
-    
+
     <div class="filter-popup-content">
       <div class="filter-popup-header">
         <h3 class="filter-popup-title">
@@ -365,7 +365,7 @@
           </svg>
         </button>
       </div>
-      
+
       <div class="filter-popup-body">
         <div class="filter-form" id="grants-filter-form">
           <style>
@@ -374,17 +374,17 @@
               grid-template-columns: 1fr;
               gap: 1.5rem;
             }
-            
+
             @media (min-width: 768px) {
               .filter-form {
                 grid-template-columns: repeat(2, 1fr);
               }
             }
-            
+
             .filter-form-section {
               margin-bottom: 0.5rem;
             }
-            
+
             .filter-form-title {
               font-size: 1rem;
               font-weight: 600;
@@ -396,13 +396,13 @@
               align-items: center;
               gap: 8px;
             }
-            
+
             .filter-form-title svg {
               width: 18px;
               height: 18px;
               color: var(--grantaura-primary);
             }
-            
+
             /* Deadline Filter */
             .deadline-options {
               display: flex;
@@ -410,18 +410,18 @@
               gap: 8px;
               margin-bottom: 1rem;
             }
-            
+
             .deadline-option {
               position: relative;
             }
-            
+
             .deadline-option input[type="radio"] {
               position: absolute;
               opacity: 0;
               width: 0;
               height: 0;
             }
-            
+
             .deadline-option label {
               display: block;
               padding: 0.5rem 1rem;
@@ -432,18 +432,18 @@
               transition: all 0.3s ease;
               color: var(--grantaura-gray-700);
             }
-            
-            .deadline-option input[type="radio"]:checked + label {
+
+            .deadline-option input[type="radio"]:checked+label {
               background: var(--grantaura-primary-light);
               color: white;
               border-color: var(--grantaura-primary-light);
               font-weight: 500;
             }
-            
-            .deadline-option input[type="radio"]:focus + label {
+
+            .deadline-option input[type="radio"]:focus+label {
               box-shadow: 0 0 0 2px rgba(90, 59, 140, 0.3);
             }
-            
+
             /* Eligibility Filter */
             .eligibility-options {
               max-height: 220px;
@@ -454,24 +454,24 @@
               background: var(--grantaura-gray-50);
               margin-bottom: 1rem;
             }
-            
+
             .eligibility-option {
               margin-bottom: 0.5rem;
               display: flex;
               align-items: center;
             }
-            
+
             .eligibility-option:last-child {
               margin-bottom: 0;
             }
-            
+
             .eligibility-option input[type="checkbox"] {
               position: absolute;
               opacity: 0;
               width: 0;
               height: 0;
             }
-            
+
             .eligibility-option label {
               position: relative;
               padding-left: 28px;
@@ -481,7 +481,7 @@
               color: var(--grantaura-gray-700);
               transition: color 0.3s ease;
             }
-            
+
             .eligibility-option label::before {
               content: '';
               position: absolute;
@@ -493,13 +493,13 @@
               border-radius: 4px;
               transition: all 0.3s ease;
             }
-            
-            .eligibility-option input[type="checkbox"]:checked + label::before {
+
+            .eligibility-option input[type="checkbox"]:checked+label::before {
               background-color: var(--grantaura-primary);
               border-color: var(--grantaura-primary);
             }
-            
-            .eligibility-option input[type="checkbox"]:checked + label::after {
+
+            .eligibility-option input[type="checkbox"]:checked+label::after {
               content: '';
               position: absolute;
               left: 6px;
@@ -510,21 +510,21 @@
               border-width: 0 2px 2px 0;
               transform: rotate(45deg);
             }
-            
-            .eligibility-option input[type="checkbox"]:focus + label::before {
+
+            .eligibility-option input[type="checkbox"]:focus+label::before {
               box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
             }
-            
+
             .eligibility-option:hover label {
               color: var(--grantaura-primary);
             }
-            
+
             /* Category and Location Filters */
             .filter-select-wrapper {
               position: relative;
               margin-bottom: 1rem;
             }
-            
+
             .filter-select {
               width: 100%;
               padding: 0.75rem;
@@ -537,13 +537,13 @@
               cursor: pointer;
               transition: all 0.3s ease;
             }
-            
+
             .filter-select:focus {
               outline: none;
               border-color: var(--grantaura-primary);
               box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
             }
-            
+
             .filter-select-arrow {
               position: absolute;
               right: 12px;
@@ -551,19 +551,19 @@
               transform: translateY(-50%);
               pointer-events: none;
             }
-            
+
             .filter-select-arrow svg {
               width: 16px;
               height: 16px;
               color: var(--grantaura-gray-500);
             }
-            
+
             /* Search field */
             .filter-search {
               position: relative;
               margin-bottom: 1rem;
             }
-            
+
             .filter-search input {
               width: 100%;
               padding: 0.75rem;
@@ -574,13 +574,13 @@
               color: var(--grantaura-gray-700);
               transition: all 0.3s ease;
             }
-            
+
             .filter-search input:focus {
               outline: none;
               border-color: var(--grantaura-primary);
               box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
             }
-            
+
             .filter-search-icon {
               position: absolute;
               left: 12px;
@@ -588,30 +588,30 @@
               transform: translateY(-50%);
               pointer-events: none;
             }
-            
+
             .filter-search-icon svg {
               width: 16px;
               height: 16px;
               color: var(--grantaura-gray-500);
             }
-            
+
             /* Amount Range Filter */
             .amount-range {
               margin-bottom: 1rem;
             }
-            
+
             .amount-range-inputs {
               display: flex;
               gap: 10px;
               align-items: center;
               margin-top: 0.5rem;
             }
-            
+
             .amount-field {
               position: relative;
               flex: 1;
             }
-            
+
             .amount-field span {
               position: absolute;
               left: 10px;
@@ -620,7 +620,7 @@
               color: var(--grantaura-gray-500);
               font-weight: 600;
             }
-            
+
             .amount-field input {
               width: 100%;
               padding: 0.75rem;
@@ -631,13 +631,13 @@
               color: var(--grantaura-gray-700);
               transition: all 0.3s ease;
             }
-            
+
             .amount-field input:focus {
               outline: none;
               border-color: var(--grantaura-primary);
               box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
             }
-            
+
             /* Selected filters display */
             .selected-filters {
               grid-column: 1 / -1;
@@ -650,7 +650,7 @@
               overflow: hidden;
               opacity: 0;
             }
-            
+
             .selected-filters.has-filters {
               max-height: 200px;
               opacity: 1;
@@ -658,7 +658,7 @@
               padding-top: 1rem;
               border-top: 1px dashed var(--grantaura-gray-200);
             }
-            
+
             .selected-filter {
               display: flex;
               align-items: center;
@@ -671,11 +671,11 @@
               color: var(--grantaura-gray-700);
               transition: all 0.3s ease;
             }
-            
+
             .selected-filter:hover {
               background: var(--grantaura-gray-200);
             }
-            
+
             .remove-filter {
               background: none;
               border: none;
@@ -687,16 +687,16 @@
               color: var(--grantaura-gray-500);
               transition: all 0.3s ease;
             }
-            
+
             .remove-filter:hover {
               color: var(--grantaura-danger);
             }
-            
+
             .remove-filter svg {
               width: 14px;
               height: 14px;
             }
-            
+
             .clear-all-filters {
               background: none;
               border: none;
@@ -708,11 +708,11 @@
               text-decoration: underline;
               transition: all 0.3s ease;
             }
-            
+
             .clear-all-filters:hover {
               color: var(--grantaura-danger);
             }
-            
+
             /* Loading States */
             .filter-loading {
               display: none;
@@ -723,11 +723,11 @@
               color: var(--grantaura-gray-600);
               font-size: 0.9rem;
             }
-            
+
             .filter-loading.active {
               display: flex;
             }
-            
+
             .filter-loading-spinner {
               width: 20px;
               height: 20px;
@@ -736,13 +736,13 @@
               border-radius: 50%;
               animation: spin 1s linear infinite;
             }
-            
+
             @keyframes spin {
               to {
                 transform: rotate(360deg);
               }
             }
-            
+
             /* Error State */
             .filter-error {
               display: none;
@@ -755,17 +755,17 @@
               align-items: center;
               gap: 10px;
             }
-            
+
             .filter-error.active {
               display: flex;
             }
-            
+
             .filter-error svg {
               width: 18px;
               height: 18px;
               flex-shrink: 0;
             }
-            
+
             /* Empty State */
             .filter-empty {
               display: none;
@@ -778,17 +778,17 @@
               align-items: center;
               gap: 10px;
             }
-            
+
             .filter-empty.active {
               display: flex;
             }
-            
+
             .filter-empty svg {
               width: 18px;
               height: 18px;
               flex-shrink: 0;
             }
-            
+
             /* Progressive Loading State */
             .filter-option-loading {
               display: inline-block;
@@ -801,19 +801,19 @@
               margin-left: 5px;
               vertical-align: middle;
             }
-            
+
             /* Accessibility focus styles */
             .filter-form *:focus-visible {
               outline: 2px solid var(--grantaura-primary);
               outline-offset: 2px;
             }
           </style>
-          
+
           <!-- Selected Filters Display -->
           <div class="selected-filters" id="selected-filters">
             <button class="clear-all-filters" id="clear-all-filters">Clear All</button>
           </div>
-          
+
           <!-- Error Message -->
           <div class="filter-error" id="filter-error">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -823,7 +823,7 @@
             </svg>
             <span>An error occurred while loading filters. Please try again.</span>
           </div>
-          
+
           <!-- Empty Results Message -->
           <div class="filter-empty" id="filter-empty">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -832,7 +832,7 @@
             </svg>
             <span>No grants match your selected filters. Try adjusting your criteria.</span>
           </div>
-          
+
           <!-- Search All Grants -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -852,7 +852,7 @@
               <input type="text" id="grant-search" name="grant-search" placeholder="Search by grant title or keywords" aria-label="Search grants">
             </div>
           </div>
-          
+
           <!-- Deadline Filter -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -885,7 +885,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Amount Range Filter -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -908,7 +908,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Categories Filter -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -932,7 +932,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Locations Filter -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -955,7 +955,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Eligibility Filter -->
           <div class="filter-form-section">
             <h4 class="filter-form-title">
@@ -975,7 +975,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Loading Indicator -->
           <div class="filter-loading" id="filter-loading">
             <div class="filter-loading-spinner"></div>
@@ -983,7 +983,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="filter-popup-footer">
         <div class="filter-results-count">
           Showing <strong id="filter-count">All</strong> Grants
@@ -1001,298 +1001,324 @@
       </div>
     </div>
   </div>
-  
-  <!-- PHP function for AJAX handling -->
+
+  <!-- Ajax Configuration Data Element -->
+  <div id="grants-filter-config" data-ajax-enabled="true" style="display:none;"></div>
+
+  <!-- PHP for AJAX Setup -->
   [php]
-// Register AJAX handlers
-function register_filter_ajax_handlers() {
-  add_action('wp_ajax_filter_grants', 'filter_grants_ajax_handler');
-  add_action('wp_ajax_nopriv_filter_grants', 'filter_grants_ajax_handler');
-  
-  add_action('wp_ajax_load_filter_options', 'load_filter_options_ajax_handler');
-  add_action('wp_ajax_nopriv_load_filter_options', 'load_filter_options_ajax_handler');
-}
-// Use 'init' hook which is more reliable for AJAX registration
-add_action('init', 'register_filter_ajax_handlers');
-  
-/**
- * Load filter options (eligibility, categories, locations)
- */
-function load_filter_options_ajax_handler() {
-  // Security check
-  check_ajax_referer('grants_filter_nonce', 'security');
-  
+  // Generate a nonce for AJAX requests
+  $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
+
+  // Register AJAX handlers for the filter system
+  function register_grants_filter_ajax_handlers() {
+  // Add hooks for the grant filtering
+  add_action('wp_ajax_filter_grants', 'grants_filter_ajax_handler');
+  add_action('wp_ajax_nopriv_filter_grants', 'grants_filter_ajax_handler');
+
+  // Add hooks for loading filter options
+  add_action('wp_ajax_load_filter_options', 'grants_load_filter_options_ajax_handler');
+  add_action('wp_ajax_nopriv_load_filter_options', 'grants_load_filter_options_ajax_handler');
+  }
+  add_action('init', 'register_grants_filter_ajax_handlers');
+
+  /**
+  * AJAX handler for loading filter options
+  */
+  function grants_load_filter_options_ajax_handler() {
+  // Verify security nonce
+  if (!check_ajax_referer('grants_filter_nonce', 'security', false)) {
+  wp_send_json_error(array(
+  'message' => 'Security check failed. Please refresh the page and try again.',
+  'code' => 'security_check_failed'
+  ));
+  wp_die();
+  }
+
+  // Get and sanitize the option type
   $option_type = isset($_POST['option_type']) ? sanitize_text_field($_POST['option_type']) : '';
   $response = array(
-    'success' => false,
-    'data' => array(),
-    'message' => 'Invalid option type'
+  'success' => false,
+  'data' => array(),
+  'message' => 'Invalid option type'
   );
-  
-  // Handle different option types
+
+  // Process based on the option type requested
   if ($option_type === 'eligibility') {
-    // Get eligibility options from all published grants
-    $option_values = array();
-    
-    // Get all grants
-    $args = array(
-      'post_type' => 'at_biz_dir',
-      'posts_per_page' => -1,
-      'post_status' => 'publish',
-      'fields' => 'ids'
-    );
-    
-    $grants_query = new WP_Query($args);
-    $grant_ids = $grants_query->posts;
-    
-    if (!empty($grant_ids)) {
-      // Go through each grant and collect eligibility options
-      foreach ($grant_ids as $post_id) {
-        $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
-        
-        // Handle serialized arrays
-        if (!empty($eligible_entities) && !is_array($eligible_entities)) {
-          $eligible_entities = maybe_unserialize($eligible_entities);
-        }
-        
-        if (is_array($eligible_entities) && !empty($eligible_entities)) {
-          foreach ($eligible_entities as $entity) {
-            // Add to our collection if not already there
-            if (!in_array($entity, $option_values)) {
-              $option_values[] = $entity;
-            }
-          }
-        }
-      }
-      
-      // Sort options alphabetically
-      sort($option_values);
-      
-      // Format for response
-      $formatted_options = array();
-      foreach ($option_values as $value) {
-        $formatted_options[] = array(
-          'value' => $value,
-          'label' => $value
-        );
-      }
-      
-      $response = array(
-        'success' => true,
-        'data' => $formatted_options,
-        'message' => 'Eligibility options loaded successfully'
-      );
-    } else {
-      $response['message'] = 'No grants found to extract eligibility options';
-    }
-  } 
+  // Get eligibility options from all published grants
+  $option_values = array();
+
+  // Setup query for grants
+  $args = array(
+  'post_type' => 'at_biz_dir',
+  'posts_per_page' => -1,
+  'post_status' => 'publish',
+  'fields' => 'ids'
+  );
+
+  $grants_query = new WP_Query($args);
+  $has_posts = $grants_query->have_posts();
+
+  if ($has_posts) {
+  $grant_ids = $grants_query->posts;
+
+  // Go through each grant and collect eligibility options
+  foreach ($grant_ids as $post_id) {
+  $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
+
+  // Handle serialized arrays
+  if (!empty($eligible_entities) && !is_array($eligible_entities)) {
+  $eligible_entities = maybe_unserialize($eligible_entities);
+  }
+
+  if (is_array($eligible_entities) && !empty($eligible_entities)) {
+  foreach ($eligible_entities as $entity) {
+  // Add to our collection if not already there
+  if (!in_array($entity, $option_values)) {
+  $option_values[] = $entity;
+  }
+  }
+  }
+  }
+
+  // Sort options alphabetically
+  sort($option_values);
+
+  // Format for response
+  $formatted_options = array();
+  foreach ($option_values as $value) {
+  $formatted_options[] = array(
+  'value' => $value,
+  'label' => $value
+  );
+  }
+
+  $response = array(
+  'success' => true,
+  'data' => $formatted_options,
+  'message' => 'Eligibility options loaded successfully'
+  );
+  } else {
+  $response['message'] = 'No grants found to extract eligibility options';
+  }
+  }
   elseif ($option_type === 'categories') {
-    // Get all categories for the grant directory
-    $categories = get_terms(array(
-      'taxonomy' => 'at_biz_dir-category',
-      'hide_empty' => true,
-    ));
-    
-    if (!is_wp_error($categories) && !empty($categories)) {
-      $formatted_categories = array();
-      foreach ($categories as $category) {
-        $formatted_categories[] = array(
-          'value' => $category->term_id,
-          'label' => $category->name
-        );
-      }
-      
-      $response = array(
-        'success' => true,
-        'data' => $formatted_categories,
-        'message' => 'Categories loaded successfully'
-      );
-    } else {
-      $response['message'] = 'No categories found';
-    }
+  // Get all categories for the grant directory
+  $categories = get_terms(array(
+  'taxonomy' => 'at_biz_dir-category',
+  'hide_empty' => true,
+  ));
+
+  if (!is_wp_error($categories) && !empty($categories)) {
+  $formatted_categories = array();
+  foreach ($categories as $category) {
+  $formatted_categories[] = array(
+  'value' => $category->term_id,
+  'label' => $category->name
+  );
+  }
+
+  $response = array(
+  'success' => true,
+  'data' => $formatted_categories,
+  'message' => 'Categories loaded successfully'
+  );
+  } else {
+  $response['message'] = 'No categories found';
+  }
   }
   elseif ($option_type === 'locations') {
-    // Get all locations for the grant directory
-    $locations = get_terms(array(
-      'taxonomy' => 'at_biz_dir-location',
-      'hide_empty' => true,
-    ));
-    
-    if (!is_wp_error($locations) && !empty($locations)) {
-      $formatted_locations = array();
-      foreach ($locations as $location) {
-        $formatted_locations[] = array(
-          'value' => $location->term_id,
-          'label' => $location->name
-        );
-      }
-      
-      $response = array(
-        'success' => true,
-        'data' => $formatted_locations,
-        'message' => 'Locations loaded successfully'
-      );
-    } else {
-      $response['message'] = 'No locations found';
-    }
+  // Get all locations for the grant directory
+  $locations = get_terms(array(
+  'taxonomy' => 'at_biz_dir-location',
+  'hide_empty' => true,
+  ));
+
+  if (!is_wp_error($locations) && !empty($locations)) {
+  $formatted_locations = array();
+  foreach ($locations as $location) {
+  $formatted_locations[] = array(
+  'value' => $location->term_id,
+  'label' => $location->name
+  );
   }
-  
+
+  $response = array(
+  'success' => true,
+  'data' => $formatted_locations,
+  'message' => 'Locations loaded successfully'
+  );
+  } else {
+  $response['message'] = 'No locations found';
+  }
+  }
+
   // Send JSON response
   wp_send_json($response);
-}
+  }
 
-/**
- * Filter grants based on selected criteria
- */
-function filter_grants_ajax_handler() {
-  // Security check
-  check_ajax_referer('grants_filter_nonce', 'security');
-  
-  // Extract filter parameters from request
+  /**
+  * AJAX handler for filtering grants
+  */
+  function grants_filter_ajax_handler() {
+  // Verify security nonce
+  if (!check_ajax_referer('grants_filter_nonce', 'security', false)) {
+  wp_send_json_error(array(
+  'message' => 'Security check failed. Please refresh the page and try again.',
+  'code' => 'security_check_failed'
+  ));
+  wp_die();
+  }
+
+  // Extract and sanitize filter parameters
   $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
   $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
   $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
   $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
   $category = isset($_POST['category']) ? intval($_POST['category']) : 0;
   $location = isset($_POST['location']) ? intval($_POST['location']) : 0;
-  $eligibility = isset($_POST['eligibility']) ? array_map('sanitize_text_field', $_POST['eligibility']) : array();
-  
+
+  // Handle eligibility array with validation
+  $eligibility = array();
+  if (isset($_POST['eligibility']) && is_array($_POST['eligibility'])) {
+  $eligibility = array_map('sanitize_text_field', $_POST['eligibility']);
+  }
+
   // Build meta query array
   $meta_query = array('relation' => 'AND');
   $tax_query = array('relation' => 'AND');
-  
+
   // Category filter
   if (!empty($category)) {
-    $tax_query[] = array(
-      'taxonomy' => 'at_biz_dir-category',
-      'field' => 'term_id',
-      'terms' => $category
-    );
+  $tax_query[] = array(
+  'taxonomy' => 'at_biz_dir-category',
+  'field' => 'term_id',
+  'terms' => $category
+  );
   }
-  
+
   // Location filter
   if (!empty($location)) {
-    $tax_query[] = array(
-      'taxonomy' => 'at_biz_dir-location',
-      'field' => 'term_id',
-      'terms' => $location
-    );
+  $tax_query[] = array(
+  'taxonomy' => 'at_biz_dir-location',
+  'field' => 'term_id',
+  'terms' => $location
+  );
   }
-  
+
   // Deadline filter
   if ($deadline != 'all') {
-    $today = date('Y-m-d');
-    
-    if ($deadline == 'today') {
-      // Due today
-      $meta_query[] = array(
-        'key' => '_custom-date',
-        'value' => $today,
-        'compare' => '=',
-        'type' => 'DATE'
-      );
-    } 
-    elseif ($deadline == 'week') {
-      // Due this week (next 7 days)
-      $one_week_later = date('Y-m-d', strtotime('+7 days'));
-      $meta_query[] = array(
-        'key' => '_custom-date',
-        'value' => array($today, $one_week_later),
-        'compare' => 'BETWEEN',
-        'type' => 'DATE'
-      );
-    }
-    elseif ($deadline == 'month') {
-      // Due this month (next 30 days)
-      $one_month_later = date('Y-m-d', strtotime('+30 days'));
-      $meta_query[] = array(
-        'key' => '_custom-date',
-        'value' => array($today, $one_month_later),
-        'compare' => 'BETWEEN',
-        'type' => 'DATE'
-      );
-    }
-    elseif ($deadline == 'ongoing') {
-      // Ongoing (no deadline date)
-      $meta_query[] = array(
-        'relation' => 'OR',
-        array(
-          'key' => '_custom-date',
-          'value' => '',
-          'compare' => '='
-        ),
-        array(
-          'key' => '_custom-date',
-          'compare' => 'NOT EXISTS'
-        )
-      );
-    }
-  } else {
-    // For "all" deadline, still ensure we don't show expired grants
-    $today = date('Y-m-d');
-    $meta_query[] = array(
-      'relation' => 'OR',
-      // Has deadline in the future
-      array(
-        'key' => '_custom-date',
-        'value' => $today,
-        'compare' => '>=',
-        'type' => 'DATE'
-      ),
-      // Or is ongoing (no deadline)
-      array(
-        'relation' => 'OR',
-        array(
-          'key' => '_custom-date',
-          'value' => '',
-          'compare' => '='
-        ),
-        array(
-          'key' => '_custom-date',
-          'compare' => 'NOT EXISTS'
-        )
-      )
-    );
+  $today = date('Y-m-d');
+
+  if ($deadline == 'today') {
+  // Due today
+  $meta_query[] = array(
+  'key' => '_custom-date',
+  'value' => $today,
+  'compare' => '=',
+  'type' => 'DATE'
+  );
   }
-  
+  elseif ($deadline == 'week') {
+  // Due this week (next 7 days)
+  $one_week_later = date('Y-m-d', strtotime('+7 days'));
+  $meta_query[] = array(
+  'key' => '_custom-date',
+  'value' => array($today, $one_week_later),
+  'compare' => 'BETWEEN',
+  'type' => 'DATE'
+  );
+  }
+  elseif ($deadline == 'month') {
+  // Due this month (next 30 days)
+  $one_month_later = date('Y-m-d', strtotime('+30 days'));
+  $meta_query[] = array(
+  'key' => '_custom-date',
+  'value' => array($today, $one_month_later),
+  'compare' => 'BETWEEN',
+  'type' => 'DATE'
+  );
+  }
+  elseif ($deadline == 'ongoing') {
+  // Ongoing (no deadline date)
+  $meta_query[] = array(
+  'relation' => 'OR',
+  array(
+  'key' => '_custom-date',
+  'value' => '',
+  'compare' => '='
+  ),
+  array(
+  'key' => '_custom-date',
+  'compare' => 'NOT EXISTS'
+  )
+  );
+  }
+  } else {
+  // For "all" deadline, still ensure we don't show expired grants
+  $today = date('Y-m-d');
+  $meta_query[] = array(
+  'relation' => 'OR',
+  // Has deadline in the future
+  array(
+  'key' => '_custom-date',
+  'value' => $today,
+  'compare' => '>=',
+  'type' => 'DATE'
+  ),
+  // Or is ongoing (no deadline)
+  array(
+  'relation' => 'OR',
+  array(
+  'key' => '_custom-date',
+  'value' => '',
+  'compare' => '='
+  ),
+  array(
+  'key' => '_custom-date',
+  'compare' => 'NOT EXISTS'
+  )
+  )
+  );
+  }
+
   // Amount filter
   if ($amount_min > 0) {
-    $meta_query[] = array(
-      'key' => '_price',
-      'value' => $amount_min,
-      'compare' => '>=',
-      'type' => 'NUMERIC'
-    );
+  $meta_query[] = array(
+  'key' => '_price',
+  'value' => $amount_min,
+  'compare' => '>=',
+  'type' => 'NUMERIC'
+  );
   }
-  
+
   if ($amount_max > 0) {
-    $meta_query[] = array(
-      'key' => '_price',
-      'value' => $amount_max,
-      'compare' => '<=',
-      'type' => 'NUMERIC'
+  $meta_query[] = array(
+  'key' => '_price',
+  'value' => $amount_max,
+  'compare' => '<=', 'type'=> 'NUMERIC'
     );
-  }
-  
-  // Eligibility filter - requires special handling as it's an array
-  if (!empty($eligibility)) {
-    $eligibility_query = array('relation' => 'OR');
-    
-    foreach ($eligibility as $entity) {
-      // Use regex operator to find values that contain this entity in serialized array
-      // This handles both single value and array meta storage
-      $eligibility_query[] = array(
-        'key' => 'custom-checkbox',
-        'value' => $entity,
-        'compare' => 'LIKE'
-      );
     }
-    
+
+    // Eligibility filter - requires special handling as it's an array
+    if (!empty($eligibility)) {
+    $eligibility_query = array('relation' => 'OR');
+
+    foreach ($eligibility as $entity) {
+    // Use regex operator to find values that contain this entity in serialized array
+    // This handles both single value and array meta storage
+    $eligibility_query[] = array(
+    'key' => 'custom-checkbox',
+    'value' => $entity,
+    'compare' => 'LIKE'
+    );
+    }
+
     $meta_query[] = $eligibility_query;
-  }
-  
-  // Build the final query
-  $args = array(
+    }
+
+    // Build the final query
+    $args = array(
     'post_type' => 'at_biz_dir',
     'posts_per_page' => -1, // Get all posts for processing
     'post_status' => 'publish',
@@ -1302,579 +1328,534 @@ function filter_grants_ajax_handler() {
     'orderby' => 'meta_value',
     'meta_key' => '_featured', // Sort by featured status first
     'order' => 'DESC'
-  );
-  
-  // Run the query
-  $filtered_query = new WP_Query($args);
-  
-  // Get post IDs from the query
-  $filtered_ids = array();
-  if ($filtered_query->have_posts()) {
+    );
+
+    // Run the query
+    $filtered_query = new WP_Query($args);
+    $has_posts = $filtered_query->have_posts();
+
+    // Get post IDs from the query
+    $filtered_ids = array();
+    if ($has_posts) {
     while ($filtered_query->have_posts()) {
-      $filtered_query->the_post();
-      $filtered_ids[] = get_the_ID();
+    $filtered_query->the_post();
+    $filtered_ids[] = get_the_ID();
     }
     wp_reset_postdata();
-  }
-  
-  // Return the filtered post IDs
-  wp_send_json(array(
+    }
+
+    // Return the filtered post IDs
+    wp_send_json(array(
     'success' => true,
     'filtered_ids' => $filtered_ids,
     'total' => count($filtered_ids),
     'message' => 'Grants filtered successfully'
-  ));
-}
-
-// Generate a nonce for AJAX requests and properly define ajaxurl
-$ajax_nonce = wp_create_nonce('grants_filter_nonce');
-// Output nonce and AJAX URL with proper escaping for security
-echo '<script>
-var grantsFilterNonce = "' . esc_js($ajax_nonce) . '";
-var ajaxurl = "' . esc_js(admin_url('admin-ajax.php')) . '";
-</script>';
-[/php]
-
-<!-- Add this right after the PHP block -->
-<script>
-// More reliable AJAX URL and nonce handling
-(function() {
-  // Ensure ajaxurl is defined with absolute path fallback
-  if (typeof ajaxurl === 'undefined') {
-    var siteUrl = window.location.protocol + '//' + window.location.host;
-    window.ajaxurl = siteUrl + '/wp-admin/admin-ajax.php';
-    console.warn('AJAX URL not defined by server, using calculated fallback: ' + window.ajaxurl);
-  }
-  
-  // Ensure nonce is defined (but never proceed with an empty nonce)
-  if (typeof grantsFilterNonce === 'undefined' || !grantsFilterNonce) {
-    console.error('Grants filter nonce not defined by server - this will cause AJAX request failures');
-    // Show error in UI to notify user
-    setTimeout(function() {
-      var filterError = document.getElementById('filter-error');
-      if (filterError) {
-        filterError.querySelector('span').textContent = 'Filter system configuration error. Please reload the page.';
-        filterError.classList.add('active');
-      }
-    }, 1000);
-  }
-})();
-</script>
-  
-  <!-- JavaScript for Filter Functionality -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Function to check if values in an array are all true - safer alternative to && operator
-      function checkConditions(conditions) {
-        for (var i = 0; i < conditions.length; i++) {
-          if (!conditions[i]) {
-            return false;
-          }
-        }
-        return true;
-      }
-      
-      // DOM Elements
-      const filterButton = document.getElementById('grants-filter-button');
-      const filterPopup = document.getElementById('grants-filter-popup');
-      const filterClose = document.querySelector('.filter-popup-close');
-      const filterForm = document.getElementById('grants-filter-form');
-      const resetButton = document.getElementById('filter-reset');
-      const applyButton = document.getElementById('filter-apply');
-      const filterCount = document.getElementById('filter-count');
-      const selectedFiltersContainer = document.getElementById('selected-filters');
-      const clearAllFilters = document.getElementById('clear-all-filters');
-      const eligibilityContainer = document.getElementById('eligibility-options');
-      const categorySelect = document.getElementById('category-filter');
-      const locationSelect = document.getElementById('location-filter');
-      const searchInput = document.getElementById('grant-search');
-      const filterError = document.getElementById('filter-error');
-      const filterEmpty = document.getElementById('filter-empty');
-      const filterLoading = document.getElementById('filter-loading');
-      
-      // State
-      let activeFilters = {};
-      let allEligibilityOptions = [];
-      let allCategories = [];
-      let allLocations = [];
-      let grantsContainer = document.querySelector('.grants-container');
-      
-      // Initialize
-      init();
-      
-      function init() {
-        // Load filter options
-        loadFilterOptions();
-        
-        // Add event listeners
-        addEventListeners();
-        
-        // Check URL for filter parameters
-        parseUrlHash();
-      }
-      
-      function addEventListeners() {
-        // Open filter popup
-        filterButton.addEventListener('click', toggleFilterPopup);
-        
-        // Close filter popup
-        filterClose.addEventListener('click', closeFilterPopup);
-        
-        // Close on outside click
-        filterPopup.addEventListener('click', function(e) {
-          if (e.target === filterPopup) {
-            closeFilterPopup();
-          }
-        });
-        
-        // Apply filters
-        applyButton.addEventListener('click', function() {
-          applyFilters();
-          closeFilterPopup();
-        });
-        
-        // Reset filters
-        resetButton.addEventListener('click', resetFilters);
-        
-        // Clear all selected filters
-        clearAllFilters.addEventListener('click', resetFilters);
-        
-        // Listen for enter key in search input
-        searchInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            applyFilters();
-          }
-        });
-        
-        // Add form input change listeners
-        const formInputs = filterForm.querySelectorAll('input, select');
-        formInputs.forEach(input => {
-          input.addEventListener('change', updateSelectedFilters);
-        });
-        
-        // Close popup with escape key
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            closeFilterPopup();
-          }
-        });
-        
-        // Update hash when window is about to unload
-        window.addEventListener('beforeunload', function() {
-          if (Object.keys(activeFilters).length > 0) {
-            updateUrlHash();
-          }
-        });
-      }
-      
-      function toggleFilterPopup() {
-        const isActive = filterPopup.classList.contains('active');
-        
-        if (isActive) {
-          closeFilterPopup();
-        } else {
-          openFilterPopup();
-        }
-      }
-      
-      function openFilterPopup() {
-        filterPopup.classList.add('active');
-        filterButton.setAttribute('aria-expanded', 'true');
-        filterPopup.setAttribute('aria-hidden', 'false');
-        
-        // Trigger animation on the content
-        setTimeout(function() {
-          document.querySelector('.filter-popup-content').classList.add('active');
-        }, 10);
-        
-        // Prevent body scrolling
-        document.body.style.overflow = 'hidden';
-        
-        // Focus on search input
-        setTimeout(function() {
-          searchInput.focus();
-        }, 300);
-      }
-      
-      function closeFilterPopup() {
-        document.querySelector('.filter-popup-content').classList.remove('active');
-        
-        setTimeout(function() {
-          filterPopup.classList.remove('active');
-          filterButton.setAttribute('aria-expanded', 'false');
-          filterPopup.setAttribute('aria-hidden', 'true');
-          
-          // Restore body scrolling
-          document.body.style.overflow = '';
-        }, 300);
-      }
-
-      // Add this function before the loadFilterOptions function in your JavaScript code
-function fetchFilterOptions(optionType) {
-  console.log(`Fetching filter options for: ${optionType}`);
-  
-  // Create form data for AJAX request
-  const formData = new FormData();
-  formData.append('action', 'load_filter_options');
-  formData.append('security', grantsFilterNonce || '');
-  formData.append('option_type', optionType);
-  
-  // Get the correct AJAX URL
-  const ajaxUrl = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
-  
-  // Make AJAX request
-  return fetch(ajaxUrl, {
-    method: 'POST',
-    body: formData,
-    credentials: 'same-origin'
-  })
-  .then(function(response) {
-    console.log(`${optionType} response status:`, response.status);
-    if (!response.ok) {
-      return response.text().then(text => {
-        console.error('Error response body:', text);
-        throw new Error(`Network error: ${response.status} ${response.statusText}`);
-      });
+    ));
     }
-    return response.json();
-  })
-  .catch(function(error) {
-    console.error(`Error fetching ${optionType} options:`, error);
-    // Return a standardized error response object
-    return {
-      success: false,
-      data: [],
-      message: error.message || `Failed to load ${optionType} options`
-    };
-  });
-}
-      
-      function loadFilterOptions() {
-        // Show loading state
-        eligibilityContainer.innerHTML = `
+
+    // Output AJAX configuration for JavaScript
+    echo '<script id="grants-filter-ajax-config">
+      // AJAX configuration
+      var grantsFilterNonce = "' . esc_js($grants_filter_nonce) . '";
+      var ajaxurl = "' . esc_js(admin_url('admin-ajax.php')) . '";
+    </script>';
+    [/php]
+
+    <!-- JavaScript for Filter Functionality -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        /* --- Configuration & Initialization --- */
+        // Function to check if values in an array are all true - safer alternative to && operator
+        function checkConditions(conditions) {
+          for (var i = 0; i < conditions.length; i++) {
+            if (!conditions[i]) {
+              return false;
+            }
+          }
+          return true;
+        }
+        // Handle ajaxurl and nonce initialization
+        function initAjaxConfig() {
+          // Try to get ajaxurl and nonce from the script block
+          if (typeof ajaxurl === 'undefined' || !ajaxurl) {
+            var configScript = document.getElementById('grants-filter-ajax-config');
+            if (!configScript) {
+              console.warn('AJAX config script not found');
+              // Use fallback URL
+              window.ajaxurl = window.location.protocol + '//' + window.location.host + '/wp-admin/admin-ajax.php';
+              console.log('Using fallback AJAX URL:', window.ajaxurl);
+            }
+          }
+          if (typeof grantsFilterNonce === 'undefined' || !grantsFilterNonce) {
+            console.warn('Grants filter nonce not found, AJAX requests may fail');
+          }
+          // Set hidden config element data attribute
+          var configEl = document.getElementById('grants-filter-config');
+          if (configEl) {
+            if (typeof ajaxurl !== 'undefined' && typeof grantsFilterNonce !== 'undefined') {
+              configEl.setAttribute('data-ajax-enabled', 'true');
+            } else {
+              configEl.setAttribute('data-ajax-enabled', 'false');
+            }
+          }
+        }
+        // DOM Elements
+        const filterButton = document.getElementById('grants-filter-button');
+        const filterPopup = document.getElementById('grants-filter-popup');
+        const filterClose = document.querySelector('.filter-popup-close');
+        const filterForm = document.getElementById('grants-filter-form');
+        const resetButton = document.getElementById('filter-reset');
+        const applyButton = document.getElementById('filter-apply');
+        const filterCount = document.getElementById('filter-count');
+        const selectedFiltersContainer = document.getElementById('selected-filters');
+        const clearAllFilters = document.getElementById('clear-all-filters');
+        const eligibilityContainer = document.getElementById('eligibility-options');
+        const categorySelect = document.getElementById('category-filter');
+        const locationSelect = document.getElementById('location-filter');
+        const searchInput = document.getElementById('grant-search');
+        const filterError = document.getElementById('filter-error');
+        const filterEmpty = document.getElementById('filter-empty');
+        const filterLoading = document.getElementById('filter-loading');
+        // State
+        let activeFilters = {};
+        let allEligibilityOptions = [];
+        let allCategories = [];
+        let allLocations = [];
+        let grantsContainer = document.querySelector('.grants-container');
+        // Initialize
+        init();
+
+        function init() {
+          console.log('Initializing grants filter system...');
+          // Ensure AJAX configuration is set
+          initAjaxConfig();
+          // Load filter options
+          loadFilterOptions();
+          // Add event listeners
+          addEventListeners();
+          // Check URL for filter parameters
+          parseUrlHash();
+        }
+        /* --- Event Handling --- */
+        function addEventListeners() {
+          // Open filter popup
+          if (filterButton) {
+            filterButton.addEventListener('click', toggleFilterPopup);
+          }
+          // Close filter popup
+          if (filterClose) {
+            filterClose.addEventListener('click', closeFilterPopup);
+          }
+          // Close on outside click
+          if (filterPopup) {
+            filterPopup.addEventListener('click', function(e) {
+              if (e.target === filterPopup) {
+                closeFilterPopup();
+              }
+            });
+          }
+          // Apply filters
+          if (applyButton) {
+            applyButton.addEventListener('click', function() {
+              applyFilters();
+              closeFilterPopup();
+            });
+          }
+          // Reset filters
+          if (resetButton) {
+            resetButton.addEventListener('click', resetFilters);
+          }
+          // Clear all selected filters
+          if (clearAllFilters) {
+            clearAllFilters.addEventListener('click', resetFilters);
+          }
+          // Listen for enter key in search input
+          if (searchInput) {
+            searchInput.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                applyFilters();
+              }
+            });
+          }
+          // Add form input change listeners
+          if (filterForm) {
+            const formInputs = filterForm.querySelectorAll('input, select');
+            formInputs.forEach(input => {
+              input.addEventListener('change', updateSelectedFilters);
+            });
+          }
+          // Close popup with escape key
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+              closeFilterPopup();
+            }
+          });
+          // Update hash when window is about to unload
+          window.addEventListener('beforeunload', function() {
+            if (Object.keys(activeFilters).length > 0) {
+              updateUrlHash();
+            }
+          });
+        }
+        /* --- Popup Handling --- */
+        function toggleFilterPopup() {
+          const isActive = filterPopup.classList.contains('active');
+          if (isActive) {
+            closeFilterPopup();
+          } else {
+            openFilterPopup();
+          }
+        }
+
+        function openFilterPopup() {
+          filterPopup.classList.add('active');
+          filterButton.setAttribute('aria-expanded', 'true');
+          filterPopup.setAttribute('aria-hidden', 'false');
+          // Trigger animation on the content
+          setTimeout(function() {
+            document.querySelector('.filter-popup-content').classList.add('active');
+          }, 10);
+          // Prevent body scrolling
+          document.body.style.overflow = 'hidden';
+          // Focus on search input
+          setTimeout(function() {
+            searchInput.focus();
+          }, 300);
+        }
+
+        function closeFilterPopup() {
+          document.querySelector('.filter-popup-content').classList.remove('active');
+          setTimeout(function() {
+            filterPopup.classList.remove('active');
+            filterButton.setAttribute('aria-expanded', 'false');
+            filterPopup.setAttribute('aria-hidden', 'true');
+            // Restore body scrolling
+            document.body.style.overflow = '';
+          }, 300);
+        }
+        /* --- AJAX Functions --- */
+        function fetchFilterOptions(optionType) {
+          console.log(`Fetching filter options for: ${optionType}`);
+          // Create form data for AJAX request
+          const formData = new FormData();
+          formData.append('action', 'load_filter_options');
+          formData.append('security', grantsFilterNonce || '');
+          formData.append('option_type', optionType);
+          // Get the AJAX URL
+          const ajaxUrl = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
+          // Log request details for debugging
+          console.log(`AJAX Request: ${ajaxUrl}`, {
+            action: 'load_filter_options',
+            option_type: optionType
+          });
+          // Make AJAX request
+          return fetch(ajaxUrl, {
+              method: 'POST',
+              body: formData,
+              credentials: 'same-origin'
+            })
+            .then(function(response) {
+              console.log(`${optionType} response status:`, response.status);
+              if (!response.ok) {
+                return response.text().then(text => {
+                  console.error('Error response body:', text);
+                  throw new Error(`Network error: ${response.status} ${response.statusText}`);
+                });
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              console.log(`${optionType} data received:`, data);
+              return data;
+            })
+            .catch(function(error) {
+              console.error(`Error fetching ${optionType} options:`, error);
+              // Return a standardized error response object
+              return {
+                success: false,
+                data: [],
+                message: error.message || `Failed to load ${optionType} options`
+              };
+            });
+        }
+
+        function loadFilterOptions() {
+          // Show loading state
+          eligibilityContainer.innerHTML = `
           <div class="filter-loading active">
             <div class="filter-loading-spinner"></div>
             <span>Loading eligibility options...</span>
           </div>
         `;
-        
-        // Load eligibility options
-        fetchFilterOptions('eligibility')
-          .then(function(response) {
-            if (response.success) {
-              allEligibilityOptions = response.data;
-              renderEligibilityOptions(response.data);
-            } else {
-              showError('Failed to load eligibility options: ' + response.message);
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading eligibility options: ' + error.message);
-          });
-        
-        // Load categories
-        fetchFilterOptions('categories')
-          .then(function(response) {
-            if (response.success) {
-              allCategories = response.data;
-              renderCategoryOptions(response.data);
-            } else {
-              showError('Failed to load categories: ' + response.message);
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading categories: ' + error.message);
-          });
-        
-        // Load locations
-        fetchFilterOptions('locations')
-          .then(function(response) {
-            if (response.success) {
-              allLocations = response.data;
-              renderLocationOptions(response.data);
-            } else {
-              showError('Failed to load locations: ' + response.message);
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading locations: ' + error.message);
-          });
-      }
-      
-      function applyFilters() {
-  // Show loading state
-  showLoading(true);
-  hideError();
-  hideEmptyState();
-  
-  console.log('Applying filters...');
-  
-  // Get all form values for the filter
-  const searchValue = searchInput.value.trim();
-  const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-  
-  if (!deadlineRadio) {
-    showError('Please select a deadline option.');
-    showLoading(false);
-    return;
-  }
-  
-  const deadlineValue = deadlineRadio.value;
-  const amountMinValue = document.getElementById('amount-min').value;
-  const amountMaxValue = document.getElementById('amount-max').value;
-  const categoryValue = categorySelect.value;
-  const locationValue = locationSelect.value;
-  
-  // Get eligibility values
-  const eligibilityValues = Array.from(
-    document.querySelectorAll('input[name="eligibility[]"]:checked')
-  ).map(checkbox => checkbox.value);
-  
-  // Create form data
-  const formData = new FormData();
-  formData.append('action', 'filter_grants');
-  formData.append('security', grantsFilterNonce || '');
-  formData.append('search', searchValue || '');
-  formData.append('deadline', deadlineValue || 'all');
-  formData.append('amount_min', amountMinValue || '');
-  formData.append('amount_max', amountMaxValue || '');
-  formData.append('category', categoryValue || '');
-  formData.append('location', locationValue || '');
-  
-  // Add eligibility values
-  eligibilityValues.forEach(value => {
-    formData.append('eligibility[]', value);
-  });
-  
-  console.log('Filter data prepared:', {
-    search: searchValue,
-    deadline: deadlineValue,
-    amountMin: amountMinValue,
-    amountMax: amountMaxValue,
-    category: categoryValue,
-    location: locationValue,
-    eligibility: eligibilityValues,
-    nonce: (grantsFilterNonce || '').substring(0, 5) + '...' // Show first few chars of nonce for debugging
-  });
-  
-  // Get the correct AJAX URL
-  const ajaxUrl = ajaxurl;
-  console.log('Using AJAX URL:', ajaxUrl);
-  
-  // Make AJAX request
-  fetch(ajaxUrl, {
-    method: 'POST',
-    body: formData,
-    credentials: 'same-origin'
-  })
-  .then(function(response) {
-    console.log('Filter response status:', response.status);
-    if (!response.ok) {
-      console.error('Network error:', response.status, response.statusText);
-      return response.text().then(text => {
-        console.error('Error response body:', text);
-        throw new Error(`Network error: ${response.status} ${response.statusText}`);
-      });
-    }
-    return response.json();
-  })
-  .then(function(data) {
-    console.log('Filter response received:', data);
-    
-    if (data.success) {
-      // Update URL hash first
-      updateUrlHash();
-      
-      // Display filtered results
-      filterGrantCards(data.filtered_ids);
-      
-      // Update result count
-      updateResultCount(data.total);
-      
-      console.log(`Filtered to ${data.total} grants successfully`);
-    } else {
-      console.error('Filter request failed:', data.message);
-      showError('Failed to filter grants: ' + data.message);
-    }
-    showLoading(false);
-  })
-  .catch(function(error) {
-    console.error('Error applying filters:', error);
-    showError('Error applying filters: ' + error.message);
-    showLoading(false);
-  });
-}
-      
-      function renderEligibilityOptions(options) {
-  console.log('Rendering eligibility options:', options);
-  
-  // Clear loading state
-  eligibilityContainer.innerHTML = '';
-  
-  if (!Array.isArray(options) || options.length === 0) {
-    eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
-    return;
-  }
-  
-  // Sort options alphabetically
-  options.sort((a, b) => a.label.localeCompare(b.label));
-  
-  let html = '';
-  options.forEach(function(option) {
-    // Create a safe ID by sanitizing the value
-    const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
-    html += `
-      <div class="eligibility-option">
-        <input type="checkbox" id="${safeId}" 
-          name="eligibility[]" value="${option.value}">
-        <label for="${safeId}">${option.label}</label>
-      </div>
-    `;
-  });
-  
-  eligibilityContainer.innerHTML = html;
-  
-  // Add change event listeners
-  const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateSelectedFilters);
-  });
-  
-  console.log('Eligibility options rendered successfully');
-  
-  // Restore any selected values from URL
-  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-}
+          // Load eligibility options
+          fetchFilterOptions('eligibility')
+            .then(function(response) {
+              if (response.success) {
+                allEligibilityOptions = response.data;
+                renderEligibilityOptions(response.data);
+              } else {
+                showError('Failed to load eligibility options: ' + response.message);
+              }
+            })
+            .catch(function(error) {
+              showError('Error loading eligibility options: ' + error.message);
+            });
+          // Load categories
+          fetchFilterOptions('categories')
+            .then(function(response) {
+              if (response.success) {
+                allCategories = response.data;
+                renderCategoryOptions(response.data);
+              } else {
+                showError('Failed to load categories: ' + response.message);
+              }
+            })
+            .catch(function(error) {
+              showError('Error loading categories: ' + error.message);
+            });
+          // Load locations
+          fetchFilterOptions('locations')
+            .then(function(response) {
+              if (response.success) {
+                allLocations = response.data;
+                renderLocationOptions(response.data);
+              } else {
+                showError('Failed to load locations: ' + response.message);
+              }
+            })
+            .catch(function(error) {
+              showError('Error loading locations: ' + error.message);
+            });
+        }
 
-function renderCategoryOptions(categories) {
-  console.log('Rendering category options:', categories);
-  
-  // Clear loading state
-  categorySelect.innerHTML = '<option value="">All Categories</option>';
-  
-  if (!Array.isArray(categories) || categories.length === 0) {
-    console.warn('No category options received or invalid data format');
-    return;
-  }
-  
-  // Sort categories alphabetically
-  categories.sort((a, b) => a.label.localeCompare(b.label));
-  
-  // Create options HTML
-  let html = '<option value="">All Categories</option>';
-  categories.forEach(function(category) {
-    if (category && category.value && category.label) {
-      html += `<option value="${category.value}">${category.label}</option>`;
-    }
-  });
-  
-  // Update select element
-  categorySelect.innerHTML = html;
-  
-  console.log('Category options rendered successfully:', categories.length);
-  
-  // Restore any selected value from URL
-  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-}
-
-function renderLocationOptions(locations) {
-  console.log('Rendering location options:', locations);
-  
-  // Clear loading state
-  locationSelect.innerHTML = '<option value="">All Locations</option>';
-  
-  if (!Array.isArray(locations) || locations.length === 0) {
-    console.warn('No location options received or invalid data format');
-    return;
-  }
-  
-  // Sort locations alphabetically
-  locations.sort((a, b) => a.label.localeCompare(b.label));
-  
-  // Create options HTML
-  let html = '<option value="">All Locations</option>';
-  locations.forEach(function(location) {
-    if (location && location.value && location.label) {
-      html += `<option value="${location.value}">${location.label}</option>`;
-    }
-  });
-  
-  // Update select element
-  locationSelect.innerHTML = html;
-  
-  console.log('Location options rendered successfully:', locations.length);
-  
-  // Restore any selected value from URL
-  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-}
-      
-      function updateSelectedFilters() {
-        // Get all form values
-        const searchValue = searchInput.value.trim();
-        const deadlineValue = document.querySelector('input[name="deadline"]:checked').value;
-        const amountMinValue = document.getElementById('amount-min').value;
-        const amountMaxValue = document.getElementById('amount-max').value;
-        const categoryValue = categorySelect.value;
-        const locationValue = locationSelect.value;
-        
-        // Get eligibility values
-        const eligibilityValues = Array.from(
-          document.querySelectorAll('input[name="eligibility[]"]:checked')
-        ).map(checkbox => checkbox.value);
-        
-        // Update active filters object
-        activeFilters = {};
-        
-        if (searchValue) activeFilters.search = searchValue;
-        if (deadlineValue && deadlineValue !== 'all') activeFilters.deadline = deadlineValue;
-        if (amountMinValue) activeFilters.amount_min = amountMinValue;
-        if (amountMaxValue) activeFilters.amount_max = amountMaxValue;
-        if (categoryValue) activeFilters.category = categoryValue;
-        if (locationValue) activeFilters.location = locationValue;
-        if (eligibilityValues.length > 0) activeFilters.eligibility = eligibilityValues;
-        
-        // Render selected filters display
-        renderSelectedFilters();
-        
-        // Update button state
-        updateFilterButtonState();
-      }
-      
-      function renderSelectedFilters() {
-        // Clear current selected filters
-        while (selectedFiltersContainer.firstChild) {
-          if (selectedFiltersContainer.firstChild === clearAllFilters) {
-            break;
+        function applyFilters() {
+          // Show loading state
+          showLoading(true);
+          hideError();
+          hideEmptyState();
+          console.log('Applying filters...');
+          // Get all form values for the filter
+          const searchValue = searchInput.value.trim();
+          const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
+          if (!deadlineRadio) {
+            showError('Please select a deadline option.');
+            showLoading(false);
+            return;
           }
-          selectedFiltersContainer.removeChild(selectedFiltersContainer.firstChild);
+          const deadlineValue = deadlineRadio.value;
+          const amountMinValue = document.getElementById('amount-min').value;
+          const amountMaxValue = document.getElementById('amount-max').value;
+          const categoryValue = categorySelect.value;
+          const locationValue = locationSelect.value;
+          // Get eligibility values
+          const eligibilityValues = Array.from(
+            document.querySelectorAll('input[name="eligibility[]"]:checked')
+          ).map(checkbox => checkbox.value);
+          // Create form data
+          const formData = new FormData();
+          formData.append('action', 'filter_grants');
+          formData.append('security', grantsFilterNonce || '');
+          formData.append('search', searchValue || '');
+          formData.append('deadline', deadlineValue || 'all');
+          formData.append('amount_min', amountMinValue || '');
+          formData.append('amount_max', amountMaxValue || '');
+          formData.append('category', categoryValue || '');
+          formData.append('location', locationValue || '');
+          // Add eligibility values
+          eligibilityValues.forEach(value => {
+            formData.append('eligibility[]', value);
+          });
+          console.log('Filter data prepared:', {
+            search: searchValue,
+            deadline: deadlineValue,
+            amountMin: amountMinValue,
+            amountMax: amountMaxValue,
+            category: categoryValue,
+            location: locationValue,
+            eligibility: eligibilityValues
+          });
+          // Get the AJAX URL
+          const ajaxUrl = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
+          console.log('Using AJAX URL:', ajaxUrl);
+          // Make AJAX request
+          fetch(ajaxUrl, {
+              method: 'POST',
+              body: formData,
+              credentials: 'same-origin'
+            })
+            .then(function(response) {
+              console.log('Filter response status:', response.status);
+              if (!response.ok) {
+                console.error('Network error:', response.status, response.statusText);
+                return response.text().then(text => {
+                  console.error('Error response body:', text);
+                  throw new Error(`Network error: ${response.status} ${response.statusText}`);
+                });
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              console.log('Filter response received:', data);
+              if (data.success) {
+                // Update URL hash first
+                updateUrlHash();
+                // Display filtered results
+                filterGrantCards(data.filtered_ids);
+                // Update result count
+                updateResultCount(data.total);
+                console.log(`Filtered to ${data.total} grants successfully`);
+              } else {
+                console.error('Filter request failed:', data.message);
+                showError('Failed to filter grants: ' + data.message);
+              }
+              showLoading(false);
+            })
+            .catch(function(error) {
+              console.error('Error applying filters:', error);
+              showError('Error applying filters: ' + error.message);
+              showLoading(false);
+            });
         }
-        
-        // Show/hide container based on if there are active filters
-        const hasActiveFilters = Object.keys(activeFilters).length > 0;
-        if (hasActiveFilters) {
-          selectedFiltersContainer.classList.add('has-filters');
-        } else {
-          selectedFiltersContainer.classList.remove('has-filters');
-          return;
+        /* --- Rendering Functions --- */
+        function renderEligibilityOptions(options) {
+          console.log('Rendering eligibility options:', options);
+          // Clear loading state
+          eligibilityContainer.innerHTML = '';
+          if (!Array.isArray(options) || options.length === 0) {
+            eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
+            return;
+          }
+          // Sort options alphabetically
+          options.sort((a, b) => a.label.localeCompare(b.label));
+          let html = '';
+          options.forEach(function(option) {
+            // Create a safe ID by sanitizing the value
+            const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+            html += `
+            <div class="eligibility-option">
+              <input type="checkbox" id="${safeId}" 
+                name="eligibility[]" value="${option.value}">
+              <label for="${safeId}">${option.label}</label>
+            </div>
+          `;
+          });
+          eligibilityContainer.innerHTML = html;
+          // Add change event listeners
+          const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedFilters);
+          });
+          console.log('Eligibility options rendered successfully');
+          // Restore any selected values from URL
+          setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
         }
-        
-        // Add selected filters
-        for (const [key, value] of Object.entries(activeFilters)) {
-          let filterValue = value;
-          let filterLabel = getFilterLabel(key, value);
-          
-          // Add filter tag
-          const filterTag = document.createElement('div');
-          filterTag.className = 'selected-filter';
-          filterTag.setAttribute('data-filter-key', key);
-          
-          if (Array.isArray(value)) {
-            // For eligibility (array values), create multiple tags
-            value.forEach(val => {
-              const tagClone = filterTag.cloneNode(true);
-              tagClone.setAttribute('data-filter-value', val);
-              tagClone.innerHTML = `
+
+        function renderCategoryOptions(categories) {
+          console.log('Rendering category options:', categories);
+          // Clear loading state
+          categorySelect.innerHTML = '<option value="">All Categories</option>';
+          if (!Array.isArray(categories) || categories.length === 0) {
+            console.warn('No category options received or invalid data format');
+            return;
+          }
+          // Sort categories alphabetically
+          categories.sort((a, b) => a.label.localeCompare(b.label));
+          // Create options HTML
+          let html = '<option value="">All Categories</option>';
+          categories.forEach(function(category) {
+            if (category && category.value && category.label) {
+              html += `<option value="${category.value}">${category.label}</option>`;
+            }
+          });
+          // Update select element
+          categorySelect.innerHTML = html;
+          console.log('Category options rendered successfully:', categories.length);
+          // Restore any selected value from URL
+          setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+        }
+
+        function renderLocationOptions(locations) {
+          console.log('Rendering location options:', locations);
+          // Clear loading state
+          locationSelect.innerHTML = '<option value="">All Locations</option>';
+          if (!Array.isArray(locations) || locations.length === 0) {
+            console.warn('No location options received or invalid data format');
+            return;
+          }
+          // Sort locations alphabetically
+          locations.sort((a, b) => a.label.localeCompare(b.label));
+          // Create options HTML
+          let html = '<option value="">All Locations</option>';
+          locations.forEach(function(location) {
+            if (location && location.value && location.label) {
+              html += `<option value="${location.value}">${location.label}</option>`;
+            }
+          });
+          // Update select element
+          locationSelect.innerHTML = html;
+          console.log('Location options rendered successfully:', locations.length);
+          // Restore any selected value from URL
+          setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+        }
+
+        function updateSelectedFilters() {
+          // Get all form values
+          const searchValue = searchInput.value.trim();
+          const deadlineValue = document.querySelector('input[name="deadline"]:checked').value;
+          const amountMinValue = document.getElementById('amount-min').value;
+          const amountMaxValue = document.getElementById('amount-max').value;
+          const categoryValue = categorySelect.value;
+          const locationValue = locationSelect.value;
+          // Get eligibility values
+          const eligibilityValues = Array.from(
+            document.querySelectorAll('input[name="eligibility[]"]:checked')
+          ).map(checkbox => checkbox.value);
+          // Update active filters object
+          activeFilters = {};
+          if (searchValue) activeFilters.search = searchValue;
+          if (deadlineValue && deadlineValue !== 'all') activeFilters.deadline = deadlineValue;
+          if (amountMinValue) activeFilters.amount_min = amountMinValue;
+          if (amountMaxValue) activeFilters.amount_max = amountMaxValue;
+          if (categoryValue) activeFilters.category = categoryValue;
+          if (locationValue) activeFilters.location = locationValue;
+          if (eligibilityValues.length > 0) activeFilters.eligibility = eligibilityValues;
+          // Render selected filters display
+          renderSelectedFilters();
+          // Update button state
+          updateFilterButtonState();
+        }
+
+        function renderSelectedFilters() {
+          // Clear current selected filters
+          while (selectedFiltersContainer.firstChild) {
+            if (selectedFiltersContainer.firstChild === clearAllFilters) {
+              break;
+            }
+            selectedFiltersContainer.removeChild(selectedFiltersContainer.firstChild);
+          }
+          // Show/hide container based on if there are active filters
+          const hasActiveFilters = Object.keys(activeFilters).length > 0;
+          if (hasActiveFilters) {
+            selectedFiltersContainer.classList.add('has-filters');
+          } else {
+            selectedFiltersContainer.classList.remove('has-filters');
+            return;
+          }
+          // Add selected filters
+          for (const [key, value] of Object.entries(activeFilters)) {
+            let filterValue = value;
+            let filterLabel = getFilterLabel(key, value);
+            // Add filter tag
+            const filterTag = document.createElement('div');
+            filterTag.className = 'selected-filter';
+            filterTag.setAttribute('data-filter-key', key);
+            if (Array.isArray(value)) {
+              // For eligibility (array values), create multiple tags
+              value.forEach(val => {
+                const tagClone = filterTag.cloneNode(true);
+                tagClone.setAttribute('data-filter-value', val);
+                tagClone.innerHTML = `
                 ${getFilterLabel(key, val)}
                 <button class="remove-filter" aria-label="Remove filter ${getFilterLabel(key, val)}">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1883,20 +1864,18 @@ function renderLocationOptions(locations) {
                   </svg>
                 </button>
               `;
-              
-              // Add click handler to remove button
-              const removeBtn = tagClone.querySelector('.remove-filter');
-              removeBtn.addEventListener('click', function() {
-                removeFilter(key, val);
+                // Add click handler to remove button
+                const removeBtn = tagClone.querySelector('.remove-filter');
+                removeBtn.addEventListener('click', function() {
+                  removeFilter(key, val);
+                });
+                // Insert before the clear all button
+                selectedFiltersContainer.insertBefore(tagClone, clearAllFilters);
               });
-              
-              // Insert before the clear all button
-              selectedFiltersContainer.insertBefore(tagClone, clearAllFilters);
-            });
-          } else {
-            // For single value filters
-            filterTag.setAttribute('data-filter-value', value);
-            filterTag.innerHTML = `
+            } else {
+              // For single value filters
+              filterTag.setAttribute('data-filter-value', value);
+              filterTag.innerHTML = `
               ${filterLabel}
               <button class="remove-filter" aria-label="Remove filter ${filterLabel}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1905,548 +1884,405 @@ function renderLocationOptions(locations) {
                 </svg>
               </button>
             `;
-            
-            // Add click handler to remove button
-            const removeBtn = filterTag.querySelector('.remove-filter');
-            removeBtn.addEventListener('click', function() {
-              removeFilter(key, value);
-            });
-            
-            // Insert before the clear all button
-            selectedFiltersContainer.insertBefore(filterTag, clearAllFilters);
-          }
-        }
-      }
-      
-      function getFilterLabel(key, value) {
-        // Return human-readable label for each filter type and value
-        switch (key) {
-          case 'search':
-            return `Search: ${value}`;
-          case 'deadline':
-            switch (value) {
-              case 'today': return 'Due Today';
-              case 'week': return 'Due This Week';
-              case 'month': return 'Due This Month';
-              case 'ongoing': return 'Ongoing';
-              default: return `Deadline: ${value}`;
+              // Add click handler to remove button
+              const removeBtn = filterTag.querySelector('.remove-filter');
+              removeBtn.addEventListener('click', function() {
+                removeFilter(key, value);
+              });
+              // Insert before the clear all button
+              selectedFiltersContainer.insertBefore(filterTag, clearAllFilters);
             }
-          case 'amount_min':
-            return `Min: $${value}`;
-          case 'amount_max':
-            return `Max: $${value}`;
-          case 'category':
-            // Find category label from value
-            const category = allCategories.find(c => c.value.toString() === value.toString());
-            return category ? category.label : `Category: ${value}`;
-          case 'location':
-            // Find location label from value
-            const location = allLocations.find(l => l.value.toString() === value.toString());
-            return location ? location.label : `Location: ${value}`;
-          case 'eligibility':
-            return `Eligibility: ${value}`;
-          default:
-            return value;
-        }
-      }
-      
-      function removeFilter(key, value) {
-        if (key === 'eligibility') {
-          // Remove just one eligibility value
-          activeFilters.eligibility = activeFilters.eligibility.filter(v => v !== value);
-          if (activeFilters.eligibility.length === 0) {
-            delete activeFilters.eligibility;
           }
-          
-          // Uncheck the corresponding checkbox
-          const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-          if (checkbox) checkbox.checked = false;
-        } else {
-          // Remove the entire key
-          delete activeFilters[key];
-          
-          // Reset the corresponding form control
+        }
+
+        function getFilterLabel(key, value) {
+          // Return human-readable label for each filter type and value
           switch (key) {
             case 'search':
-              searchInput.value = '';
-              break;
+              return `Search: ${value}`;
             case 'deadline':
-              document.getElementById('deadline-all').checked = true;
-              break;
-            case 'amount_min':
-              document.getElementById('amount-min').value = '';
-              break;
-            case 'amount_max':
-              document.getElementById('amount-max').value = '';
-              break;
-            case 'category':
-              categorySelect.value = '';
-              break;
-            case 'location':
-              locationSelect.value = '';
-              break;
+              switch (value) {
+                case 'today':
+                  return 'Due Today';
+                case 'week':
+                  return 'Due This Week';
+                case 'month':
+                  return 'Due This Month';
+                case 'ongoing':
+                  return 'Ongoing';
+                default:
+                  return `Deadline: ${value}`;
+              }
+              case 'amount_min':
+                return `Min: $${value}`;
+              case 'amount_max':
+                return `Max: $${value}`;
+              case 'category':
+                // Find category label from value
+                const category = allCategories.find(c => c.value.toString() === value.toString());
+                return category ? category.label : `Category: ${value}`;
+              case 'location':
+                // Find location label from value
+                const location = allLocations.find(l => l.value.toString() === value.toString());
+                return location ? location.label : `Location: ${value}`;
+              case 'eligibility':
+                return `Eligibility: ${value}`;
+              default:
+                return value;
           }
         }
-        
-        // Update filters display
-        renderSelectedFilters();
-        
-        // Update filter button state
-        updateFilterButtonState();
-        
-        // Apply filters immediately
-        applyFilters();
-      }
-      
-      function updateFilterButtonState() {
-        const filterCount = Object.keys(activeFilters).length;
-        const countElement = filterButton.querySelector('.filter-count');
-        
-        if (filterCount > 0) {
-          filterButton.classList.add('has-active-filters');
-          countElement.textContent = filterCount;
-        } else {
-          filterButton.classList.remove('has-active-filters');
-          countElement.textContent = '0';
-        }
-      }
-      
-      function resetFilters() {
-        // Reset form inputs
-        filterForm.reset();
-        
-        // Clear active filters
-        activeFilters = {};
-        
-        // Update UI
-        renderSelectedFilters();
-        updateFilterButtonState();
-        
-        // Apply filters to reset to default state
-        applyFilters();
-        
-        // Clear URL hash
-        history.pushState("", document.title, window.location.pathname + window.location.search);
-      }
-      
-      function applyFilters() {
-  // Show loading state
-  showLoading(true);
-  hideError();
-  hideEmptyState();
-  
-  console.log('Applying filters...');
-  
-  // Get all form values for the filter
-  const searchValue = searchInput.value.trim();
-  const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-  
-  if (!deadlineRadio) {
-    showError('Please select a deadline option.');
-    showLoading(false);
-    return;
-  }
-  
-  const deadlineValue = deadlineRadio.value;
-  const amountMinValue = document.getElementById('amount-min').value;
-  const amountMaxValue = document.getElementById('amount-max').value;
-  const categoryValue = categorySelect.value;
-  const locationValue = locationSelect.value;
-  
-  // Get eligibility values
-  const eligibilityValues = Array.from(
-    document.querySelectorAll('input[name="eligibility[]"]:checked')
-  ).map(checkbox => checkbox.value);
-  
-  // Create form data
-  const formData = new FormData();
-  formData.append('action', 'filter_grants');
-  formData.append('security', grantsFilterNonce || '');
-  formData.append('search', searchValue || '');
-  formData.append('deadline', deadlineValue || 'all');
-  formData.append('amount_min', amountMinValue || '');
-  formData.append('amount_max', amountMaxValue || '');
-  formData.append('category', categoryValue || '');
-  formData.append('location', locationValue || '');
-  
-  // Add eligibility values
-  eligibilityValues.forEach(value => {
-    formData.append('eligibility[]', value);
-  });
-  
-  console.log('Filter data prepared:', {
-    search: searchValue,
-    deadline: deadlineValue,
-    amountMin: amountMinValue,
-    amountMax: amountMaxValue,
-    category: categoryValue,
-    location: locationValue,
-    eligibility: eligibilityValues,
-    nonce: (grantsFilterNonce || '').substring(0, 5) + '...' // Show first few chars of nonce for debugging
-  });
-  
-  // Get the correct AJAX URL
-  const ajaxUrl = ajaxurl;
-  console.log('Using AJAX URL:', ajaxUrl);
-  
-  // Make AJAX request
-  fetch(ajaxUrl, {
-    method: 'POST',
-    body: formData,
-    credentials: 'same-origin'
-  })
-  .then(function(response) {
-    console.log('Filter response status:', response.status);
-    if (!response.ok) {
-      console.error('Network error:', response.status, response.statusText);
-      return response.text().then(text => {
-        console.error('Error response body:', text);
-        throw new Error(`Network error: ${response.status} ${response.statusText}`);
-      });
-    }
-    return response.json();
-  })
-  .then(function(data) {
-    console.log('Filter response received:', data);
-    
-    if (data.success) {
-      // Update URL hash first
-      updateUrlHash();
-      
-      // Display filtered results
-      filterGrantCards(data.filtered_ids);
-      
-      // Update result count
-      updateResultCount(data.total);
-      
-      console.log(`Filtered to ${data.total} grants successfully`);
-    } else {
-      console.error('Filter request failed:', data.message);
-      showError('Failed to filter grants: ' + data.message);
-    }
-    showLoading(false);
-  })
-  .catch(function(error) {
-    console.error('Error applying filters:', error);
-    showError('Error applying filters: ' + error.message);
-    showLoading(false);
-  });
-}
-      
-      function filterGrantCards(filteredIds) {
-  console.log('Filtering grant cards with IDs:', filteredIds);
-  
-  // Make sure we have an array of integers
-  const numericFilteredIds = filteredIds.map(id => parseInt(id, 10));
-  
-  // Find the grants container first
-  if (!grantsContainer) {
-    grantsContainer = document.querySelector('.grants-container');
-    if (!grantsContainer) {
-      console.error('Grants container not found!');
-      showError('Could not find grants container');
-      return;
-    }
-  }
-  
-  // Hide all grant cards
-  const allCards = document.querySelectorAll('.g-card');
-  let visibleCount = 0;
-  
-  console.log(`Processing ${allCards.length} total grant cards`);
-  
-  if (allCards.length === 0) {
-    console.warn('No grant cards found on page!');
-  }
-  
-  allCards.forEach(card => {
-    const cardId = card.getAttribute('data-grant-id');
-    if (!cardId) {
-      console.warn('Found card without grant-id attribute', card);
-      return;
-    }
-    
-    const cardIdNum = parseInt(cardId, 10);
-    
-    if (numericFilteredIds.includes(cardIdNum)) {
-      card.style.display = '';
-      visibleCount++;
-    } else {
-      card.style.display = 'none';
-    }
-  });
-  
-  console.log(`Filtered to ${visibleCount} visible cards`);
-  
-  // Show empty state if no cards visible
-  if (visibleCount === 0) {
-    showEmptyState();
-    console.log('Showing empty state (no results)');
-  } else {
-    hideEmptyState();
-  }
-  
-  // Remove loading state from pagination if present
-  const pagination = document.querySelector('.g-pagination');
-  if (pagination) {
-    pagination.classList.remove('loading');
-  }
-  
-  // Scroll to top of grants container for better UX
-  if (grantsContainer) {
-    setTimeout(() => {
-      grantsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
-  }
-}
-      
-      function updateResultCount(count) {
-        // Update count in filter modal
-        if (count === 0) {
-          filterCount.textContent = 'No';
-        } else {
-          filterCount.textContent = count;
-        }
-      }
-      
-      function showLoading(isLoading) {
-        if (isLoading) {
-          filterLoading.classList.add('active');
-          
-          // Add loading state to grant container
-          if (grantsContainer) {
-            grantsContainer.classList.add('loading');
-            
-            // Add loading class to pagination if present
-            const pagination = document.querySelector('.g-pagination');
-            if (pagination) {
-              pagination.classList.add('loading');
+
+        function removeFilter(key, value) {
+          if (key === 'eligibility') {
+            // Remove just one eligibility value
+            activeFilters.eligibility = activeFilters.eligibility.filter(v => v !== value);
+            if (activeFilters.eligibility.length === 0) {
+              delete activeFilters.eligibility;
+            }
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+          } else {
+            // Remove the entire key
+            delete activeFilters[key];
+            // Reset the corresponding form control
+            switch (key) {
+              case 'search':
+                searchInput.value = '';
+                break;
+              case 'deadline':
+                document.getElementById('deadline-all').checked = true;
+                break;
+              case 'amount_min':
+                document.getElementById('amount-min').value = '';
+                break;
+              case 'amount_max':
+                document.getElementById('amount-max').value = '';
+                break;
+              case 'category':
+                categorySelect.value = '';
+                break;
+              case 'location':
+                locationSelect.value = '';
+                break;
             }
           }
-        } else {
-          filterLoading.classList.remove('active');
-          
-          // Remove loading state from grant container
-          if (grantsContainer) {
-            grantsContainer.classList.remove('loading');
+          // Update filters display
+          renderSelectedFilters();
+          // Update filter button state
+          updateFilterButtonState();
+          // Apply filters immediately
+          applyFilters();
+        }
+
+        function updateFilterButtonState() {
+          const filterCount = Object.keys(activeFilters).length;
+          const countElement = filterButton.querySelector('.filter-count');
+          if (filterCount > 0) {
+            filterButton.classList.add('has-active-filters');
+            countElement.textContent = filterCount;
+          } else {
+            filterButton.classList.remove('has-active-filters');
+            countElement.textContent = '0';
           }
         }
-      }
-      
-      function showError(message) {
-        filterError.classList.add('active');
-        filterError.querySelector('span').textContent = message;
-      }
-      
-      function hideError() {
-        filterError.classList.remove('active');
-      }
-      
-      function showEmptyState() {
-        filterEmpty.classList.add('active');
-      }
-      
-      function hideEmptyState() {
-        filterEmpty.classList.remove('active');
-      }
-      
-      function updateUrlHash() {
-  console.log('Updating URL hash with active filters:', activeFilters);
-  
-  // Create URL hash from active filters
-  if (Object.keys(activeFilters).length === 0) {
-    // Clear hash if no active filters
-    console.log('No active filters, clearing hash');
-    try {
-      history.pushState("", document.title, window.location.pathname + window.location.search);
-    } catch (e) {
-      console.error('Failed to update history:', e);
-      // Fallback for older browsers
-      window.location.hash = '';
-    }
-    return;
-  }
-  
-  // Create hash string
-  const hashParts = [];
-  
-  for (const [key, value] of Object.entries(activeFilters)) {
-    if (Array.isArray(value)) {
-      // Handle array values (eligibility)
-      value.forEach(val => {
-        if (val) { // Only add non-empty values
-          hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+
+        function resetFilters() {
+          // Reset form inputs
+          filterForm.reset();
+          // Clear active filters
+          activeFilters = {};
+          // Update UI
+          renderSelectedFilters();
+          updateFilterButtonState();
+          // Apply filters to reset to default state
+          applyFilters();
+          // Clear URL hash
+          history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+        /* --- Filter Application --- */
+        function filterGrantCards(filteredIds) {
+          console.log('Filtering grant cards with IDs:', filteredIds);
+          // Make sure we have an array of integers
+          const numericFilteredIds = filteredIds.map(id => parseInt(id, 10));
+          // Find the grants container first
+          if (!grantsContainer) {
+            grantsContainer = document.querySelector('.grants-container');
+            if (!grantsContainer) {
+              console.error('Grants container not found!');
+              showError('Could not find grants container');
+              return;
+            }
+          }
+          // Find all grant cards
+          const allCards = document.querySelectorAll('.g-card');
+          let visibleCount = 0;
+          console.log(`Processing ${allCards.length} total grant cards`);
+          if (allCards.length === 0) {
+            console.warn('No grant cards found on page!');
+          }
+          // Filter cards
+          allCards.forEach(card => {
+            const cardId = card.getAttribute('data-grant-id');
+            if (!cardId) {
+              console.warn('Found card without grant-id attribute', card);
+              return;
+            }
+            const cardIdNum = parseInt(cardId, 10);
+            if (numericFilteredIds.includes(cardIdNum)) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          console.log(`Filtered to ${visibleCount} visible cards`);
+          // Show empty state if no cards visible
+          if (visibleCount === 0) {
+            showEmptyState();
+            console.log('Showing empty state (no results)');
+          } else {
+            hideEmptyState();
+          }
+          // Remove loading state from pagination if present
+          const pagination = document.querySelector('.g-pagination');
+          if (pagination) {
+            pagination.classList.remove('loading');
+          }
+          // Scroll to top of grants container for better UX
+          if (grantsContainer) {
+            setTimeout(() => {
+              grantsContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }, 300);
+          }
+        }
+
+        function updateResultCount(count) {
+          // Update count in filter modal
+          if (count === 0) {
+            filterCount.textContent = 'No';
+          } else {
+            filterCount.textContent = count;
+          }
+        }
+        /* --- UI State Management --- */
+        function showLoading(isLoading) {
+          if (isLoading) {
+            filterLoading.classList.add('active');
+            // Add loading state to grant container
+            if (grantsContainer) {
+              grantsContainer.classList.add('loading');
+              // Add loading class to pagination if present
+              const pagination = document.querySelector('.g-pagination');
+              if (pagination) {
+                pagination.classList.add('loading');
+              }
+            }
+          } else {
+            filterLoading.classList.remove('active');
+            // Remove loading state from grant container
+            if (grantsContainer) {
+              grantsContainer.classList.remove('loading');
+            }
+          }
+        }
+
+        function showError(message) {
+          console.error('Filter error:', message);
+          filterError.classList.add('active');
+          filterError.querySelector('span').textContent = message;
+        }
+
+        function hideError() {
+          filterError.classList.remove('active');
+        }
+
+        function showEmptyState() {
+          filterEmpty.classList.add('active');
+        }
+
+        function hideEmptyState() {
+          filterEmpty.classList.remove('active');
+        }
+        /* --- URL & Hash Management --- */
+        function updateUrlHash() {
+          console.log('Updating URL hash with active filters:', activeFilters);
+          // Create URL hash from active filters
+          if (Object.keys(activeFilters).length === 0) {
+            // Clear hash if no active filters
+            console.log('No active filters, clearing hash');
+            try {
+              history.pushState("", document.title, window.location.pathname + window.location.search);
+            } catch (e) {
+              console.error('Failed to update history:', e);
+              // Fallback for older browsers
+              window.location.hash = '';
+            }
+            return;
+          }
+          // Create hash string
+          const hashParts = [];
+          for (const [key, value] of Object.entries(activeFilters)) {
+            if (Array.isArray(value)) {
+              // Handle array values (eligibility)
+              value.forEach(val => {
+                if (val) { // Only add non-empty values
+                  hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+                }
+              });
+            } else {
+              // Handle single values
+              if (value) { // Only add non-empty values
+                hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+              }
+            }
+          }
+          // Create the hash string
+          const hashString = hashParts.join('&');
+          console.log('New hash string:', hashString);
+          // Update URL hash
+          try {
+            // Use history API for better user experience (no page jump)
+            const newUrl = window.location.pathname + window.location.search + '#' + hashString;
+            history.pushState(activeFilters, document.title, newUrl);
+          } catch (e) {
+            console.error('Failed to update history, falling back to direct hash update:', e);
+            // Fallback for older browsers
+            window.location.hash = hashString;
+          }
+        }
+
+        function parseUrlHash() {
+          // Get hash without the # symbol
+          const hash = window.location.hash.substring(1);
+          console.log('Parsing URL hash:', hash);
+          if (!hash) {
+            console.log('No hash found in URL');
+            return;
+          }
+          // Split into key-value pairs
+          const hashParts = hash.split('&');
+          let tempFilters = {};
+          hashParts.forEach(part => {
+            const [key, value] = part.split('=');
+            if (key && value) {
+              try {
+                const decodedKey = decodeURIComponent(key);
+                const decodedValue = decodeURIComponent(value);
+                console.log(`Parsed hash parameter: ${decodedKey} = ${decodedValue}`);
+                // Handle eligibility (array values)
+                if (decodedKey === 'eligibility') {
+                  if (!tempFilters.eligibility) {
+                    tempFilters.eligibility = [];
+                  }
+                  tempFilters.eligibility.push(decodedValue);
+                } else {
+                  tempFilters[decodedKey] = decodedValue;
+                }
+              } catch (e) {
+                console.error('Error decoding URL parameter:', e);
+              }
+            }
+          });
+          console.log('Parsed filters from URL:', tempFilters);
+          // Update active filters
+          activeFilters = tempFilters;
+          // We'll restore form values after option loading is complete
+          // The actual restoration happens in renderXXXOptions functions
+        }
+
+        function restoreFormValues() {
+          // Check if we have active filters from URL
+          if (Object.keys(activeFilters).length === 0) return;
+          console.log('Restoring form values from URL hash...');
+          // Restore search value
+          if (activeFilters.search) {
+            searchInput.value = activeFilters.search;
+          }
+          // Restore deadline selection
+          if (activeFilters.deadline) {
+            const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
+            if (deadlineRadio) deadlineRadio.checked = true;
+          }
+          // Restore amount values
+          if (activeFilters.amount_min) {
+            document.getElementById('amount-min').value = activeFilters.amount_min;
+          }
+          if (activeFilters.amount_max) {
+            document.getElementById('amount-max').value = activeFilters.amount_max;
+          }
+          // Restore category selection
+          if (activeFilters.category && categorySelect.options.length > 1) {
+            categorySelect.value = activeFilters.category;
+          }
+          // Restore location selection
+          if (activeFilters.location && locationSelect.options.length > 1) {
+            locationSelect.value = activeFilters.location;
+          }
+          // Restore eligibility checkboxes
+          if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
+            activeFilters.eligibility.forEach(value => {
+              const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
+              if (checkbox) checkbox.checked = true;
+            });
+          }
+          // Update UI to reflect restored filters
+          renderSelectedFilters();
+          updateFilterButtonState();
+          // Apply the filters
+          setTimeout(function() {
+            console.log('Applying filters from URL hash');
+            applyFilters();
+          }, 300);
         }
       });
-    } else {
-      // Handle single values
-      if (value) { // Only add non-empty values
-        hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    </script>
+
+    <!-- Add CSS for loading state -->
+    <style>
+      .grants-container.loading {
+        position: relative;
+        min-height: 300px;
       }
-    }
-  }
-  
-  // Create the hash string
-  const hashString = hashParts.join('&');
-  console.log('New hash string:', hashString);
-  
-  // Update URL hash
-  try {
-    // Use history API for better user experience (no page jump)
-    const newUrl = window.location.pathname + window.location.search + '#' + hashString;
-    history.pushState(activeFilters, document.title, newUrl);
-  } catch (e) {
-    console.error('Failed to update history, falling back to direct hash update:', e);
-    // Fallback for older browsers
-    window.location.hash = hashString;
-  }
-}
-      
-      function parseUrlHash() {
-  // Get hash without the # symbol
-  const hash = window.location.hash.substring(1);
-  
-  console.log('Parsing URL hash:', hash);
-  
-  if (!hash) {
-    console.log('No hash found in URL');
-    return;
-  }
-  
-  // Split into key-value pairs
-  const hashParts = hash.split('&');
-  let tempFilters = {};
-  
-  hashParts.forEach(part => {
-    const [key, value] = part.split('=');
-    
-    if (key && value) {
-      try {
-        const decodedKey = decodeURIComponent(key);
-        const decodedValue = decodeURIComponent(value);
-        
-        console.log(`Parsed hash parameter: ${decodedKey} = ${decodedValue}`);
-        
-        // Handle eligibility (array values)
-        if (decodedKey === 'eligibility') {
-          if (!tempFilters.eligibility) {
-            tempFilters.eligibility = [];
-          }
-          tempFilters.eligibility.push(decodedValue);
-        } else {
-          tempFilters[decodedKey] = decodedValue;
-        }
-      } catch (e) {
-        console.error('Error decoding URL parameter:', e);
+
+      .grants-container.loading::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 10;
       }
-    }
-  });
-  
-  console.log('Parsed filters from URL:', tempFilters);
-  
-  // Update active filters
-  activeFilters = tempFilters;
-  
-  // We'll restore form values after option loading is complete
-  // The actual restoration happens in renderXXXOptions functions
-}
-      
-      function restoreFormValues() {
-        // Check if we have active filters from URL
-        if (Object.keys(activeFilters).length === 0) return;
-        
-        // Restore search value
-        if (activeFilters.search) {
-          searchInput.value = activeFilters.search;
-        }
-        
-        // Restore deadline selection
-        if (activeFilters.deadline) {
-          const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
-          if (deadlineRadio) deadlineRadio.checked = true;
-        }
-        
-        // Restore amount values
-        if (activeFilters.amount_min) {
-          document.getElementById('amount-min').value = activeFilters.amount_min;
-        }
-        
-        if (activeFilters.amount_max) {
-          document.getElementById('amount-max').value = activeFilters.amount_max;
-        }
-        
-        // Restore category selection
-        if (activeFilters.category && categorySelect.options.length > 1) {
-          categorySelect.value = activeFilters.category;
-        }
-        
-        // Restore location selection
-        if (activeFilters.location && locationSelect.options.length > 1) {
-          locationSelect.value = activeFilters.location;
-        }
-        
-        // Restore eligibility checkboxes
-        if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
-          activeFilters.eligibility.forEach(value => {
-            const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-            if (checkbox) checkbox.checked = true;
-          });
-        }
-        
-        // Update UI to reflect restored filters
-        renderSelectedFilters();
-        updateFilterButtonState();
-        
-        // Apply the filters
-        applyFilters();
+
+      .grants-container.loading::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(90, 59, 140, 0.2);
+        border-top-color: var(--grantaura-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 11;
       }
-      
-      // Add CSS for loading state
-      const style = document.createElement('style');
-      style.textContent = `
-        .grants-container.loading {
-          position: relative;
-          min-height: 300px;
+
+      .g-pagination.loading {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      @keyframes spin {
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
         }
-        
-        .grants-container.loading::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(255, 255, 255, 0.8);
-          z-index: 10;
-        }
-        
-        .grants-container.loading::before {
-          content: "";
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 50px;
-          height: 50px;
-          border: 4px solid rgba(90, 59, 140, 0.2);
-          border-top-color: var(--grantaura-primary);
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          z-index: 11;
-        }
-        
-        .g-pagination.loading {
-          opacity: 0.5;
-          pointer-events: none;
-        }
-        
-        @keyframes spin {
-          to {
-            transform: translate(-50%, -50%) rotate(360deg);
-          }
-        }
-      `;
-      document.head.appendChild(style);
-    });
-  </script>
+      }
+    </style>
 </section>
