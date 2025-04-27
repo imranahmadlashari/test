@@ -1643,48 +1643,66 @@ if (typeof grantsFilterNonce === 'undefined') {
 }
       
       function renderCategoryOptions(categories) {
-        if (!Array.isArray(categories) || categories.length === 0) {
-          categorySelect.innerHTML = '<option value="">No categories available</option>';
-          return;
-        }
-        
-        // Sort categories alphabetically
-        categories.sort((a, b) => a.label.localeCompare(b.label));
-        
-        // Create options HTML
-        let html = '<option value="">All Categories</option>';
-        categories.forEach(function(category) {
-          html += `<option value="${category.value}">${category.label}</option>`;
-        });
-        
-        // Update select element
-        categorySelect.innerHTML = html;
-        
-        // Restore any selected value from URL
-        restoreFormValues();
-      }
+  console.log('Rendering category options:', categories);
+  
+  // Clear loading state
+  categorySelect.innerHTML = '<option value="">All Categories</option>';
+  
+  if (!Array.isArray(categories) || categories.length === 0) {
+    console.warn('No category options received or invalid data format');
+    return;
+  }
+  
+  // Sort categories alphabetically
+  categories.sort((a, b) => a.label.localeCompare(b.label));
+  
+  // Create options HTML
+  let html = '<option value="">All Categories</option>';
+  categories.forEach(function(category) {
+    if (category && category.value && category.label) {
+      html += `<option value="${category.value}">${category.label}</option>`;
+    }
+  });
+  
+  // Update select element
+  categorySelect.innerHTML = html;
+  
+  console.log('Category options rendered successfully:', categories.length);
+  
+  // Restore any selected value from URL
+  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+}
       
       function renderLocationOptions(locations) {
-        if (!Array.isArray(locations) || locations.length === 0) {
-          locationSelect.innerHTML = '<option value="">No locations available</option>';
-          return;
-        }
-        
-        // Sort locations alphabetically
-        locations.sort((a, b) => a.label.localeCompare(b.label));
-        
-        // Create options HTML
-        let html = '<option value="">All Locations</option>';
-        locations.forEach(function(location) {
-          html += `<option value="${location.value}">${location.label}</option>`;
-        });
-        
-        // Update select element
-        locationSelect.innerHTML = html;
-        
-        // Restore any selected value from URL
-        restoreFormValues();
-      }
+  console.log('Rendering location options:', locations);
+  
+  // Clear loading state
+  locationSelect.innerHTML = '<option value="">All Locations</option>';
+  
+  if (!Array.isArray(locations) || locations.length === 0) {
+    console.warn('No location options received or invalid data format');
+    return;
+  }
+  
+  // Sort locations alphabetically
+  locations.sort((a, b) => a.label.localeCompare(b.label));
+  
+  // Create options HTML
+  let html = '<option value="">All Locations</option>';
+  locations.forEach(function(location) {
+    if (location && location.value && location.label) {
+      html += `<option value="${location.value}">${location.label}</option>`;
+    }
+  });
+  
+  // Update select element
+  locationSelect.innerHTML = html;
+  
+  console.log('Location options rendered successfully:', locations.length);
+  
+  // Restore any selected value from URL
+  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+}
       
       function updateSelectedFilters() {
         // Get all form values
