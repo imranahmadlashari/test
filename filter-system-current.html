@@ -1004,7 +1004,6 @@
   
   <!-- PHP function for AJAX handling -->
   [php]
-  [php]
 // Register AJAX handlers
 function register_filter_ajax_handlers() {
   add_action('wp_ajax_filter_grants', 'filter_grants_ajax_handler');
@@ -1016,318 +1015,318 @@ function register_filter_ajax_handlers() {
 // Use 'init' hook which is more reliable for AJAX registration
 add_action('init', 'register_filter_ajax_handlers');
   
-  /**
-   * Load filter options (eligibility, categories, locations)
-   */
-  function load_filter_options_ajax_handler() {
-    // Security check
-    check_ajax_referer('grants_filter_nonce', 'security');
+/**
+ * Load filter options (eligibility, categories, locations)
+ */
+function load_filter_options_ajax_handler() {
+  // Security check
+  check_ajax_referer('grants_filter_nonce', 'security');
+  
+  $option_type = isset($_POST['option_type']) ? sanitize_text_field($_POST['option_type']) : '';
+  $response = array(
+    'success' => false,
+    'data' => array(),
+    'message' => 'Invalid option type'
+  );
+  
+  // Handle different option types
+  if ($option_type === 'eligibility') {
+    // Get eligibility options from all published grants
+    $option_values = array();
     
-    $option_type = isset($_POST['option_type']) ? sanitize_text_field($_POST['option_type']) : '';
-    $response = array(
-      'success' => false,
-      'data' => array(),
-      'message' => 'Invalid option type'
+    // Get all grants
+    $args = array(
+      'post_type' => 'at_biz_dir',
+      'posts_per_page' => -1,
+      'post_status' => 'publish',
+      'fields' => 'ids'
     );
     
-    // Handle different option types
-    if ($option_type === 'eligibility') {
-      // Get eligibility options from all published grants
-      $option_values = array();
-      
-      // Get all grants
-      $args = array(
-        'post_type' => 'at_biz_dir',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'fields' => 'ids'
-      );
-      
-      $grants_query = new WP_Query($args);
-      $grant_ids = $grants_query->posts;
-      
-      if (!empty($grant_ids)) {
-        // Go through each grant and collect eligibility options
-        foreach ($grant_ids as $post_id) {
-          $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
-          
-          // Handle serialized arrays
-          if (!empty($eligible_entities) && !is_array($eligible_entities)) {
-            $eligible_entities = maybe_unserialize($eligible_entities);
-          }
-          
-          if (is_array($eligible_entities) && !empty($eligible_entities)) {
-            foreach ($eligible_entities as $entity) {
-              // Add to our collection if not already there
-              if (!in_array($entity, $option_values)) {
-                $option_values[] = $entity;
-              }
+    $grants_query = new WP_Query($args);
+    $grant_ids = $grants_query->posts;
+    
+    if (!empty($grant_ids)) {
+      // Go through each grant and collect eligibility options
+      foreach ($grant_ids as $post_id) {
+        $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
+        
+        // Handle serialized arrays
+        if (!empty($eligible_entities) && !is_array($eligible_entities)) {
+          $eligible_entities = maybe_unserialize($eligible_entities);
+        }
+        
+        if (is_array($eligible_entities) && !empty($eligible_entities)) {
+          foreach ($eligible_entities as $entity) {
+            // Add to our collection if not already there
+            if (!in_array($entity, $option_values)) {
+              $option_values[] = $entity;
             }
           }
         }
-        
-        // Sort options alphabetically
-        sort($option_values);
-        
-        // Format for response
-        $formatted_options = array();
-        foreach ($option_values as $value) {
-          $formatted_options[] = array(
-            'value' => $value,
-            'label' => $value
-          );
-        }
-        
-        $response = array(
-          'success' => true,
-          'data' => $formatted_options,
-          'message' => 'Eligibility options loaded successfully'
-        );
-      } else {
-        $response['message'] = 'No grants found to extract eligibility options';
       }
-    } 
-    elseif ($option_type === 'categories') {
-      // Get all categories for the grant directory
-      $categories = get_terms(array(
-        'taxonomy' => 'at_biz_dir-category',
-        'hide_empty' => true,
-      ));
       
-      if (!is_wp_error($categories) && !empty($categories)) {
-        $formatted_categories = array();
-        foreach ($categories as $category) {
-          $formatted_categories[] = array(
-            'value' => $category->term_id,
-            'label' => $category->name
-          );
-        }
-        
-        $response = array(
-          'success' => true,
-          'data' => $formatted_categories,
-          'message' => 'Categories loaded successfully'
-        );
-      } else {
-        $response['message'] = 'No categories found';
-      }
-    }
-    elseif ($option_type === 'locations') {
-      // Get all locations for the grant directory
-      $locations = get_terms(array(
-        'taxonomy' => 'at_biz_dir-location',
-        'hide_empty' => true,
-      ));
+      // Sort options alphabetically
+      sort($option_values);
       
-      if (!is_wp_error($locations) && !empty($locations)) {
-        $formatted_locations = array();
-        foreach ($locations as $location) {
-          $formatted_locations[] = array(
-            'value' => $location->term_id,
-            'label' => $location->name
-          );
-        }
-        
-        $response = array(
-          'success' => true,
-          'data' => $formatted_locations,
-          'message' => 'Locations loaded successfully'
+      // Format for response
+      $formatted_options = array();
+      foreach ($option_values as $value) {
+        $formatted_options[] = array(
+          'value' => $value,
+          'label' => $value
         );
-      } else {
-        $response['message'] = 'No locations found';
       }
+      
+      $response = array(
+        'success' => true,
+        'data' => $formatted_options,
+        'message' => 'Eligibility options loaded successfully'
+      );
+    } else {
+      $response['message'] = 'No grants found to extract eligibility options';
     }
+  } 
+  elseif ($option_type === 'categories') {
+    // Get all categories for the grant directory
+    $categories = get_terms(array(
+      'taxonomy' => 'at_biz_dir-category',
+      'hide_empty' => true,
+    ));
     
-    // Send JSON response
-    wp_send_json($response);
+    if (!is_wp_error($categories) && !empty($categories)) {
+      $formatted_categories = array();
+      foreach ($categories as $category) {
+        $formatted_categories[] = array(
+          'value' => $category->term_id,
+          'label' => $category->name
+        );
+      }
+      
+      $response = array(
+        'success' => true,
+        'data' => $formatted_categories,
+        'message' => 'Categories loaded successfully'
+      );
+    } else {
+      $response['message'] = 'No categories found';
+    }
+  }
+  elseif ($option_type === 'locations') {
+    // Get all locations for the grant directory
+    $locations = get_terms(array(
+      'taxonomy' => 'at_biz_dir-location',
+      'hide_empty' => true,
+    ));
+    
+    if (!is_wp_error($locations) && !empty($locations)) {
+      $formatted_locations = array();
+      foreach ($locations as $location) {
+        $formatted_locations[] = array(
+          'value' => $location->term_id,
+          'label' => $location->name
+        );
+      }
+      
+      $response = array(
+        'success' => true,
+        'data' => $formatted_locations,
+        'message' => 'Locations loaded successfully'
+      );
+    } else {
+      $response['message'] = 'No locations found';
+    }
   }
   
-  /**
-   * Filter grants based on selected criteria
-   */
-  function filter_grants_ajax_handler() {
-    // Security check
-    check_ajax_referer('grants_filter_nonce', 'security');
+  // Send JSON response
+  wp_send_json($response);
+}
+
+/**
+ * Filter grants based on selected criteria
+ */
+function filter_grants_ajax_handler() {
+  // Security check
+  check_ajax_referer('grants_filter_nonce', 'security');
+  
+  // Extract filter parameters from request
+  $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+  $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
+  $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
+  $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
+  $category = isset($_POST['category']) ? intval($_POST['category']) : 0;
+  $location = isset($_POST['location']) ? intval($_POST['location']) : 0;
+  $eligibility = isset($_POST['eligibility']) ? array_map('sanitize_text_field', $_POST['eligibility']) : array();
+  
+  // Build meta query array
+  $meta_query = array('relation' => 'AND');
+  $tax_query = array('relation' => 'AND');
+  
+  // Category filter
+  if (!empty($category)) {
+    $tax_query[] = array(
+      'taxonomy' => 'at_biz_dir-category',
+      'field' => 'term_id',
+      'terms' => $category
+    );
+  }
+  
+  // Location filter
+  if (!empty($location)) {
+    $tax_query[] = array(
+      'taxonomy' => 'at_biz_dir-location',
+      'field' => 'term_id',
+      'terms' => $location
+    );
+  }
+  
+  // Deadline filter
+  if ($deadline != 'all') {
+    $today = date('Y-m-d');
     
-    // Extract filter parameters from request
-    $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-    $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
-    $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
-    $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
-    $category = isset($_POST['category']) ? intval($_POST['category']) : 0;
-    $location = isset($_POST['location']) ? intval($_POST['location']) : 0;
-    $eligibility = isset($_POST['eligibility']) ? array_map('sanitize_text_field', $_POST['eligibility']) : array();
-    
-    // Build meta query array
-    $meta_query = array('relation' => 'AND');
-    $tax_query = array('relation' => 'AND');
-    
-    // Category filter
-    if (!empty($category)) {
-      $tax_query[] = array(
-        'taxonomy' => 'at_biz_dir-category',
-        'field' => 'term_id',
-        'terms' => $category
+    if ($deadline == 'today') {
+      // Due today
+      $meta_query[] = array(
+        'key' => '_custom-date',
+        'value' => $today,
+        'compare' => '=',
+        'type' => 'DATE'
+      );
+    } 
+    elseif ($deadline == 'week') {
+      // Due this week (next 7 days)
+      $one_week_later = date('Y-m-d', strtotime('+7 days'));
+      $meta_query[] = array(
+        'key' => '_custom-date',
+        'value' => array($today, $one_week_later),
+        'compare' => 'BETWEEN',
+        'type' => 'DATE'
       );
     }
-    
-    // Location filter
-    if (!empty($location)) {
-      $tax_query[] = array(
-        'taxonomy' => 'at_biz_dir-location',
-        'field' => 'term_id',
-        'terms' => $location
+    elseif ($deadline == 'month') {
+      // Due this month (next 30 days)
+      $one_month_later = date('Y-m-d', strtotime('+30 days'));
+      $meta_query[] = array(
+        'key' => '_custom-date',
+        'value' => array($today, $one_month_later),
+        'compare' => 'BETWEEN',
+        'type' => 'DATE'
       );
     }
-    
-    // Deadline filter
-    if ($deadline != 'all') {
-      $today = date('Y-m-d');
-      
-      if ($deadline == 'today') {
-        // Due today
-        $meta_query[] = array(
-          'key' => '_custom-date',
-          'value' => $today,
-          'compare' => '=',
-          'type' => 'DATE'
-        );
-      } 
-      elseif ($deadline == 'week') {
-        // Due this week (next 7 days)
-        $one_week_later = date('Y-m-d', strtotime('+7 days'));
-        $meta_query[] = array(
-          'key' => '_custom-date',
-          'value' => array($today, $one_week_later),
-          'compare' => 'BETWEEN',
-          'type' => 'DATE'
-        );
-      }
-      elseif ($deadline == 'month') {
-        // Due this month (next 30 days)
-        $one_month_later = date('Y-m-d', strtotime('+30 days'));
-        $meta_query[] = array(
-          'key' => '_custom-date',
-          'value' => array($today, $one_month_later),
-          'compare' => 'BETWEEN',
-          'type' => 'DATE'
-        );
-      }
-      elseif ($deadline == 'ongoing') {
-        // Ongoing (no deadline date)
-        $meta_query[] = array(
-          'relation' => 'OR',
-          array(
-            'key' => '_custom-date',
-            'value' => '',
-            'compare' => '='
-          ),
-          array(
-            'key' => '_custom-date',
-            'compare' => 'NOT EXISTS'
-          )
-        );
-      }
-    } else {
-      // For "all" deadline, still ensure we don't show expired grants
-      $today = date('Y-m-d');
+    elseif ($deadline == 'ongoing') {
+      // Ongoing (no deadline date)
       $meta_query[] = array(
         'relation' => 'OR',
-        // Has deadline in the future
         array(
           'key' => '_custom-date',
-          'value' => $today,
-          'compare' => '>=',
-          'type' => 'DATE'
+          'value' => '',
+          'compare' => '='
         ),
-        // Or is ongoing (no deadline)
         array(
-          'relation' => 'OR',
-          array(
-            'key' => '_custom-date',
-            'value' => '',
-            'compare' => '='
-          ),
-          array(
-            'key' => '_custom-date',
-            'compare' => 'NOT EXISTS'
-          )
+          'key' => '_custom-date',
+          'compare' => 'NOT EXISTS'
         )
       );
     }
-    
-    // Amount filter
-    if ($amount_min > 0) {
-      $meta_query[] = array(
-        'key' => '_price',
-        'value' => $amount_min,
+  } else {
+    // For "all" deadline, still ensure we don't show expired grants
+    $today = date('Y-m-d');
+    $meta_query[] = array(
+      'relation' => 'OR',
+      // Has deadline in the future
+      array(
+        'key' => '_custom-date',
+        'value' => $today,
         'compare' => '>=',
-        'type' => 'NUMERIC'
-      );
-    }
-    
-    if ($amount_max > 0) {
-      $meta_query[] = array(
-        'key' => '_price',
-        'value' => $amount_max,
-        'compare' => '<=',
-        'type' => 'NUMERIC'
-      );
-    }
-    
-    // Eligibility filter - requires special handling as it's an array
-    if (!empty($eligibility)) {
-      $eligibility_query = array('relation' => 'OR');
-      
-      foreach ($eligibility as $entity) {
-        // Use regex operator to find values that contain this entity in serialized array
-        // This handles both single value and array meta storage
-        $eligibility_query[] = array(
-          'key' => 'custom-checkbox',
-          'value' => $entity,
-          'compare' => 'LIKE'
-        );
-      }
-      
-      $meta_query[] = $eligibility_query;
-    }
-    
-    // Build the final query
-    $args = array(
-      'post_type' => 'at_biz_dir',
-      'posts_per_page' => -1, // Get all posts for processing
-      'post_status' => 'publish',
-      'meta_query' => $meta_query,
-      'tax_query' => $tax_query,
-      's' => $search,
-      'orderby' => 'meta_value',
-      'meta_key' => '_featured', // Sort by featured status first
-      'order' => 'DESC'
+        'type' => 'DATE'
+      ),
+      // Or is ongoing (no deadline)
+      array(
+        'relation' => 'OR',
+        array(
+          'key' => '_custom-date',
+          'value' => '',
+          'compare' => '='
+        ),
+        array(
+          'key' => '_custom-date',
+          'compare' => 'NOT EXISTS'
+        )
+      )
     );
-    
-    // Run the query
-    $filtered_query = new WP_Query($args);
-    
-    // Get post IDs from the query
-    $filtered_ids = array();
-    if ($filtered_query->have_posts()) {
-      while ($filtered_query->have_posts()) {
-        $filtered_query->the_post();
-        $filtered_ids[] = get_the_ID();
-      }
-      wp_reset_postdata();
-    }
-    
-    // Return the filtered post IDs
-    wp_send_json(array(
-      'success' => true,
-      'filtered_ids' => $filtered_ids,
-      'total' => count($filtered_ids),
-      'message' => 'Grants filtered successfully'
-    ));
   }
   
-  // Generate a nonce for AJAX requests and properly define ajaxurl
+  // Amount filter
+  if ($amount_min > 0) {
+    $meta_query[] = array(
+      'key' => '_price',
+      'value' => $amount_min,
+      'compare' => '>=',
+      'type' => 'NUMERIC'
+    );
+  }
+  
+  if ($amount_max > 0) {
+    $meta_query[] = array(
+      'key' => '_price',
+      'value' => $amount_max,
+      'compare' => '<=',
+      'type' => 'NUMERIC'
+    );
+  }
+  
+  // Eligibility filter - requires special handling as it's an array
+  if (!empty($eligibility)) {
+    $eligibility_query = array('relation' => 'OR');
+    
+    foreach ($eligibility as $entity) {
+      // Use regex operator to find values that contain this entity in serialized array
+      // This handles both single value and array meta storage
+      $eligibility_query[] = array(
+        'key' => 'custom-checkbox',
+        'value' => $entity,
+        'compare' => 'LIKE'
+      );
+    }
+    
+    $meta_query[] = $eligibility_query;
+  }
+  
+  // Build the final query
+  $args = array(
+    'post_type' => 'at_biz_dir',
+    'posts_per_page' => -1, // Get all posts for processing
+    'post_status' => 'publish',
+    'meta_query' => $meta_query,
+    'tax_query' => $tax_query,
+    's' => $search,
+    'orderby' => 'meta_value',
+    'meta_key' => '_featured', // Sort by featured status first
+    'order' => 'DESC'
+  );
+  
+  // Run the query
+  $filtered_query = new WP_Query($args);
+  
+  // Get post IDs from the query
+  $filtered_ids = array();
+  if ($filtered_query->have_posts()) {
+    while ($filtered_query->have_posts()) {
+      $filtered_query->the_post();
+      $filtered_ids[] = get_the_ID();
+    }
+    wp_reset_postdata();
+  }
+  
+  // Return the filtered post IDs
+  wp_send_json(array(
+    'success' => true,
+    'filtered_ids' => $filtered_ids,
+    'total' => count($filtered_ids),
+    'message' => 'Grants filtered successfully'
+  ));
+}
+
+// Generate a nonce for AJAX requests and properly define ajaxurl
 $ajax_nonce = wp_create_nonce('grants_filter_nonce');
 // Output nonce and AJAX URL with proper escaping for security
 echo '<script>
