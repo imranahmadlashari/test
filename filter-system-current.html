@@ -1005,14 +1005,16 @@
   <!-- PHP function for AJAX handling -->
   [php]
   // Register AJAX handlers
-  function register_filter_ajax_handlers() {
-    add_action('wp_ajax_filter_grants', 'filter_grants_ajax_handler');
-    add_action('wp_ajax_nopriv_filter_grants', 'filter_grants_ajax_handler');
-    
-    add_action('wp_ajax_load_filter_options', 'load_filter_options_ajax_handler');
-    add_action('wp_ajax_nopriv_load_filter_options', 'load_filter_options_ajax_handler');
-  }
-  add_action('init', 'register_filter_ajax_handlers');
+  // Register AJAX handlers
+function register_filter_ajax_handlers() {
+  add_action('wp_ajax_filter_grants', 'filter_grants_ajax_handler');
+  add_action('wp_ajax_nopriv_filter_grants', 'filter_grants_ajax_handler');
+  
+  add_action('wp_ajax_load_filter_options', 'load_filter_options_ajax_handler');
+  add_action('wp_ajax_nopriv_load_filter_options', 'load_filter_options_ajax_handler');
+}
+// Use 'wp_loaded' hook instead of 'init' for more reliability
+add_action('wp_loaded', 'register_filter_ajax_handlers');
   
   /**
    * Load filter options (eligibility, categories, locations)
@@ -1331,7 +1333,21 @@ echo '<script>
 var grantsFilterNonce = "' . $ajax_nonce . '";
 var ajaxurl = "' . esc_url(admin_url('admin-ajax.php')) . '";
 </script>';
-  [/php]
+[/php]
+
+<!-- Add this right after the PHP block -->
+<script>
+// Ensure ajaxurl is defined with fallback
+if (typeof ajaxurl === 'undefined') {
+  var ajaxurl = '/wp-admin/admin-ajax.php';
+}
+// Ensure nonce is defined with fallback
+if (typeof grantsFilterNonce === 'undefined') {
+  // This is just a placeholder - the real nonce will be set by the PHP above
+  var grantsFilterNonce = '';
+  console.warn('Grants filter nonce not defined by server - AJAX requests may fail');
+}
+</script>
   
   <!-- JavaScript for Filter Functionality -->
   <script>
@@ -1535,57 +1551,96 @@ var ajaxurl = "' . esc_url(admin_url('admin-ajax.php')) . '";
       }
       
       function fetchFilterOptions(optionType) {
-        // Create form data
-        const formData = new FormData();
-        formData.append('action', 'load_filter_options');
-        formData.append('security', grantsFilterNonce);
-        formData.append('option_type', optionType);
-        
-        // Make AJAX request
-        return fetch(ajaxurl, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        })
-        .then(function(response) {
-          if (!response.ok) {
-            throw new Error('Network error');
-          }
-          return response.json();
-        });
-      }
+  // Show loading state in the UI
+  const container = document.getElementById(optionType === 'eligibility' ? 'eligibility-options' : 
+                                            optionType === 'categories' ? 'categories-wrapper' : 
+                                            optionType === 'locations' ? 'locations-wrapper' : null);
+  
+  if (container) {
+    if (optionType === 'eligibility') {
+      container.innerHTML = `
+        <div class="filter-loading active">
+          <div class="filter-loading-spinner"></div>
+          <span>Loading ${optionType} options...</span>
+        </div>
+      `;
+    }
+  }
+  
+  // Create form data
+  const formData = new FormData();
+  formData.append('action', 'load_filter_options');
+  formData.append('security', grantsFilterNonce);
+  formData.append('option_type', optionType);
+  
+  // Log request for debugging
+  console.log(`Fetching ${optionType} options...`);
+  
+  // Make AJAX request with better error handling
+  const ajaxUrl = (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php';
+  
+  return fetch(ajaxUrl, {
+    method: 'POST',
+    body: formData,
+    credentials: 'same-origin'
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      console.error(`Network error when fetching ${optionType}:`, response.status, response.statusText);
+      throw new Error(`Network error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  })
+  .then(function(data) {
+    console.log(`${optionType} data received:`, data);
+    return data;
+  })
+  .catch(function(error) {
+    console.error(`Error fetching ${optionType} options:`, error);
+    showError(`Failed to load ${optionType} options. Please refresh the page or try again later.`);
+    throw error;
+  });
+}
       
       function renderEligibilityOptions(options) {
-        if (!Array.isArray(options) || options.length === 0) {
-          eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
-          return;
-        }
-        
-        // Sort options alphabetically
-        options.sort((a, b) => a.label.localeCompare(b.label));
-        
-        let html = '';
-        options.forEach(function(option) {
-          html += `
-            <div class="eligibility-option">
-              <input type="checkbox" id="eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}" 
-                name="eligibility[]" value="${option.value}">
-              <label for="eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}">${option.label}</label>
-            </div>
-          `;
-        });
-        
-        eligibilityContainer.innerHTML = html;
-        
-        // Add change event listeners
-        const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          checkbox.addEventListener('change', updateSelectedFilters);
-        });
-        
-        // Restore any selected values from URL
-        restoreFormValues();
-      }
+  console.log('Rendering eligibility options:', options);
+  
+  // Clear loading state
+  eligibilityContainer.innerHTML = '';
+  
+  if (!Array.isArray(options) || options.length === 0) {
+    eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
+    return;
+  }
+  
+  // Sort options alphabetically
+  options.sort((a, b) => a.label.localeCompare(b.label));
+  
+  let html = '';
+  options.forEach(function(option) {
+    const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+    html += `
+      <div class="eligibility-option">
+        <input type="checkbox" id="${safeId}" 
+          name="eligibility[]" value="${option.value}">
+        <label for="${safeId}">${option.label}</label>
+      </div>
+    `;
+  });
+  
+  eligibilityContainer.innerHTML = html;
+  
+  // Add change event listeners
+  const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedFilters);
+  });
+  
+  console.log('Eligibility options rendered successfully');
+  
+  // Restore any selected values from URL
+  setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+}
       
       function renderCategoryOptions(categories) {
         if (!Array.isArray(categories) || categories.length === 0) {
@@ -1852,101 +1907,151 @@ var ajaxurl = "' . esc_url(admin_url('admin-ajax.php')) . '";
       }
       
       function applyFilters() {
-        // Show loading state
-        showLoading(true);
-        hideError();
-        hideEmptyState();
-        
-        // Get all form values for the filter
-        const searchValue = searchInput.value.trim();
-        const deadlineValue = document.querySelector('input[name="deadline"]:checked').value;
-        const amountMinValue = document.getElementById('amount-min').value;
-        const amountMaxValue = document.getElementById('amount-max').value;
-        const categoryValue = categorySelect.value;
-        const locationValue = locationSelect.value;
-        
-        // Get eligibility values
-        const eligibilityValues = Array.from(
-          document.querySelectorAll('input[name="eligibility[]"]:checked')
-        ).map(checkbox => checkbox.value);
-        
-        // Create form data
-        const formData = new FormData();
-        formData.append('action', 'filter_grants');
-        formData.append('security', grantsFilterNonce);
-        formData.append('search', searchValue);
-        formData.append('deadline', deadlineValue);
-        formData.append('amount_min', amountMinValue);
-        formData.append('amount_max', amountMaxValue);
-        formData.append('category', categoryValue);
-        formData.append('location', locationValue);
-        
-        // Add eligibility values
-        eligibilityValues.forEach(value => {
-          formData.append('eligibility[]', value);
-        });
-        
-        // Make AJAX request
-        fetch(ajaxurl, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        })
-        .then(function(response) {
-          if (!response.ok) {
-            throw new Error('Network error');
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          if (data.success) {
-            // Update URL hash
-            updateUrlHash();
-            
-            // Display filtered results
-            filterGrantCards(data.filtered_ids);
-            
-            // Update result count
-            updateResultCount(data.total);
-          } else {
-            showError('Failed to filter grants: ' + data.message);
-          }
-          showLoading(false);
-        })
-        .catch(function(error) {
-          showError('Error applying filters: ' + error.message);
-          showLoading(false);
-        });
-      }
+  // Show loading state
+  showLoading(true);
+  hideError();
+  hideEmptyState();
+  
+  console.log('Applying filters...');
+  
+  // Get all form values for the filter
+  const searchValue = searchInput.value.trim();
+  const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
+  
+  if (!deadlineRadio) {
+    showError('Please select a deadline option.');
+    showLoading(false);
+    return;
+  }
+  
+  const deadlineValue = deadlineRadio.value;
+  const amountMinValue = document.getElementById('amount-min').value;
+  const amountMaxValue = document.getElementById('amount-max').value;
+  const categoryValue = categorySelect.value;
+  const locationValue = locationSelect.value;
+  
+  // Get eligibility values
+  const eligibilityValues = Array.from(
+    document.querySelectorAll('input[name="eligibility[]"]:checked')
+  ).map(checkbox => checkbox.value);
+  
+  // Create form data
+  const formData = new FormData();
+  formData.append('action', 'filter_grants');
+  formData.append('security', grantsFilterNonce);
+  formData.append('search', searchValue);
+  formData.append('deadline', deadlineValue);
+  formData.append('amount_min', amountMinValue);
+  formData.append('amount_max', amountMaxValue);
+  formData.append('category', categoryValue);
+  formData.append('location', locationValue);
+  
+  // Add eligibility values
+  eligibilityValues.forEach(value => {
+    formData.append('eligibility[]', value);
+  });
+  
+  console.log('Filter data prepared:', {
+    search: searchValue,
+    deadline: deadlineValue,
+    amountMin: amountMinValue,
+    amountMax: amountMaxValue,
+    category: categoryValue,
+    location: locationValue,
+    eligibility: eligibilityValues
+  });
+  
+  // Get the correct AJAX URL with fallback
+  const ajaxUrl = (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php';
+  
+  // Make AJAX request
+  fetch(ajaxUrl, {
+    method: 'POST',
+    body: formData,
+    credentials: 'same-origin'
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      console.error('Network error:', response.status, response.statusText);
+      throw new Error(`Network error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  })
+  .then(function(data) {
+    console.log('Filter response received:', data);
+    
+    if (data.success) {
+      // Update URL hash first
+      updateUrlHash();
+      
+      // Display filtered results
+      filterGrantCards(data.filtered_ids);
+      
+      // Update result count
+      updateResultCount(data.total);
+      
+      console.log(`Filtered to ${data.total} grants successfully`);
+    } else {
+      console.error('Filter request failed:', data.message);
+      showError('Failed to filter grants: ' + data.message);
+    }
+    showLoading(false);
+  })
+  .catch(function(error) {
+    console.error('Error applying filters:', error);
+    showError('Error applying filters: ' + error.message);
+    showLoading(false);
+  });
+}
       
       function filterGrantCards(filteredIds) {
-        // Hide all grant cards
-        const allCards = document.querySelectorAll('.g-card');
-        let visibleCount = 0;
-        
-        allCards.forEach(card => {
-          const cardId = card.getAttribute('data-grant-id');
-          if (filteredIds.includes(parseInt(cardId))) {
-            card.style.display = '';
-            visibleCount++;
-          } else {
-            card.style.display = 'none';
-          }
-        });
-        
-        // Show empty state if no cards visible
-        if (visibleCount === 0) {
-          showEmptyState();
-        } else {
-          hideEmptyState();
-        }
-        
-        // Remove loading state from pagination if present
-        const pagination = document.querySelector('.g-pagination');
-        if (pagination) {
-          pagination.classList.remove('loading');
-        }
-      }
+  console.log('Filtering grant cards with IDs:', filteredIds);
+  
+  // Make sure we have an array of integers
+  const numericFilteredIds = filteredIds.map(id => parseInt(id, 10));
+  
+  // Hide all grant cards
+  const allCards = document.querySelectorAll('.g-card');
+  let visibleCount = 0;
+  
+  console.log(`Processing ${allCards.length} total grant cards`);
+  
+  allCards.forEach(card => {
+    const cardId = card.getAttribute('data-grant-id');
+    const cardIdNum = parseInt(cardId, 10);
+    
+    if (numericFilteredIds.includes(cardIdNum)) {
+      card.style.display = '';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  
+  console.log(`Filtered to ${visibleCount} visible cards`);
+  
+  // Show empty state if no cards visible
+  if (visibleCount === 0) {
+    showEmptyState();
+    console.log('Showing empty state (no results)');
+  } else {
+    hideEmptyState();
+  }
+  
+  // Remove loading state from pagination if present
+  const pagination = document.querySelector('.g-pagination');
+  if (pagination) {
+    pagination.classList.remove('loading');
+  }
+  
+  // Scroll to top of grants container for better UX
+  const grantsContainer = document.querySelector('.grants-container');
+  if (grantsContainer) {
+    setTimeout(() => {
+      grantsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+}
       
       function updateResultCount(count) {
         // Update count in filter modal
@@ -1999,67 +2104,105 @@ var ajaxurl = "' . esc_url(admin_url('admin-ajax.php')) . '";
       }
       
       function updateUrlHash() {
-        // Create URL hash from active filters
-        if (Object.keys(activeFilters).length === 0) {
-          // Clear hash if no active filters
-          history.pushState("", document.title, window.location.pathname + window.location.search);
-          return;
+  console.log('Updating URL hash with active filters:', activeFilters);
+  
+  // Create URL hash from active filters
+  if (Object.keys(activeFilters).length === 0) {
+    // Clear hash if no active filters
+    console.log('No active filters, clearing hash');
+    try {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    } catch (e) {
+      console.error('Failed to update history:', e);
+      // Fallback for older browsers
+      window.location.hash = '';
+    }
+    return;
+  }
+  
+  // Create hash string
+  const hashParts = [];
+  
+  for (const [key, value] of Object.entries(activeFilters)) {
+    if (Array.isArray(value)) {
+      // Handle array values (eligibility)
+      value.forEach(val => {
+        if (val) { // Only add non-empty values
+          hashParts.push(`${key}=${encodeURIComponent(val)}`);
         }
-        
-        // Create hash string
-        const hashParts = [];
-        
-        for (const [key, value] of Object.entries(activeFilters)) {
-          if (Array.isArray(value)) {
-            // Handle array values (eligibility)
-            value.forEach(val => {
-              hashParts.push(`${key}=${encodeURIComponent(val)}`);
-            });
-          } else {
-            // Handle single values
-            hashParts.push(`${key}=${encodeURIComponent(value)}`);
-          }
-        }
-        
-        // Update URL hash
-        window.location.hash = hashParts.join('&');
+      });
+    } else {
+      // Handle single values
+      if (value) { // Only add non-empty values
+        hashParts.push(`${key}=${encodeURIComponent(value)}`);
       }
+    }
+  }
+  
+  // Create the hash string
+  const hashString = hashParts.join('&');
+  console.log('New hash string:', hashString);
+  
+  // Update URL hash
+  try {
+    // Use history API for better user experience (no page jump)
+    const newUrl = window.location.pathname + window.location.search + '#' + hashString;
+    history.pushState(activeFilters, document.title, newUrl);
+  } catch (e) {
+    console.error('Failed to update history, falling back to direct hash update:', e);
+    // Fallback for older browsers
+    window.location.hash = hashString;
+  }
+}
       
       function parseUrlHash() {
-        // Get hash without the # symbol
-        const hash = window.location.hash.substring(1);
+  // Get hash without the # symbol
+  const hash = window.location.hash.substring(1);
+  
+  console.log('Parsing URL hash:', hash);
+  
+  if (!hash) {
+    console.log('No hash found in URL');
+    return;
+  }
+  
+  // Split into key-value pairs
+  const hashParts = hash.split('&');
+  let tempFilters = {};
+  
+  hashParts.forEach(part => {
+    const [key, value] = part.split('=');
+    
+    if (key && value) {
+      try {
+        const decodedKey = decodeURIComponent(key);
+        const decodedValue = decodeURIComponent(value);
         
-        if (!hash) return;
+        console.log(`Parsed hash parameter: ${decodedKey} = ${decodedValue}`);
         
-        // Split into key-value pairs
-        const hashParts = hash.split('&');
-        let tempFilters = {};
-        
-        hashParts.forEach(part => {
-          const [key, value] = part.split('=');
-          
-          if (key && value) {
-            const decodedKey = decodeURIComponent(key);
-            const decodedValue = decodeURIComponent(value);
-            
-            // Handle eligibility (array values)
-            if (decodedKey === 'eligibility') {
-              if (!tempFilters.eligibility) {
-                tempFilters.eligibility = [];
-              }
-              tempFilters.eligibility.push(decodedValue);
-            } else {
-              tempFilters[decodedKey] = decodedValue;
-            }
+        // Handle eligibility (array values)
+        if (decodedKey === 'eligibility') {
+          if (!tempFilters.eligibility) {
+            tempFilters.eligibility = [];
           }
-        });
-        
-        // Update active filters
-        activeFilters = tempFilters;
-        
-        // Restore form state once options are loaded
-        // This will happen in the renderXXXOptions functions
+          tempFilters.eligibility.push(decodedValue);
+        } else {
+          tempFilters[decodedKey] = decodedValue;
+        }
+      } catch (e) {
+        console.error('Error decoding URL parameter:', e);
       }
+    }
+  });
+  
+  console.log('Parsed filters from URL:', tempFilters);
+  
+  // Update active filters
+  activeFilters = tempFilters;
+  
+  // We'll restore form values after option loading is complete
+  // The actual restoration happens in renderXXXOptions functions
+}
       
       function restoreFormValues() {
         // Check if we have active filters from URL
