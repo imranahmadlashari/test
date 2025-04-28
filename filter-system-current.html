@@ -776,7 +776,7 @@
   </div>
   
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+ document.addEventListener('DOMContentLoaded', function() {
       // Function to safely check multiple conditions (alternative to && operator)
       function checkConditions(conditions) {
         for (var i = 0; i < conditions.length; i++) {
@@ -812,8 +812,18 @@
       const locationFilter = document.getElementById('location-filter');
       const eligibilityContainer = document.querySelector('.eligibility-options');
       
+      // Store the original markup of the grants container
+      // This will be used to restore the original state when filters are cleared
+      const originalGrantsContainerMarkup = grantsContainer ? grantsContainer.innerHTML : '';
+      
       // Store all visible grants for initial state
       const visibleGrants = Array.from(document.querySelectorAll('.g-card'));
+      
+      // Store the original layout template for grant cards
+      let grantTemplate = null;
+      if (visibleGrants.length > 0) {
+          grantTemplate = visibleGrants[0].cloneNode(true);
+      }
       
       // Will store all grants from all pages
       let allGrants = [];
@@ -822,6 +832,9 @@
       let currentPage = 1; // Current page in pagination
       let currentPageParam = getQueryParam('paged') || getQueryParam('page') || 1;
       currentPage = parseInt(currentPageParam);
+      
+      // Keep track of original classes for layout restoration
+      const originalGrantClasses = {};
       
       // Current active filters
       let activeFilters = {
@@ -847,7 +860,17 @@
         
         try {
           // Start with visible grants on the current page
-          allGrants = [...visibleGrants];
+          // Store original classes and IDs before cloning
+          visibleGrants.forEach(grant => {
+            const id = grant.id || `grant-${Math.random().toString(36).substring(2, 15)}`;
+            grant.id = id; // Ensure each grant has an ID
+            originalGrantClasses[id] = {
+              classes: grant.className,
+              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : ''
+            };
+          });
+          
+          allGrants = visibleGrants.map(grant => grant.cloneNode(true));
           
           // Get pagination info from the original pagination
           if (originalPagination) {
@@ -860,7 +883,7 @@
             }).pop();
             
             if (lastPageItem) {
-              const lastPageNum = parseInt(lastPageItem.textContent);
+              const lastPageNum = parseInt(lastPageItem.textContent || lastPageItem.querySelector('a, span').textContent);
               if (!isNaN(lastPageNum) && lastPageNum > 1) {
                 totalPages = lastPageNum;
                 
@@ -868,19 +891,7 @@
                 postsPerPage = visibleGrants.length;
                 
                 // For pages other than current, we need to fetch grants
-                // We'll use grant structure from current page to create placeholders
-                const grantsNeeded = totalPages * postsPerPage - allGrants.length;
-                
-                // Add placeholder grants with unique identifiers
-                if (grantsNeeded > 0) {
-                  const sampleGrant = visibleGrants[0].cloneNode(true);
-                  
-                  // Create a container for additional grants (hidden)
-                  const hiddenContainer = document.createElement('div');
-                  hiddenContainer.id = 'hidden-grants-container';
-                  hiddenContainer.style.display = 'none';
-                  document.body.appendChild(hiddenContainer);
-                  
+                if (totalPages > 1) {
                   // Fetch all additional pages in parallel
                   const pagePromises = [];
                   for (let page = 1; page <= totalPages; page++) {
@@ -909,7 +920,7 @@
         } catch (error) {
           console.error('Error fetching all grants:', error);
           // Fallback to just using visible grants
-          allGrants = [...visibleGrants];
+          allGrants = visibleGrants.map(grant => grant.cloneNode(true));
           initializeFilters();
         } finally {
           // Hide loading indicator
@@ -944,7 +955,17 @@
           // Extract grants from the page
           const pageGrants = Array.from(doc.querySelectorAll('.g-card'));
           
+          // Store classes and ensure IDs before cloning
           return pageGrants.map(grant => {
+            const id = grant.id || `grant-page${pageNum}-${Math.random().toString(36).substring(2, 15)}`;
+            grant.id = id;
+            
+            // Store original classes for this grant
+            originalGrantClasses[id] = {
+              classes: grant.className,
+              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : ''
+            };
+            
             const clone = grant.cloneNode(true);
             clone.setAttribute('data-page', pageNum);
             return clone;
@@ -1044,30 +1065,67 @@
         });
       }
       
-      // Populate eligibility options - FIXED IMPLEMENTATION
+      // Populate eligibility options - IMPROVED IMPLEMENTATION
       function populateEligibility() {
         // Create a Set to track unique eligibility criteria
         const eligibilityCriteria = new Set();
         
         // Loop through all grants to collect eligibility criteria
         allGrants.forEach(function(grant) {
-          // Find the second meta item that contains eligibility info
+          // Use multiple approaches to find eligibility info
+          let eligibilityItems = [];
+          
+          // Attempt 1: Look for meta items that contain "Eligible:"
           const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item'))
             .find(item => item.textContent.includes('Eligible:'));
           
           if (eligibilitySection) {
-            // Get all spans except those with 'more' class
-            const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
-            
-            eligibilityItems.forEach(function(item) {
-              // Clean up text (remove commas)
-              const criteria = item.textContent.replace(',', '').trim();
-              if (criteria && !criteria.includes('+') && criteria !== ',') {
-                eligibilityCriteria.add(criteria);
-              }
-            });
+            // Get all spans excluding "more" indicators
+            eligibilityItems = Array.from(eligibilitySection.querySelectorAll('span:not(.g-card__location-more)'));
           }
+          
+          // Attempt 2: Look for specific eligibility class
+          if (eligibilityItems.length === 0) {
+            eligibilityItems = Array.from(grant.querySelectorAll('.g-card__eligibility-item'));
+          }
+          
+          // Attempt 3: Look for a section with class containing "eligib"
+          if (eligibilityItems.length === 0) {
+            const potentialSections = Array.from(grant.querySelectorAll('[class*="eligib"]'));
+            eligibilityItems = potentialSections.flatMap(section => 
+              Array.from(section.querySelectorAll('span'))
+            );
+          }
+          
+          // Process found items
+          eligibilityItems.forEach(function(item) {
+            // Clean up text (remove commas, colons, "Eligible:" text)
+            let criteria = item.textContent
+              .replace(',', '')
+              .replace('Eligible:', '')
+              .trim();
+              
+            if (criteria && !criteria.includes('+') && !criteria.includes('...') && criteria !== ',') {
+              eligibilityCriteria.add(criteria);
+            }
+          });
         });
+        
+        // Fallback: Add commonly used eligibility types if none found
+        if (eligibilityCriteria.size === 0) {
+          const fallbackTypes = [
+            'Small Businesses', 
+            'Nonprofits',
+            'Individuals',
+            'Startups',
+            'Women-Owned Businesses',
+            'Minority-Owned Businesses',
+            'Veteran-Owned Businesses',
+            'Educational Institutions'
+          ];
+          
+          fallbackTypes.forEach(type => eligibilityCriteria.add(type));
+        }
         
         // Sort eligibility alphabetically
         const sortedEligibility = Array.from(eligibilityCriteria).sort();
@@ -1409,85 +1467,133 @@
         
         // Short delay to ensure loading indicator appears
         setTimeout(function() {
-          // Filter all grants
-          const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant));
-          
-          // Update filters display
-          updateActiveFiltersDisplay();
-          
-          if (hasActiveFilters()) {
-            // Show filtered pagination, hide original
-            if (originalPagination) originalPagination.style.display = 'none';
+          try {
+            // Filter all grants
+            const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant));
             
-            // Calculate total pages for filtered results
-            const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage);
+            // Update filters display
+            updateActiveFiltersDisplay();
             
-            // Make sure current page is valid
-            currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages || 1);
-            
-            // Calculate which grants to show on current page
-            const startIndex = (currentPage - 1) * postsPerPage;
-            const endIndex = Math.min(startIndex + postsPerPage, filteredGrants.length);
-            const grantsToShow = filteredGrants.slice(startIndex, endIndex);
-            
-            // Clear grants container
-            grantsContainer.innerHTML = '';
-            
-            // Add grants for current page
-            if (grantsToShow.length > 0) {
-              grantsToShow.forEach(grant => {
-                grantsContainer.appendChild(grant.cloneNode(true));
-              });
+            if (hasActiveFilters()) {
+              // Show filtered pagination, hide original
+              if (originalPagination) originalPagination.style.display = 'none';
               
-              // Show filtered pagination
-              updateFilteredPagination(filteredGrants.length, totalFilteredPages);
-              noMatchingGrants.classList.remove('is-visible');
+              // Calculate total pages for filtered results
+              const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage);
+              
+              // Make sure current page is valid
+              currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages || 1);
+              
+              // Calculate which grants to show on current page
+              const startIndex = (currentPage - 1) * postsPerPage;
+              const endIndex = Math.min(startIndex + postsPerPage, filteredGrants.length);
+              const grantsToShow = filteredGrants.slice(startIndex, endIndex);
+              
+              // Clear grants container
+              if (grantsContainer) {
+                  // Keep track of original container classes
+                  const containerClasses = grantsContainer.className;
+                  
+                  // Clear container
+                  grantsContainer.innerHTML = '';
+                  
+                  // Ensure container has correct classes
+                  grantsContainer.className = containerClasses;
+                  
+                  // Add grants for current page
+                  if (grantsToShow.length > 0) {
+                      grantsToShow.forEach(grant => {
+                          // Clone the grant to avoid modifying the original
+                          const clonedGrant = grant.cloneNode(true);
+                          
+                          // Ensure proper classes are applied
+                          const grantId = grant.id;
+                          if (originalGrantClasses[grantId]) {
+                              clonedGrant.className = originalGrantClasses[grantId].classes;
+                          }
+                          
+                          grantsContainer.appendChild(clonedGrant);
+                      });
+                      
+                      // Show filtered pagination
+                      updateFilteredPagination(filteredGrants.length, totalFilteredPages);
+                      noMatchingGrants.classList.remove('is-visible');
+                  } else {
+                      // No matching grants
+                      noMatchingGrants.classList.add('is-visible');
+                      filteredPagination.style.display = 'none';
+                  }
+              } else {
+                  console.error('Grants container not found');
+                  noMatchingGrants.classList.add('is-visible');
+              }
+              
+              // Update grants counter
+              updateGrantsCounter(filteredGrants.length);
             } else {
-              // No matching grants
-              noMatchingGrants.classList.add('is-visible');
-              filteredPagination.style.display = 'none';
+              // Reset to original state
+              resetToOriginalState();
             }
             
-            // Update grants counter
-            updateGrantsCounter(filteredGrants.length);
-          } else {
-            // Reset to original state
+            // Update URL if requested
+            if (updateUrlFlag) {
+              updateUrl();
+            }
+            
+            // Initialize any JavaScript needed for the newly added grants
+            initGrantsScripts();
+          } catch (error) {
+            console.error('Error applying filters:', error);
+            // Fallback to original state on error
             resetToOriginalState();
+          } finally {
+            // Hide loading indicator
+            grantsLoading.classList.remove('is-active');
+            
+            // Close modal after applying filters
+            closeFilterModal();
           }
-          
-          // Update URL if requested
-          if (updateUrlFlag) {
-            updateUrl();
-          }
-          
-          // Hide loading indicator
-          grantsLoading.classList.remove('is-active');
-          
-          // Close modal after applying filters
-          closeFilterModal();
-          
-          // Initialize any JavaScript needed for the newly added grants
-          initGrantsScripts();
         }, 300);
       }
       
       // Reset to original unfiltered state
       function resetToOriginalState() {
-        // Clear and repopulate grants container with original visible grants
-        grantsContainer.innerHTML = '';
-        visibleGrants.forEach(grant => {
-          grantsContainer.appendChild(grant.cloneNode(true));
-        });
-        
-        // Show original pagination, hide filtered
-        if (originalPagination) originalPagination.style.display = '';
-        filteredPagination.style.display = 'none';
-        
-        // Hide no matching message
-        noMatchingGrants.classList.remove('is-visible');
-        
-        // Update grants counter
-        updateGrantsCounter(visibleGrants.length);
+        try {
+          // If we have the original markup, use it
+          if (originalGrantsContainerMarkup && grantsContainer) {
+            grantsContainer.innerHTML = originalGrantsContainerMarkup;
+          } else if (grantsContainer) {
+            // Otherwise clear and repopulate with visible grants
+            grantsContainer.innerHTML = '';
+            visibleGrants.forEach(grant => {
+              const clone = grant.cloneNode(true);
+              // Apply original classes if available
+              if (grant.id && originalGrantClasses[grant.id]) {
+                clone.className = originalGrantClasses[grant.id].classes;
+              }
+              grantsContainer.appendChild(clone);
+            });
+          }
+          
+          // Show original pagination, hide filtered
+          if (originalPagination) originalPagination.style.display = '';
+          if (filteredPagination) filteredPagination.style.display = 'none';
+          
+          // Hide no matching message
+          if (noMatchingGrants) noMatchingGrants.classList.remove('is-visible');
+          
+          // Update grants counter
+          updateGrantsCounter(visibleGrants.length);
+          
+          // Initialize scripts for restored content
+          initGrantsScripts();
+        } catch (error) {
+          console.error('Error resetting to original state:', error);
+          // If we encounter an error, reload the page as last resort
+          if (hasActiveFilters()) {
+            window.location.href = window.location.pathname;
+          }
+        }
       }
       
       // Update filtered pagination
@@ -1594,18 +1700,20 @@
         applyFilters();
         
         // Scroll to top of grants container
-        window.scrollTo({
-          top: grantsContainer.offsetTop - 100,
-          behavior: 'smooth'
-        });
+        if (grantsContainer) {
+          window.scrollTo({
+            top: grantsContainer.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
       }
       
       // Function to check if a grant matches all active filters
       function doesGrantMatchFilters(grant) {
         // Keyword filter
         if (activeFilters.keyword) {
-          const title = grant.querySelector('.g-card__title a').textContent.toLowerCase();
-          const excerpt = grant.querySelector('.g-card__excerpt').textContent.toLowerCase();
+          const title = grant.querySelector('.g-card__title a')?.textContent.toLowerCase() || '';
+          const excerpt = grant.querySelector('.g-card__excerpt')?.textContent.toLowerCase() || '';
           const keyword = activeFilters.keyword.toLowerCase();
           
           if (!title.includes(keyword) && !excerpt.includes(keyword)) {
@@ -1617,8 +1725,8 @@
         if (activeFilters.deadline !== 'all') {
           const statusBadge = grant.querySelector('.g-card__status-badge');
           const statusText = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
-          const deadlineText = grant.querySelector('.g-card__deadline-value') ? 
-                               grant.querySelector('.g-card__deadline-value').textContent.trim() : '';
+          const deadlineEl = grant.querySelector('.g-card__deadline-value, [class*="deadline"]');
+          const deadlineText = deadlineEl ? deadlineEl.textContent.trim() : '';
           const deadlineMatch = getDeadlineMatch(statusText, deadlineText, activeFilters.deadline);
           
           if (!deadlineMatch) {
@@ -1627,7 +1735,8 @@
         }
         
         // Amount filter
-        const amountText = grant.querySelector('.g-card__amount').textContent.trim();
+        const amountEl = grant.querySelector('.g-card__amount, [class*="amount"]');
+        const amountText = amountEl ? amountEl.textContent.trim() : '';
         const amountValue = parseAmount(amountText);
         
         if (activeFilters.minAmount && !isNaN(amountValue) && amountValue < parseInt(activeFilters.minAmount)) {
@@ -1640,11 +1749,12 @@
         
         // Category filter
         if (activeFilters.category) {
-          const categoryLinks = grant.querySelectorAll('.g-card__tag');
+          const categoryLinks = grant.querySelectorAll('.g-card__tag, [class*="category"], [class*="tag"]');
           let categoryMatch = false;
           
           categoryLinks.forEach(function(link) {
-            if (link.getAttribute('href') === activeFilters.category) {
+            const linkHref = link.getAttribute('href');
+            if (linkHref === activeFilters.category) {
               categoryMatch = true;
             }
           });
@@ -1656,11 +1766,12 @@
         
         // Location filter
         if (activeFilters.location) {
-          const locationLinks = grant.querySelectorAll('.g-card__location-link');
+          const locationLinks = grant.querySelectorAll('.g-card__location-link, [class*="location"]');
           let locationMatch = false;
           
           locationLinks.forEach(function(link) {
-            if (link.getAttribute('href') === activeFilters.location) {
+            const linkHref = link.getAttribute('href');
+            if (linkHref === activeFilters.location) {
               locationMatch = true;
             }
           });
@@ -1670,26 +1781,52 @@
           }
         }
         
-        // Eligibility filter
+        // Eligibility filter - Enhanced to check multiple selectors
         if (activeFilters.eligibility.length > 0) {
-          // Find the second meta item that contains eligibility info (Updated selector)
-          const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item'))
+          // Try multiple approaches to find eligibility information
+          let grantEligibility = [];
+          
+          // Approach 1: Look for meta items with "Eligible:"
+          const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item, [class*="meta"]'))
             .find(item => item.textContent.includes('Eligible:'));
           
-          if (!eligibilitySection) {
-            return false;
+          if (eligibilitySection) {
+            const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
+            grantEligibility = Array.from(eligibilityItems).map(item => 
+              item.textContent.replace(',', '').replace('Eligible:', '').trim()
+            );
           }
           
-          const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
-          const grantEligibility = Array.from(eligibilityItems).map(item => item.textContent.replace(',', '').trim());
+          // Approach 2: Look for specific eligibility classes
+          if (grantEligibility.length === 0) {
+            const eligibilityItems = grant.querySelectorAll('.g-card__eligibility-item, [class*="eligib"]');
+            grantEligibility = Array.from(eligibilityItems).map(item => 
+              item.textContent.replace(',', '').trim()
+            );
+          }
+          
+          // Approach 3: Check the entire grant text as last resort
+          if (grantEligibility.length === 0) {
+            const grantText = grant.textContent.toLowerCase();
+            for (let i = 0; i < activeFilters.eligibility.length; i++) {
+              if (grantText.includes(activeFilters.eligibility[i].toLowerCase())) {
+                return true; // Match found in text
+              }
+            }
+            return false; // No match in text
+          }
           
           // Check if any of the selected eligibility criteria match
           let matchesAny = false;
           for (let i = 0; i < activeFilters.eligibility.length; i++) {
-            if (grantEligibility.includes(activeFilters.eligibility[i])) {
-              matchesAny = true;
-              break;
+            const eligibilityLower = activeFilters.eligibility[i].toLowerCase();
+            for (let j = 0; j < grantEligibility.length; j++) {
+              if (grantEligibility[j].toLowerCase().includes(eligibilityLower)) {
+                matchesAny = true;
+                break;
+              }
             }
+            if (matchesAny) break;
           }
           
           if (!matchesAny) {
@@ -1703,6 +1840,17 @@
       
       // Helper function to determine if a grant matches deadline filter
       function getDeadlineMatch(status, deadline, filterValue) {
+        // For safety, handle null/undefined values
+        status = status || '';
+        deadline = deadline || '';
+        
+        // Check if this is an ongoing grant
+        const isOngoing = deadline.toLowerCase().includes('ongoing') || 
+                          status.toLowerCase().includes('ongoing');
+        
+        // Check if this grant is marked as active
+        const isActive = status.toLowerCase().includes('active');
+        
         switch (filterValue) {
           case 'today':
             return deadline.includes(getTodayFormatted());
@@ -1711,9 +1859,9 @@
           case 'month':
             return isWithinThisMonth(deadline);
           case 'ongoing':
-            return deadline.toLowerCase() === 'ongoing' || status.toLowerCase() === 'ongoing';
+            return isOngoing;
           case 'active':
-            return status.toLowerCase() === 'active';
+            return isActive || (!isOngoing && new Date(deadline) >= new Date());
           default:
             return true;
         }
@@ -1728,23 +1876,56 @@
       
       // Helper function to check if date is within this week
       function isWithinThisWeek(dateStr) {
-        if (dateStr.toLowerCase() === 'ongoing') return false;
+        if (!dateStr || dateStr.toLowerCase().includes('ongoing')) return false;
         
         try {
-          const today = new Date();
+          const dateMatches = dateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
+          
+          if (dateMatches) {
+            const months = {'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 
+                           'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11};
+                           
+            const month = months[dateMatches[1].toLowerCase()];
+            const day = parseInt(dateMatches[2]);
+            const year = parseInt(dateMatches[3]);
+            
+            if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+              const deadline = new Date(year, month, day);
+              const today = new Date();
+              
+              // Get the first day of the current week (Sunday)
+              const firstDayOfWeek = new Date(today);
+              firstDayOfWeek.setDate(today.getDate() - today.getDay());
+              firstDayOfWeek.setHours(0, 0, 0, 0);
+              
+              // Get the last day of the current week (Saturday)
+              const lastDayOfWeek = new Date(firstDayOfWeek);
+              lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+              lastDayOfWeek.setHours(23, 59, 59, 999);
+              
+              return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
+            }
+          }
+          
+          // Fallback to try direct Date parsing
           const deadline = new Date(dateStr);
+          if (!isNaN(deadline.getTime())) {
+            const today = new Date();
+            
+            // Get the first day of the current week (Sunday)
+            const firstDayOfWeek = new Date(today);
+            firstDayOfWeek.setDate(today.getDate() - today.getDay());
+            firstDayOfWeek.setHours(0, 0, 0, 0);
+            
+            // Get the last day of the current week (Saturday)
+            const lastDayOfWeek = new Date(firstDayOfWeek);
+            lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+            lastDayOfWeek.setHours(23, 59, 59, 999);
+            
+            return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
+          }
           
-          // Get the first day of the current week (Sunday)
-          const firstDayOfWeek = new Date(today);
-          firstDayOfWeek.setDate(today.getDate() - today.getDay());
-          firstDayOfWeek.setHours(0, 0, 0, 0);
-          
-          // Get the last day of the current week (Saturday)
-          const lastDayOfWeek = new Date(firstDayOfWeek);
-          lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-          lastDayOfWeek.setHours(23, 59, 59, 999);
-          
-          return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
+          return false;
         } catch (e) {
           return false;
         }
@@ -1752,14 +1933,33 @@
       
       // Helper function to check if date is within this month
       function isWithinThisMonth(dateStr) {
-        if (dateStr.toLowerCase() === 'ongoing') return false;
+        if (!dateStr || dateStr.toLowerCase().includes('ongoing')) return false;
         
         try {
-          const today = new Date();
-          const deadline = new Date(dateStr);
+          const dateMatches = dateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
           
-          return deadline.getMonth() === today.getMonth() && 
-                 deadline.getFullYear() === today.getFullYear();
+          if (dateMatches) {
+            const months = {'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 
+                           'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11};
+                           
+            const month = months[dateMatches[1].toLowerCase()];
+            const year = parseInt(dateMatches[3]);
+            
+            if (!isNaN(month) && !isNaN(year)) {
+              const today = new Date();
+              return month === today.getMonth() && year === today.getFullYear();
+            }
+          }
+          
+          // Fallback to try direct Date parsing
+          const deadline = new Date(dateStr);
+          if (!isNaN(deadline.getTime())) {
+            const today = new Date();
+            return deadline.getMonth() === today.getMonth() && 
+                   deadline.getFullYear() === today.getFullYear();
+          }
+          
+          return false;
         } catch (e) {
           return false;
         }
@@ -1767,13 +1967,20 @@
       
       // Helper function to parse amount from text
       function parseAmount(amountText) {
+        if (!amountText) return NaN;
+        
         // Handle "Various Benefits" or non-numeric amount
         if (amountText.includes('Various Benefits') || !amountText.includes('$')) {
           return NaN;
         }
         
         // Extract numeric value from format like "$10,000"
-        return parseInt(amountText.replace(/[$,]/g, ''));
+        const matches = amountText.match(/\$([0-9,]+)/);
+        if (matches && matches[1]) {
+          return parseInt(matches[1].replace(/,/g, ''));
+        }
+        
+        return NaN;
       }
       
       // Function to update the grants counter
@@ -1888,10 +2095,66 @@
           // Update every second
           setInterval(updateCountdown, 1000);
         });
+        
+        // Any other initialization needed for the grants
+        reinitializeDropdowns();
+        reinitializeTruncation();
+      }
+      
+      // Reinitialize truncation for long text
+      function reinitializeTruncation() {
+        const longTextElements = document.querySelectorAll('.g-card__excerpt');
+        longTextElements.forEach(function(element) {
+          if (element.offsetHeight > 80) {
+            element.classList.add('g-card__excerpt--truncated');
+          }
+        });
+      }
+      
+      // Reinitialize dropdowns and other interactive elements
+      function reinitializeDropdowns() {
+        document.querySelectorAll('.g-card__dropdown-trigger').forEach(function(trigger) {
+          if (!trigger.hasEventListener) {
+            trigger.hasEventListener = true;
+            trigger.addEventListener('click', function(e) {
+              e.preventDefault();
+              const dropdown = this.nextElementSibling;
+              if (dropdown && dropdown.classList.contains('g-card__dropdown-content')) {
+                dropdown.classList.toggle('is-active');
+              }
+            });
+          }
+        });
       }
       
       // Start by fetching all grants
       fetchAllGrants();
+      
+      // Add mutation observer to detect DOM changes and reapply styles
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            // Check if we need to reinitialize scripts
+            const hasGrantCards = Array.from(mutation.addedNodes).some(node => 
+              node.nodeType === 1 && (
+                node.classList && node.classList.contains('g-card') || 
+                node.querySelector && node.querySelector('.g-card')
+              )
+            );
+            
+            if (hasGrantCards) {
+              // Reinitialize scripts for newly added grants
+              setTimeout(initGrantsScripts, 100);
+            }
+          }
+        });
+      });
+      
+      // Observe the grants container
+      if (grantsContainer) {
+        observer.observe(grantsContainer, { childList: true, subtree: true });
+      }
     });
   </script>
+
 </section>
