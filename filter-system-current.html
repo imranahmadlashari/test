@@ -1,7 +1,6 @@
-<!-- Grants Filter System - FIXED VERSION -->
+<!-- Grants Filter System - OPTIMIZED VERSION -->
 <section class="grants-filter-section" data-section-id="grants-filter-system">
   <style>
-    /* CSS styles remain the same */
     .grants-filter-section {
       max-width: 98%;
       margin: 0 auto 1.5rem;
@@ -41,7 +40,6 @@
   <!-- Filter Button -->
   <button id="grants-filter-button" class="grants-filter-button" aria-label="Filter Grants" aria-expanded="false" aria-controls="grants-filter-popup">
     <style>
-      /* Button styling remains the same */
       .grants-filter-button {
         display: flex;
         align-items: center;
@@ -98,7 +96,6 @@
         transform: rotate(90deg);
       }
 
-      /* Active state with counter */
       .grants-filter-button.has-active-filters {
         padding-right: 2.5rem;
       }
@@ -149,7 +146,6 @@
   <!-- Filter Popup -->
   <div id="grants-filter-popup" class="grants-filter-popup" aria-hidden="true">
     <style>
-      /* Popup styling remains the same */
       .grants-filter-popup {
         position: fixed;
         top: 0;
@@ -321,7 +317,6 @@
         height: 16px;
       }
 
-      /* For very small mobile screens */
       @media (max-width: 480px) {
         .filter-popup-header {
           padding: 0.75rem 1rem;
@@ -372,7 +367,6 @@
       <div class="filter-popup-body">
         <div class="filter-form" id="grants-filter-form">
           <style>
-            /* Form styling remains the same */
             .filter-form {
               display: grid;
               grid-template-columns: 1fr;
@@ -927,7 +921,6 @@
               <select id="category-filter" name="category" class="filter-select" aria-label="Filter by category">
                 <option value="">All Categories</option>
                 <!-- Categories will be loaded dynamically -->
-                <option value="loading" disabled>Loading categories...</option>
               </select>
               <div class="filter-select-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -950,7 +943,6 @@
               <select id="location-filter" name="location" class="filter-select" aria-label="Filter by location">
                 <option value="">All Locations</option>
                 <!-- Locations will be loaded dynamically -->
-                <option value="loading" disabled>Loading locations...</option>
               </select>
               <div class="filter-select-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1006,15 +998,17 @@
     </div>
   </div>
 
-  <!-- Hidden field for AJAX nonce (critical fix) -->
+  <!-- Hidden field for AJAX nonce -->
   <input type="hidden" id="grants-filter-nonce" value="" data-ajax-url="" />
 
-  <!-- PHP for AJAX Setup - FIXED -->
+  <!-- PHP for AJAX Setup - SIMPLIFIED -->
   [php]
-  // Replace the PHP section in the filter-system-current.html file
-// Define hardcoded categories data
-function grantaura_get_grant_categories() {
-  $categories = array(
+  // Generate a secure nonce for AJAX operations
+  $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
+  $admin_ajax_url = admin_url('admin-ajax.php');
+  
+  // These are hardcoded data arrays to avoid function definitions that might conflict
+  $categories_data = array(
     array('value' => '54', 'label' => 'Grants For For-Profit Businesses'),
     array('value' => '63', 'label' => 'Grants For Non-Profit Organizations'),
     array('value' => '51', 'label' => 'Grants For Individuals'),
@@ -1036,32 +1030,10 @@ function grantaura_get_grant_categories() {
     array('value' => '57', 'label' => 'Grants For Veteran Entrepreneurs'),
     array('value' => '143', 'label' => 'Grants For Women Veterans'),
     array('value' => '137', 'label' => 'Grants For Latina Entrepreneurs'),
-    array('value' => '125', 'label' => 'Grants For Women Of Color Entrepreneurs'),
-    array('value' => '97', 'label' => 'Grants for Artists & Writers'),
-    array('value' => '59', 'label' => 'Grants For Disabled/Special Persons'),
-    array('value' => '132', 'label' => 'Grants For Farmers & Ranchers'),
-    array('value' => '123', 'label' => 'Grants For LGBTQI+'),
-    array('value' => '218', 'label' => 'Grants For Media Projects'),
-    array('value' => '224', 'label' => 'Grants For Military Persons'),
-    array('value' => '227', 'label' => 'Grants For Native Americans & Alaska Natives'),
-    array('value' => '106', 'label' => 'Grants For Researchers'),
-    array('value' => '226', 'label' => 'Grants For Seniors'),
-    array('value' => '105', 'label' => 'Grants For Students'),
-    array('value' => '124', 'label' => 'Grants For Transgenders'),
-    array('value' => '225', 'label' => 'Grants For Veterans'),
-    array('value' => '118', 'label' => 'Grants For Women'),
-    array('value' => '64', 'label' => 'Grants For Youth'),
-    array('value' => '139', 'label' => 'Grants For Institutions'),
-    array('value' => '91', 'label' => 'Grants For Environmental Projects'),
-    array('value' => '232', 'label' => 'Grants For Women-Serving Organizations')
+    array('value' => '125', 'label' => 'Grants For Women Of Color Entrepreneurs')
   );
-
-  return $categories;
-}
-
-// Define hardcoded locations data
-function grantaura_get_grant_locations() {
-  $locations = array(
+  
+  $locations_data = array(
     array('value' => '28', 'label' => 'Global'),
     array('value' => '27', 'label' => 'United States'),
     array('value' => '72', 'label' => 'Canada'),
@@ -1073,32 +1045,10 @@ function grantaura_get_grant_locations() {
     array('value' => '127', 'label' => 'Massachusetts'),
     array('value' => '99', 'label' => 'Illinois'),
     array('value' => '107', 'label' => 'Africa'),
-    array('value' => '108', 'label' => 'Asia'),
-    array('value' => '75', 'label' => 'Brazil'),
-    array('value' => '198', 'label' => 'Caribbean'),
-    array('value' => '196', 'label' => 'Chile'),
-    array('value' => '197', 'label' => 'Colombia'),
-    array('value' => '71', 'label' => 'Europe'),
-    array('value' => '117', 'label' => 'Francophone Sub-Saharan Africa'),
-    array('value' => '222', 'label' => 'Guam'),
-    array('value' => '76', 'label' => 'Latin America'),
-    array('value' => '116', 'label' => 'Latin America and the Caribbean'),
-    array('value' => '194', 'label' => 'Mexico'),
-    array('value' => '147', 'label' => 'Middle East'),
-    array('value' => '115', 'label' => 'North America'),
-    array('value' => '114', 'label' => 'Oceania'),
-    array('value' => '195', 'label' => 'Peru'),
-    array('value' => '220', 'label' => 'Puerto Rico'),
-    array('value' => '221', 'label' => 'U.S. Virgin Islands'),
-    array('value' => '96', 'label' => 'UK')
+    array('value' => '108', 'label' => 'Asia')
   );
-
-  return $locations;
-}
-
-// Define hardcoded eligibility data
-function grantaura_get_eligibility_options() {
-  $eligibility = array(
+  
+  $eligibility_data = array(
     array('value' => 'Businesses', 'label' => 'Businesses'),
     array('value' => 'Startups', 'label' => 'Startups'),
     array('value' => 'Nonprofits', 'label' => 'Nonprofits'),
@@ -1110,34 +1060,17 @@ function grantaura_get_eligibility_options() {
     array('value' => 'Asian Americans', 'label' => 'Asian Americans'),
     array('value' => 'Females', 'label' => 'Women'),
     array('value' => 'Veterans', 'label' => 'Military Veterans'),
-    array('value' => 'Disabled', 'label' => 'Disabled/Special Persons'),
-    array('value' => 'Students', 'label' => 'Students'),
-    array('value' => 'Family', 'label' => 'Family'),
-    array('value' => 'Project', 'label' => 'Project'),
-    array('value' => 'Scientists', 'label' => 'Scientists'),
-    array('value' => 'Minority', 'label' => 'Minority'),
-    array('value' => 'Youth', 'label' => 'Youth'),
-    array('value' => 'Educational Institutions', 'label' => 'Educational Institutions'),
-    array('value' => 'CFDIs (Community Development Financial Institutions)', 'label' => 'Community Development Financial Institutions (CDFIs)'),
-    array('value' => 'Non-Binary', 'label' => 'Non-Binary'),
-    array('value' => 'Researchers', 'label' => 'Researchers')
+    array('value' => 'Disabled', 'label' => 'Disabled/Special Persons')
   );
 
-  return $eligibility;
-}
-
-// Generate a secure nonce for AJAX operations
-$grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
-$admin_ajax_url = admin_url('admin-ajax.php');
-
-// Add the data to the page directly - KEY FIX: We provide the data directly to the page
-echo '<script type="text/javascript">
+  // Output directly to the page - avoids function definitions
+  echo '<script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function() {
     // Store hardcoded data directly in global variables
     window.grantauraData = {
-      categories: ' . json_encode(grantaura_get_grant_categories()) . ',
-      locations: ' . json_encode(grantaura_get_grant_locations()) . ',
-      eligibility: ' . json_encode(grantaura_get_eligibility_options()) . '
+      categories: ' . json_encode($categories_data) . ',
+      locations: ' . json_encode($locations_data) . ',
+      eligibility: ' . json_encode($eligibility_data) . '
     };
     
     // Set up the nonce and AJAX URL
@@ -1147,887 +1080,608 @@ echo '<script type="text/javascript">
       nonceField.setAttribute("data-ajax-url", "' . esc_js($admin_ajax_url) . '");
     }
   });
-</script>';
-
-// Define AJAX handlers for server-side filtering
-function register_grants_filter_ajax_handlers() {
-  add_action("wp_ajax_filter_grants", "grants_filter_ajax_handler");
-  add_action("wp_ajax_nopriv_filter_grants", "grants_filter_ajax_handler");
-  add_action("wp_ajax_load_filter_options", "grants_load_filter_options_ajax_handler");
-  add_action("wp_ajax_nopriv_load_filter_options", "grants_load_filter_options_ajax_handler");
-}
-add_action("init", "register_grants_filter_ajax_handlers");
-
-// AJAX handler for loading filter options
-function grants_load_filter_options_ajax_handler() {
-  // Security check
-  check_ajax_referer("grants_filter_nonce", "security");
+  </script>';
   
-  $option_type = isset($_POST["option_type"]) ? sanitize_text_field($_POST["option_type"]) : "";
-  $response = array("success" => false, "data" => array(), "message" => "Invalid option type");
-  
-  if ($option_type === "categories") {
-    $response = array(
-      "success" => true, 
-      "data" => grantaura_get_grant_categories(),
-      "message" => "Categories loaded successfully"
-    );
-  }
-  else if ($option_type === "locations") {
-    $response = array(
-      "success" => true, 
-      "data" => grantaura_get_grant_locations(),
-      "message" => "Locations loaded successfully"
-    );
-  }
-  else if ($option_type === "eligibility") {
-    $response = array(
-      "success" => true, 
-      "data" => grantaura_get_eligibility_options(),
-      "message" => "Eligibility options loaded successfully"
-    );
+  // Simple AJAX handler registration without function definitions directly here
+  if (!function_exists('register_grants_filter_ajax')) {
+    function register_grants_filter_ajax() {
+      add_action('wp_ajax_filter_grants', 'grants_filter_ajax_handler');
+      add_action('wp_ajax_nopriv_filter_grants', 'grants_filter_ajax_handler');
+    }
+    add_action('init', 'register_grants_filter_ajax');
   }
   
-  wp_send_json($response);
-  wp_die(); // Important to terminate properly
-}
-
-// Filter grants AJAX handler
-function grants_filter_ajax_handler() {
-  // Security check
-  check_ajax_referer("grants_filter_nonce", "security");
-  
-  // Get filter parameters
-  $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-  $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
-  $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
-  $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
-  $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-  $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
-  $eligibility = isset($_POST['eligibility']) ? array_map('sanitize_text_field', (array)$_POST['eligibility']) : array();
-  
-  // Build query args - for now, just return all grants as client-side filtering handles the rest
-  $query_args = array(
-    'post_type' => 'at_biz_dir',
-    'posts_per_page' => -1,
-    'fields' => 'ids',
-    'post_status' => 'publish'
-  );
-  
-  // Get all published grants
-  $all_grants = get_posts($query_args);
-  
-  wp_send_json(array(
-    'success' => true,
-    'filtered_ids' => $all_grants,
-    'total' => count($all_grants),
-    'filters_applied' => array(
-      'search' => $search,
-      'deadline' => $deadline,
-      'amount_min' => $amount_min,
-      'amount_max' => $amount_max,
-      'category' => $category,
-      'location' => $location,
-      'eligibility' => $eligibility
-    ),
-    'message' => 'Grants filtered successfully'
-  ));
-  
-  wp_die(); // Important to terminate properly
-}
+  if (!function_exists('grants_filter_ajax_handler')) {
+    function grants_filter_ajax_handler() {
+      check_ajax_referer('grants_filter_nonce', 'security');
+      $query_args = array(
+        'post_type' => 'at_biz_dir',
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'post_status' => 'publish'
+      );
+      $all_grants = get_posts($query_args);
+      wp_send_json(array('success' => true, 'filtered_ids' => $all_grants));
+      wp_die();
+    }
+  }
   [/php]
 
-  <!-- JavaScript for Filter Functionality - FIXED -->
+  <!-- JavaScript for Filter Functionality - SIMPLIFIED -->
   <script>
-    // Replace the entire JavaScript block in the filter system section
-document.addEventListener('DOMContentLoaded', function() {
-  /* --- Configuration & Initialization --- */
-  // Function to check if values in an array are all true - safer alternative to && operator
-  function checkConditions(conditions) {
-    for (var i = 0; i < conditions.length; i++) {
-      if (!conditions[i]) {
-        return false;
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to check if values in an array are all true - safer alternative to && operator
+    function checkConditions(conditions) {
+      for (var i = 0; i < conditions.length; i++) {
+        if (!conditions[i]) {
+          return false;
+        }
       }
-    }
-    return true;
-  }
-  
-  // Function to safely get the AJAX configuration
-  function initAjaxConfig() {
-    // Get configuration from the hidden input field
-    var nonceField = document.getElementById('grants-filter-nonce');
-    
-    if (nonceField) {
-      window.grantsFilterNonce = nonceField.value;
-      window.ajaxurl = nonceField.getAttribute('data-ajax-url');
-      
-      console.log('AJAX Configuration initialized:', {
-        nonceAvailable: !!window.grantsFilterNonce,
-        ajaxUrlAvailable: !!window.ajaxurl
-      });
-      
-      return checkConditions([!!window.grantsFilterNonce, !!window.ajaxurl]);
+      return true;
     }
     
-    console.warn('Grants filter nonce field not found, AJAX may not work correctly');
+    // DOM Elements
+    const filterButton = document.getElementById('grants-filter-button');
+    const filterPopup = document.getElementById('grants-filter-popup');
+    const filterClose = document.querySelector('.filter-popup-close');
+    const filterForm = document.getElementById('grants-filter-form');
+    const resetButton = document.getElementById('filter-reset');
+    const applyButton = document.getElementById('filter-apply');
+    const filterCount = document.getElementById('filter-count');
+    const selectedFiltersContainer = document.getElementById('selected-filters');
+    const clearAllFilters = document.getElementById('clear-all-filters');
+    const eligibilityContainer = document.getElementById('eligibility-options');
+    const categorySelect = document.getElementById('category-filter');
+    const locationSelect = document.getElementById('location-filter');
+    const searchInput = document.getElementById('grant-search');
+    const filterError = document.getElementById('filter-error');
+    const filterEmpty = document.getElementById('filter-empty');
+    const filterLoading = document.getElementById('filter-loading');
     
-    // Fallback for ajaxurl if not set
-    if (typeof window.ajaxurl === 'undefined') {
-      window.ajaxurl = '/wp-admin/admin-ajax.php';
-      console.log('Using fallback AJAX URL:', window.ajaxurl);
-    }
+    // State
+    let activeFilters = {};
+    let allEligibilityOptions = [];
+    let allCategories = [];
+    let allLocations = [];
+    let grantsContainer = document.querySelector('.grants-container');
     
-    return false;
-  }
-  
-  // DOM Elements
-  const filterButton = document.getElementById('grants-filter-button');
-  const filterPopup = document.getElementById('grants-filter-popup');
-  const filterClose = document.querySelector('.filter-popup-close');
-  const filterForm = document.getElementById('grants-filter-form');
-  const resetButton = document.getElementById('filter-reset');
-  const applyButton = document.getElementById('filter-apply');
-  const filterCount = document.getElementById('filter-count');
-  const selectedFiltersContainer = document.getElementById('selected-filters');
-  const clearAllFilters = document.getElementById('clear-all-filters');
-  const eligibilityContainer = document.getElementById('eligibility-options');
-  const categorySelect = document.getElementById('category-filter');
-  const locationSelect = document.getElementById('location-filter');
-  const searchInput = document.getElementById('grant-search');
-  const filterError = document.getElementById('filter-error');
-  const filterEmpty = document.getElementById('filter-empty');
-  const filterLoading = document.getElementById('filter-loading');
-  
-  // State
-  let activeFilters = {};
-  let allEligibilityOptions = [];
-  let allCategories = [];
-  let allLocations = [];
-  let grantsContainer = document.querySelector('.grants-container');
-  
-  // Initialize
-  init();
+    // Initialize
+    init();
 
-  function init() {
-    console.log('Initializing grants filter system...');
-    // Ensure AJAX configuration is set
-    const configSuccess = initAjaxConfig();
-    
-    if (configSuccess) {
-      console.log('AJAX configuration successful');
-      // Load filter options - Use the direct data approach first
+    function init() {
+      // Get AJAX configuration
+      initAjaxConfig();
+      
+      // Use direct data from page
       if (window.grantauraData) {
-        console.log('Using direct data from page');
         renderCategoryOptions(window.grantauraData.categories);
         renderLocationOptions(window.grantauraData.locations);
         renderEligibilityOptions(window.grantauraData.eligibility);
         
-        // Store the data for reference
+        // Store data for reference
         allCategories = window.grantauraData.categories;
         allLocations = window.grantauraData.locations;
         allEligibilityOptions = window.grantauraData.eligibility;
-      } else {
-        // Fallback to AJAX if direct data not available
-        console.log('Direct data not available, trying AJAX');
-        loadFilterOptions();
       }
-    } else {
-      console.warn('AJAX configuration incomplete, trying direct data approach');
-      // Try direct data approach even without AJAX config
-      if (window.grantauraData) {
-        console.log('Using direct data from page as fallback');
-        renderCategoryOptions(window.grantauraData.categories);
-        renderLocationOptions(window.grantauraData.locations);
-        renderEligibilityOptions(window.grantauraData.eligibility);
+      
+      // Add event listeners
+      addEventListeners();
+      
+      // Check URL for filter parameters
+      parseUrlHash();
+    }
+    
+    function initAjaxConfig() {
+      // Get configuration from the hidden input field
+      var nonceField = document.getElementById('grants-filter-nonce');
+      
+      if (nonceField) {
+        window.grantsFilterNonce = nonceField.value;
+        window.ajaxurl = nonceField.getAttribute('data-ajax-url');
         
-        // Store the data for reference
-        allCategories = window.grantauraData.categories;
-        allLocations = window.grantauraData.locations;
-        allEligibilityOptions = window.grantauraData.eligibility;
-      } else {
-        // If both methods fail, show error
-        showError('Filter system configuration issue. Please refresh the page or contact support.');
+        return checkConditions([!!window.grantsFilterNonce, !!window.ajaxurl]);
       }
+      
+      // Fallback for ajaxurl if not set
+      if (typeof window.ajaxurl === 'undefined') {
+        window.ajaxurl = '/wp-admin/admin-ajax.php';
+      }
+      
+      return false;
     }
     
-    // Add event listeners
-    addEventListeners();
-    // Check URL for filter parameters
-    parseUrlHash();
-  }
-  
-  /* --- Event Handling --- */
-  function addEventListeners() {
-    // Open filter popup
-    if (filterButton) {
-      filterButton.addEventListener('click', toggleFilterPopup);
-    }
-    
-    // Close filter popup
-    if (filterClose) {
-      filterClose.addEventListener('click', closeFilterPopup);
-    }
-    
-    // Close on outside click
-    if (filterPopup) {
-      filterPopup.addEventListener('click', function(e) {
-        if (e.target === filterPopup) {
+    function addEventListeners() {
+      // Open filter popup
+      if (filterButton) {
+        filterButton.addEventListener('click', toggleFilterPopup);
+      }
+      
+      // Close filter popup
+      if (filterClose) {
+        filterClose.addEventListener('click', closeFilterPopup);
+      }
+      
+      // Close on outside click
+      if (filterPopup) {
+        filterPopup.addEventListener('click', function(e) {
+          if (e.target === filterPopup) {
+            closeFilterPopup();
+          }
+        });
+      }
+      
+      // Apply filters
+      if (applyButton) {
+        applyButton.addEventListener('click', function() {
+          applyFilters();
+          closeFilterPopup();
+        });
+      }
+      
+      // Reset filters
+      if (resetButton) {
+        resetButton.addEventListener('click', resetFilters);
+      }
+      
+      // Clear all selected filters
+      if (clearAllFilters) {
+        clearAllFilters.addEventListener('click', resetFilters);
+      }
+      
+      // Listen for enter key in search input
+      if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            applyFilters();
+          }
+        });
+      }
+      
+      // Add form input change listeners
+      if (filterForm) {
+        const formInputs = filterForm.querySelectorAll('input, select');
+        formInputs.forEach(input => {
+          input.addEventListener('change', updateSelectedFilters);
+        });
+      }
+      
+      // Close popup with escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
           closeFilterPopup();
         }
       });
+      
+      // Update hash when window is about to unload
+      window.addEventListener('beforeunload', function() {
+        if (Object.keys(activeFilters).length > 0) {
+          updateUrlHash();
+        }
+      });
     }
     
-    // Apply filters
-    if (applyButton) {
-      applyButton.addEventListener('click', function() {
-        applyFilters();
+    function toggleFilterPopup() {
+      const isActive = filterPopup.classList.contains('active');
+      if (isActive) {
         closeFilterPopup();
-      });
-    }
-    
-    // Reset filters
-    if (resetButton) {
-      resetButton.addEventListener('click', resetFilters);
-    }
-    
-    // Clear all selected filters
-    if (clearAllFilters) {
-      clearAllFilters.addEventListener('click', resetFilters);
-    }
-    
-    // Listen for enter key in search input
-    if (searchInput) {
-      searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          applyFilters();
-        }
-      });
-    }
-    
-    // Add form input change listeners
-    if (filterForm) {
-      const formInputs = filterForm.querySelectorAll('input, select');
-      formInputs.forEach(input => {
-        input.addEventListener('change', updateSelectedFilters);
-      });
-    }
-    
-    // Close popup with escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeFilterPopup();
-      }
-    });
-    
-    // Update hash when window is about to unload
-    window.addEventListener('beforeunload', function() {
-      if (Object.keys(activeFilters).length > 0) {
-        updateUrlHash();
-      }
-    });
-  }
-  
-  /* --- Popup Handling --- */
-  function toggleFilterPopup() {
-    const isActive = filterPopup.classList.contains('active');
-    if (isActive) {
-      closeFilterPopup();
-    } else {
-      openFilterPopup();
-    }
-  }
-
-  function openFilterPopup() {
-    filterPopup.classList.add('active');
-    filterButton.setAttribute('aria-expanded', 'true');
-    filterPopup.setAttribute('aria-hidden', 'false');
-    
-    // Trigger animation on the content
-    setTimeout(function() {
-      const content = document.querySelector('.filter-popup-content');
-      if (content) content.classList.add('active');
-    }, 10);
-    
-    // Prevent body scrolling
-    document.body.style.overflow = 'hidden';
-    
-    // Focus on search input
-    setTimeout(function() {
-      if (searchInput) searchInput.focus();
-    }, 300);
-  }
-
-  function closeFilterPopup() {
-    const content = document.querySelector('.filter-popup-content');
-    if (content) content.classList.remove('active');
-    
-    setTimeout(function() {
-      filterPopup.classList.remove('active');
-      filterButton.setAttribute('aria-expanded', 'false');
-      filterPopup.setAttribute('aria-hidden', 'true');
-      
-      // Restore body scrolling
-      document.body.style.overflow = '';
-    }, 300);
-  }
-  
-  /* --- AJAX Functions --- */
-  // Improved AJAX data fetching with better error handling
-  function fetchFilterOptions(optionType) {
-    console.log(`Fetching filter options for: ${optionType}`);
-    
-    // Check if we have direct data first
-    if (window.grantauraData && window.grantauraData[optionType]) {
-      console.log(`Using direct data for ${optionType}`);
-      return Promise.resolve({
-        success: true,
-        data: window.grantauraData[optionType],
-        message: `${optionType} loaded successfully from direct data`
-      });
-    }
-    
-    // If no direct data, fall back to AJAX
-    console.log(`No direct data for ${optionType}, using AJAX`);
-    
-    // Create form data for AJAX request
-    const formData = new FormData();
-    formData.append('action', 'load_filter_options');
-    formData.append('security', window.grantsFilterNonce || '');
-    formData.append('option_type', optionType);
-    
-    // Make sure ajaxurl is defined
-    const ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-    
-    // Make AJAX request
-    return fetch(ajaxUrl, {
-      method: 'POST',
-      body: formData,
-      credentials: 'same-origin'
-    })
-    .then(function(response) {
-      console.log(`${optionType} response status:`, response.status);
-      
-      if (!response.ok) {
-        return response.text().then(text => {
-          console.error('Error response body:', text);
-          throw new Error(`Network error: ${response.status} ${response.statusText}`);
-        });
-      }
-      
-      return response.json();
-    })
-    .then(function(data) {
-      console.log(`${optionType} data received:`, data);
-      return data;
-    })
-    .catch(function(error) {
-      console.error(`Error fetching ${optionType} options:`, error);
-      // Return a standardized error response object
-      return {
-        success: false,
-        data: [],
-        message: error.message || `Failed to load ${optionType} options`
-      };
-    });
-  }
-
-  function loadFilterOptions() {
-    // Show loading state for eligibility options
-    eligibilityContainer.innerHTML = `
-      <div class="filter-loading active">
-        <div class="filter-loading-spinner"></div>
-        <span>Loading eligibility options...</span>
-      </div>
-    `;
-    
-    // Load eligibility options
-    fetchFilterOptions('eligibility')
-      .then(function(response) {
-        if (response.success) {
-          allEligibilityOptions = response.data;
-          renderEligibilityOptions(response.data);
-        } else {
-          // Try fallback to hardcoded data
-          if (window.grantauraData && window.grantauraData.eligibility) {
-            allEligibilityOptions = window.grantauraData.eligibility;
-            renderEligibilityOptions(window.grantauraData.eligibility);
-          } else {
-            showError('Failed to load eligibility options: ' + response.message);
-          }
-        }
-      })
-      .catch(function(error) {
-        showError('Error loading eligibility options: ' + error.message);
-      });
-    
-    // Load categories
-    fetchFilterOptions('categories')
-      .then(function(response) {
-        if (response.success) {
-          allCategories = response.data;
-          renderCategoryOptions(response.data);
-        } else {
-          // Try fallback to hardcoded data
-          if (window.grantauraData && window.grantauraData.categories) {
-            allCategories = window.grantauraData.categories;
-            renderCategoryOptions(window.grantauraData.categories);
-          } else {
-            showError('Failed to load categories: ' + response.message);
-          }
-        }
-      })
-      .catch(function(error) {
-        showError('Error loading categories: ' + error.message);
-      });
-    
-    // Load locations
-    fetchFilterOptions('locations')
-      .then(function(response) {
-        if (response.success) {
-          allLocations = response.data;
-          renderLocationOptions(response.data);
-        } else {
-          // Try fallback to hardcoded data
-          if (window.grantauraData && window.grantauraData.locations) {
-            allLocations = window.grantauraData.locations;
-            renderLocationOptions(window.grantauraData.locations);
-          } else {
-            showError('Failed to load locations: ' + response.message);
-          }
-        }
-      })
-      .catch(function(error) {
-        showError('Error loading locations: ' + error.message);
-      });
-  }
-
-  function applyFilters() {
-    // Show loading state
-    showLoading(true);
-    hideError();
-    hideEmptyState();
-    console.log('Applying filters...');
-    
-    // Get all form values for the filter
-    const searchValue = searchInput.value.trim();
-    const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-    
-    if (!deadlineRadio) {
-      showError('Please select a deadline option.');
-      showLoading(false);
-      return;
-    }
-    
-    const deadlineValue = deadlineRadio.value;
-    const amountMinValue = document.getElementById('amount-min').value;
-    const amountMaxValue = document.getElementById('amount-max').value;
-    const categoryValue = categorySelect.value;
-    const locationValue = locationSelect.value;
-    
-    // Get eligibility values
-    const eligibilityValues = Array.from(
-      document.querySelectorAll('input[name="eligibility[]"]:checked')
-    ).map(checkbox => checkbox.value);
-    
-    // Update URL hash first (do this immediately regardless of AJAX result)
-    updateUrlHash();
-    
-    // IMPROVED: Use client-side filtering for immediate response
-    clientSideFiltering({
-      search: searchValue,
-      deadline: deadlineValue,
-      amountMin: amountMinValue,
-      amountMax: amountMaxValue,
-      category: categoryValue,
-      location: locationValue,
-      eligibility: eligibilityValues
-    });
-    
-    // Create form data for backend filtering (optional)
-    if (window.grantsFilterNonce) {
-      try {
-        const formData = new FormData();
-        formData.append('action', 'filter_grants');
-        formData.append('security', window.grantsFilterNonce);
-        
-        if (searchValue) formData.append('search', searchValue);
-        formData.append('deadline', deadlineValue || 'all');
-        if (amountMinValue) formData.append('amount_min', amountMinValue);
-        if (amountMaxValue) formData.append('amount_max', amountMaxValue);
-        if (categoryValue) formData.append('category', categoryValue);
-        if (locationValue) formData.append('location', locationValue);
-        
-        // Add eligibility values
-        eligibilityValues.forEach(value => {
-          formData.append('eligibility[]', value);
-        });
-        
-        // Make sure ajaxurl is defined
-        const ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-        
-        // Make non-blocking AJAX request to sync with server
-        fetch(ajaxUrl, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        })
-        .then(function(response) {
-          if (!response.ok) {
-            console.log('Server filter response not OK, but using client-side results');
-            return;
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          console.log('Server filter response received:', data);
-          // Optional: You could use the server response to refine client-side results
-        })
-        .catch(function(error) {
-          console.log('Server filter error (continuing with client results):', error.message);
-        });
-      } catch (error) {
-        console.log('Error setting up server filter:', error.message);
-      }
-    }
-  }
-  
-  function clientSideFiltering(filters) {
-    console.log('Applying client-side filtering with:', filters);
-    
-    // Get all grant cards
-    const allGrantCards = document.querySelectorAll('.g-card');
-    if (!allGrantCards || allGrantCards.length === 0) {
-      console.error('No grant cards found on page!');
-      showError('Could not find grant cards to filter');
-      showLoading(false);
-      return;
-    }
-    
-    // Prepare for filtering
-    let matchedCards = [];
-    let visibleCount = 0;
-    
-    // Filter each card
-    allGrantCards.forEach(card => {
-      // Default to showing the card
-      let showCard = true;
-      
-      try {
-        // Apply each filter criterion
-        if (showCard && filters.search) {
-          // Search in title and description
-          const title = card.querySelector('.g-card__title')?.textContent?.toLowerCase() || '';
-          const excerpt = card.querySelector('.g-card__excerpt')?.textContent?.toLowerCase() || '';
-          const searchTerm = filters.search.toLowerCase();
-          
-          showCard = title.includes(searchTerm) || excerpt.includes(searchTerm);
-        }
-        
-        if (showCard && filters.deadline && filters.deadline !== 'all') {
-          // Filter by deadline
-          const status = card.querySelector('.g-card__status-badge')?.textContent?.trim().toLowerCase() || '';
-          const deadlineText = card.querySelector('.g-card__deadline-value')?.textContent?.trim().toLowerCase() || '';
-          
-          if (filters.deadline === 'today') {
-            // Show only grants due today
-            showCard = status === 'active' && deadlineText.includes('today');
-          } else if (filters.deadline === 'week') {
-            // Show only grants due this week
-            showCard = status === 'active' && (
-              deadlineText.includes('today') || 
-              (card.querySelector('.g-card__deadline-days') && 
-               parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 7)
-            );
-          } else if (filters.deadline === 'month') {
-            // Show only grants due this month
-            showCard = status === 'active' && (
-              deadlineText.includes('today') || 
-              (card.querySelector('.g-card__deadline-days') && 
-               parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 31)
-            );
-          } else if (filters.deadline === 'ongoing') {
-            // Show only ongoing grants
-            showCard = status === 'ongoing' || deadlineText.toLowerCase() === 'ongoing';
-          }
-        }
-        
-        if (showCard && (filters.amountMin || filters.amountMax)) {
-          // Filter by amount
-          const amountText = card.querySelector('.g-card__amount')?.textContent?.trim() || '';
-          if (amountText !== 'Various Benefits' && amountText !== 'Varies') {
-            const amountValue = parseInt(amountText.replace(/[^0-9]/g, '')) || 0;
-            
-            if (filters.amountMin && amountValue < parseInt(filters.amountMin)) {
-              showCard = false;
-            }
-            
-            if (filters.amountMax && amountValue > parseInt(filters.amountMax)) {
-              showCard = false;
-            }
-          }
-        }
-        
-        if (showCard && filters.category) {
-          // Filter by category
-          const categoryLinks = card.querySelectorAll('.g-card__tag');
-          let categoryMatch = false;
-          
-          categoryLinks.forEach(link => {
-            const href = link.getAttribute('href') || '';
-            if (href.includes(`category-${filters.category}`) || href.includes(`=${filters.category}`)) {
-              categoryMatch = true;
-            }
-          });
-          
-          showCard = categoryMatch;
-        }
-        
-        if (showCard && filters.location) {
-          // Filter by location
-          const locationLinks = card.querySelectorAll('.g-card__location-link');
-          let locationMatch = false;
-          
-          locationLinks.forEach(link => {
-            const href = link.getAttribute('href') || '';
-            if (href.includes(`location-${filters.location}`) || href.includes(`=${filters.location}`)) {
-              locationMatch = true;
-            }
-          });
-          
-          showCard = locationMatch;
-        }
-        
-        if (showCard && filters.eligibility && filters.eligibility.length > 0) {
-          // Filter by eligibility
-          const eligibilityTexts = card.querySelectorAll('.g-card__meta-item:nth-of-type(2) span');
-          let eligibilityMatch = false;
-          
-          eligibilityTexts.forEach(span => {
-            const text = span.textContent?.trim() || '';
-            if (filters.eligibility.some(value => text.toLowerCase() === value.toLowerCase())) {
-              eligibilityMatch = true;
-            }
-          });
-          
-          showCard = eligibilityMatch;
-        }
-      } catch (error) {
-        console.error('Error filtering card:', error);
-        showCard = true; // Default to showing on error
-      }
-      
-      // Apply visibility to the card
-      if (showCard) {
-        card.style.display = '';
-        matchedCards.push(card);
-        visibleCount++;
       } else {
-        card.style.display = 'none';
+        openFilterPopup();
       }
-    });
+    }
+
+    function openFilterPopup() {
+      filterPopup.classList.add('active');
+      filterButton.setAttribute('aria-expanded', 'true');
+      filterPopup.setAttribute('aria-hidden', 'false');
+      
+      // Trigger animation on the content
+      setTimeout(function() {
+        const content = document.querySelector('.filter-popup-content');
+        if (content) content.classList.add('active');
+      }, 10);
+      
+      // Prevent body scrolling
+      document.body.style.overflow = 'hidden';
+      
+      // Focus on search input
+      setTimeout(function() {
+        if (searchInput) searchInput.focus();
+      }, 300);
+    }
+
+    function closeFilterPopup() {
+      const content = document.querySelector('.filter-popup-content');
+      if (content) content.classList.remove('active');
+      
+      setTimeout(function() {
+        filterPopup.classList.remove('active');
+        filterButton.setAttribute('aria-expanded', 'false');
+        filterPopup.setAttribute('aria-hidden', 'true');
+        
+        // Restore body scrolling
+        document.body.style.overflow = '';
+      }, 300);
+    }
     
-    // Update counts and UI
-    updateResultCount(visibleCount);
+    function renderEligibilityOptions(options) {
+      // Clear loading state
+      eligibilityContainer.innerHTML = '';
+      
+      if (!Array.isArray(options) || options.length === 0) {
+        eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
+        return;
+      }
+      
+      // Sort options alphabetically
+      options.sort((a, b) => a.label.localeCompare(b.label));
+      
+      let html = '';
+      options.forEach(function(option) {
+        // Create a safe ID by sanitizing the value
+        const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+        
+        html += `
+          <div class="eligibility-option">
+            <input type="checkbox" id="${safeId}" 
+              name="eligibility[]" value="${option.value}">
+            <label for="${safeId}">${option.label}</label>
+          </div>
+        `;
+      });
+      
+      eligibilityContainer.innerHTML = html;
+      
+      // Add change event listeners
+      const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedFilters);
+      });
+      
+      // Restore any selected values from URL
+      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+    }
+
+    function renderCategoryOptions(categories) {
+      // Clear loading state
+      categorySelect.innerHTML = '<option value="">All Categories</option>';
+      
+      if (!Array.isArray(categories) || categories.length === 0) {
+        return;
+      }
+      
+      // Sort categories alphabetically
+      categories.sort((a, b) => a.label.localeCompare(b.label));
+      
+      // Create options HTML
+      let html = '<option value="">All Categories</option>';
+      
+      categories.forEach(function(category) {
+        if (category && category.value && category.label) {
+          html += `<option value="${category.value}">${category.label}</option>`;
+        }
+      });
+      
+      // Update select element
+      categorySelect.innerHTML = html;
+      
+      // Restore any selected value from URL
+      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+    }
+
+    function renderLocationOptions(locations) {
+      // Clear loading state
+      locationSelect.innerHTML = '<option value="">All Locations</option>';
+      
+      if (!Array.isArray(locations) || locations.length === 0) {
+        return;
+      }
+      
+      // Sort locations alphabetically
+      locations.sort((a, b) => a.label.localeCompare(b.label));
+      
+      // Create options HTML
+      let html = '<option value="">All Locations</option>';
+      
+      locations.forEach(function(location) {
+        if (location && location.value && location.label) {
+          html += `<option value="${location.value}">${location.label}</option>`;
+        }
+      });
+      
+      // Update select element
+      locationSelect.innerHTML = html;
+      
+      // Restore any selected value from URL
+      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+    }
     
-    // Show empty state if no results
-    if (visibleCount === 0) {
-      showEmptyState();
-    } else {
+    function applyFilters() {
+      // Show loading state
+      showLoading(true);
+      hideError();
       hideEmptyState();
       
-      // Scroll to top of grants container for better UX
-      if (grantsContainer) {
-        setTimeout(() => {
-          window.scrollTo({
-            top: grantsContainer.offsetTop - 100,
-            behavior: 'smooth'
+      // Get all form values for the filter
+      const searchValue = searchInput.value.trim();
+      const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
+      
+      if (!deadlineRadio) {
+        showError('Please select a deadline option.');
+        showLoading(false);
+        return;
+      }
+      
+      const deadlineValue = deadlineRadio.value;
+      const amountMinValue = document.getElementById('amount-min').value;
+      const amountMaxValue = document.getElementById('amount-max').value;
+      const categoryValue = categorySelect.value;
+      const locationValue = locationSelect.value;
+      
+      // Get eligibility values
+      const eligibilityValues = Array.from(
+        document.querySelectorAll('input[name="eligibility[]"]:checked')
+      ).map(checkbox => checkbox.value);
+      
+      // Update URL hash first (do this immediately regardless of AJAX result)
+      updateUrlHash();
+      
+      // Use client-side filtering for immediate response
+      clientSideFiltering({
+        search: searchValue,
+        deadline: deadlineValue,
+        amountMin: amountMinValue,
+        amountMax: amountMaxValue,
+        category: categoryValue,
+        location: locationValue,
+        eligibility: eligibilityValues
+      });
+    }
+    
+    function clientSideFiltering(filters) {
+      // Get all grant cards
+      const allGrantCards = document.querySelectorAll('.g-card');
+      if (!allGrantCards || allGrantCards.length === 0) {
+        showError('Could not find grant cards to filter');
+        showLoading(false);
+        return;
+      }
+      
+      // Prepare for filtering
+      let visibleCount = 0;
+      
+      // Filter each card
+      allGrantCards.forEach(card => {
+        // Default to showing the card
+        let showCard = true;
+        
+        try {
+          // Apply each filter criterion
+          if (showCard && filters.search) {
+            // Search in title and description
+            const title = card.querySelector('.g-card__title')?.textContent?.toLowerCase() || '';
+            const excerpt = card.querySelector('.g-card__excerpt')?.textContent?.toLowerCase() || '';
+            const searchTerm = filters.search.toLowerCase();
+            
+            showCard = title.includes(searchTerm) || excerpt.includes(searchTerm);
+          }
+          
+          if (showCard && filters.deadline && filters.deadline !== 'all') {
+            // Filter by deadline
+            const status = card.querySelector('.g-card__status-badge')?.textContent?.trim().toLowerCase() || '';
+            const deadlineText = card.querySelector('.g-card__deadline-value')?.textContent?.trim().toLowerCase() || '';
+            
+            if (filters.deadline === 'today') {
+              // Show only grants due today
+              showCard = status === 'active' && deadlineText.includes('today');
+            } else if (filters.deadline === 'week') {
+              // Show only grants due this week
+              showCard = status === 'active' && (
+                deadlineText.includes('today') || 
+                (card.querySelector('.g-card__deadline-days') && 
+                 parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 7)
+              );
+            } else if (filters.deadline === 'month') {
+              // Show only grants due this month
+              showCard = status === 'active' && (
+                deadlineText.includes('today') || 
+                (card.querySelector('.g-card__deadline-days') && 
+                 parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 31)
+              );
+            } else if (filters.deadline === 'ongoing') {
+              // Show only ongoing grants
+              showCard = status === 'ongoing' || deadlineText.toLowerCase() === 'ongoing';
+            }
+          }
+          
+          if (showCard && (filters.amountMin || filters.amountMax)) {
+            // Filter by amount
+            const amountText = card.querySelector('.g-card__amount')?.textContent?.trim() || '';
+            if (amountText !== 'Various Benefits' && amountText !== 'Varies') {
+              const amountValue = parseInt(amountText.replace(/[^0-9]/g, '')) || 0;
+              
+              if (filters.amountMin && amountValue < parseInt(filters.amountMin)) {
+                showCard = false;
+              }
+              
+              if (filters.amountMax && amountValue > parseInt(filters.amountMax)) {
+                showCard = false;
+              }
+            }
+          }
+          
+          if (showCard && filters.category) {
+            // Filter by category
+            const categoryLinks = card.querySelectorAll('.g-card__tag');
+            let categoryMatch = false;
+            
+            categoryLinks.forEach(link => {
+              const href = link.getAttribute('href') || '';
+              if (href.includes(`category-${filters.category}`) || href.includes(`=${filters.category}`)) {
+                categoryMatch = true;
+              }
+            });
+            
+            showCard = categoryMatch;
+          }
+          
+          if (showCard && filters.location) {
+            // Filter by location
+            const locationLinks = card.querySelectorAll('.g-card__location-link');
+            let locationMatch = false;
+            
+            locationLinks.forEach(link => {
+              const href = link.getAttribute('href') || '';
+              if (href.includes(`location-${filters.location}`) || href.includes(`=${filters.location}`)) {
+                locationMatch = true;
+              }
+            });
+            
+            showCard = locationMatch;
+          }
+          
+          if (showCard && filters.eligibility && filters.eligibility.length > 0) {
+            // Filter by eligibility
+            const eligibilityTexts = card.querySelectorAll('.g-card__meta-item:nth-of-type(2) span');
+            let eligibilityMatch = false;
+            
+            eligibilityTexts.forEach(span => {
+              const text = span.textContent?.trim() || '';
+              if (filters.eligibility.some(value => text.toLowerCase() === value.toLowerCase())) {
+                eligibilityMatch = true;
+              }
+            });
+            
+            showCard = eligibilityMatch;
+          }
+        } catch (error) {
+          showCard = true; // Default to showing on error
+        }
+        
+        // Apply visibility to the card
+        if (showCard) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Update counts and UI
+      updateResultCount(visibleCount);
+      
+      // Show empty state if no results
+      if (visibleCount === 0) {
+        showEmptyState();
+      } else {
+        hideEmptyState();
+        
+        // Scroll to top of grants container for better UX
+        if (grantsContainer) {
+          setTimeout(() => {
+            window.scrollTo({
+              top: grantsContainer.offsetTop - 100,
+              behavior: 'smooth'
+            });
+          }, 300);
+        }
+      }
+      
+      // Hide loading state
+      showLoading(false);
+    }
+    
+    function updateSelectedFilters() {
+      // Get all form values
+      const searchValue = searchInput.value.trim();
+      const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
+      const deadlineValue = deadlineRadio ? deadlineRadio.value : 'all';
+      const amountMinValue = document.getElementById('amount-min').value;
+      const amountMaxValue = document.getElementById('amount-max').value;
+      const categoryValue = categorySelect.value;
+      const locationValue = locationSelect.value;
+      
+      // Get eligibility values
+      const eligibilityValues = Array.from(
+        document.querySelectorAll('input[name="eligibility[]"]:checked')
+      ).map(checkbox => checkbox.value);
+      
+      // Update active filters object
+      activeFilters = {};
+      
+      if (searchValue) activeFilters.search = searchValue;
+      if (deadlineValue && deadlineValue !== 'all') activeFilters.deadline = deadlineValue;
+      if (amountMinValue) activeFilters.amount_min = amountMinValue;
+      if (amountMaxValue) activeFilters.amount_max = amountMaxValue;
+      if (categoryValue) activeFilters.category = categoryValue;
+      if (locationValue) activeFilters.location = locationValue;
+      if (eligibilityValues.length > 0) activeFilters.eligibility = eligibilityValues;
+      
+      // Render selected filters display
+      renderSelectedFilters();
+      
+      // Update button state
+      updateFilterButtonState();
+    }
+
+    function renderSelectedFilters() {
+      // Clear current selected filters
+      while (selectedFiltersContainer.firstChild) {
+        if (selectedFiltersContainer.firstChild === clearAllFilters) {
+          break;
+        }
+        selectedFiltersContainer.removeChild(selectedFiltersContainer.firstChild);
+      }
+      
+      // Show/hide container based on if there are active filters
+      const hasActiveFilters = Object.keys(activeFilters).length > 0;
+      
+      if (hasActiveFilters) {
+        selectedFiltersContainer.classList.add('has-filters');
+      } else {
+        selectedFiltersContainer.classList.remove('has-filters');
+        return;
+      }
+      
+      // Add selected filters
+      for (const [key, value] of Object.entries(activeFilters)) {
+        let filterLabel = getFilterLabel(key, value);
+        
+        // Add filter tag
+        const filterTag = document.createElement('div');
+        filterTag.className = 'selected-filter';
+        filterTag.setAttribute('data-filter-key', key);
+        
+        if (Array.isArray(value)) {
+          // For eligibility (array values), create multiple tags
+          value.forEach(val => {
+            const tagClone = filterTag.cloneNode(true);
+            tagClone.setAttribute('data-filter-value', val);
+            tagClone.innerHTML = `
+              ${getFilterLabel(key, val)}
+              <button class="remove-filter" aria-label="Remove filter ${getFilterLabel(key, val)}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            `;
+            
+            // Add click handler to remove button
+            const removeBtn = tagClone.querySelector('.remove-filter');
+            removeBtn.addEventListener('click', function() {
+              removeFilter(key, val);
+            });
+            
+            // Insert before the clear all button
+            selectedFiltersContainer.insertBefore(tagClone, clearAllFilters);
           });
-        }, 300);
-      }
-    }
-    
-    // Hide loading state
-    showLoading(false);
-    
-    console.log(`Filtered to ${visibleCount} visible cards out of ${allGrantCards.length} total`);
-  }
-  
-  /* --- Rendering Functions --- */
-  function renderEligibilityOptions(options) {
-    console.log('Rendering eligibility options:', options);
-    
-    // Clear loading state
-    eligibilityContainer.innerHTML = '';
-    
-    if (!Array.isArray(options) || options.length === 0) {
-      eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
-      return;
-    }
-    
-    // Sort options alphabetically
-    options.sort((a, b) => a.label.localeCompare(b.label));
-    
-    let html = '';
-    options.forEach(function(option) {
-      // Create a safe ID by sanitizing the value
-      const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
-      
-      html += `
-        <div class="eligibility-option">
-          <input type="checkbox" id="${safeId}" 
-            name="eligibility[]" value="${option.value}">
-          <label for="${safeId}">${option.label}</label>
-        </div>
-      `;
-    });
-    
-    eligibilityContainer.innerHTML = html;
-    
-    // Add change event listeners
-    const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', updateSelectedFilters);
-    });
-    
-    console.log('Eligibility options rendered successfully');
-    
-    // Restore any selected values from URL
-    setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-  }
-
-  function renderCategoryOptions(categories) {
-    console.log('Rendering category options:', categories);
-    
-    // Clear loading state
-    categorySelect.innerHTML = '<option value="">All Categories</option>';
-    
-    if (!Array.isArray(categories) || categories.length === 0) {
-      console.warn('No category options received or invalid data format');
-      return;
-    }
-    
-    // Sort categories alphabetically
-    categories.sort((a, b) => a.label.localeCompare(b.label));
-    
-    // Create options HTML
-    let html = '<option value="">All Categories</option>';
-    
-    categories.forEach(function(category) {
-      if (category && category.value && category.label) {
-        html += `<option value="${category.value}">${category.label}</option>`;
-      }
-    });
-    
-    // Update select element
-    categorySelect.innerHTML = html;
-    console.log('Category options rendered successfully:', categories.length);
-    
-    // Restore any selected value from URL
-    setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-  }
-
-  function renderLocationOptions(locations) {
-    console.log('Rendering location options:', locations);
-    
-    // Clear loading state
-    locationSelect.innerHTML = '<option value="">All Locations</option>';
-    
-    if (!Array.isArray(locations) || locations.length === 0) {
-      console.warn('No location options received or invalid data format');
-      return;
-    }
-    
-    // Sort locations alphabetically
-    locations.sort((a, b) => a.label.localeCompare(b.label));
-    
-    // Create options HTML
-    let html = '<option value="">All Locations</option>';
-    
-    locations.forEach(function(location) {
-      if (location && location.value && location.label) {
-        html += `<option value="${location.value}">${location.label}</option>`;
-      }
-    });
-    
-    // Update select element
-    locationSelect.innerHTML = html;
-    console.log('Location options rendered successfully:', locations.length);
-    
-    // Restore any selected value from URL
-    setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-  }
-
-  function updateSelectedFilters() {
-    // Get all form values
-    const searchValue = searchInput.value.trim();
-    const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-    const deadlineValue = deadlineRadio ? deadlineRadio.value : 'all';
-    const amountMinValue = document.getElementById('amount-min').value;
-    const amountMaxValue = document.getElementById('amount-max').value;
-    const categoryValue = categorySelect.value;
-    const locationValue = locationSelect.value;
-    
-    // Get eligibility values
-    const eligibilityValues = Array.from(
-      document.querySelectorAll('input[name="eligibility[]"]:checked')
-    ).map(checkbox => checkbox.value);
-    
-    // Update active filters object
-    activeFilters = {};
-    
-    if (searchValue) activeFilters.search = searchValue;
-    if (deadlineValue && deadlineValue !== 'all') activeFilters.deadline = deadlineValue;
-    if (amountMinValue) activeFilters.amount_min = amountMinValue;
-    if (amountMaxValue) activeFilters.amount_max = amountMaxValue;
-    if (categoryValue) activeFilters.category = categoryValue;
-    if (locationValue) activeFilters.location = locationValue;
-    if (eligibilityValues.length > 0) activeFilters.eligibility = eligibilityValues;
-    
-    // Render selected filters display
-    renderSelectedFilters();
-    
-    // Update button state
-    updateFilterButtonState();
-  }
-
-  function renderSelectedFilters() {
-    // Clear current selected filters
-    while (selectedFiltersContainer.firstChild) {
-      if (selectedFiltersContainer.firstChild === clearAllFilters) {
-        break;
-      }
-      selectedFiltersContainer.removeChild(selectedFiltersContainer.firstChild);
-    }
-    
-    // Show/hide container based on if there are active filters
-    const hasActiveFilters = Object.keys(activeFilters).length > 0;
-    
-    if (hasActiveFilters) {
-      selectedFiltersContainer.classList.add('has-filters');
-    } else {
-      selectedFiltersContainer.classList.remove('has-filters');
-      return;
-    }
-    
-    // Add selected filters
-    for (const [key, value] of Object.entries(activeFilters)) {
-      let filterValue = value;
-      let filterLabel = getFilterLabel(key, value);
-      
-      // Add filter tag
-      const filterTag = document.createElement('div');
-      filterTag.className = 'selected-filter';
-      filterTag.setAttribute('data-filter-key', key);
-      
-      if (Array.isArray(value)) {
-        // For eligibility (array values), create multiple tags
-        value.forEach(val => {
-          const tagClone = filterTag.cloneNode(true);
-          tagClone.setAttribute('data-filter-value', val);
-          tagClone.innerHTML = `
-            ${getFilterLabel(key, val)}
-            <button class="remove-filter" aria-label="Remove filter ${getFilterLabel(key, val)}">
+        } else {
+          // For single value filters
+          filterTag.setAttribute('data-filter-value', value);
+          filterTag.innerHTML = `
+            ${filterLabel}
+            <button class="remove-filter" aria-label="Remove filter ${filterLabel}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -2036,372 +1690,329 @@ document.addEventListener('DOMContentLoaded', function() {
           `;
           
           // Add click handler to remove button
-          const removeBtn = tagClone.querySelector('.remove-filter');
+          const removeBtn = filterTag.querySelector('.remove-filter');
           removeBtn.addEventListener('click', function() {
-            removeFilter(key, val);
+            removeFilter(key, value);
           });
           
           // Insert before the clear all button
-          selectedFiltersContainer.insertBefore(tagClone, clearAllFilters);
-        });
-      } else {
-        // For single value filters
-        filterTag.setAttribute('data-filter-value', value);
-        filterTag.innerHTML = `
-          ${filterLabel}
-          <button class="remove-filter" aria-label="Remove filter ${filterLabel}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        `;
-        
-        // Add click handler to remove button
-        const removeBtn = filterTag.querySelector('.remove-filter');
-        removeBtn.addEventListener('click', function() {
-          removeFilter(key, value);
-        });
-        
-        // Insert before the clear all button
-        selectedFiltersContainer.insertBefore(filterTag, clearAllFilters);
-      }
-    }
-  }
-
-  function getFilterLabel(key, value) {
-    // Return human-readable label for each filter type and value
-    switch (key) {
-      case 'search':
-        return `Search: ${value}`;
-      case 'deadline':
-        switch (value) {
-          case 'today':
-            return 'Due Today';
-          case 'week':
-            return 'Due This Week';
-          case 'month':
-            return 'Due This Month';
-          case 'ongoing':
-            return 'Ongoing';
-          default:
-            return `Deadline: ${value}`;
+          selectedFiltersContainer.insertBefore(filterTag, clearAllFilters);
         }
-      case 'amount_min':
-        return `Min: $${value}`;
-      case 'amount_max':
-        return `Max: $${value}`;
-      case 'category':
-        // Find category label from value
-        const category = allCategories.find(c => c.value.toString() === value.toString());
-        return category ? category.label : `Category: ${value}`;
-      case 'location':
-        // Find location label from value
-        const location = allLocations.find(l => l.value.toString() === value.toString());
-        return location ? location.label : `Location: ${value}`;
-      case 'eligibility':
-        return `Eligibility: ${value}`;
-      default:
-        return value;
-    }
-  }
-
-  function removeFilter(key, value) {
-    if (key === 'eligibility') {
-      // Remove just one eligibility value
-      activeFilters.eligibility = activeFilters.eligibility.filter(v => v !== value);
-      
-      if (activeFilters.eligibility.length === 0) {
-        delete activeFilters.eligibility;
       }
-      
-      // Uncheck the corresponding checkbox
-      const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-      if (checkbox) checkbox.checked = false;
-    } else {
-      // Remove the entire key
-      delete activeFilters[key];
-      
-      // Reset the corresponding form control
+    }
+
+    function getFilterLabel(key, value) {
+      // Return human-readable label for each filter type and value
       switch (key) {
         case 'search':
-          searchInput.value = '';
-          break;
+          return `Search: ${value}`;
         case 'deadline':
-          document.getElementById('deadline-all').checked = true;
-          break;
+          switch (value) {
+            case 'today':
+              return 'Due Today';
+            case 'week':
+              return 'Due This Week';
+            case 'month':
+              return 'Due This Month';
+            case 'ongoing':
+              return 'Ongoing';
+            default:
+              return `Deadline: ${value}`;
+          }
         case 'amount_min':
-          document.getElementById('amount-min').value = '';
-          break;
+          return `Min: $${value}`;
         case 'amount_max':
-          document.getElementById('amount-max').value = '';
-          break;
+          return `Max: $${value}`;
         case 'category':
-          categorySelect.value = '';
-          break;
+          // Find category label from value
+          const category = allCategories.find(c => c.value.toString() === value.toString());
+          return category ? category.label : `Category: ${value}`;
         case 'location':
-          locationSelect.value = '';
-          break;
+          // Find location label from value
+          const location = allLocations.find(l => l.value.toString() === value.toString());
+          return location ? location.label : `Location: ${value}`;
+        case 'eligibility':
+          return `Eligibility: ${value}`;
+        default:
+          return value;
       }
     }
-    
-    // Update filters display
-    renderSelectedFilters();
-    
-    // Update filter button state
-    updateFilterButtonState();
-    
-    // Apply filters immediately
-    applyFilters();
-  }
 
-  function updateFilterButtonState() {
-    const filterCount = Object.keys(activeFilters).length;
-    const countElement = filterButton.querySelector('.filter-count');
-    
-    if (filterCount > 0) {
-      filterButton.classList.add('has-active-filters');
-      countElement.textContent = filterCount;
-    } else {
-      filterButton.classList.remove('has-active-filters');
-      countElement.textContent = '0';
-    }
-  }
-
-  function resetFilters() {
-    // Reset form inputs
-    filterForm.reset();
-    
-    // Clear active filters
-    activeFilters = {};
-    
-    // Update UI
-    renderSelectedFilters();
-    updateFilterButtonState();
-    
-    // Apply filters to reset to default state
-    applyFilters();
-    
-    // Clear URL hash
-    history.pushState("", document.title, window.location.pathname + window.location.search);
-  }
-  
-  /* --- UI State Management --- */
-  function updateResultCount(count) {
-    // Update count in filter modal
-    if (count === 0) {
-      filterCount.textContent = 'No';
-    } else {
-      filterCount.textContent = count;
-    }
-  }
-  
-  function showLoading(isLoading) {
-    if (isLoading) {
-      filterLoading.classList.add('active');
-      
-      // Add loading state to grant container
-      if (grantsContainer) {
-        grantsContainer.classList.add('loading');
+    function removeFilter(key, value) {
+      if (key === 'eligibility') {
+        // Remove just one eligibility value
+        activeFilters.eligibility = activeFilters.eligibility.filter(v => v !== value);
         
-        // Add loading class to pagination if present
-        const pagination = document.querySelector('.g-pagination');
-        if (pagination) {
-          pagination.classList.add('loading');
+        if (activeFilters.eligibility.length === 0) {
+          delete activeFilters.eligibility;
         }
-      }
-    } else {
-      filterLoading.classList.remove('active');
-      
-      // Remove loading state from grant container
-      if (grantsContainer) {
-        grantsContainer.classList.remove('loading');
         
-        // Remove loading class from pagination
-        const pagination = document.querySelector('.g-pagination');
-        if (pagination) {
-          pagination.classList.remove('loading');
-        }
-      }
-    }
-  }
-
-  function showError(message) {
-    console.error('Filter error:', message);
-    filterError.classList.add('active');
-    filterError.querySelector('span').textContent = message;
-    showLoading(false);
-  }
-
-  function hideError() {
-    filterError.classList.remove('active');
-  }
-
-  function showEmptyState() {
-    filterEmpty.classList.add('active');
-  }
-
-  function hideEmptyState() {
-    filterEmpty.classList.remove('active');
-  }
-  
-  /* --- URL & Hash Management --- */
-  function updateUrlHash() {
-    console.log('Updating URL hash with active filters:', activeFilters);
-    
-    // Create URL hash from active filters
-    if (Object.keys(activeFilters).length === 0) {
-      // Clear hash if no active filters
-      console.log('No active filters, clearing hash');
-      
-      try {
-        history.pushState("", document.title, window.location.pathname + window.location.search);
-      } catch (e) {
-        console.error('Failed to update history:', e);
-        // Fallback for older browsers
-        window.location.hash = '';
-      }
-      
-      return;
-    }
-    
-    // Create hash string
-    const hashParts = [];
-    
-    for (const [key, value] of Object.entries(activeFilters)) {
-      if (Array.isArray(value)) {
-        // Handle array values (eligibility)
-        value.forEach(val => {
-          if (val) { // Only add non-empty values
-            hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
-          }
-        });
-      } else {
-        // Handle single values
-        if (value) { // Only add non-empty values
-          hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-        }
-      }
-    }
-    
-    // Create the hash string
-    const hashString = hashParts.join('&');
-    console.log('New hash string:', hashString);
-    
-    // Update URL hash
-    try {
-      // Use history API for better user experience (no page jump)
-      const newUrl = window.location.pathname + window.location.search + '#' + hashString;
-      history.pushState(activeFilters, document.title, newUrl);
-    } catch (e) {
-      console.error('Failed to update history, falling back to direct hash update:', e);
-      // Fallback for older browsers
-      window.location.hash = hashString;
-    }
-  }
-
-  function parseUrlHash() {
-    // Get hash without the # symbol
-    const hash = window.location.hash.substring(1);
-    console.log('Parsing URL hash:', hash);
-    
-    if (!hash) {
-      console.log('No hash found in URL');
-      return;
-    }
-    
-    // Split into key-value pairs
-    const hashParts = hash.split('&');
-    let tempFilters = {};
-    
-    hashParts.forEach(part => {
-      const [key, value] = part.split('=');
-      
-      if (key && value) {
-        try {
-          const decodedKey = decodeURIComponent(key);
-          const decodedValue = decodeURIComponent(value);
-          console.log(`Parsed hash parameter: ${decodedKey} = ${decodedValue}`);
-          
-          // Handle eligibility (array values)
-          if (decodedKey === 'eligibility') {
-            if (!tempFilters.eligibility) {
-              tempFilters.eligibility = [];
-            }
-            tempFilters.eligibility.push(decodedValue);
-          } else {
-            tempFilters[decodedKey] = decodedValue;
-          }
-        } catch (e) {
-          console.error('Error decoding URL parameter:', e);
-        }
-      }
-    });
-    
-    console.log('Parsed filters from URL:', tempFilters);
-    
-    // Update active filters
-    activeFilters = tempFilters;
-    
-    // We'll restore form values after option loading is complete
-    // The actual restoration happens in renderXXXOptions functions
-  }
-
-  function restoreFormValues() {
-    // Check if we have active filters from URL
-    if (Object.keys(activeFilters).length === 0) return;
-    
-    console.log('Restoring form values from URL hash...');
-    
-    // Restore search value
-    if (activeFilters.search) {
-      searchInput.value = activeFilters.search;
-    }
-    
-    // Restore deadline selection
-    if (activeFilters.deadline) {
-      const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
-      if (deadlineRadio) deadlineRadio.checked = true;
-    }
-    
-    // Restore amount values
-    if (activeFilters.amount_min) {
-      document.getElementById('amount-min').value = activeFilters.amount_min;
-    }
-    
-    if (activeFilters.amount_max) {
-      document.getElementById('amount-max').value = activeFilters.amount_max;
-    }
-    
-    // Restore category selection
-    if (activeFilters.category && categorySelect.options.length > 1) {
-      categorySelect.value = activeFilters.category;
-    }
-    
-    // Restore location selection
-    if (activeFilters.location && locationSelect.options.length > 1) {
-      locationSelect.value = activeFilters.location;
-    }
-    
-    // Restore eligibility checkboxes
-    if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
-      activeFilters.eligibility.forEach(value => {
+        // Uncheck the corresponding checkbox
         const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-        if (checkbox) checkbox.checked = true;
-      });
+        if (checkbox) checkbox.checked = false;
+      } else {
+        // Remove the entire key
+        delete activeFilters[key];
+        
+        // Reset the corresponding form control
+        switch (key) {
+          case 'search':
+            searchInput.value = '';
+            break;
+          case 'deadline':
+            document.getElementById('deadline-all').checked = true;
+            break;
+          case 'amount_min':
+            document.getElementById('amount-min').value = '';
+            break;
+          case 'amount_max':
+            document.getElementById('amount-max').value = '';
+            break;
+          case 'category':
+            categorySelect.value = '';
+            break;
+          case 'location':
+            locationSelect.value = '';
+            break;
+        }
+      }
+      
+      // Update filters display
+      renderSelectedFilters();
+      
+      // Update filter button state
+      updateFilterButtonState();
+      
+      // Apply filters immediately
+      applyFilters();
+    }
+
+    function updateFilterButtonState() {
+      const filterCount = Object.keys(activeFilters).length;
+      const countElement = filterButton.querySelector('.filter-count');
+      
+      if (filterCount > 0) {
+        filterButton.classList.add('has-active-filters');
+        countElement.textContent = filterCount;
+      } else {
+        filterButton.classList.remove('has-active-filters');
+        countElement.textContent = '0';
+      }
+    }
+
+    function resetFilters() {
+      // Reset form inputs
+      filterForm.reset();
+      
+      // Clear active filters
+      activeFilters = {};
+      
+      // Update UI
+      renderSelectedFilters();
+      updateFilterButtonState();
+      
+      // Apply filters to reset to default state
+      applyFilters();
+      
+      // Clear URL hash
+      history.pushState("", document.title, window.location.pathname + window.location.search);
     }
     
-    // Update UI to reflect restored filters
-    renderSelectedFilters();
-    updateFilterButtonState();
+    function updateResultCount(count) {
+      // Update count in filter modal
+      if (count === 0) {
+        filterCount.textContent = 'No';
+      } else {
+        filterCount.textContent = count;
+      }
+    }
     
-    // Apply the filters
-    setTimeout(function() {
-      console.log('Applying filters from URL hash');
-      applyFilters();
-    }, 300);
-  }
-});
+    function showLoading(isLoading) {
+      if (isLoading) {
+        filterLoading.classList.add('active');
+        
+        // Add loading state to grant container
+        if (grantsContainer) {
+          grantsContainer.classList.add('loading');
+          
+          // Add loading class to pagination if present
+          const pagination = document.querySelector('.g-pagination');
+          if (pagination) {
+            pagination.classList.add('loading');
+          }
+        }
+      } else {
+        filterLoading.classList.remove('active');
+        
+        // Remove loading state from grant container
+        if (grantsContainer) {
+          grantsContainer.classList.remove('loading');
+          
+          // Remove loading class from pagination
+          const pagination = document.querySelector('.g-pagination');
+          if (pagination) {
+            pagination.classList.remove('loading');
+          }
+        }
+      }
+    }
+
+    function showError(message) {
+      filterError.classList.add('active');
+      filterError.querySelector('span').textContent = message;
+      showLoading(false);
+    }
+
+    function hideError() {
+      filterError.classList.remove('active');
+    }
+
+    function showEmptyState() {
+      filterEmpty.classList.add('active');
+    }
+
+    function hideEmptyState() {
+      filterEmpty.classList.remove('active');
+    }
+    
+    function updateUrlHash() {
+      // Create URL hash from active filters
+      if (Object.keys(activeFilters).length === 0) {
+        // Clear hash if no active filters
+        try {
+          history.pushState("", document.title, window.location.pathname + window.location.search);
+        } catch (e) {
+          // Fallback for older browsers
+          window.location.hash = '';
+        }
+        
+        return;
+      }
+      
+      // Create hash string
+      const hashParts = [];
+      
+      for (const [key, value] of Object.entries(activeFilters)) {
+        if (Array.isArray(value)) {
+          // Handle array values (eligibility)
+          value.forEach(val => {
+            if (val) { // Only add non-empty values
+              hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+            }
+          });
+        } else {
+          // Handle single values
+          if (value) { // Only add non-empty values
+            hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+          }
+        }
+      }
+      
+      // Create the hash string
+      const hashString = hashParts.join('&');
+      
+      // Update URL hash
+      try {
+        // Use history API for better user experience (no page jump)
+        const newUrl = window.location.pathname + window.location.search + '#' + hashString;
+        history.pushState(activeFilters, document.title, newUrl);
+      } catch (e) {
+        // Fallback for older browsers
+        window.location.hash = hashString;
+      }
+    }
+
+    function parseUrlHash() {
+      // Get hash without the # symbol
+      const hash = window.location.hash.substring(1);
+      
+      if (!hash) {
+        return;
+      }
+      
+      // Split into key-value pairs
+      const hashParts = hash.split('&');
+      let tempFilters = {};
+      
+      hashParts.forEach(part => {
+        const [key, value] = part.split('=');
+        
+        if (key && value) {
+          try {
+            const decodedKey = decodeURIComponent(key);
+            const decodedValue = decodeURIComponent(value);
+            
+            // Handle eligibility (array values)
+            if (decodedKey === 'eligibility') {
+              if (!tempFilters.eligibility) {
+                tempFilters.eligibility = [];
+              }
+              tempFilters.eligibility.push(decodedValue);
+            } else {
+              tempFilters[decodedKey] = decodedValue;
+            }
+          } catch (e) {
+            // Silent error handling
+          }
+        }
+      });
+      
+      // Update active filters
+      activeFilters = tempFilters;
+    }
+
+    function restoreFormValues() {
+      // Check if we have active filters from URL
+      if (Object.keys(activeFilters).length === 0) return;
+      
+      // Restore search value
+      if (activeFilters.search) {
+        searchInput.value = activeFilters.search;
+      }
+      
+      // Restore deadline selection
+      if (activeFilters.deadline) {
+        const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
+        if (deadlineRadio) deadlineRadio.checked = true;
+      }
+      
+      // Restore amount values
+      if (activeFilters.amount_min) {
+        document.getElementById('amount-min').value = activeFilters.amount_min;
+      }
+      
+      if (activeFilters.amount_max) {
+        document.getElementById('amount-max').value = activeFilters.amount_max;
+      }
+      
+      // Restore category selection
+      if (activeFilters.category && categorySelect.options.length > 1) {
+        categorySelect.value = activeFilters.category;
+      }
+      
+      // Restore location selection
+      if (activeFilters.location && locationSelect.options.length > 1) {
+        locationSelect.value = activeFilters.location;
+      }
+      
+      // Restore eligibility checkboxes
+      if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
+        activeFilters.eligibility.forEach(value => {
+          const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
+          if (checkbox) checkbox.checked = true;
+        });
+      }
+      
+      // Update UI to reflect restored filters
+      renderSelectedFilters();
+      updateFilterButtonState();
+      
+      // Apply the filters
+      setTimeout(function() {
+        applyFilters();
+      }, 300);
+    }
+  });
   </script>
 
   <!-- Add CSS for loading state -->
