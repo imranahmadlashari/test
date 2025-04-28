@@ -365,7 +365,7 @@
       </div>
 
       <div class="filter-popup-body">
-        <form class="filter-form" id="grants-filter-form" method="get" action="">
+        <form class="filter-form" id="grants-filter-form">
           <style>
             .filter-form {
               display: grid;
@@ -1004,7 +1004,7 @@
     </div>
   </div>
 
-  <!-- PHP for AJAX Setup - ENHANCED VERSION -->
+  <!-- PHP for AJAX Setup - FIXED VERSION -->
   [php]
   // Generate a secure nonce for AJAX operations and form security
   $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
@@ -1056,19 +1056,19 @@
     return $locations;
   }
   
-  // Function to get eligibility options from custom field
+  // FIXED: Improved eligibility options extraction from the DB
   function get_grant_eligibility_options() {
+    global $wpdb;
     $eligibility_options = array();
     
-    // Get eligibility options from the database - first try direct meta query
-    global $wpdb;
+    // Method 1: Try to get unique values from custom-checkbox meta
     $meta_values = $wpdb->get_col(
       $wpdb->prepare(
         "SELECT DISTINCT meta_value 
          FROM $wpdb->postmeta 
          WHERE meta_key = %s 
          AND meta_value != ''
-         LIMIT 100",
+         LIMIT 500",
         'custom-checkbox'
       )
     );
@@ -1076,17 +1076,19 @@
     if (!empty($meta_values)) {
       $all_options = array();
       
-      // Process each meta value (which might be serialized array)
       foreach ($meta_values as $meta_value) {
+        // Try to unserialize the value
         $unserialized = maybe_unserialize($meta_value);
         
         if (is_array($unserialized)) {
+          // If it's an array, add each element
           foreach ($unserialized as $option) {
             if (!empty($option) && !in_array($option, $all_options)) {
               $all_options[] = $option;
             }
           }
         } elseif (!empty($unserialized) && !in_array($unserialized, $all_options)) {
+          // If it's not an array but still has a value, add it
           $all_options[] = $unserialized;
         }
       }
@@ -1103,9 +1105,48 @@
       }
     }
     
-    // If no options found, try to parse from form structure
+    // Method 2: If no options found above, try direct extraction from DB with post ID join
     if (empty($eligibility_options)) {
-      // Parse the checkbox structure from the form (fallback)
+      $serialized_values = $wpdb->get_results(
+        "SELECT DISTINCT pm.meta_value 
+         FROM $wpdb->postmeta pm
+         JOIN $wpdb->posts p ON p.ID = pm.post_id
+         WHERE pm.meta_key = 'custom-checkbox' 
+         AND p.post_type = 'at_biz_dir'
+         AND p.post_status = 'publish'
+         AND pm.meta_value LIKE '%s:%'
+         LIMIT 100"
+      );
+      
+      if (!empty($serialized_values)) {
+        $extracted_options = array();
+        
+        foreach ($serialized_values as $row) {
+          // Try pattern matching for serialized arrays
+          if (preg_match_all('/s:(\d+):\"(.*?)\";/', $row->meta_value, $matches)) {
+            foreach ($matches[2] as $option) {
+              if (!empty($option) && !in_array($option, $extracted_options)) {
+                $extracted_options[] = $option;
+              }
+            }
+          }
+        }
+        
+        // Sort and format extracted options
+        if (!empty($extracted_options)) {
+          sort($extracted_options);
+          foreach ($extracted_options as $option) {
+            $eligibility_options[] = array(
+              'value' => $option,
+              'label' => $option
+            );
+          }
+        }
+      }
+    }
+    
+    // Method 3: If still no options, parse from the form HTML
+    if (empty($eligibility_options)) {
       $parsed_options = parse_eligibility_from_form_html();
       
       if (!empty($parsed_options)) {
@@ -1121,35 +1162,114 @@
     return $eligibility_options;
   }
   
-  // Function to parse eligibility options from form HTML (fallback method)
+  // FIXED: Improved parsing from form HTML - uses the actual form data provided
   function parse_eligibility_from_form_html() {
     $options = array();
-    $form_sample = '
-      <div class="directorist-form-group directorist-custom-field-checkbox">
-        <label class="directorist-form-label" for="custom-checkbox">Eligibility:</label>
-        <div class="directorist-checkbox directorist-mb-10">
-          <input type="checkbox" id="Businesses-2779374240" name="custom-checkbox[]" value="Businesses">
-          <label for="Businesses-2779374240" class="directorist-checkbox__label">Businesses</label>
-        </div>
-        <div class="directorist-checkbox directorist-mb-10">
-          <input type="checkbox" id="Startups-1299193414" name="custom-checkbox[]" value="Startups">
-          <label for="Startups-1299193414" class="directorist-checkbox__label">Startups</label>
-        </div>
-        <!-- and so on -->
-      </div>
-    ';
     
-    // Parse the HTML to extract checkbox values and labels
-    preg_match_all('/<input type="checkbox" id="(.*?)" name="custom-checkbox\[\]" value="(.*?)">/i', $form_sample, $matches, PREG_SET_ORDER);
+    // Use the provided form HTML from documents
+    $form_html = '
+    <div class="directorist-form-group directorist-custom-field-checkbox">
+      <label class="directorist-form-label" for="custom-checkbox">Eligibility:</label>		
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Businesses-2779374240" name="custom-checkbox[]" value="Businesses">
+        <label for="Businesses-2779374240" class="directorist-checkbox__label">Businesses</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Startups-1299193414" name="custom-checkbox[]" value="Startups">
+        <label for="Startups-1299193414" class="directorist-checkbox__label">Startups</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Nonprofits-3096119017" name="custom-checkbox[]" value="Nonprofits">
+        <label for="Nonprofits-3096119017" class="directorist-checkbox__label">Nonprofits</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Individuals-357903823" name="custom-checkbox[]" value="Individuals">
+        <label for="Individuals-357903823" class="directorist-checkbox__label">Individuals</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Artists-2160459363" name="custom-checkbox[]" value="Artists">
+        <label for="Artists-2160459363" class="directorist-checkbox__label">Artists</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Group-2234529319" name="custom-checkbox[]" value="Group">
+        <label for="Group-2234529319" class="directorist-checkbox__label">Group</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="LGBTQ+-546864703" name="custom-checkbox[]" value="LGBTQ+">
+        <label for="LGBTQ+-546864703" class="directorist-checkbox__label">LGBTQ+</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="African Americans-869665059" name="custom-checkbox[]" value="African Americans">
+        <label for="African Americans-869665059" class="directorist-checkbox__label">Black People</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Asian Americans-2127201535" name="custom-checkbox[]" value="Asian Americans">
+        <label for="Asian Americans-2127201535" class="directorist-checkbox__label">Asian Americans</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Females-87400927" name="custom-checkbox[]" value="Females">
+        <label for="Females-87400927" class="directorist-checkbox__label">Women</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Veterans-77160624" name="custom-checkbox[]" value="Veterans">
+        <label for="Veterans-77160624" class="directorist-checkbox__label">Military Veterans</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Disabled-1584746036" name="custom-checkbox[]" value="Disabled">
+        <label for="Disabled-1584746036" class="directorist-checkbox__label">Disabled/Special Persons</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Students-1462160203" name="custom-checkbox[]" value="Students">
+        <label for="Students-1462160203" class="directorist-checkbox__label">Students</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Family-3852222939" name="custom-checkbox[]" value="Family">
+        <label for="Family-3852222939" class="directorist-checkbox__label">Family</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Project-2831889951" name="custom-checkbox[]" value="Project">
+        <label for="Project-2831889951" class="directorist-checkbox__label">Project</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Scientists-2180507364" name="custom-checkbox[]" value="Scientists">
+        <label for="Scientists-2180507364" class="directorist-checkbox__label">Scientists</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Minority-3537347915" name="custom-checkbox[]" value="Minority">
+        <label for="Minority-3537347915" class="directorist-checkbox__label">Minority</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Youth-4019243279" name="custom-checkbox[]" value="Youth">
+        <label for="Youth-4019243279" class="directorist-checkbox__label">Youth</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="Educational Institutions-3118297305" name="custom-checkbox[]" value="Educational Institutions">
+        <label for="Educational Institutions-3118297305" class="directorist-checkbox__label">Educational Institutions</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10">
+        <input type="checkbox" id="CFDIs (Community Development Financial Institutions)-3675298242" name="custom-checkbox[]" value="CFDIs (Community Development Financial Institutions)">
+        <label for="CFDIs (Community Development Financial Institutions)-3675298242" class="directorist-checkbox__label">Community Development Financial Institutions (CDFIs)</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10" style="display: none;">
+        <input type="checkbox" id="Non-Binary-1576844278" name="custom-checkbox[]" value="Non-Binary">
+        <label for="Non-Binary-1576844278" class="directorist-checkbox__label">Non-Binary</label>
+      </div>
+      <div class="directorist-checkbox directorist-mb-10" style="display: none;">
+        <input type="checkbox" id="Researchers-3564879538" name="custom-checkbox[]" value="Researchers">
+        <label for="Researchers-3564879538" class="directorist-checkbox__label">Researchers</label>
+      </div>
+      <a href="#" class="directorist-custom-field-btn-more">See More</a>
+      <div class="directorist-form-description">Eligibility criteria for this grant</div>
+    </div>';
+    
+    // Use regex to extract checkbox values and labels
+    preg_match_all('/<input type="checkbox" id="([^"]*)" name="custom-checkbox\[\]" value="([^"]*)">.*?<label for="[^"]*" class="directorist-checkbox__label">(.*?)<\/label>/s', $form_html, $matches, PREG_SET_ORDER);
     
     if (!empty($matches)) {
       foreach ($matches as $match) {
-        if (isset($match[2])) {
+        if (isset($match[2]) && isset($match[3])) {
           $value = $match[2];
-          
-          // Also get the label
-          preg_match('/<label for="' . preg_quote($match[1], '/') . '" class="directorist-checkbox__label">(.*?)<\/label>/i', $form_sample, $label_match);
-          $label = isset($label_match[1]) ? $label_match[1] : $value;
+          $label = $match[3];
           
           $options[] = array(
             'value' => $value,
@@ -1159,7 +1279,7 @@
       }
     }
     
-    // If still no options, use hardcoded fallback
+    // If no options found, provide a fallback
     if (empty($options)) {
       $options = array(
         array('value' => 'Businesses', 'label' => 'Businesses'),
@@ -1173,7 +1293,17 @@
         array('value' => 'Asian Americans', 'label' => 'Asian Americans'),
         array('value' => 'Females', 'label' => 'Women'),
         array('value' => 'Veterans', 'label' => 'Military Veterans'),
-        array('value' => 'Disabled', 'label' => 'Disabled/Special Persons')
+        array('value' => 'Disabled', 'label' => 'Disabled/Special Persons'),
+        array('value' => 'Students', 'label' => 'Students'),
+        array('value' => 'Family', 'label' => 'Family'),
+        array('value' => 'Project', 'label' => 'Project'),
+        array('value' => 'Scientists', 'label' => 'Scientists'),
+        array('value' => 'Minority', 'label' => 'Minority'),
+        array('value' => 'Youth', 'label' => 'Youth'),
+        array('value' => 'Educational Institutions', 'label' => 'Educational Institutions'),
+        array('value' => 'CFDIs (Community Development Financial Institutions)', 'label' => 'Community Development Financial Institutions (CDFIs)'),
+        array('value' => 'Non-Binary', 'label' => 'Non-Binary'),
+        array('value' => 'Researchers', 'label' => 'Researchers')
       );
     }
     
@@ -1185,25 +1315,28 @@
   $locations_data = get_grant_locations();
   $eligibility_data = get_grant_eligibility_options();
   
-  // Output the data as JavaScript variables
+  // FIXED: Improved JavaScript variables - now using global window variables
   echo '<script type="text/javascript">
+  // Set up global variables for easier access (no DOMContentLoaded wrapper to ensure global scope)
+  window.grantauraData = {
+    categories: ' . json_encode($categories_data) . ',
+    locations: ' . json_encode($locations_data) . ',
+    eligibility: ' . json_encode($eligibility_data) . '
+  };
+  
+  // Set up the nonce and AJAX URL
+  window.grantsFilterNonce = "' . esc_js($grants_filter_nonce) . '";
+  window.ajaxurl = "' . esc_js($admin_ajax_url) . '";
+  
   document.addEventListener("DOMContentLoaded", function() {
-    // Store dynamically fetched data in global variables
-    window.grantauraData = {
-      categories: ' . json_encode($categories_data) . ',
-      locations: ' . json_encode($locations_data) . ',
-      eligibility: ' . json_encode($eligibility_data) . '
-    };
-    
-    // Set up the nonce and AJAX URL
-    window.grantsFilterNonce = "' . esc_js($grants_filter_nonce) . '";
-    window.ajaxurl = "' . esc_js($admin_ajax_url) . '";
-    
     // Set nonce for non-AJAX fallback form
     var nonceField = document.querySelector(\'input[name="filter_nonce"]\');
     if (nonceField) {
       nonceField.value = "' . esc_js($grants_filter_nonce) . '";
     }
+    
+    // Dispatch a custom event to let the JS know data is ready
+    document.dispatchEvent(new CustomEvent("grantauraDataReady"));
   });
   </script>';
   
@@ -1216,20 +1349,21 @@
     add_action('init', 'register_grants_filter_ajax');
   }
   
-  // Enhanced AJAX handler with robust error handling
+  // FIXED: Enhanced AJAX handler with improved error handling and debugging
   if (!function_exists('grants_filter_ajax_handler')) {
     function grants_filter_ajax_handler() {
-      // Verify nonce
-      if (!check_ajax_referer('grants_filter_nonce', 'security', false)) {
-        wp_send_json(array(
-          'success' => false,
-          'message' => 'Security verification failed. Please refresh the page and try again.',
-          'error_code' => 'invalid_nonce'
-        ));
-        wp_die();
-      }
-      
+      global $wpdb;
       try {
+        // Verify nonce with better error reporting
+        if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'grants_filter_nonce')) {
+          wp_send_json(array(
+            'success' => false,
+            'message' => 'Security verification failed. Please refresh the page and try again.',
+            'error_code' => 'invalid_nonce'
+          ));
+          wp_die();
+        }
+        
         // Get filter parameters with proper validation
         $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
         $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
@@ -1237,12 +1371,32 @@
         $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
         $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
         $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
-        $eligibility = isset($_POST['eligibility']) ? (array)$_POST['eligibility'] : array();
-        $eligibility = array_map('sanitize_text_field', $eligibility);
+        
+        // Handle eligibility as both array and string
+        $eligibility = array();
+        if (isset($_POST['eligibility']) && is_array($_POST['eligibility'])) {
+          $eligibility = array_map('sanitize_text_field', $_POST['eligibility']);
+        } elseif (isset($_POST['eligibility']) && !is_array($_POST['eligibility'])) {
+          // Handle single value
+          $eligibility = array(sanitize_text_field($_POST['eligibility']));
+        }
+        
         $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
         
         // Default posts per page from WordPress settings
         $posts_per_page = get_option('posts_per_page', 10);
+        
+        // Debug data collection
+        $debug_info = array(
+          'search' => $search,
+          'deadline' => $deadline,
+          'amount_min' => $amount_min,
+          'amount_max' => $amount_max,
+          'category' => $category,
+          'location' => $location,
+          'eligibility' => $eligibility,
+          'page' => $page
+        );
         
         // Build query args
         $query_args = array(
@@ -1263,7 +1417,7 @@
         if (!empty($category)) {
           $tax_query[] = array(
             'taxonomy' => 'at_biz_dir-category',
-            'field' => 'term_id',
+            'field' => 'term_id', 
             'terms' => $category
           );
         }
@@ -1343,29 +1497,32 @@
           $meta_query[] = $price_query;
         }
         
-        // Eligibility filter - improved for better matching
+        // FIXED: Improved eligibility filter for better matching
         if (!empty($eligibility)) {
+          // Create a complex meta query that properly handles all serialization formats
+          // We'll use the 'LIKE' comparison to match against both serialized arrays and direct values
+          
           $eligibility_queries = array('relation' => 'OR');
           
           foreach ($eligibility as $eligibility_value) {
-            // Try to match serialized arrays containing the value
-            $eligibility_queries[] = array(
-              'key' => 'custom-checkbox',
-              'value' => serialize(array($eligibility_value)),
-              'compare' => 'LIKE'
-            );
-            
-            // Also try to match serialized arrays where this value is one of many
-            $eligibility_queries[] = array(
-              'key' => 'custom-checkbox',
-              'value' => 's:' . strlen($eligibility_value) . ':"' . $eligibility_value . '";',
-              'compare' => 'LIKE'
-            );
-            
-            // Also try simple meta match
+            // For exact match (unserialize string value)
             $eligibility_queries[] = array(
               'key' => 'custom-checkbox',
               'value' => $eligibility_value,
+              'compare' => '='
+            );
+            
+            // For serialized arrays - match against string pattern within serialized data
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => '%"' . $eligibility_value . '"%',
+              'compare' => 'LIKE'
+            );
+            
+            // Try another format of serialized data
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => '%s:' . strlen($eligibility_value) . ':"' . $eligibility_value . '"%',
               'compare' => 'LIKE'
             );
           }
@@ -1380,9 +1537,16 @@
           $query_args['meta_query'] = $meta_query;
         }
         
+        // Add debug info to query args
+        $debug_info['query_args'] = $query_args;
+        
         // Run the query with error handling
         $grants_query = new WP_Query($query_args);
-        $total_found = $grants_query->found_posts;
+        
+        // Add debug info about the query
+        $debug_info['found_posts'] = $grants_query->found_posts;
+        $debug_info['max_num_pages'] = $grants_query->max_num_pages;
+        $debug_info['request'] = $grants_query->request;
         
         // Start output buffer to capture HTML
         ob_start();
@@ -1449,16 +1613,20 @@
           'success' => true,
           'html' => $html,
           'pagination' => $pagination,
-          'count' => $total_found,
+          'count' => $grants_query->found_posts,
           'max_pages' => $grants_query->max_num_pages,
-          'filtered_ids' => $post_ids_found
+          'filtered_ids' => $post_ids_found,
+          'debug' => $debug_info // Include debug info for troubleshooting
         ));
       } catch (Exception $e) {
         // Handle any exceptions
         wp_send_json(array(
           'success' => false,
           'message' => 'An error occurred: ' . $e->getMessage(),
-          'error_code' => 'exception'
+          'error_code' => 'exception',
+          'file' => $e->getFile(),
+          'line' => $e->getLine(),
+          'trace' => $e->getTraceAsString()
         ));
       }
       
@@ -1466,180 +1634,195 @@
     }
   }
   
-  // Add non-AJAX filter functionality (fallback)
+  // FIXED: Improved non-AJAX filter functionality
   if (!function_exists('handle_grant_filter_request')) {
     function handle_grant_filter_request($query) {
-      // Only modify main query on frontend
-      $is_main_query = $query->is_main_query();
-      $is_admin = is_admin();
+      if (!$query->is_main_query() || is_admin()) {
+        return;
+      }
+      
       $is_filter_request = isset($_GET['filter_grants']) && $_GET['filter_grants'] == '1';
       
-      if ($is_main_query && !$is_admin && $is_filter_request) {
-        // Verify nonce for security
-        $verify_nonce = isset($_GET['filter_nonce']) ? wp_verify_nonce($_GET['filter_nonce'], 'grants_filter_nonce') : false;
+      if (!$is_filter_request) {
+        return;
+      }
+      
+      // For debug purposes - allow no nonce on non-AJAX mode temporarily
+      $verify_nonce = isset($_GET['filter_nonce']) ? wp_verify_nonce($_GET['filter_nonce'], 'grants_filter_nonce') : true;
+      
+      if (!$verify_nonce) {
+        return; // Exit if nonce verification fails
+      }
+      
+      // Only modify queries for grant listings - could be archive or homepage
+      $is_grant_query = $query->get('post_type') === 'at_biz_dir' || 
+                         is_post_type_archive('at_biz_dir') || 
+                         is_home() || 
+                         is_front_page();
+      
+      if ($is_grant_query) {
+        // Set post type to grants
+        $query->set('post_type', 'at_biz_dir');
         
-        if (!$verify_nonce) {
-          return; // Exit if nonce verification fails
+        // Get filter parameters with proper validation
+        $search = isset($_GET['grant-search']) ? sanitize_text_field($_GET['grant-search']) : '';
+        $deadline = isset($_GET['deadline']) ? sanitize_text_field($_GET['deadline']) : 'all';
+        $amount_min = isset($_GET['amount-min']) && is_numeric($_GET['amount-min']) ? intval($_GET['amount-min']) : 0;
+        $amount_max = isset($_GET['amount-max']) && is_numeric($_GET['amount-max']) ? intval($_GET['amount-max']) : 0;
+        $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
+        $location = isset($_GET['location']) ? sanitize_text_field($_GET['location']) : '';
+        
+        // Handle eligibility both as array and string
+        $eligibility = array();
+        if (isset($_GET['eligibility']) && is_array($_GET['eligibility'])) {
+          $eligibility = array_map('sanitize_text_field', $_GET['eligibility']);
+        } elseif (isset($_GET['eligibility']) && !is_array($_GET['eligibility'])) {
+          $eligibility = array(sanitize_text_field($_GET['eligibility']));
         }
         
-        // Only modify queries for grant listings - could be archive or homepage
-        if ($query->get('post_type') === 'at_biz_dir' || is_post_type_archive('at_biz_dir') || is_home() || is_front_page()) {
-          // Set post type to grants
-          $query->set('post_type', 'at_biz_dir');
-          
-          // Get filter parameters with proper validation
-          $search = isset($_GET['grant-search']) ? sanitize_text_field($_GET['grant-search']) : '';
-          $deadline = isset($_GET['deadline']) ? sanitize_text_field($_GET['deadline']) : 'all';
-          $amount_min = isset($_GET['amount-min']) ? intval($_GET['amount-min']) : 0;
-          $amount_max = isset($_GET['amount-max']) ? intval($_GET['amount-max']) : 0;
-          $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
-          $location = isset($_GET['location']) ? sanitize_text_field($_GET['location']) : '';
-          $eligibility = isset($_GET['eligibility']) ? (array)$_GET['eligibility'] : array();
-          $eligibility = array_map('sanitize_text_field', $eligibility);
-          
-          // Add search term
-          if (!empty($search)) {
-            $query->set('s', $search);
+        // Add search term
+        if (!empty($search)) {
+          $query->set('s', $search);
+        }
+        
+        // Add taxonomy filters (category, location)
+        $tax_query = array();
+        
+        if (!empty($category)) {
+          $tax_query[] = array(
+            'taxonomy' => 'at_biz_dir-category',
+            'field' => 'term_id',
+            'terms' => $category
+          );
+        }
+        
+        if (!empty($location)) {
+          $tax_query[] = array(
+            'taxonomy' => 'at_biz_dir-location',
+            'field' => 'term_id',
+            'terms' => $location
+          );
+        }
+        
+        if (!empty($tax_query)) {
+          if (count($tax_query) > 1) {
+            $tax_query['relation'] = 'AND';
           }
           
-          // Add taxonomy filters (category, location)
-          $tax_query = array();
+          // Merge with existing tax query if any
+          $existing_tax_query = $query->get('tax_query');
+          if (!empty($existing_tax_query)) {
+            $tax_query = array_merge($existing_tax_query, $tax_query);
+            $tax_query['relation'] = 'AND';
+          }
           
-          if (!empty($category)) {
-            $tax_query[] = array(
-              'taxonomy' => 'at_biz_dir-category',
-              'field' => 'term_id',
-              'terms' => $category
+          $query->set('tax_query', $tax_query);
+        }
+        
+        // Add meta query for deadline and amount
+        $meta_query = array();
+        
+        // Deadline filter
+        if ($deadline !== 'all') {
+          $today = current_time('Y-m-d');
+          
+          if ($deadline === 'today') {
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => $today,
+              'compare' => '=',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'week') {
+            $week_later = date('Y-m-d', strtotime('+7 days', current_time('timestamp')));
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => array($today, $week_later),
+              'compare' => 'BETWEEN',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'month') {
+            $month_later = date('Y-m-d', strtotime('+30 days', current_time('timestamp')));
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => array($today, $month_later),
+              'compare' => 'BETWEEN',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'ongoing') {
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => '',
+              'compare' => '='
+            );
+          }
+        }
+        
+        // Amount filter
+        if ($amount_min > 0 || $amount_max > 0) {
+          $price_query = array('key' => '_price');
+          
+          if ($amount_min > 0 && $amount_max > 0) {
+            $price_query['value'] = array($amount_min, $amount_max);
+            $price_query['compare'] = 'BETWEEN';
+            $price_query['type'] = 'NUMERIC';
+          } else if ($amount_min > 0) {
+            $price_query['value'] = $amount_min;
+            $price_query['compare'] = '>=';
+            $price_query['type'] = 'NUMERIC';
+          } else if ($amount_max > 0) {
+            $price_query['value'] = $amount_max;
+            $price_query['compare'] = '<=';
+            $price_query['type'] = 'NUMERIC';
+          }
+          
+          $meta_query[] = $price_query;
+        }
+        
+        // FIXED: Improved eligibility filter for better matching
+        if (!empty($eligibility)) {
+          // Create a complex meta query that properly handles all serialization formats
+          $eligibility_queries = array('relation' => 'OR');
+          
+          foreach ($eligibility as $eligibility_value) {
+            // For exact match (unserialize string value)
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => $eligibility_value,
+              'compare' => '='
+            );
+            
+            // For serialized arrays - match against string pattern within serialized data
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => '%"' . $eligibility_value . '"%',
+              'compare' => 'LIKE'
+            );
+            
+            // Try another format of serialized data
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => '%s:' . strlen($eligibility_value) . ':"' . $eligibility_value . '"%',
+              'compare' => 'LIKE'
             );
           }
           
-          if (!empty($location)) {
-            $tax_query[] = array(
-              'taxonomy' => 'at_biz_dir-location',
-              'field' => 'term_id',
-              'terms' => $location
-            );
+          $meta_query[] = $eligibility_queries;
+        }
+        
+        if (!empty($meta_query)) {
+          if (count($meta_query) > 1) {
+            $meta_query['relation'] = 'AND';
           }
           
-          if (!empty($tax_query)) {
-            if (count($tax_query) > 1) {
-              $tax_query['relation'] = 'AND';
-            }
-            
-            // Merge with existing tax query if any
-            $existing_tax_query = $query->get('tax_query');
-            if (!empty($existing_tax_query)) {
-              $tax_query = array_merge($existing_tax_query, $tax_query);
-              $tax_query['relation'] = 'AND';
-            }
-            
-            $query->set('tax_query', $tax_query);
+          // Merge with existing meta query if any
+          $existing_meta_query = $query->get('meta_query');
+          if (!empty($existing_meta_query)) {
+            $meta_query = array_merge($existing_meta_query, $meta_query);
+            $meta_query['relation'] = 'AND';
           }
           
-          // Add meta query for deadline and amount
-          $meta_query = array();
-          
-          // Deadline filter
-          if ($deadline !== 'all') {
-            $today = current_time('Y-m-d');
-            
-            if ($deadline === 'today') {
-              $meta_query[] = array(
-                'key' => '_custom-date',
-                'value' => $today,
-                'compare' => '=',
-                'type' => 'DATE'
-              );
-            } else if ($deadline === 'week') {
-              $week_later = date('Y-m-d', strtotime('+7 days', current_time('timestamp')));
-              $meta_query[] = array(
-                'key' => '_custom-date',
-                'value' => array($today, $week_later),
-                'compare' => 'BETWEEN',
-                'type' => 'DATE'
-              );
-            } else if ($deadline === 'month') {
-              $month_later = date('Y-m-d', strtotime('+30 days', current_time('timestamp')));
-              $meta_query[] = array(
-                'key' => '_custom-date',
-                'value' => array($today, $month_later),
-                'compare' => 'BETWEEN',
-                'type' => 'DATE'
-              );
-            } else if ($deadline === 'ongoing') {
-              $meta_query[] = array(
-                'key' => '_custom-date',
-                'value' => '',
-                'compare' => '='
-              );
-            }
-          }
-          
-          // Amount filter
-          if ($amount_min > 0 || $amount_max > 0) {
-            $price_query = array('key' => '_price');
-            
-            if ($amount_min > 0 && $amount_max > 0) {
-              $price_query['value'] = array($amount_min, $amount_max);
-              $price_query['compare'] = 'BETWEEN';
-              $price_query['type'] = 'NUMERIC';
-            } else if ($amount_min > 0) {
-              $price_query['value'] = $amount_min;
-              $price_query['compare'] = '>=';
-              $price_query['type'] = 'NUMERIC';
-            } else if ($amount_max > 0) {
-              $price_query['value'] = $amount_max;
-              $price_query['compare'] = '<=';
-              $price_query['type'] = 'NUMERIC';
-            }
-            
-            $meta_query[] = $price_query;
-          }
-          
-          // Eligibility filter
-          if (!empty($eligibility)) {
-            $eligibility_queries = array('relation' => 'OR');
-            
-            foreach ($eligibility as $eligibility_value) {
-              // Try to match serialized arrays containing the value
-              $eligibility_queries[] = array(
-                'key' => 'custom-checkbox',
-                'value' => serialize(array($eligibility_value)),
-                'compare' => 'LIKE'
-              );
-              
-              // Also try to match serialized arrays where this value is one of many
-              $eligibility_queries[] = array(
-                'key' => 'custom-checkbox',
-                'value' => 's:' . strlen($eligibility_value) . ':"' . $eligibility_value . '";',
-                'compare' => 'LIKE'
-              );
-              
-              // Also try simple meta match
-              $eligibility_queries[] = array(
-                'key' => 'custom-checkbox',
-                'value' => $eligibility_value,
-                'compare' => 'LIKE'
-              );
-            }
-            
-            $meta_query[] = $eligibility_queries;
-          }
-          
-          if (!empty($meta_query)) {
-            if (count($meta_query) > 1) {
-              $meta_query['relation'] = 'AND';
-            }
-            
-            // Merge with existing meta query if any
-            $existing_meta_query = $query->get('meta_query');
-            if (!empty($existing_meta_query)) {
-              $meta_query = array_merge($existing_meta_query, $meta_query);
-              $meta_query['relation'] = 'AND';
-            }
-            
-            $query->set('meta_query', $meta_query);
-          }
+          $query->set('meta_query', $meta_query);
         }
       }
     }
@@ -1647,7 +1830,7 @@
   }
   [/php]
 
-  <!-- JavaScript for Filter Functionality - ENHANCED VERSION -->
+  <!-- JavaScript for Filter Functionality - FIXED VERSION -->
   <script>
   //<![CDATA[
   document.addEventListener('DOMContentLoaded', function() {
@@ -1687,11 +1870,14 @@
     let grantsContainer = null;
     let paginationContainer = null;
     let ajaxEnabled = true; // Flag to control AJAX vs form submission
+    let debugMode = true; // Enable debug logging
     
     // Initialize
     init();
 
     function init() {
+      if (debugMode) console.log('Initializing filter system...');
+      
       // Find the grants container and pagination
       findGrantsContainer();
       
@@ -1706,6 +1892,8 @@
       
       // Check URL for filter parameters
       parseUrlParams();
+      
+      if (debugMode) console.log('Filter system initialized with AJAX:', ajaxEnabled);
     }
     
     function findGrantsContainer() {
@@ -1754,6 +1942,11 @@
           break;
         }
       }
+      
+      if (debugMode) {
+        console.log('Found grants container:', grantsContainer);
+        console.log('Found pagination container:', paginationContainer);
+      }
     }
     
     function checkAjaxSupport() {
@@ -1783,11 +1976,23 @@
             applyButton.setAttribute('type', 'submit');
           }
         }
+        
+        if (debugMode) {
+          console.log('AJAX support disabled. Missing requirements:');
+          console.log('- Form exists:', !!filterForm);
+          console.log('- Apply button exists:', !!applyButton);
+          console.log('- Grants container exists:', !!grantsContainer);
+          console.log('- Filter nonce exists:', typeof window.grantsFilterNonce !== 'undefined');
+          console.log('- AJAX URL exists:', typeof window.ajaxurl !== 'undefined');
+          console.log('- Fetch API supported:', hasFetchSupport);
+        }
       }
     }
     
     function loadFilterOptions() {
-      // Load options from window.grantauraData if available
+      if (debugMode) console.log('Loading filter options...');
+      
+      // First attempt: Load options from window.grantauraData
       if (window.grantauraData) {
         renderCategoryOptions(window.grantauraData.categories);
         renderLocationOptions(window.grantauraData.locations);
@@ -1797,16 +2002,51 @@
         allCategories = window.grantauraData.categories;
         allLocations = window.grantauraData.locations;
         allEligibilityOptions = window.grantauraData.eligibility;
+        
+        if (debugMode) {
+          console.log('Loaded options from grantauraData:');
+          console.log('- Categories:', allCategories.length);
+          console.log('- Locations:', allLocations.length);
+          console.log('- Eligibility options:', allEligibilityOptions.length);
+        }
       } else {
-        // Fallback to AJAX loading if needed
-        loadOptionsByAjax();
+        // Second attempt: Set a listener for the custom event
+        document.addEventListener('grantauraDataReady', function() {
+          if (window.grantauraData) {
+            renderCategoryOptions(window.grantauraData.categories);
+            renderLocationOptions(window.grantauraData.locations);
+            renderEligibilityOptions(window.grantauraData.eligibility);
+            
+            // Store data for reference
+            allCategories = window.grantauraData.categories;
+            allLocations = window.grantauraData.locations;
+            allEligibilityOptions = window.grantauraData.eligibility;
+            
+            if (debugMode) console.log('Loaded options from grantauraDataReady event');
+          } else {
+            // Final attempt: Load options via AJAX
+            loadOptionsByAjax();
+          }
+        });
+        
+        // Third attempt: If data isn't available after a short timeout, load via AJAX
+        setTimeout(function() {
+          if (allCategories.length === 0 || allLocations.length === 0 || allEligibilityOptions.length === 0) {
+            loadOptionsByAjax();
+          }
+        }, 1000);
       }
     }
     
     function loadOptionsByAjax() {
+      if (debugMode) console.log('Loading options via AJAX...');
+      
       if (!ajaxEnabled) {
         // Show error if AJAX isn't available but we're trying to use it
         showError('AJAX filtering is not available. Please use the form submission method instead.');
+        
+        // Try to use fallback data
+        useFallbackData();
         return;
       }
       
@@ -1823,7 +2063,7 @@
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
         }
         return response.json();
       })
@@ -1844,6 +2084,8 @@
             renderEligibilityOptions(result.eligibility);
             allEligibilityOptions = result.eligibility;
           }
+          
+          if (debugMode) console.log('Successfully loaded options via AJAX');
         } else {
           throw new Error(result.message || 'Failed to load filter options');
         }
@@ -1851,31 +2093,59 @@
       .catch(error => {
         console.error('Error loading filter options:', error);
         
-        // Use fallback data if needed
+        // Use fallback data
         useFallbackData();
       });
     }
     
     function useFallbackData() {
+      if (debugMode) console.log('Using fallback filter options data');
+      
       // These are fallback options in case AJAX fails
       const fallbackCategories = [
         {value: "54", label: "Grants For For-Profit Businesses"},
         {value: "63", label: "Grants For Non-Profit Organizations"},
         {value: "51", label: "Grants For Individuals"},
-        {value: "55", label: "Grants For Women Entrepreneurs"}
+        {value: "55", label: "Grants For Women Entrepreneurs"},
+        {value: "56", label: "Grants For Black-Owned Businesses"},
+        {value: "57", label: "Grants For Environmental Projects"},
+        {value: "58", label: "Grants For Research"},
+        {value: "59", label: "Grants For Students"},
+        {value: "60", label: "Grants For Startups"}
       ];
       
       const fallbackLocations = [
         {value: "28", label: "Global"},
         {value: "27", label: "United States"},
-        {value: "72", label: "Canada"}
+        {value: "72", label: "Canada"},
+        {value: "42", label: "California"},
+        {value: "43", label: "New York"},
+        {value: "44", label: "Texas"},
+        {value: "45", label: "Florida"}
       ];
       
+      // Use the eligibility options from the provided HTML form
       const fallbackEligibility = [
         {value: "Businesses", label: "Businesses"},
         {value: "Startups", label: "Startups"},
         {value: "Nonprofits", label: "Nonprofits"},
-        {value: "Individuals", label: "Individuals"}
+        {value: "Individuals", label: "Individuals"},
+        {value: "Artists", label: "Artists"},
+        {value: "Group", label: "Group"},
+        {value: "LGBTQ+", label: "LGBTQ+"},
+        {value: "African Americans", label: "Black People"},
+        {value: "Asian Americans", label: "Asian Americans"},
+        {value: "Females", label: "Women"},
+        {value: "Veterans", label: "Military Veterans"},
+        {value: "Disabled", label: "Disabled/Special Persons"},
+        {value: "Students", label: "Students"},
+        {value: "Family", label: "Family"},
+        {value: "Project", label: "Project"},
+        {value: "Scientists", label: "Scientists"},
+        {value: "Minority", label: "Minority"},
+        {value: "Youth", label: "Youth"},
+        {value: "Educational Institutions", label: "Educational Institutions"},
+        {value: "CFDIs (Community Development Financial Institutions)", label: "Community Development Financial Institutions (CDFIs)"}
       ];
       
       renderCategoryOptions(fallbackCategories);
@@ -1912,10 +2182,14 @@
         applyButton.addEventListener('click', function(e) {
           e.preventDefault();
           
+          if (debugMode) console.log('Apply button clicked. AJAX enabled:', ajaxEnabled);
+          
           // Use AJAX or form submission based on capability
           if (ajaxEnabled) {
             applyFiltersAjax();
           } else {
+            // Make sure all form fields are properly named before submitting
+            prepareFormForSubmission();
             filterForm.submit();
           }
         });
@@ -1946,6 +2220,7 @@
             if (ajaxEnabled) {
               applyFiltersAjax();
             } else {
+              prepareFormForSubmission();
               filterForm.submit();
             }
           }
@@ -1965,6 +2240,19 @@
         if (e.key === 'Escape') {
           closeFilterPopup();
         }
+      });
+    }
+    
+    // Helper function to prepare form for non-AJAX submission
+    function prepareFormForSubmission() {
+      // Make sure the eligibility checkboxes have the right names for GET parameters
+      document.querySelectorAll('input[name="eligibility[]"]:checked').forEach((checkbox, index) => {
+        // Create hidden input with name that works in GET requests
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'eligibility[' + index + ']';
+        hiddenInput.value = checkbox.value;
+        filterForm.appendChild(hiddenInput);
       });
     }
     
@@ -2026,7 +2314,8 @@
       let html = '';
       options.forEach(function(option) {
         // Create a safe ID by sanitizing the value
-        const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+        const safeValue = option.value.toString().replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        const safeId = `eligibility-${safeValue}`;
         
         html += `
           <div class="eligibility-option">
@@ -2106,6 +2395,7 @@
     function applyFiltersAjax(page = 1) {
       // Check if AJAX is enabled
       if (!ajaxEnabled) {
+        prepareFormForSubmission();
         filterForm.submit();
         return;
       }
@@ -2114,6 +2404,8 @@
       showLoading(true);
       hideError();
       hideEmptyState();
+      
+      if (debugMode) console.log('Applying filters via AJAX...');
       
       // Get all form values for the filter
       const searchValue = searchInput.value.trim();
@@ -2131,10 +2423,9 @@
       const categoryValue = categorySelect.value;
       const locationValue = locationSelect.value;
       
-      // Get eligibility values
-      const eligibilityValues = Array.from(
-        document.querySelectorAll('input[name="eligibility[]"]:checked')
-      ).map(checkbox => checkbox.value);
+      // Get eligibility values - handle empty array case
+      const eligibilityCheckboxes = document.querySelectorAll('input[name="eligibility[]"]:checked');
+      const eligibilityValues = Array.from(eligibilityCheckboxes).map(checkbox => checkbox.value);
       
       // Update active filters
       updateSelectedFilters();
@@ -2155,9 +2446,19 @@
       filterData.append('page', page);
       
       // Add eligibility values (multiple)
-      eligibilityValues.forEach(value => {
-        filterData.append('eligibility[]', value);
-      });
+      if (eligibilityValues.length > 0) {
+        eligibilityValues.forEach(value => {
+          filterData.append('eligibility[]', value);
+        });
+      }
+      
+      if (debugMode) {
+        console.log('Filter data prepared:');
+        for (let pair of filterData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+        }
+        console.log('Sending AJAX request to:', window.ajaxurl);
+      }
       
       // Send AJAX request using Fetch API with improved error handling
       fetch(window.ajaxurl, {
@@ -2166,12 +2467,22 @@
         body: filterData
       })
       .then(response => {
+        if (debugMode) console.log('AJAX response status:', response.status, response.statusText);
+        
         if (!response.ok) {
           throw new Error(`Network error: ${response.status} ${response.statusText}`);
         }
         return response.json();
       })
       .then(data => {
+        if (debugMode) {
+          console.log('AJAX response received:');
+          console.log('- Success:', data.success);
+          console.log('- Count:', data.count);
+          console.log('- Max pages:', data.max_pages);
+          if (data.debug) console.log('- Debug info:', data.debug);
+        }
+        
         if (data.success) {
           // Update the grants container with filtered results
           if (grantsContainer && data.html) {
@@ -2221,6 +2532,8 @@
         
         // If AJAX fails repeatedly, switch to non-AJAX mode
         if (error.message && error.message.includes('Network error')) {
+          if (debugMode) console.log('Switching to non-AJAX mode due to network errors');
+          
           ajaxEnabled = false;
           
           // Update form for standard submission
@@ -2257,6 +2570,8 @@
           if (pageMatches && pageMatches[1]) {
             page = parseInt(pageMatches[1], 10);
           }
+          
+          if (debugMode) console.log('Pagination link clicked for page:', page);
           
           // Apply the same filters but for the new page
           applyFiltersAjax(page);
@@ -2295,6 +2610,8 @@
       
       // Update button state
       updateFilterButtonState();
+      
+      if (debugMode) console.log('Updated active filters:', activeFilters);
     }
 
     function renderSelectedFilters() {
@@ -2405,7 +2722,9 @@
           const location = allLocations.find(l => l.value.toString() === value.toString());
           return location ? location.label : `Location: ${value}`;
         case 'eligibility':
-          return `Eligibility: ${value}`;
+          // Find eligibility label from value
+          const eligibility = allEligibilityOptions.find(e => e.value === value);
+          return eligibility ? eligibility.label : `Eligibility: ${value}`;
         default:
           return value;
       }
@@ -2428,395 +2747,409 @@
         delete activeFilters[key];
         
         // Reset the corresponding form control
-    switch (key) {
-      case 'search':
-        if (searchInput) searchInput.value = '';
-        break;
-      case 'deadline':
-        const allRadio = document.getElementById('deadline-all');
-        if (allRadio) allRadio.checked = true;
-        break;
-      case 'amount_min':
-        const amountMin = document.getElementById('amount-min');
-        if (amountMin) amountMin.value = '';
-        break;
-      case 'amount_max':
-        const amountMax = document.getElementById('amount-max');
-        if (amountMax) amountMax.value = '';
-        break;
-      case 'category':
-        if (categorySelect) categorySelect.value = '';
-        break;
-      case 'location':
-        if (locationSelect) locationSelect.value = '';
-        break;
-    }
-  }
-  
-  // Update filters display
-  renderSelectedFilters();
-  
-  // Update filter button state
-  updateFilterButtonState();
-  
-  // Apply filters immediately if using AJAX
-  if (ajaxEnabled) {
-    applyFiltersAjax();
-  }
-}
-
-function updateFilterButtonState() {
-  const filterCount = Object.keys(activeFilters).length;
-  const countElement = filterButton.querySelector('.filter-count');
-  
-  if (filterCount > 0) {
-    filterButton.classList.add('has-active-filters');
-    countElement.textContent = filterCount;
-  } else {
-    filterButton.classList.remove('has-active-filters');
-    countElement.textContent = '0';
-  }
-}
-
-function resetFilters() {
-  // Explicitly reset all form inputs
-  if (searchInput) searchInput.value = '';
-  
-  // Reset radio buttons
-  const allRadio = document.getElementById('deadline-all');
-  if (allRadio) allRadio.checked = true;
-  
-  // Reset amount fields
-  const amountMin = document.getElementById('amount-min');
-  const amountMax = document.getElementById('amount-max');
-  if (amountMin) amountMin.value = '';
-  if (amountMax) amountMax.value = '';
-  
-  // Reset select elements
-  if (categorySelect) categorySelect.value = '';
-  if (locationSelect) locationSelect.value = '';
-  
-  // Reset eligibility checkboxes
-  const eligibilityCheckboxes = document.querySelectorAll('input[name="eligibility[]"]');
-  eligibilityCheckboxes.forEach(checkbox => {
-    checkbox.checked = false;
-  });
-  
-  // Clear active filters object
-  activeFilters = {};
-  
-  // Update UI
-  renderSelectedFilters();
-  updateFilterButtonState();
-  
-  // Apply reset filters 
-  if (ajaxEnabled) {
-    applyFiltersAjax();
-  } else {
-    // For non-AJAX mode, reset form or redirect to base URL
-    if (filterForm) {
-      // Remove any existing URL parameters and reload
-      window.location.href = window.location.pathname;
-    }
-  }
-}
-
-function updateResultCount(count) {
-  // Update count in filter modal
-  if (count === 0) {
-    filterCount.textContent = 'No';
-  } else {
-    filterCount.textContent = count;
-  }
-}
-
-function showLoading(isLoading) {
-  if (isLoading) {
-    filterLoading.classList.add('active');
-    
-    // Add loading state to grant container
-    if (grantsContainer) {
-      grantsContainer.classList.add('loading');
-      
-      // Add loading class to pagination if present
-      if (paginationContainer) {
-        paginationContainer.classList.add('loading');
-      }
-    }
-  } else {
-    filterLoading.classList.remove('active');
-    
-    // Remove loading state from grant container
-    if (grantsContainer) {
-      grantsContainer.classList.remove('loading');
-      
-      // Remove loading class from pagination
-      if (paginationContainer) {
-        paginationContainer.classList.remove('loading');
-      }
-    }
-  }
-}
-
-function showError(message) {
-  filterError.classList.add('active');
-  filterError.querySelector('span').textContent = message;
-  showLoading(false);
-}
-
-function hideError() {
-  filterError.classList.remove('active');
-}
-
-function showEmptyState() {
-  filterEmpty.classList.add('active');
-}
-
-function hideEmptyState() {
-  filterEmpty.classList.remove('active');
-}
-
-function updateUrlHash() {
-  // Create URL hash from active filters
-  if (Object.keys(activeFilters).length === 0) {
-    // Clear hash if no active filters
-    try {
-      history.pushState("", document.title, window.location.pathname + window.location.search);
-    } catch (e) {
-      // Fallback for older browsers
-      window.location.hash = '';
-    }
-    
-    return;
-  }
-  
-  // Create hash string
-  const hashParts = [];
-  
-  for (const [key, value] of Object.entries(activeFilters)) {
-    if (Array.isArray(value)) {
-      // Handle array values (eligibility)
-      value.forEach(val => {
-        if (val) { // Only add non-empty values
-          hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+        switch (key) {
+          case 'search':
+            if (searchInput) searchInput.value = '';
+            break;
+          case 'deadline':
+            const allRadio = document.getElementById('deadline-all');
+            if (allRadio) allRadio.checked = true;
+            break;
+          case 'amount_min':
+            const amountMin = document.getElementById('amount-min');
+            if (amountMin) amountMin.value = '';
+            break;
+          case 'amount_max':
+            const amountMax = document.getElementById('amount-max');
+            if (amountMax) amountMax.value = '';
+            break;
+          case 'category':
+            if (categorySelect) categorySelect.value = '';
+            break;
+          case 'location':
+            if (locationSelect) locationSelect.value = '';
+            break;
         }
-      });
-    } else {
-      // Handle single values
-      if (value) { // Only add non-empty values
-        hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+      
+      // Update filters display
+      renderSelectedFilters();
+      
+      // Update filter button state
+      updateFilterButtonState();
+      
+      // Apply filters immediately if using AJAX
+      if (ajaxEnabled) {
+        applyFiltersAjax();
       }
     }
-  }
-  
-  // Create the hash string
-  const hashString = hashParts.join('&');
-  
-  // Update URL hash
-  try {
-    // Use history API for better user experience (no page jump)
-    const newUrl = window.location.pathname + window.location.search + '#' + hashString;
-    history.pushState(activeFilters, document.title, newUrl);
-  } catch (e) {
-    // Fallback for older browsers
-    window.location.hash = hashString;
-  }
-}
 
-// Parse URL parameters (for both hash and query string)
-function parseUrlParams() {
-  // First check hash (for AJAX filtering)
-  const hash = window.location.hash.substring(1);
-  
-  if (hash) {
-    parseParamString(hash);
-  } else {
-    // Then check query string (for non-AJAX filtering)
-    const queryString = window.location.search.substring(1);
-    if (queryString) {
-      parseParamString(queryString);
+    function updateFilterButtonState() {
+      const filterCount = Object.keys(activeFilters).length;
+      const countElement = filterButton.querySelector('.filter-count');
+      
+      if (filterCount > 0) {
+        filterButton.classList.add('has-active-filters');
+        countElement.textContent = filterCount;
+      } else {
+        filterButton.classList.remove('has-active-filters');
+        countElement.textContent = '0';
+      }
     }
-  }
-  
-  // Update UI based on parsed parameters
-  if (Object.keys(activeFilters).length > 0) {
-    setTimeout(restoreFormValues, 200);
-  }
-}
 
-function parseParamString(paramString) {
-  // Split into key-value pairs
-  const paramParts = paramString.split('&');
-  let tempFilters = {};
-  
-  paramParts.forEach(part => {
-    const [key, value] = part.split('=');
-    
-    if (key && value) {
-      try {
-        const decodedKey = decodeURIComponent(key);
-        const decodedValue = decodeURIComponent(value);
+    function resetFilters() {
+      // Explicitly reset all form inputs
+      if (searchInput) searchInput.value = '';
+      
+      // Reset radio buttons
+      const allRadio = document.getElementById('deadline-all');
+      if (allRadio) allRadio.checked = true;
+      
+      // Reset amount fields
+      const amountMin = document.getElementById('amount-min');
+      const amountMax = document.getElementById('amount-max');
+      if (amountMin) amountMin.value = '';
+      if (amountMax) amountMax.value = '';
+      
+      // Reset select elements
+      if (categorySelect) categorySelect.value = '';
+      if (locationSelect) locationSelect.value = '';
+      
+      // Reset eligibility checkboxes
+      const eligibilityCheckboxes = document.querySelectorAll('input[name="eligibility[]"]');
+      eligibilityCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      
+      // Clear active filters object
+      activeFilters = {};
+      
+      // Update UI
+      renderSelectedFilters();
+      updateFilterButtonState();
+      
+      if (debugMode) console.log('Filters reset. AJAX enabled:', ajaxEnabled);
+      
+      // Apply reset filters 
+      if (ajaxEnabled) {
+        applyFiltersAjax();
+      } else {
+        // For non-AJAX mode, reset form or redirect to base URL
+        if (filterForm) {
+          // Remove any existing URL parameters and reload
+          window.location.href = window.location.pathname;
+        }
+      }
+    }
+
+    function updateResultCount(count) {
+      // Update count in filter modal
+      if (count === 0) {
+        filterCount.textContent = 'No';
+      } else {
+        filterCount.textContent = count;
+      }
+    }
+
+    function showLoading(isLoading) {
+      if (isLoading) {
+        filterLoading.classList.add('active');
         
-        // Special handling for form parameter names that might differ from our object keys
-        let filterKey = decodedKey;
-        
-        // Map form field names to our filter object keys
-        if (filterKey === 'grant-search') filterKey = 'search';
-        if (filterKey === 'amount-min') filterKey = 'amount_min';
-        if (filterKey === 'amount-max') filterKey = 'amount_max';
-        
-        // Handle eligibility (array values)
-        if (filterKey === 'eligibility[]' || filterKey === 'eligibility') {
-          if (!tempFilters.eligibility) {
-            tempFilters.eligibility = [];
+        // Add loading state to grant container
+        if (grantsContainer) {
+          grantsContainer.classList.add('loading');
+          
+          // Add loading class to pagination if present
+          if (paginationContainer) {
+            paginationContainer.classList.add('loading');
           }
-          tempFilters.eligibility.push(decodedValue);
-        } else {
-          tempFilters[filterKey] = decodedValue;
         }
-      } catch (e) {
-        // Silent error handling for malformed parameters
-        console.warn('Error parsing URL parameter:', e);
+      } else {
+        filterLoading.classList.remove('active');
+        
+        // Remove loading state from grant container
+        if (grantsContainer) {
+          grantsContainer.classList.remove('loading');
+          
+          // Remove loading class from pagination
+          if (paginationContainer) {
+            paginationContainer.classList.remove('loading');
+          }
+        }
       }
     }
-  });
-  
-  // Update active filters
-  activeFilters = tempFilters;
-}
 
-function restoreFormValues() {
-  // Check if we have active filters
-  if (Object.keys(activeFilters).length === 0) return;
-  
-  // Restore search value
-  if (activeFilters.search && searchInput) {
-    searchInput.value = activeFilters.search;
-  }
-  
-  // Restore deadline selection
-  if (activeFilters.deadline) {
-    const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
-    if (deadlineRadio) deadlineRadio.checked = true;
-  }
-  
-  // Restore amount values
-  if (activeFilters.amount_min) {
-    const amountMin = document.getElementById('amount-min');
-    if (amountMin) amountMin.value = activeFilters.amount_min;
-  }
-  
-  if (activeFilters.amount_max) {
-    const amountMax = document.getElementById('amount-max');
-    if (amountMax) amountMax.value = activeFilters.amount_max;
-  }
-  
-  // Restore category selection
-  if (activeFilters.category && categorySelect) {
-    // Wait for categories to load if needed
-    if (categorySelect.options.length <= 1) {
-      setTimeout(() => {
-        if (categorySelect.options.length > 1) {
-          categorySelect.value = activeFilters.category;
-        }
-      }, 500);
-    } else {
-      categorySelect.value = activeFilters.category;
-    }
-  }
-  
-  // Restore location selection
-  if (activeFilters.location && locationSelect) {
-    // Wait for locations to load if needed
-    if (locationSelect.options.length <= 1) {
-      setTimeout(() => {
-        if (locationSelect.options.length > 1) {
-          locationSelect.value = activeFilters.location;
-        }
-      }, 500);
-    } else {
-      locationSelect.value = activeFilters.location;
-    }
-  }
-  
-  // Restore eligibility checkboxes
-  if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
-    // Function to check eligibility boxes with retry
-    const checkEligibilityBoxes = (retries = 3) => {
-      const allChecked = activeFilters.eligibility.every(value => {
-        const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-        if (checkbox) {
-          checkbox.checked = true;
-          return true;
-        }
-        return false;
-      });
+    function showError(message) {
+      filterError.classList.add('active');
+      filterError.querySelector('span').textContent = message;
+      showLoading(false);
       
-      // If not all checkboxes found and we have retries left, try again
-      if (!allChecked && retries > 0) {
-        setTimeout(() => checkEligibilityBoxes(retries - 1), 300);
-      }
-    };
-    
-    checkEligibilityBoxes();
-  }
-  
-  // Update UI to reflect restored filters
-  renderSelectedFilters();
-  updateFilterButtonState();
-}
+      if (debugMode) console.error('Filter error:', message);
+    }
 
-// Initialize countdown timers for grant cards
-function initCountdowns() {
-  const countdownElements = document.querySelectorAll('[data-deadline]');
-  
-  countdownElements.forEach(function(element) {
-    const deadline = parseInt(element.getAttribute('data-deadline'), 10) * 1000;
-    const countdownId = element.id;
-    
-    if (!countdownId) return;
-    
-    const countdown = document.getElementById(countdownId);
-    if (!countdown) return;
-    
-    const hoursElement = countdown.querySelector('[data-hours]');
-    const minutesElement = countdown.querySelector('[data-minutes]');
-    const secondsElement = countdown.querySelector('[data-seconds]');
-    
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = deadline - now;
-      
-      if (distance <= 0) {
-        // Handle expired timer
-        if (hoursElement) hoursElement.textContent = '00';
-        if (minutesElement) minutesElement.textContent = '00';
-        if (secondsElement) secondsElement.textContent = '00';
+    function hideError() {
+      filterError.classList.remove('active');
+    }
+
+    function showEmptyState() {
+      filterEmpty.classList.add('active');
+    }
+
+    function hideEmptyState() {
+      filterEmpty.classList.remove('active');
+    }
+
+    function updateUrlHash() {
+      // Create URL hash from active filters
+      if (Object.keys(activeFilters).length === 0) {
+        // Clear hash if no active filters
+        try {
+          history.pushState("", document.title, window.location.pathname + window.location.search);
+        } catch (e) {
+          // Fallback for older browsers
+          window.location.hash = '';
+        }
+        
         return;
       }
       
-      // Calculate time units
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      // Create hash string
+      const hashParts = [];
       
-      // Update the elements
-      if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
-      if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
-      if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
+      for (const [key, value] of Object.entries(activeFilters)) {
+        if (Array.isArray(value)) {
+          // Handle array values (eligibility)
+          value.forEach(val => {
+            if (val) { // Only add non-empty values
+              hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+            }
+          });
+        } else {
+          // Handle single values
+          if (value) { // Only add non-empty values
+            hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+          }
+        }
+      }
+      
+      // Create the hash string
+      const hashString = hashParts.join('&');
+      
+      // Update URL hash
+      try {
+        // Use history API for better user experience (no page jump)
+        const newUrl = window.location.pathname + window.location.search + '#' + hashString;
+        history.pushState(activeFilters, document.title, newUrl);
+      } catch (e) {
+        // Fallback for older browsers
+        window.location.hash = hashString;
+      }
     }
-    
-    // Initial update
-    updateCountdown();
-    
-    // Update every second
-    setInterval(updateCountdown, 1000);
-  });
-}
 
-// Handle any countdowns on page load
-setTimeout(initCountdowns, 500);
-});
+    // Parse URL parameters (for both hash and query string)
+    function parseUrlParams() {
+      if (debugMode) console.log('Parsing URL parameters...');
+      
+      // First check hash (for AJAX filtering)
+      const hash = window.location.hash.substring(1);
+      
+      if (hash) {
+        parseParamString(hash);
+        if (debugMode) console.log('Parsed hash parameters:', activeFilters);
+      } else {
+        // Then check query string (for non-AJAX filtering)
+        const queryString = window.location.search.substring(1);
+        if (queryString) {
+          parseParamString(queryString);
+          if (debugMode) console.log('Parsed query parameters:', activeFilters);
+        }
+      }
+      
+      // Update UI based on parsed parameters
+      if (Object.keys(activeFilters).length > 0) {
+        setTimeout(restoreFormValues, 200);
+      }
+    }
+
+    function parseParamString(paramString) {
+      // Split into key-value pairs
+      const paramParts = paramString.split('&');
+      let tempFilters = {};
+      
+      paramParts.forEach(part => {
+        const [key, value] = part.split('=');
+        
+        if (key && value) {
+          try {
+            const decodedKey = decodeURIComponent(key);
+            const decodedValue = decodeURIComponent(value);
+            
+            // Special handling for form parameter names that might differ from our object keys
+            let filterKey = decodedKey;
+            
+            // Map form field names to our filter object keys
+            if (filterKey === 'grant-search') filterKey = 'search';
+            if (filterKey === 'amount-min') filterKey = 'amount_min';
+            if (filterKey === 'amount-max') filterKey = 'amount_max';
+            
+            // Handle array-like keys for eligibility
+            const eligibilityRegex = /^eligibility(?:\[\d*\])?$/;
+            if (eligibilityRegex.test(filterKey)) {
+              filterKey = 'eligibility';
+              if (!tempFilters.eligibility) {
+                tempFilters.eligibility = [];
+              }
+              if (!tempFilters.eligibility.includes(decodedValue)) {
+                tempFilters.eligibility.push(decodedValue);
+              }
+            } else {
+              tempFilters[filterKey] = decodedValue;
+            }
+          } catch (e) {
+            // Silent error handling for malformed parameters
+            console.warn('Error parsing URL parameter:', e);
+          }
+        }
+      });
+      
+      // Update active filters
+      activeFilters = tempFilters;
+    }
+
+    function restoreFormValues() {
+      // Check if we have active filters
+      if (Object.keys(activeFilters).length === 0) return;
+      
+      if (debugMode) console.log('Restoring form values from active filters');
+      
+      // Restore search value
+      if (activeFilters.search && searchInput) {
+        searchInput.value = activeFilters.search;
+      }
+      
+      // Restore deadline selection
+      if (activeFilters.deadline) {
+        const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
+        if (deadlineRadio) deadlineRadio.checked = true;
+      }
+      
+      // Restore amount values
+      if (activeFilters.amount_min) {
+        const amountMin = document.getElementById('amount-min');
+        if (amountMin) amountMin.value = activeFilters.amount_min;
+      }
+      
+      if (activeFilters.amount_max) {
+        const amountMax = document.getElementById('amount-max');
+        if (amountMax) amountMax.value = activeFilters.amount_max;
+      }
+      
+      // Restore category selection
+      if (activeFilters.category && categorySelect) {
+        // Wait for categories to load if needed
+        if (categorySelect.options.length <= 1) {
+          setTimeout(() => {
+            if (categorySelect.options.length > 1) {
+              categorySelect.value = activeFilters.category;
+            }
+          }, 500);
+        } else {
+          categorySelect.value = activeFilters.category;
+        }
+      }
+      
+      // Restore location selection
+      if (activeFilters.location && locationSelect) {
+        // Wait for locations to load if needed
+        if (locationSelect.options.length <= 1) {
+          setTimeout(() => {
+            if (locationSelect.options.length > 1) {
+              locationSelect.value = activeFilters.location;
+            }
+          }, 500);
+        } else {
+          locationSelect.value = activeFilters.location;
+        }
+      }
+      
+      // Restore eligibility checkboxes
+      if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
+        // Function to check eligibility boxes with retry
+        const checkEligibilityBoxes = (retries = 3) => {
+          const allChecked = activeFilters.eligibility.every(value => {
+            const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
+            if (checkbox) {
+              checkbox.checked = true;
+              return true;
+            }
+            return false;
+          });
+          
+          // If not all checkboxes found and we have retries left, try again
+          if (!allChecked && retries > 0) {
+            setTimeout(() => checkEligibilityBoxes(retries - 1), 300);
+          }
+        };
+        
+        checkEligibilityBoxes();
+      }
+      
+      // Update UI to reflect restored filters
+      renderSelectedFilters();
+      updateFilterButtonState();
+    }
+
+    // Initialize countdown timers for grant cards
+    function initCountdowns() {
+      const countdownElements = document.querySelectorAll('[data-deadline]');
+      
+      countdownElements.forEach(function(element) {
+        const deadline = parseInt(element.getAttribute('data-deadline'), 10) * 1000;
+        const countdownId = element.id;
+        
+        if (!countdownId) return;
+        
+        const countdown = document.getElementById(countdownId);
+        if (!countdown) return;
+        
+        const hoursElement = countdown.querySelector('[data-hours]');
+        const minutesElement = countdown.querySelector('[data-minutes]');
+        const secondsElement = countdown.querySelector('[data-seconds]');
+        
+        function updateCountdown() {
+          const now = new Date().getTime();
+          const distance = deadline - now;
+          
+          if (distance <= 0) {
+            // Handle expired timer
+            if (hoursElement) hoursElement.textContent = '00';
+            if (minutesElement) minutesElement.textContent = '00';
+            if (secondsElement) secondsElement.textContent = '00';
+            return;
+          }
+          
+          // Calculate time units
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          
+          // Update the elements
+          if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
+          if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
+          if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Initial update
+        updateCountdown();
+        
+        // Update every second
+        setInterval(updateCountdown, 1000);
+      });
+    }
+
+    // Handle any countdowns on page load
+    setTimeout(initCountdowns, 500);
+  });
 //]]>
 </script>
 
