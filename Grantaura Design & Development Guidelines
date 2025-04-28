@@ -48,79 +48,53 @@ NOTE: These have already been added to the footer of the website. So, there's no
 # Grant Data Fetching Guide
 Here's a comprehensive guide to fetch all elements of a grant listing:
 
-Basic Grant Information
-Post Retrieval: Any standard WP method works (get_posts(), WP_Query, or direct SQL)
-Title: Available via post_title property
-Description/Content: Use post_content field through any of these methods:
-get_the_content() (within The Loop)
-$post->post_content (from post object)
-get_post_field('post_content', $post_id)
+## 1. Basic Grant Information
+- Grant ID: `$post->ID` (within loop) or `get_the_ID()`
+- Title: `get_the_title($post_id)`
+- Permalink: `get_permalink($post_id)`
+- Publication Date: `$post->post_date` (within loop) or `get_post_field('post_date', $post_id)`
 
-Permalink: get_permalink($post_id) works as expected
-Publication Date: Available via post_date property
+## 2. Excerpt Information
+- Excerpt/Tagline: `get_post_meta($post_id, 'tagline', true)`
 
-Excerpt Information
-Excerpt Field: Custom meta field "tagline" rather than standard excerpt
-Method: get_post_meta($post_id, 'tagline', true)
-Fallback: If empty, use WordPress native excerpt with get_the_excerpt()
+## 3. Custom Meta Fields
+- Deadline Date: `get_post_meta($post_id, '_custom-date', true)` (Format: `'YYYY-MM-DD'`)
+- Amount: `get_post_meta($post_id, '_price', true)` (Numeric value)
+- Expiration Date: `get_post_meta($post_id, '_expiry_date', true)` (Format: `'YYYY-MM-DD HH:MM:SS'`)
+- Eligible Entities: `get_post_meta($post_id, '_custom-checkbox', true)` (Returns array)
 
-Critical Fields
-Deadline Date:
-Field: _custom-date (note the underscore prefix)
-Method: get_post_meta($post_id, '_custom-date', true)
-Format: YYYY-MM-DD (e.g., 2025-05-09)
+## 4. Image Handling
+- Featured Image: 
+  - `$listing_preview_id = get_post_meta($post_id, 'listing_prv_img', true)`
+  - `wp_get_attachment_image_url($listing_preview_id, 'large')`
 
-Amount:
-Field: _price (with underscore prefix)
-Method: get_post_meta($post_id, '_price', true)
-Returns: Numeric value without currency symbol (Grantaura uses USD so add $ symbol)
-NOTE: For amount where no amount is found use "Varies" and/or "Various Benefits"
+## 5. Taxonomies
+- Locations: `get_the_terms($post_id, 'at_biz_dir-location')` (Array of term objects)
+- Categories: `get_the_terms($post_id, 'at_biz_dir-category')` (Array of term objects)
 
-Expiration Date:
-Field: _expiry_date (with underscore prefix)
-Method: get_post_meta($post_id, '_expiry_date', true)
-Format: YYYY-MM-DD HH
+## 6. Grant Status
+- Status Determination:
+  - Retrieve deadline: `get_post_meta($post_id, '_custom-date', true)`
+  - If future: `'active'`
+  - If none: `'ongoing'`
+  - If past:
+    - Check expiration: `get_post_meta($post_id, '_expiry_date', true)`
+    - If present: `'expired_with_notice'`
+    - If not: `'expired_no_notice'`
 
-Eligible Entities
-Field: custom-checkbox (stored as array)
-Method: get_post_meta($post_id, 'custom-checkbox', true)
-Returns: Array of eligibility strings (e.g., "Businesses", "Nonprofits", etc.)
-Alternative Access: If not returning as array, might be serialized - check format and use appropriate serialization functions
+## 7. Time Remaining Calculation
+- Current time: `current_time('timestamp')`
+- Deadline: `get_post_meta($post_id, '_custom-date', true)` + `' 23:59:59'`
+- Difference: `strtotime($deadline) - current_time('timestamp')`
+- Parse if positive:
+  - Days: `floor($diff / 86400)`
+  - Hours: `floor(($diff % 86400) / 3600)`
+  - Minutes: `floor(($diff % 3600) / 60)`
+  - Seconds: `$diff % 60`
 
-Image Handling
-Featured Image:
-Method: get_the_post_thumbnail_url($post_id, 'large')
-Fallback: Check for first image in gallery if featured image unavailable
-
-Gallery/Slider Images:
-Field: _listing_img (with underscore prefix)
-Method: get_post_meta($post_id, '_listing_img', true)
-Returns: Array of attachment IDs
-Access URLs: wp_get_attachment_image_url($attachment_id, 'large')
-
-File Attachments
-File Field: Look for meta fields containing uploaded files
-Potential Fields: Check if files are stored in specific meta fields like 'custom-file' or similar
-Access Method: If identified, use wp_get_attachment_url($attachment_id)
-
-Taxonomies
-Locations:
-Taxonomy: at_biz_dir-location
-Method: get_the_terms($post_id, 'at_biz_dir-location')
-Returns: Array of term objects with ID, name, and slug
-
-Categories:
-Taxonomy: at_biz_dir-category
-Method: get_the_terms($post_id, 'at_biz_dir-category')
-Returns: Array of term objects with ID, name, and slug
-
-Grant Status Determination
-Status Types:
-active: Grant with future deadline date
-ongoing: Grant with no deadline date (always available)
-expired_with_notice: Expired grant that displays the expiration notice
-expired_no_notice: Expired grant without an expiration notice
-
+## 8. Featured Status
+- Check: `get_post_meta($post_id, '_featured', true)`
+- Featured if: `'1'`, `'yes'`, `'true'`, or `'on'`
 
 # Guidelines for Writing PHP Code in [php] Blocks
 When writing PHP code within [php] shortcodes, adhere to the following best practices to ensure security, compatibility, and optimal performance:
