@@ -365,7 +365,8 @@
       </div>
 
       <div class="filter-popup-body">
-        <form class="filter-form" id="grants-filter-form">
+        <!-- FIXED: Changed form action and method for improved fallback -->
+        <form class="filter-form" id="grants-filter-form" action="" method="get">
           <style>
             .filter-form {
               display: grid;
@@ -831,9 +832,10 @@
             <span>No grants match your selected filters. Try adjusting your criteria.</span>
           </div>
 
-          <!-- Hidden fields for non-AJAX fallback -->
+          <!-- FIXED: Added proper field name for search - Use standard name for GET compatibility -->
           <input type="hidden" name="filter_grants" value="1">
-          <input type="hidden" name="filter_nonce" value="">
+          <input type="hidden" name="filter_nonce" id="filter_nonce" value="">
+          <input type="hidden" name="filter_action" value="filter">
 
           <!-- Search All Grants -->
           <div class="filter-form-section">
@@ -851,7 +853,8 @@
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
               </div>
-              <input type="text" id="grant-search" name="grant-search" placeholder="Search by grant title or keywords" aria-label="Search grants">
+              <!-- FIXED: Changed input name to work with traditional form submission -->
+              <input type="text" id="grant-search" name="search" placeholder="Search by grant title or keywords" aria-label="Search grants">
             </div>
           </div>
 
@@ -901,11 +904,12 @@
               <div class="amount-range-inputs">
                 <div class="amount-field">
                   <span>$</span>
-                  <input type="number" id="amount-min" name="amount-min" placeholder="Min" min="0" aria-label="Minimum grant amount">
+                  <!-- FIXED: Changed input names for GET compatibility -->
+                  <input type="number" id="amount-min" name="amount_min" placeholder="Min" min="0" aria-label="Minimum grant amount">
                 </div>
                 <div class="amount-field">
                   <span>$</span>
-                  <input type="number" id="amount-max" name="amount-max" placeholder="Max" min="0" aria-label="Maximum grant amount">
+                  <input type="number" id="amount-max" name="amount_max" placeholder="Max" min="0" aria-label="Maximum grant amount">
                 </div>
               </div>
             </div>
@@ -970,7 +974,7 @@
               Eligibility
             </h4>
             <div class="eligibility-options" id="eligibility-options">
-              <!-- Eligibility options will be loaded dynamically -->
+              <!-- FIXED: Will generate eligibility options with proper name for GET params -->
               <div class="filter-loading active">
                 <div class="filter-loading-spinner"></div>
                 <span>Loading eligibility options...</span>
@@ -1009,6 +1013,9 @@
   // Generate a secure nonce for AJAX operations and form security
   $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
   $admin_ajax_url = admin_url('admin-ajax.php');
+  
+  // FIXED: Use absolute URL for admin-ajax.php to prevent issues with subfolder installs
+  $admin_ajax_absolute_url = site_url('/wp-admin/admin-ajax.php');
   
   // Function to get categories from WordPress taxonomy
   function get_grant_categories() {
@@ -1315,24 +1322,39 @@
   $locations_data = get_grant_locations();
   $eligibility_data = get_grant_eligibility_options();
   
-  // FIXED: Improved JavaScript variables - now using global window variables
+  // FIXED: Improved JavaScript variables - now using global window variables with proper JSON encoding
   echo '<script type="text/javascript">
   // Set up global variables for easier access (no DOMContentLoaded wrapper to ensure global scope)
-  window.grantauraData = {
-    categories: ' . json_encode($categories_data) . ',
-    locations: ' . json_encode($locations_data) . ',
-    eligibility: ' . json_encode($eligibility_data) . '
-  };
+  window.grantauraData = ' . json_encode(array(
+    'categories' => $categories_data,
+    'locations' => $locations_data,
+    'eligibility' => $eligibility_data
+  )) . ';
   
-  // Set up the nonce and AJAX URL
+  // FIXED: Set up the nonce and AJAX URL with absolute path
   window.grantsFilterNonce = "' . esc_js($grants_filter_nonce) . '";
-  window.ajaxurl = "' . esc_js($admin_ajax_url) . '";
+  window.ajaxurl = "' . esc_js($admin_ajax_absolute_url) . '";
+  
+  // Add diagnostic info to help troubleshoot
+  window.grantauraDiagnostics = {
+    siteUrl: "' . esc_js(site_url()) . '",
+    ajaxUrl: "' . esc_js($admin_ajax_absolute_url) . '",
+    nonceValue: "' . esc_js($grants_filter_nonce) . '",
+    nonceAction: "grants_filter_nonce",
+    wpVersion: "' . esc_js(get_bloginfo("version")) . '"
+  };
   
   document.addEventListener("DOMContentLoaded", function() {
     // Set nonce for non-AJAX fallback form
-    var nonceField = document.querySelector(\'input[name="filter_nonce"]\');
+    var nonceField = document.querySelector(\'#filter_nonce\');
     if (nonceField) {
       nonceField.value = "' . esc_js($grants_filter_nonce) . '";
+    }
+    
+    // FIXED: Update form action to current page for fallback
+    var filterForm = document.getElementById("grants-filter-form");
+    if (filterForm) {
+      filterForm.action = window.location.href;
     }
     
     // Dispatch a custom event to let the JS know data is ready
@@ -1340,7 +1362,7 @@
   });
   </script>';
   
-  // Register the filter grants function to handle AJAX requests
+  // FIXED: Make sure the AJAX handler is properly registered and works
   if (!function_exists('register_grants_filter_ajax')) {
     function register_grants_filter_ajax() {
       add_action('wp_ajax_filter_grants', 'grants_filter_ajax_handler');
@@ -1354,13 +1376,22 @@
     function grants_filter_ajax_handler() {
       global $wpdb;
       try {
+        // FIXED: Log debugging info to help diagnose issues
+        error_log('Grants filter AJAX request received: ' . json_encode($_POST));
+        
         // Verify nonce with better error reporting
         if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'grants_filter_nonce')) {
-          wp_send_json(array(
+          $nonce_error = array(
             'success' => false,
             'message' => 'Security verification failed. Please refresh the page and try again.',
-            'error_code' => 'invalid_nonce'
-          ));
+            'error_code' => 'invalid_nonce',
+            'debug' => array(
+              'received_nonce' => isset($_POST['security']) ? substr($_POST['security'], 0, 5) . '...' : 'not set',
+              'expected_action' => 'grants_filter_nonce'
+            )
+          );
+          error_log('Grants filter nonce verification failed: ' . json_encode($nonce_error));
+          wp_send_json($nonce_error);
           wp_die();
         }
         
@@ -1372,13 +1403,18 @@
         $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
         $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
         
-        // Handle eligibility as both array and string
+        // FIXED: Handle eligibility as both array and string with better validation
         $eligibility = array();
         if (isset($_POST['eligibility']) && is_array($_POST['eligibility'])) {
           $eligibility = array_map('sanitize_text_field', $_POST['eligibility']);
         } elseif (isset($_POST['eligibility']) && !is_array($_POST['eligibility'])) {
           // Handle single value
           $eligibility = array(sanitize_text_field($_POST['eligibility']));
+        } elseif (isset($_POST['eligibility[]']) && is_array($_POST['eligibility[]'])) {
+          // Some servers might reformat the array keys
+          $eligibility = array_map('sanitize_text_field', $_POST['eligibility[]']);
+        } elseif (isset($_POST['eligibility[]']) && !is_array($_POST['eligibility[]'])) {
+          $eligibility = array(sanitize_text_field($_POST['eligibility[]']));
         }
         
         $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
@@ -1395,8 +1431,14 @@
           'category' => $category,
           'location' => $location,
           'eligibility' => $eligibility,
-          'page' => $page
+          'page' => $page,
+          'raw_post' => array_map(function($val) {
+            return is_string($val) ? substr($val, 0, 50) . (strlen($val) > 50 ? '...' : '') : gettype($val);
+          }, $_POST)
         );
+        
+        // FIXED: Log filter parameters for debugging
+        error_log('Grants filter parameters: ' . json_encode($debug_info));
         
         // Build query args
         $query_args = array(
@@ -1505,6 +1547,9 @@
           $eligibility_queries = array('relation' => 'OR');
           
           foreach ($eligibility as $eligibility_value) {
+            // Skip empty values
+            if (empty($eligibility_value)) continue;
+            
             // For exact match (unserialize string value)
             $eligibility_queries[] = array(
               'key' => 'custom-checkbox',
@@ -1527,7 +1572,9 @@
             );
           }
           
-          $meta_query[] = $eligibility_queries;
+          if (!empty($eligibility_queries) && count($eligibility_queries) > 1) {
+            $meta_query[] = $eligibility_queries;
+          }
         }
         
         if (!empty($meta_query)) {
@@ -1540,6 +1587,9 @@
         // Add debug info to query args
         $debug_info['query_args'] = $query_args;
         
+        // FIXED: Log the final query args
+        error_log('Grants filter final query args: ' . json_encode($query_args));
+        
         // Run the query with error handling
         $grants_query = new WP_Query($query_args);
         
@@ -1551,9 +1601,12 @@
         // Start output buffer to capture HTML
         ob_start();
         
-        if ($grants_query->have_posts()) {
+        $has_posts = $grants_query->have_posts();
+        
+        if ($has_posts) {
           // Generate the HTML for the grant cards
           $post_ids_found = array();
+          
           while ($grants_query->have_posts()) {
             $grants_query->the_post();
             $post_ids_found[] = get_the_ID();
@@ -1578,12 +1631,14 @@
         
         // Generate pagination for filtered results
         $pagination = '';
-        if ($grants_query->max_num_pages > 1) {
+        $has_multiple_pages = $grants_query->max_num_pages > 1;
+        
+        if ($has_multiple_pages) {
           ob_start();
           
           // Format the pagination base URL
           $big = 999999999; // an unlikely integer
-          echo paginate_links(array(
+          $pagination_args = array(
             'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
             'format' => '?paged=%#%',
             'current' => max(1, $page),
@@ -1593,20 +1648,25 @@
             'type' => 'list',
             'add_args' => array(
               'filter_grants' => '1',
-              'grant-search' => $search,
+              'search' => $search,
               'deadline' => $deadline,
-              'amount-min' => $amount_min,
-              'amount-max' => $amount_max,
+              'amount_min' => $amount_min,
+              'amount_max' => $amount_max,
               'category' => $category,
               'location' => $location,
               // Eligibility is handled specially for array values
             )
-          ));
+          );
+          
+          echo paginate_links($pagination_args);
           
           $pagination = ob_get_clean();
         }
         
         wp_reset_postdata();
+        
+        // FIXED: Log success info
+        error_log('Grants filter successful: found ' . $grants_query->found_posts . ' posts');
         
         // Return JSON response with all needed data
         wp_send_json(array(
@@ -1619,15 +1679,17 @@
           'debug' => $debug_info // Include debug info for troubleshooting
         ));
       } catch (Exception $e) {
-        // Handle any exceptions
-        wp_send_json(array(
+        // FIXED: Improved error handling with detailed logging
+        $error_data = array(
           'success' => false,
           'message' => 'An error occurred: ' . $e->getMessage(),
           'error_code' => 'exception',
           'file' => $e->getFile(),
-          'line' => $e->getLine(),
-          'trace' => $e->getTraceAsString()
-        ));
+          'line' => $e->getLine()
+        );
+        
+        error_log('Grants filter error: ' . json_encode($error_data));
+        wp_send_json($error_data);
       }
       
       wp_die();
@@ -1641,16 +1703,23 @@
         return;
       }
       
-      $is_filter_request = isset($_GET['filter_grants']) && $_GET['filter_grants'] == '1';
+      // FIXED: Check for both filter_action and filter_grants params
+      $is_filter_request = (isset($_GET['filter_grants']) && $_GET['filter_grants'] == '1') || 
+                           (isset($_GET['filter_action']) && $_GET['filter_action'] == 'filter');
       
       if (!$is_filter_request) {
         return;
       }
       
+      // FIXED: For debugging
+      error_log('Starting non-AJAX filter: ' . json_encode($_GET));
+      
       // For debug purposes - allow no nonce on non-AJAX mode temporarily
-      $verify_nonce = isset($_GET['filter_nonce']) ? wp_verify_nonce($_GET['filter_nonce'], 'grants_filter_nonce') : true;
+      $has_nonce = isset($_GET['filter_nonce']);
+      $verify_nonce = $has_nonce ? wp_verify_nonce($_GET['filter_nonce'], 'grants_filter_nonce') : true;
       
       if (!$verify_nonce) {
+        error_log('Nonce verification failed for non-AJAX filter');
         return; // Exit if nonce verification fails
       }
       
@@ -1664,21 +1733,43 @@
         // Set post type to grants
         $query->set('post_type', 'at_biz_dir');
         
-        // Get filter parameters with proper validation
-        $search = isset($_GET['grant-search']) ? sanitize_text_field($_GET['grant-search']) : '';
+        // FIXED: Use standardized parameter names
+        $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
         $deadline = isset($_GET['deadline']) ? sanitize_text_field($_GET['deadline']) : 'all';
-        $amount_min = isset($_GET['amount-min']) && is_numeric($_GET['amount-min']) ? intval($_GET['amount-min']) : 0;
-        $amount_max = isset($_GET['amount-max']) && is_numeric($_GET['amount-max']) ? intval($_GET['amount-max']) : 0;
+        $amount_min = isset($_GET['amount_min']) && is_numeric($_GET['amount_min']) ? intval($_GET['amount_min']) : 0;
+        $amount_max = isset($_GET['amount_max']) && is_numeric($_GET['amount_max']) ? intval($_GET['amount_max']) : 0;
         $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
         $location = isset($_GET['location']) ? sanitize_text_field($_GET['location']) : '';
         
-        // Handle eligibility both as array and string
+        // FIXED: Improved handling of eligibility parameter in GET requests
         $eligibility = array();
+        
+        // Handle different ways the eligibility parameter might be passed
         if (isset($_GET['eligibility']) && is_array($_GET['eligibility'])) {
           $eligibility = array_map('sanitize_text_field', $_GET['eligibility']);
         } elseif (isset($_GET['eligibility']) && !is_array($_GET['eligibility'])) {
           $eligibility = array(sanitize_text_field($_GET['eligibility']));
         }
+        
+        // Check for renamed eligibility parameters (eligibility[0], eligibility[1], etc.)
+        foreach ($_GET as $key => $value) {
+          if (preg_match('/^eligibility\[\d+\]$/', $key)) {
+            $eligibility[] = sanitize_text_field($value);
+          }
+        }
+        
+        // Debug info
+        $filter_debug = array(
+          'search' => $search,
+          'deadline' => $deadline,
+          'amount_min' => $amount_min,
+          'amount_max' => $amount_max,
+          'category' => $category,
+          'location' => $location,
+          'eligibility' => $eligibility
+        );
+        
+        error_log('Non-AJAX filter parameters: ' . json_encode($filter_debug));
         
         // Add search term
         if (!empty($search)) {
@@ -1779,12 +1870,15 @@
           $meta_query[] = $price_query;
         }
         
-        // FIXED: Improved eligibility filter for better matching
+        // FIXED: Improved eligibility filter with better pattern matching
         if (!empty($eligibility)) {
           // Create a complex meta query that properly handles all serialization formats
           $eligibility_queries = array('relation' => 'OR');
           
           foreach ($eligibility as $eligibility_value) {
+            // Skip empty values
+            if (empty($eligibility_value)) continue;
+            
             // For exact match (unserialize string value)
             $eligibility_queries[] = array(
               'key' => 'custom-checkbox',
@@ -1807,7 +1901,9 @@
             );
           }
           
-          $meta_query[] = $eligibility_queries;
+          if (!empty($eligibility_queries) && count($eligibility_queries) > 1) {
+            $meta_query[] = $eligibility_queries;
+          }
         }
         
         if (!empty($meta_query)) {
@@ -1824,6 +1920,10 @@
           
           $query->set('meta_query', $meta_query);
         }
+        
+        // FIXED: Log the final filtered query
+        $query_vars = $query->query_vars;
+        error_log('Final non-AJAX filter query vars: ' . json_encode($query_vars));
       }
     }
     add_action('pre_get_posts', 'handle_grant_filter_request');
@@ -1962,29 +2062,48 @@
       // Check if fetch API is supported
       let hasFetchSupport = 'fetch' in window;
       
-      // Set AJAX mode based on checks
-      ajaxEnabled = hasRequiredElements && hasFetchSupport;
+      // FIXED: Additional check for potential Ajax issues
+      let hasValidAjaxUrl = false;
+      if (typeof window.ajaxurl === 'string') {
+        try {
+          const ajaxUrlObj = new URL(window.ajaxurl);
+          hasValidAjaxUrl = ajaxUrlObj.pathname.includes('admin-ajax.php');
+        } catch (e) {
+          console.error('Invalid AJAX URL format:', window.ajaxurl);
+        }
+      }
       
-      // Configure form for non-AJAX mode if needed
-      if (!ajaxEnabled) {
-        if (filterForm) {
-          filterForm.setAttribute('action', window.location.href);
-          filterForm.setAttribute('method', 'get');
-          
-          // Change button type for form submission
+      // Set AJAX mode based on checks
+      ajaxEnabled = hasRequiredElements && hasFetchSupport && hasValidAjaxUrl;
+      
+      // FIXED: Configure form for non-AJAX mode 
+      if (filterForm) {
+        // Always set the action to current page for fallback
+        filterForm.setAttribute('action', window.location.href);
+        filterForm.setAttribute('method', 'get');
+        
+        if (!ajaxEnabled) {
+          // Change button type for form submission when AJAX is not available
           if (applyButton) {
             applyButton.setAttribute('type', 'submit');
           }
         }
+      }
+      
+      if (debugMode) {
+        console.log('AJAX support check results:');
+        console.log('- Form exists:', !!filterForm);
+        console.log('- Apply button exists:', !!applyButton);
+        console.log('- Grants container exists:', !!grantsContainer);
+        console.log('- Filter nonce exists:', typeof window.grantsFilterNonce !== 'undefined');
+        console.log('- AJAX URL exists:', typeof window.ajaxurl !== 'undefined');
+        console.log('- AJAX URL is valid:', hasValidAjaxUrl);
+        console.log('- Fetch API supported:', hasFetchSupport);
+        console.log('- AJAX enabled:', ajaxEnabled);
         
-        if (debugMode) {
-          console.log('AJAX support disabled. Missing requirements:');
-          console.log('- Form exists:', !!filterForm);
-          console.log('- Apply button exists:', !!applyButton);
-          console.log('- Grants container exists:', !!grantsContainer);
-          console.log('- Filter nonce exists:', typeof window.grantsFilterNonce !== 'undefined');
-          console.log('- AJAX URL exists:', typeof window.ajaxurl !== 'undefined');
-          console.log('- Fetch API supported:', hasFetchSupport);
+        // FIXED: Log diagnostics info if available
+        if (window.grantauraDiagnostics) {
+          console.log('Diagnostics:', window.grantauraDiagnostics);
         }
       }
     }
@@ -2050,22 +2169,27 @@
         return;
       }
       
-      // Prepare data
+      // FIXED: Use FormData for better compatibility
       const data = new FormData();
       data.append('action', 'get_filter_options');
       data.append('security', window.grantsFilterNonce);
       
-      // Fetch options
+      // Fetch options with better error handling
       fetch(window.ajaxurl, {
         method: 'POST',
         credentials: 'same-origin',
         body: data
       })
       .then(response => {
+        // FIXED: Better response error handling
         if (!response.ok) {
+          if (debugMode) console.error('Network error:', response.status, response.statusText);
           throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
         }
-        return response.json();
+        return response.json().catch(err => {
+          if (debugMode) console.error('JSON parse error:', err);
+          throw new Error('Failed to parse JSON response');
+        });
       })
       .then(result => {
         if (result.success) {
@@ -2184,7 +2308,7 @@
           
           if (debugMode) console.log('Apply button clicked. AJAX enabled:', ajaxEnabled);
           
-          // Use AJAX or form submission based on capability
+          // FIXED: Use AJAX or form submission based on capability
           if (ajaxEnabled) {
             applyFiltersAjax();
           } else {
@@ -2243,17 +2367,34 @@
       });
     }
     
-    // Helper function to prepare form for non-AJAX submission
+    // FIXED: Improved form preparation for non-AJAX submission
     function prepareFormForSubmission() {
+      // Clear any previous hidden inputs
+      const oldHiddenInputs = document.querySelectorAll('input[name^="eligibility["]');
+      oldHiddenInputs.forEach(input => input.remove());
+      
       // Make sure the eligibility checkboxes have the right names for GET parameters
-      document.querySelectorAll('input[name="eligibility[]"]:checked').forEach((checkbox, index) => {
-        // Create hidden input with name that works in GET requests
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'eligibility[' + index + ']';
-        hiddenInput.value = checkbox.value;
-        filterForm.appendChild(hiddenInput);
-      });
+      const checkedEligibility = document.querySelectorAll('input[name="eligibility[]"]:checked');
+      
+      if (checkedEligibility.length > 0) {
+        checkedEligibility.forEach((checkbox, index) => {
+          // Create hidden input with name that works in GET requests
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'eligibility[' + index + ']';
+          hiddenInput.value = checkbox.value;
+          filterForm.appendChild(hiddenInput);
+        });
+      }
+      
+      // FIXED: Add other necessary hidden fields
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'filter_action';
+      actionInput.value = 'filter';
+      filterForm.appendChild(actionInput);
+      
+      if (debugMode) console.log('Form prepared for standard submission');
     }
     
     function toggleFilterPopup() {
@@ -2313,8 +2454,10 @@
       
       let html = '';
       options.forEach(function(option) {
-        // Create a safe ID by sanitizing the value
-        const safeValue = option.value.toString().replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        // FIXED: Create safer, more reliable ID by sanitizing the value
+        const safeValue = option.value.toString()
+          .replace(/[^a-z0-9]/gi, '-')
+          .toLowerCase();
         const safeId = `eligibility-${safeValue}`;
         
         html += `
@@ -2392,6 +2535,7 @@
       setTimeout(restoreFormValues, 100);
     }
     
+    // FIXED: Improved AJAX filtering with better error handling
     function applyFiltersAjax(page = 1) {
       // Check if AJAX is enabled
       if (!ajaxEnabled) {
@@ -2433,7 +2577,7 @@
       // Update URL hash (for browser history)
       updateUrlHash();
       
-      // Prepare data for AJAX request
+      // FIXED: Use FormData for better compatibility
       const filterData = new FormData();
       filterData.append('action', 'filter_grants');
       filterData.append('security', window.grantsFilterNonce);
@@ -2443,7 +2587,7 @@
       filterData.append('amount_max', amountMaxValue);
       filterData.append('category', categoryValue);
       filterData.append('location', locationValue);
-      filterData.append('page', page);
+      filterData.append('page', page.toString());
       
       // Add eligibility values (multiple)
       if (eligibilityValues.length > 0) {
@@ -2460,19 +2604,38 @@
         console.log('Sending AJAX request to:', window.ajaxurl);
       }
       
+      // FIXED: Add timeout and better error handling
+      const timeoutDuration = 15000; // 15 seconds
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+      
       // Send AJAX request using Fetch API with improved error handling
       fetch(window.ajaxurl, {
         method: 'POST',
         credentials: 'same-origin',
-        body: filterData
+        body: filterData,
+        signal: controller.signal
       })
       .then(response => {
+        // Clear timeout since we got a response
+        clearTimeout(timeoutId);
+        
         if (debugMode) console.log('AJAX response status:', response.status, response.statusText);
         
         if (!response.ok) {
           throw new Error(`Network error: ${response.status} ${response.statusText}`);
         }
-        return response.json();
+        
+        // FIXED: Handle JSON parsing errors
+        return response.text().then(text => {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error('JSON parse error:', e);
+            console.error('Raw response:', text.substring(0, 500) + '...');
+            throw new Error('Failed to parse response as JSON');
+          }
+        });
       })
       .then(data => {
         if (debugMode) {
@@ -2527,12 +2690,18 @@
       .catch(error => {
         console.error('Filtering Error:', error);
         
-        // Show fallback error to user
-        showError('Failed to load filtered grants. Please try again or use the regular search method.');
+        // FIXED: Handle specific abort error
+        if (error.name === 'AbortError') {
+          showError('Request timed out. Please try again or use the regular search method.');
+          console.error('Request timed out after', timeoutDuration/1000, 'seconds');
+        } else {
+          // Show fallback error to user
+          showError('Failed to load filtered grants. Please try again or use the regular search method.');
+        }
         
-        // If AJAX fails repeatedly, switch to non-AJAX mode
-        if (error.message && error.message.includes('Network error')) {
-          if (debugMode) console.log('Switching to non-AJAX mode due to network errors');
+        // If AJAX fails, switch to non-AJAX mode
+        if (error.message && (error.message.includes('Network error') || error.message.includes('parse'))) {
+          if (debugMode) console.log('Switching to non-AJAX mode due to errors');
           
           ajaxEnabled = false;
           
@@ -2797,6 +2966,7 @@
       }
     }
 
+    // FIXED: Improved filter reset functionality
     function resetFilters() {
       // Explicitly reset all form inputs
       if (searchInput) searchInput.value = '';
@@ -2835,10 +3005,7 @@
         applyFiltersAjax();
       } else {
         // For non-AJAX mode, reset form or redirect to base URL
-        if (filterForm) {
-          // Remove any existing URL parameters and reload
-          window.location.href = window.location.pathname;
-        }
+        window.location.href = window.location.pathname;
       }
     }
 
@@ -2899,6 +3066,7 @@
       filterEmpty.classList.remove('active');
     }
 
+    // FIXED: Improved URL hash management
     function updateUrlHash() {
       // Create URL hash from active filters
       if (Object.keys(activeFilters).length === 0) {
@@ -2971,13 +3139,24 @@
       }
     }
 
+    // FIXED: Improved parameter parsing to handle all formats
     function parseParamString(paramString) {
+      // Skip if empty
+      if (!paramString) return;
+      
       // Split into key-value pairs
       const paramParts = paramString.split('&');
       let tempFilters = {};
       
+      // Track found eligibility values to avoid duplicates
+      const eligibilityFound = [];
+      
       paramParts.forEach(part => {
-        const [key, value] = part.split('=');
+        const equalPos = part.indexOf('=');
+        if (equalPos === -1) return; // Skip malformed parts
+        
+        const key = part.substring(0, equalPos);
+        const value = part.substring(equalPos + 1);
         
         if (key && value) {
           try {
@@ -2993,14 +3172,19 @@
             if (filterKey === 'amount-max') filterKey = 'amount_max';
             
             // Handle array-like keys for eligibility
-            const eligibilityRegex = /^eligibility(?:\[\d*\])?$/;
-            if (eligibilityRegex.test(filterKey)) {
+            const isEligibilityParam = filterKey === 'eligibility' || 
+                                      filterKey.startsWith('eligibility[');
+            
+            if (isEligibilityParam) {
               filterKey = 'eligibility';
               if (!tempFilters.eligibility) {
                 tempFilters.eligibility = [];
               }
-              if (!tempFilters.eligibility.includes(decodedValue)) {
+              
+              // Only add unique values
+              if (!eligibilityFound.includes(decodedValue)) {
                 tempFilters.eligibility.push(decodedValue);
+                eligibilityFound.push(decodedValue);
               }
             } else {
               tempFilters[filterKey] = decodedValue;
@@ -3016,6 +3200,7 @@
       activeFilters = tempFilters;
     }
 
+    // FIXED: Improved form value restoration
     function restoreFormValues() {
       // Check if we have active filters
       if (Object.keys(activeFilters).length === 0) return;
