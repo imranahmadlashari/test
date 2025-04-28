@@ -1,1246 +1,783 @@
-<!-- Grants Filter System - FIXED VERSION -->
-<section class="grants-filter-section" data-section-id="grants-filter-system">
+<!-- Grant Filter System -->
+<section class="grants-filter-section" data-section-id="grants-filter">
   <style>
-    /* CSS styles remain the same */
+    /* Filter Section */
     .grants-filter-section {
       max-width: 98%;
       margin: 0 auto 1.5rem;
       padding: 0.5rem;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    }
+    
+    /* Filter Controls */
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .filter-trigger-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--grantaura-primary);
+      color: white !important;
+      border: none;
+      border-radius: var(--grantaura-border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--grantaura-transition);
+    }
+    
+    .filter-trigger-button:hover {
+      background: var(--grantaura-primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .filter-trigger-button svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* Active Filters */
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .active-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--grantaura-gray-100);
+      border: 1px solid var(--grantaura-gray-200);
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .active-filter-label {
+      font-weight: 600;
+      color: var(--grantaura-gray-700);
+    }
+    
+    .active-filter-value {
+      color: var(--grantaura-primary);
+    }
+    
+    .active-filter-remove {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      background: var(--grantaura-gray-300);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      color: white;
+      transition: var(--grantaura-transition);
+      margin-left: 5px;
+    }
+    
+    .active-filter-remove:hover {
+      background: var(--grantaura-danger);
+    }
+    
+    .active-filter-remove svg {
+      width: 10px;
+      height: 10px;
+    }
+    
+    .reset-all-filters {
+      font-size: 0.85rem;
+      color: var(--grantaura-primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: var(--grantaura-transition);
+    }
+    
+    .reset-all-filters:hover {
+      color: var(--grantaura-primary-dark);
+    }
+    
+    /* Filter Modal */
+    .filter-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .filter-modal.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .filter-modal-content {
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      background: white;
+      border-radius: var(--grantaura-border-radius-lg);
+      box-shadow: var(--grantaura-box-shadow-xl);
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    
+    .filter-modal.is-active .filter-modal-content {
+      transform: translateY(0);
+    }
+    
+    .filter-modal header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--grantaura-gray-200);
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+    }
+    
+    .filter-modal h2 {
+      font-size: 1.5rem;
+      color: var(--grantaura-primary);
+      margin: 0;
+    }
+    
+    .filter-close-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--grantaura-gray-100);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--grantaura-transition);
+    }
+    
+    .filter-close-button:hover {
+      background: var(--grantaura-gray-200);
+    }
+    
+    .filter-close-button svg {
+      width: 20px;
+      height: 20px;
+      color: var(--grantaura-gray-700);
+    }
+    
+    .filter-modal-body {
+      padding: 1.25rem;
+    }
+    
+    /* Filter Groups */
+    .filter-group {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--grantaura-gray-200);
+    }
+    
+    .filter-group:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .filter-group-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--grantaura-gray-800);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .filter-group-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--grantaura-primary);
+    }
+    
+    /* Search Filter */
+    .search-filter {
+      position: relative;
+    }
+    
+    .search-filter input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem !important;
+      border: 1px solid var(--grantaura-gray-300);
+      border-radius: var(--grantaura-border-radius);
+      font-size: 1rem;
+      transition: var(--grantaura-transition);
+    }
+    
+    .search-filter input:focus {
+      border-color: var(--grantaura-primary) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
+    }
+    
+    .search-filter svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--grantaura-gray-500);
+      pointer-events: none;
+    }
+    
+    /* Deadline Filter */
+    .deadline-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    
+    @media (min-width: 480px) {
+      .deadline-options {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .deadline-option {
+      position: relative;
+    }
+    
+    .deadline-option input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .deadline-option label {
+      display: block;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      background: var(--grantaura-gray-100);
+      border: 1px solid var(--grantaura-gray-300);
+      border-radius: var(--grantaura-border-radius);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--grantaura-transition);
+    }
+    
+    .deadline-option input:checked + label {
+      background: var(--grantaura-primary);
+      color: white;
+      border-color: var(--grantaura-primary);
+    }
+    
+    .deadline-option label:hover:not(input:checked + label) {
+      background: var(--grantaura-gray-200);
+    }
+    
+    /* Amount Filter */
+    .amount-filter {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .amount-input {
+      flex: 1;
+      position: relative;
+    }
+    
+    .amount-input input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.25rem !important;
+      border: 1px solid var(--grantaura-gray-300);
+      border-radius: var(--grantaura-border-radius);
+      font-size: 1rem;
+      transition: var(--grantaura-transition);
+    }
+    
+    .amount-input input:focus {
+      border-color: var(--grantaura-primary) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
+    }
+    
+    .amount-input span {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 600;
+      color: var(--grantaura-gray-700);
+      pointer-events: none;
+    }
+    
+    /* Category & Location Filters */
+    .select-filter {
+      position: relative;
+    }
+    
+    .select-filter select {
+      width: 100%;
+      padding: 0.75rem 1rem !important;
+      border: 1px solid var(--grantaura-gray-300);
+      border-radius: var(--grantaura-border-radius);
+      font-size: 1rem;
+      transition: var(--grantaura-transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 16px 16px;
+    }
+    
+    .select-filter select:focus {
+      border-color: var(--grantaura-primary) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
+    }
+    
+    /* Eligibility Filter */
+    .eligibility-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    
+    @media (min-width: 480px) {
+      .eligibility-options {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .eligibility-option {
       position: relative;
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    @media (min-width: 640px) {
-      .grants-filter-section {
-        padding: 1rem;
+    
+    .eligibility-option input[type="checkbox"] {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--grantaura-gray-400);
+      border-radius: 4px;
+      appearance: none;
+      background: white;
+      cursor: pointer;
+      transition: var(--grantaura-transition);
+    }
+    
+    .eligibility-option input[type="checkbox"]:checked {
+      background: var(--grantaura-primary);
+      border-color: var(--grantaura-primary);
+    }
+    
+    .eligibility-option input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 3px;
+      width: 5px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    
+    .eligibility-option input[type="checkbox"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
+    }
+    
+    .eligibility-option label {
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    /* Filter Actions */
+    .filter-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--grantaura-gray-200);
+    }
+    
+    .filter-reset {
+      font-size: 0.9rem;
+      color: var(--grantaura-gray-600);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: var(--grantaura-transition);
+    }
+    
+    .filter-reset:hover {
+      color: var(--grantaura-danger);
+    }
+    
+    .filter-apply {
+      padding: 0.75rem 1.5rem;
+      background: var(--grantaura-primary);
+      color: white !important;
+      border: none;
+      border-radius: var(--grantaura-border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--grantaura-transition);
+    }
+    
+    .filter-apply:hover {
+      background: var(--grantaura-primary-dark);
+    }
+    
+    /* Results Counter */
+    .grants-counter {
+      font-size: 0.95rem;
+      color: var(--grantaura-gray-700);
+      margin-right: auto;
+      padding: 0.5rem 0;
+    }
+    
+    .grants-counter strong {
+      font-weight: 700;
+      color: var(--grantaura-primary);
+    }
+    
+    /* Loading States */
+    .grants-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--grantaura-gray-200);
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .grants-loading.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .grants-loading::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 20%;
+      background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
+      animation: loading 1.5s infinite ease-in-out;
+    }
+    
+    @keyframes loading {
+      0% { left: -20%; width: 20%; }
+      50% { width: 30%; }
+      100% { left: 100%; width: 20%; }
+    }
+    
+    /* Empty State */
+    .no-matching-grants {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background-color: var(--grantaura-gray-50);
+      border-radius: var(--grantaura-border-radius);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--grantaura-gray-200);
+      display: none;
+    }
+    
+    .no-matching-grants.is-visible {
+      display: block;
+    }
+    
+    .no-matching-grants::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
+    }
+    
+    .no-matching-grants h3 {
+      font-size: clamp(1.5rem, 5vw, 1.75rem);
+      margin-bottom: 1.25rem;
+      color: var(--grantaura-gray-800);
+      position: relative;
+      display: inline-block;
+    }
+    
+    .no-matching-grants h3::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 3px;
+      background-color: var(--grantaura-primary-light);
+    }
+    
+    .no-matching-grants p {
+      font-size: clamp(0.95rem, 4vw, 1.1rem);
+      color: var(--grantaura-gray-600);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    /* Custom Pagination for Filtered Results */
+    .g-pagination.filtered-mode {
+      display: flex !important;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .active-filters {
+        width: 100%;
       }
     }
-
-    @media (min-width: 768px) {
-      .grants-filter-section {
-        padding: 1.5rem;
-        max-width: 96%;
+    
+    @media (prefers-reduced-motion: reduce) {
+      .filter-modal,
+      .filter-modal-content,
+      .grants-loading,
+      .grants-loading::after {
+        transition: none;
       }
-    }
-
-    @media (min-width: 1280px) {
-      .grants-filter-section {
-        max-width: 95%;
-      }
-    }
-
-    @media (min-width: 1600px) {
-      .grants-filter-section {
-        max-width: 90%;
+      
+      .grants-loading::after {
+        animation: none;
       }
     }
   </style>
-
-  <!-- Filter Button -->
-  <button id="grants-filter-button" class="grants-filter-button" aria-label="Filter Grants" aria-expanded="false" aria-controls="grants-filter-popup">
-    <style>
-      /* Button styling remains the same */
-      .grants-filter-button {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
-        color: white !important;
-        border: none;
-        padding: 0.75rem 1.25rem;
-        border-radius: var(--grantaura-border-radius);
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(90, 59, 140, 0.2);
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-      }
-
-      .grants-filter-button::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--grantaura-primary-dark), var(--grantaura-primary));
-        z-index: -1;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .grants-filter-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(90, 59, 140, 0.3);
-      }
-
-      .grants-filter-button:hover::before {
-        opacity: 1;
-      }
-
-      .grants-filter-button:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.3);
-      }
-
-      .grants-filter-button svg {
-        width: 18px;
-        height: 18px;
-        transition: transform 0.3s ease;
-      }
-
-      .grants-filter-button:hover svg {
-        transform: rotate(90deg);
-      }
-
-      /* Active state with counter */
-      .grants-filter-button.has-active-filters {
-        padding-right: 2.5rem;
-      }
-
-      .grants-filter-button .filter-count {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--grantaura-secondary);
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        font-weight: 700;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .grants-filter-button.has-active-filters .filter-count {
-        opacity: 1;
-      }
-
-      @media (max-width: 640px) {
-        .grants-filter-button {
-          padding: 0.6rem 1rem;
-          font-size: 0.85rem;
-        }
-
-        .grants-filter-button svg {
-          width: 16px;
-          height: 16px;
-        }
-      }
-    </style>
-
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-    </svg>
-    Filter Grants
-    <span class="filter-count">0</span>
-  </button>
-
-  <!-- Filter Popup -->
-  <div id="grants-filter-popup" class="grants-filter-popup" aria-hidden="true">
-    <style>
-      /* Popup styling remains the same */
-      .grants-filter-popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(17, 24, 39, 0.6);
-        backdrop-filter: blur(3px);
-        -webkit-backdrop-filter: blur(3px);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        overflow: hidden;
-      }
-
-      .grants-filter-popup.active {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .grants-filter-popup .filter-popup-content {
-        background-color: white;
-        border-radius: var(--grantaura-border-radius-lg);
-        width: 95%;
-        max-width: 900px;
-        max-height: 90vh;
-        overflow-y: auto;
-        position: relative;
-        transform: translateY(20px);
-        opacity: 0;
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--grantaura-gray-200);
-      }
-
-      .grants-filter-popup.active .filter-popup-content {
-        transform: translateY(0);
-        opacity: 1;
-      }
-
-      .filter-popup-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid var(--grantaura-gray-200);
-        position: sticky;
-        top: 0;
-        background: white;
-        z-index: 10;
-      }
-
-      .filter-popup-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--grantaura-primary-dark);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .filter-popup-title svg {
-        width: 20px;
-        height: 20px;
-        color: var(--grantaura-primary);
-      }
-
-      .filter-popup-close {
-        background: none;
-        border: none;
-        color: var(--grantaura-gray-600);
-        cursor: pointer;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-      }
-
-      .filter-popup-close:hover {
-        background-color: var(--grantaura-gray-100);
-        color: var(--grantaura-primary);
-      }
-
-      .filter-popup-close svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      .filter-popup-body {
-        padding: 1.5rem;
-      }
-
-      .filter-popup-footer {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-        border-top: 1px solid var(--grantaura-gray-200);
-        position: sticky;
-        bottom: 0;
-        background: white;
-        z-index: 10;
-      }
-
-      .filter-results-count {
-        font-size: 0.9rem;
-        color: var(--grantaura-gray-600);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .filter-results-count strong {
-        color: var(--grantaura-primary);
-        font-weight: 600;
-      }
-
-      .filter-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .filter-reset-btn {
-        padding: 0.6rem 1rem;
-        border: 1px solid var(--grantaura-gray-300);
-        background: white;
-        color: var(--grantaura-gray-700) !important;
-        border-radius: var(--grantaura-border-radius);
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .filter-reset-btn:hover {
-        background-color: var(--grantaura-gray-100);
-        border-color: var(--grantaura-gray-400);
-      }
-
-      .filter-apply-btn {
-        padding: 0.6rem 1.25rem;
-        background: linear-gradient(135deg, var(--grantaura-primary), var(--grantaura-primary-dark));
-        color: white !important;
-        border: none;
-        border-radius: var(--grantaura-border-radius);
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .filter-apply-btn:hover {
-        box-shadow: 0 4px 8px rgba(90, 59, 140, 0.3);
-        transform: translateY(-1px);
-      }
-
-      .filter-apply-btn svg {
-        width: 16px;
-        height: 16px;
-      }
-
-      /* For very small mobile screens */
-      @media (max-width: 480px) {
-        .filter-popup-header {
-          padding: 0.75rem 1rem;
-        }
-
-        .filter-popup-title {
-          font-size: 1rem;
-        }
-
-        .filter-popup-body {
-          padding: 1rem;
-        }
-
-        .filter-popup-footer {
-          padding: 0.75rem 1rem;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .filter-buttons {
-          width: 100%;
-        }
-
-        .filter-reset-btn,
-        .filter-apply-btn {
-          flex: 1;
-          justify-content: center;
-        }
-      }
-    </style>
-
-    <div class="filter-popup-content">
-      <div class="filter-popup-header">
-        <h3 class="filter-popup-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          Filter Grants
-        </h3>
-        <button class="filter-popup-close" aria-label="Close filter popup">
+  
+  <!-- Grant Filter Controls -->
+  <div class="filter-controls">
+    <button type="button" class="filter-trigger-button" id="filter-trigger" aria-expanded="false" aria-controls="filter-modal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      Filter Grants
+    </button>
+    
+    <div class="grants-counter" id="grants-counter">
+      Showing <strong>All</strong> Grants
+    </div>
+    
+    <div class="active-filters" id="active-filters">
+      <!-- Active filters will be inserted here by JavaScript -->
+    </div>
+  </div>
+  
+  <!-- Grant Filter Modal -->
+  <div class="filter-modal" id="filter-modal" aria-hidden="true">
+    <div class="filter-modal-content" role="dialog" aria-labelledby="filter-modal-title">
+      <header>
+        <h2 id="filter-modal-title">Filter Grants</h2>
+        <button type="button" class="filter-close-button" id="filter-close" aria-label="Close filters">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-      </div>
-
-      <div class="filter-popup-body">
-        <div class="filter-form" id="grants-filter-form">
-          <style>
-            /* Form styling remains the same */
-            .filter-form {
-              display: grid;
-              grid-template-columns: 1fr;
-              gap: 1.5rem;
-            }
-
-            @media (min-width: 768px) {
-              .filter-form {
-                grid-template-columns: repeat(2, 1fr);
-              }
-            }
-
-            .filter-form-section {
-              margin-bottom: 0.5rem;
-            }
-
-            .filter-form-title {
-              font-size: 1rem;
-              font-weight: 600;
-              color: var(--grantaura-primary-dark);
-              margin: 0 0 0.75rem;
-              padding-bottom: 0.5rem;
-              border-bottom: 1px solid var(--grantaura-gray-200);
-              display: flex;
-              align-items: center;
-              gap: 8px;
-            }
-
-            .filter-form-title svg {
-              width: 18px;
-              height: 18px;
-              color: var(--grantaura-primary);
-            }
-
-            /* Deadline Filter */
-            .deadline-options {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 8px;
-              margin-bottom: 1rem;
-            }
-
-            .deadline-option {
-              position: relative;
-            }
-
-            .deadline-option input[type="radio"] {
-              position: absolute;
-              opacity: 0;
-              width: 0;
-              height: 0;
-            }
-
-            .deadline-option label {
-              display: block;
-              padding: 0.5rem 1rem;
-              border: 1px solid var(--grantaura-gray-300);
-              border-radius: var(--grantaura-border-radius);
-              font-size: 0.85rem;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              color: var(--grantaura-gray-700);
-            }
-
-            .deadline-option input[type="radio"]:checked+label {
-              background: var(--grantaura-primary-light);
-              color: white;
-              border-color: var(--grantaura-primary-light);
-              font-weight: 500;
-            }
-
-            .deadline-option input[type="radio"]:focus+label {
-              box-shadow: 0 0 0 2px rgba(90, 59, 140, 0.3);
-            }
-
-            /* Eligibility Filter */
-            .eligibility-options {
-              max-height: 220px;
-              overflow-y: auto;
-              border: 1px solid var(--grantaura-gray-200);
-              border-radius: var(--grantaura-border-radius);
-              padding: 0.75rem;
-              background: var(--grantaura-gray-50);
-              margin-bottom: 1rem;
-            }
-
-            .eligibility-option {
-              margin-bottom: 0.5rem;
-              display: flex;
-              align-items: center;
-            }
-
-            .eligibility-option:last-child {
-              margin-bottom: 0;
-            }
-
-            .eligibility-option input[type="checkbox"] {
-              position: absolute;
-              opacity: 0;
-              width: 0;
-              height: 0;
-            }
-
-            .eligibility-option label {
-              position: relative;
-              padding-left: 28px;
-              cursor: pointer;
-              display: inline-block;
-              font-size: 0.9rem;
-              color: var(--grantaura-gray-700);
-              transition: color 0.3s ease;
-            }
-
-            .eligibility-option label::before {
-              content: '';
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 18px;
-              height: 18px;
-              border: 2px solid var(--grantaura-gray-400);
-              border-radius: 4px;
-              transition: all 0.3s ease;
-            }
-
-            .eligibility-option input[type="checkbox"]:checked+label::before {
-              background-color: var(--grantaura-primary);
-              border-color: var(--grantaura-primary);
-            }
-
-            .eligibility-option input[type="checkbox"]:checked+label::after {
-              content: '';
-              position: absolute;
-              left: 6px;
-              top: 3px;
-              width: 6px;
-              height: 10px;
-              border: solid white;
-              border-width: 0 2px 2px 0;
-              transform: rotate(45deg);
-            }
-
-            .eligibility-option input[type="checkbox"]:focus+label::before {
-              box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
-            }
-
-            .eligibility-option:hover label {
-              color: var(--grantaura-primary);
-            }
-
-            /* Category and Location Filters */
-            .filter-select-wrapper {
-              position: relative;
-              margin-bottom: 1rem;
-            }
-
-            .filter-select {
-              width: 100%;
-              padding: 0.75rem;
-              border: 1px solid var(--grantaura-gray-300);
-              border-radius: var(--grantaura-border-radius);
-              font-size: 0.9rem;
-              color: var(--grantaura-gray-700);
-              background-color: white;
-              appearance: none;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            }
-
-            .filter-select:focus {
-              outline: none;
-              border-color: var(--grantaura-primary);
-              box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
-            }
-
-            .filter-select-arrow {
-              position: absolute;
-              right: 12px;
-              top: 50%;
-              transform: translateY(-50%);
-              pointer-events: none;
-            }
-
-            .filter-select-arrow svg {
-              width: 16px;
-              height: 16px;
-              color: var(--grantaura-gray-500);
-            }
-
-            /* Search field */
-            .filter-search {
-              position: relative;
-              margin-bottom: 1rem;
-            }
-
-            .filter-search input {
-              width: 100%;
-              padding: 0.75rem;
-              padding-left: 2.5rem;
-              border: 1px solid var(--grantaura-gray-300);
-              border-radius: var(--grantaura-border-radius);
-              font-size: 0.9rem;
-              color: var(--grantaura-gray-700);
-              transition: all 0.3s ease;
-            }
-
-            .filter-search input:focus {
-              outline: none;
-              border-color: var(--grantaura-primary);
-              box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
-            }
-
-            .filter-search-icon {
-              position: absolute;
-              left: 12px;
-              top: 50%;
-              transform: translateY(-50%);
-              pointer-events: none;
-            }
-
-            .filter-search-icon svg {
-              width: 16px;
-              height: 16px;
-              color: var(--grantaura-gray-500);
-            }
-
-            /* Amount Range Filter */
-            .amount-range {
-              margin-bottom: 1rem;
-            }
-
-            .amount-range-inputs {
-              display: flex;
-              gap: 10px;
-              align-items: center;
-              margin-top: 0.5rem;
-            }
-
-            .amount-field {
-              position: relative;
-              flex: 1;
-            }
-
-            .amount-field span {
-              position: absolute;
-              left: 10px;
-              top: 50%;
-              transform: translateY(-50%);
-              color: var(--grantaura-gray-500);
-              font-weight: 600;
-            }
-
-            .amount-field input {
-              width: 100%;
-              padding: 0.75rem;
-              padding-left: 1.8rem;
-              border: 1px solid var(--grantaura-gray-300);
-              border-radius: var(--grantaura-border-radius);
-              font-size: 0.9rem;
-              color: var(--grantaura-gray-700);
-              transition: all 0.3s ease;
-            }
-
-            .amount-field input:focus {
-              outline: none;
-              border-color: var(--grantaura-primary);
-              box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.1);
-            }
-
-            /* Selected filters display */
-            .selected-filters {
-              grid-column: 1 / -1;
-              display: flex;
-              flex-wrap: wrap;
-              gap: 8px;
-              margin-bottom: 1rem;
-              transition: all 0.3s ease;
-              max-height: 0;
-              overflow: hidden;
-              opacity: 0;
-            }
-
-            .selected-filters.has-filters {
-              max-height: 200px;
-              opacity: 1;
-              margin-top: 0.5rem;
-              padding-top: 1rem;
-              border-top: 1px dashed var(--grantaura-gray-200);
-            }
-
-            .selected-filter {
-              display: flex;
-              align-items: center;
-              gap: 5px;
-              background: var(--grantaura-gray-100);
-              border: 1px solid var(--grantaura-gray-200);
-              border-radius: 50px;
-              padding: 0.35rem 0.75rem;
-              font-size: 0.8rem;
-              color: var(--grantaura-gray-700);
-              transition: all 0.3s ease;
-            }
-
-            .selected-filter:hover {
-              background: var(--grantaura-gray-200);
-            }
-
-            .remove-filter {
-              background: none;
-              border: none;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 2px;
-              color: var(--grantaura-gray-500);
-              transition: all 0.3s ease;
-            }
-
-            .remove-filter:hover {
-              color: var(--grantaura-danger);
-            }
-
-            .remove-filter svg {
-              width: 14px;
-              height: 14px;
-            }
-
-            .clear-all-filters {
-              background: none;
-              border: none;
-              font-size: 0.8rem;
-              color: var(--grantaura-primary-dark);
-              cursor: pointer;
-              padding: 0.35rem 0.5rem;
-              margin-left: auto;
-              text-decoration: underline;
-              transition: all 0.3s ease;
-            }
-
-            .clear-all-filters:hover {
-              color: var(--grantaura-danger);
-            }
-
-            /* Loading States */
-            .filter-loading {
-              display: none;
-              align-items: center;
-              justify-content: center;
-              gap: 10px;
-              padding: 1rem;
-              color: var(--grantaura-gray-600);
-              font-size: 0.9rem;
-            }
-
-            .filter-loading.active {
-              display: flex;
-            }
-
-            .filter-loading-spinner {
-              width: 20px;
-              height: 20px;
-              border: 3px solid rgba(90, 59, 140, 0.2);
-              border-top-color: var(--grantaura-primary);
-              border-radius: 50%;
-              animation: spin 1s linear infinite;
-            }
-
-            @keyframes spin {
-              to {
-                transform: rotate(360deg);
-              }
-            }
-
-            /* Error State */
-            .filter-error {
-              display: none;
-              padding: 1rem;
-              background-color: rgba(239, 68, 68, 0.1);
-              border-radius: var(--grantaura-border-radius);
-              color: var(--grantaura-danger);
-              margin-bottom: 1rem;
-              font-size: 0.9rem;
-              align-items: center;
-              gap: 10px;
-            }
-
-            .filter-error.active {
-              display: flex;
-            }
-
-            .filter-error svg {
-              width: 18px;
-              height: 18px;
-              flex-shrink: 0;
-            }
-
-            /* Empty State */
-            .filter-empty {
-              display: none;
-              padding: 1rem;
-              background-color: rgba(245, 158, 11, 0.1);
-              border-radius: var(--grantaura-border-radius);
-              color: var(--grantaura-warning);
-              margin-bottom: 1rem;
-              font-size: 0.9rem;
-              align-items: center;
-              gap: 10px;
-            }
-
-            .filter-empty.active {
-              display: flex;
-            }
-
-            .filter-empty svg {
-              width: 18px;
-              height: 18px;
-              flex-shrink: 0;
-            }
-
-            /* Progressive Loading State */
-            .filter-option-loading {
-              display: inline-block;
-              width: 16px;
-              height: 16px;
-              border: 2px solid rgba(90, 59, 140, 0.2);
-              border-top-color: var(--grantaura-primary);
-              border-radius: 50%;
-              animation: spin 1s linear infinite;
-              margin-left: 5px;
-              vertical-align: middle;
-            }
-
-            /* Accessibility focus styles */
-            .filter-form *:focus-visible {
-              outline: 2px solid var(--grantaura-primary);
-              outline-offset: 2px;
-            }
-          </style>
-
-          <!-- Selected Filters Display -->
-          <div class="selected-filters" id="selected-filters">
-            <button class="clear-all-filters" id="clear-all-filters">Clear All</button>
-          </div>
-
-          <!-- Error Message -->
-          <div class="filter-error" id="filter-error">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <span>An error occurred while loading filters. Please try again.</span>
-          </div>
-
-          <!-- Empty Results Message -->
-          <div class="filter-empty" id="filter-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="8" y1="12" x2="16" y2="12"></line>
-            </svg>
-            <span>No grants match your selected filters. Try adjusting your criteria.</span>
-          </div>
-
-          <!-- Search All Grants -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+      </header>
+      
+      <div class="filter-modal-body">
+        <form id="filter-form">
+          <!-- Search Filter -->
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              Search Grants
-            </h4>
-            <div class="filter-search">
-              <div class="filter-search-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </div>
-              <input type="text" id="grant-search" name="grant-search" placeholder="Search by grant title or keywords" aria-label="Search grants">
+              Search
+            </h3>
+            <div class="search-filter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" name="keyword" id="keyword-filter" placeholder="Search grant titles, descriptions..." aria-label="Search grants">
             </div>
           </div>
-
+          
           <!-- Deadline Filter -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
               Deadline
-            </h4>
+            </h3>
             <div class="deadline-options">
               <div class="deadline-option">
-                <input type="radio" id="deadline-all" name="deadline" value="all" checked>
+                <input type="radio" name="deadline" id="deadline-all" value="all" checked>
                 <label for="deadline-all">All</label>
               </div>
               <div class="deadline-option">
-                <input type="radio" id="deadline-today" name="deadline" value="today">
+                <input type="radio" name="deadline" id="deadline-today" value="today">
                 <label for="deadline-today">Today</label>
               </div>
               <div class="deadline-option">
-                <input type="radio" id="deadline-week" name="deadline" value="week">
+                <input type="radio" name="deadline" id="deadline-week" value="week">
                 <label for="deadline-week">This Week</label>
               </div>
               <div class="deadline-option">
-                <input type="radio" id="deadline-month" name="deadline" value="month">
+                <input type="radio" name="deadline" id="deadline-month" value="month">
                 <label for="deadline-month">This Month</label>
               </div>
               <div class="deadline-option">
-                <input type="radio" id="deadline-ongoing" name="deadline" value="ongoing">
+                <input type="radio" name="deadline" id="deadline-ongoing" value="ongoing">
                 <label for="deadline-ongoing">Ongoing</label>
+              </div>
+              <div class="deadline-option">
+                <input type="radio" name="deadline" id="deadline-active" value="active">
+                <label for="deadline-active">Active Only</label>
               </div>
             </div>
           </div>
-
-          <!-- Amount Range Filter -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+          
+          <!-- Amount Filter -->
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="1" x2="12" y2="23"></line>
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
               </svg>
-              Grant Amount
-            </h4>
-            <div class="amount-range">
-              <div class="amount-range-inputs">
-                <div class="amount-field">
-                  <span>$</span>
-                  <input type="number" id="amount-min" name="amount-min" placeholder="Min" min="0" aria-label="Minimum grant amount">
-                </div>
-                <div class="amount-field">
-                  <span>$</span>
-                  <input type="number" id="amount-max" name="amount-max" placeholder="Max" min="0" aria-label="Maximum grant amount">
-                </div>
+              Amount
+            </h3>
+            <div class="amount-filter">
+              <div class="amount-input">
+                <span>$</span>
+                <input type="number" name="min-amount" id="min-amount" placeholder="Min" min="0" aria-label="Minimum grant amount">
+              </div>
+              <div class="amount-input">
+                <span>$</span>
+                <input type="number" name="max-amount" id="max-amount" placeholder="Max" min="0" aria-label="Maximum grant amount">
               </div>
             </div>
           </div>
-
-          <!-- Categories Filter -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+          
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                 <polyline points="2 17 12 22 22 17"></polyline>
                 <polyline points="2 12 12 17 22 12"></polyline>
               </svg>
-              Categories
-            </h4>
-            <div class="filter-select-wrapper" id="categories-wrapper">
-              <select id="category-filter" name="category" class="filter-select" aria-label="Filter by category">
+              Category
+            </h3>
+            <div class="select-filter">
+              <select name="category" id="category-filter" aria-label="Filter by category">
                 <option value="">All Categories</option>
-                <!-- Categories will be loaded dynamically -->
-                <option value="loading" disabled>Loading categories...</option>
+                <!-- Categories will be populated by JavaScript -->
               </select>
-              <div class="filter-select-arrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
             </div>
           </div>
-
-          <!-- Locations Filter -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+          
+          <!-- Location Filter -->
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
               Location
-            </h4>
-            <div class="filter-select-wrapper" id="locations-wrapper">
-              <select id="location-filter" name="location" class="filter-select" aria-label="Filter by location">
+            </h3>
+            <div class="select-filter">
+              <select name="location" id="location-filter" aria-label="Filter by location">
                 <option value="">All Locations</option>
-                <!-- Locations will be loaded dynamically -->
-                <option value="loading" disabled>Loading locations...</option>
+                <!-- Locations will be populated by JavaScript -->
               </select>
-              <div class="filter-select-arrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
             </div>
           </div>
-
+          
           <!-- Eligibility Filter -->
-          <div class="filter-form-section">
-            <h4 class="filter-form-title">
+          <div class="filter-group">
+            <h3 class="filter-group-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
               </svg>
               Eligibility
-            </h4>
-            <div class="eligibility-options" id="eligibility-options">
-              <!-- Eligibility options will be loaded dynamically -->
-              <div class="filter-loading active">
-                <div class="filter-loading-spinner"></div>
-                <span>Loading eligibility options...</span>
-              </div>
+            </h3>
+            <div class="eligibility-options">
+              <!-- Eligibility options will be populated by JavaScript -->
             </div>
           </div>
-
-          <!-- Loading Indicator -->
-          <div class="filter-loading" id="filter-loading">
-            <div class="filter-loading-spinner"></div>
-            <span>Loading grants...</span>
+          
+          <!-- Filter Actions -->
+          <div class="filter-actions">
+            <button type="button" class="filter-reset" id="filter-reset">Reset All</button>
+            <button type="submit" class="filter-apply" id="filter-apply">Apply Filters</button>
           </div>
-        </div>
-      </div>
-
-      <div class="filter-popup-footer">
-        <div class="filter-results-count">
-          Showing <strong id="filter-count">All</strong> Grants
-        </div>
-        <div class="filter-buttons">
-          <button id="filter-reset" class="filter-reset-btn">Reset Filters</button>
-          <button id="filter-apply" class="filter-apply-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 11 12 14 22 4"></polyline>
-              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-            </svg>
-            Apply Filters
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
-
-  <!-- Hidden field for AJAX nonce (critical fix) -->
-  <input type="hidden" id="grants-filter-nonce" value="" data-ajax-url="" />
-
-  <!-- PHP for AJAX Setup - FIXED -->
-  [php]
-  // Define hardcoded categories data
-  function grantaura_get_grant_categories() {
-    $categories = array(
-      array('value' => '54', 'label' => 'Grants For For-Profit Businesses'),
-      array('value' => '63', 'label' => 'Grants For Non-Profit Organizations'),
-      array('value' => '51', 'label' => 'Grants For Individuals'),
-      array('value' => '55', 'label' => 'Grants For Women Entrepreneurs'),
-      array('value' => '61', 'label' => 'Grants For Startups'),
-      array('value' => '62', 'label' => 'Grants For Projects'),
-      array('value' => '70', 'label' => 'Grants For Educational Institutions'),
-      array('value' => '69', 'label' => 'Grants For Research'),
-      array('value' => '120', 'label' => 'Grants For Minority Entrepreneurs'),
-      array('value' => '121', 'label' => 'Grants For Black-Owned Businesses'),
-      array('value' => '113', 'label' => 'Community Development Financial Institutions (CDFIs)'),
-      array('value' => '94', 'label' => 'Grants For Agricultural Businesses'),
-      array('value' => '93', 'label' => 'Grants For Brick & Mortar Stores'),
-      array('value' => '230', 'label' => 'Grants For E-Commerce Businesses'),
-      array('value' => '135', 'label' => 'Grants For BIPOC-Owned Businesses'),
-      array('value' => '134', 'label' => 'Grants For Non-Binary Entrepreneurs'),
-      array('value' => '138', 'label' => 'Grants For Restaurants'),
-      array('value' => '231', 'label' => 'Grants For Service-Based Businesses'),
-      array('value' => '57', 'label' => 'Grants For Veteran Entrepreneurs'),
-      array('value' => '143', 'label' => 'Grants For Women Veterans'),
-      array('value' => '137', 'label' => 'Grants For Latina Entrepreneurs'),
-      array('value' => '125', 'label' => 'Grants For Women Of Color Entrepreneurs'),
-      array('value' => '97', 'label' => 'Grants for Artists & Writers'),
-      array('value' => '59', 'label' => 'Grants For Disabled/Special Persons'),
-      array('value' => '132', 'label' => 'Grants For Farmers & Ranchers'),
-      array('value' => '123', 'label' => 'Grants For LGBTQI+'),
-      array('value' => '218', 'label' => 'Grants For Media Projects'),
-      array('value' => '224', 'label' => 'Grants For Military Persons'),
-      array('value' => '227', 'label' => 'Grants For Native Americans & Alaska Natives'),
-      array('value' => '106', 'label' => 'Grants For Researchers'),
-      array('value' => '226', 'label' => 'Grants For Seniors'),
-      array('value' => '105', 'label' => 'Grants For Students'),
-      array('value' => '124', 'label' => 'Grants For Transgenders'),
-      array('value' => '225', 'label' => 'Grants For Veterans'),
-      array('value' => '118', 'label' => 'Grants For Women'),
-      array('value' => '64', 'label' => 'Grants For Youth'),
-      array('value' => '139', 'label' => 'Grants For Institutions'),
-      array('value' => '91', 'label' => 'Grants For Environmental Projects'),
-      array('value' => '232', 'label' => 'Grants For Women-Serving Organizations')
-    );
-
-    return $categories;
-  }
-
-  // Define hardcoded locations data
-  function grantaura_get_grant_locations() {
-    $locations = array(
-      array('value' => '28', 'label' => 'Global'),
-      array('value' => '27', 'label' => 'United States'),
-      array('value' => '72', 'label' => 'Canada'),
-      array('value' => '92', 'label' => 'California'),
-      array('value' => '141', 'label' => 'Chicago'),
-      array('value' => '32', 'label' => 'Texas'),
-      array('value' => '206', 'label' => 'Minnesota'),
-      array('value' => '29', 'label' => 'New Jersey'),
-      array('value' => '127', 'label' => 'Massachusetts'),
-      array('value' => '99', 'label' => 'Illinois'),
-      array('value' => '107', 'label' => 'Africa'),
-      array('value' => '108', 'label' => 'Asia'),
-      array('value' => '75', 'label' => 'Brazil'),
-      array('value' => '198', 'label' => 'Caribbean'),
-      array('value' => '196', 'label' => 'Chile'),
-      array('value' => '197', 'label' => 'Colombia'),
-      array('value' => '71', 'label' => 'Europe'),
-      array('value' => '117', 'label' => 'Francophone Sub-Saharan Africa'),
-      array('value' => '222', 'label' => 'Guam'),
-      array('value' => '76', 'label' => 'Latin America'),
-      array('value' => '116', 'label' => 'Latin America and the Caribbean'),
-      array('value' => '194', 'label' => 'Mexico'),
-      array('value' => '147', 'label' => 'Middle East'),
-      array('value' => '115', 'label' => 'North America'),
-      array('value' => '114', 'label' => 'Oceania'),
-      array('value' => '195', 'label' => 'Peru'),
-      array('value' => '220', 'label' => 'Puerto Rico'),
-      array('value' => '221', 'label' => 'U.S. Virgin Islands'),
-      array('value' => '96', 'label' => 'UK')
-    );
-
-    return $locations;
-  }
-
-  // Define hardcoded eligibility data
-  function grantaura_get_eligibility_options() {
-    $eligibility = array(
-      array('value' => 'Businesses', 'label' => 'Businesses'),
-      array('value' => 'Startups', 'label' => 'Startups'),
-      array('value' => 'Nonprofits', 'label' => 'Nonprofits'),
-      array('value' => 'Individuals', 'label' => 'Individuals'),
-      array('value' => 'Artists', 'label' => 'Artists'),
-      array('value' => 'Group', 'label' => 'Group'),
-      array('value' => 'LGBTQ+', 'label' => 'LGBTQ+'),
-      array('value' => 'African Americans', 'label' => 'Black People'),
-      array('value' => 'Asian Americans', 'label' => 'Asian Americans'),
-      array('value' => 'Females', 'label' => 'Women'),
-      array('value' => 'Veterans', 'label' => 'Military Veterans'),
-      array('value' => 'Disabled', 'label' => 'Disabled/Special Persons'),
-      array('value' => 'Students', 'label' => 'Students'),
-      array('value' => 'Family', 'label' => 'Family'),
-      array('value' => 'Project', 'label' => 'Project'),
-      array('value' => 'Scientists', 'label' => 'Scientists'),
-      array('value' => 'Minority', 'label' => 'Minority'),
-      array('value' => 'Youth', 'label' => 'Youth'),
-      array('value' => 'Educational Institutions', 'label' => 'Educational Institutions'),
-      array('value' => 'CFDIs (Community Development Financial Institutions)', 'label' => 'Community Development Financial Institutions (CDFIs)'),
-      array('value' => 'Non-Binary', 'label' => 'Non-Binary'),
-      array('value' => 'Researchers', 'label' => 'Researchers')
-    );
-
-    return $eligibility;
-  }
-
-  // Generate a secure nonce for AJAX operations
-  $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
-  $admin_ajax_url = admin_url('admin-ajax.php');
-
-  // Add the data to the page directly - KEY FIX: We provide the data directly to the page
-  echo '<script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function() {
-      // Store hardcoded data directly in global variables
-      window.grantauraData = {
-        categories: ' . json_encode(grantaura_get_grant_categories()) . ',
-        locations: ' . json_encode(grantaura_get_grant_locations()) . ',
-        eligibility: ' . json_encode(grantaura_get_eligibility_options()) . '
-      };
-      
-      // Set up the nonce and AJAX URL
-      var nonceField = document.getElementById("grants-filter-nonce");
-      if (nonceField) {
-        nonceField.value = "' . esc_js($grants_filter_nonce) . '";
-        nonceField.setAttribute("data-ajax-url", "' . esc_js($admin_ajax_url) . '");
-      }
-    });
-  </script>';
-
-  // Define AJAX handlers for server-side filtering
-  function register_grants_filter_ajax_handlers() {
-    add_action("wp_ajax_filter_grants", "grants_filter_ajax_handler");
-    add_action("wp_ajax_nopriv_filter_grants", "grants_filter_ajax_handler");
-    add_action("wp_ajax_load_filter_options", "grants_load_filter_options_ajax_handler");
-    add_action("wp_ajax_nopriv_load_filter_options", "grants_load_filter_options_ajax_handler");
-  }
-  add_action("init", "register_grants_filter_ajax_handlers");
-
-  // AJAX handler for loading filter options
-  function grants_load_filter_options_ajax_handler() {
-    // Security check
-    check_ajax_referer("grants_filter_nonce", "security");
-    
-    $option_type = isset($_POST["option_type"]) ? sanitize_text_field($_POST["option_type"]) : "";
-    $response = array("success" => false, "data" => array(), "message" => "Invalid option type");
-    
-    if ($option_type === "categories") {
-      $response = array(
-        "success" => true, 
-        "data" => grantaura_get_grant_categories(),
-        "message" => "Categories loaded successfully"
-      );
-    }
-    else if ($option_type === "locations") {
-      $response = array(
-        "success" => true, 
-        "data" => grantaura_get_grant_locations(),
-        "message" => "Locations loaded successfully"
-      );
-    }
-    else if ($option_type === "eligibility") {
-      $response = array(
-        "success" => true, 
-        "data" => grantaura_get_eligibility_options(),
-        "message" => "Eligibility options loaded successfully"
-      );
-    }
-    
-    wp_send_json($response);
-    wp_die(); // Important to terminate properly
-  }
-
-  // Filter grants AJAX handler
-  function grants_filter_ajax_handler() {
-    // Security check
-    check_ajax_referer("grants_filter_nonce", "security");
-    
-    // Get filter parameters
-    $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-    $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
-    $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
-    $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
-    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-    $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
-    $eligibility = isset($_POST['eligibility']) ? array_map('sanitize_text_field', (array)$_POST['eligibility']) : array();
-    
-    // Build query args - for now, just return all grants as client-side filtering handles the rest
-    $query_args = array(
-      'post_type' => 'at_biz_dir',
-      'posts_per_page' => -1,
-      'fields' => 'ids',
-      'post_status' => 'publish'
-    );
-    
-    // Get all published grants
-    $all_grants = get_posts($query_args);
-    
-    wp_send_json(array(
-      'success' => true,
-      'filtered_ids' => $all_grants,
-      'total' => count($all_grants),
-      'filters_applied' => array(
-        'search' => $search,
-        'deadline' => $deadline,
-        'amount_min' => $amount_min,
-        'amount_max' => $amount_max,
-        'category' => $category,
-        'location' => $location,
-        'eligibility' => $eligibility
-      ),
-      'message' => 'Grants filtered successfully'
-    ));
-    
-    wp_die(); // Important to terminate properly
-  }
-  [/php]
-
-  <!-- JavaScript for Filter Functionality - FIXED -->
+  
+  <!-- Grants Loading Indicator -->
+  <div class="grants-loading" id="grants-loading" aria-hidden="true"></div>
+  
+  <!-- No Matching Grants Message -->
+  <div class="no-matching-grants" id="no-matching-grants">
+    <h3>No Matching Grants</h3>
+    <p>No grants match your current filter criteria. Try adjusting your filters or <button type="button" class="reset-all-filters" id="reset-filters-empty">reset all filters</button> to see all available grants.</p>
+  </div>
+  
+  <!-- Custom Pagination for Filtered Results (hidden by default) -->
+  <div class="g-pagination filtered-pagination" id="filtered-pagination" style="display: none;">
+    <ul class="g-pagination__list" id="filtered-pagination-list">
+      <!-- Pagination will be generated by JavaScript -->
+    </ul>
+  </div>
+  
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      /* --- Configuration & Initialization --- */
-      // Function to check if values in an array are all true - safer alternative to && operator
+      // Function to safely check multiple conditions (alternative to && operator)
       function checkConditions(conditions) {
         for (var i = 0; i < conditions.length; i++) {
           if (!conditions[i]) {
@@ -1250,1200 +787,1111 @@
         return true;
       }
       
-      // Function to safely get the AJAX configuration
-      function initAjaxConfig() {
-        // Get configuration from the hidden input field
-        var nonceField = document.getElementById('grants-filter-nonce');
+      // Element references
+      const filterTrigger = document.getElementById('filter-trigger');
+      const filterModal = document.getElementById('filter-modal');
+      const filterClose = document.getElementById('filter-close');
+      const filterForm = document.getElementById('filter-form');
+      const filterReset = document.getElementById('filter-reset');
+      const resetFiltersEmpty = document.getElementById('reset-filters-empty');
+      const activeFiltersContainer = document.getElementById('active-filters');
+      const grantsCounter = document.getElementById('grants-counter');
+      const grantsLoading = document.getElementById('grants-loading');
+      const noMatchingGrants = document.getElementById('no-matching-grants');
+      const grantsContainer = document.querySelector('.grants-container');
+      const originalPagination = document.querySelector('.g-pagination:not(.filtered-pagination)');
+      const filteredPagination = document.getElementById('filtered-pagination');
+      const filteredPaginationList = document.getElementById('filtered-pagination-list');
+      
+      // Filter elements
+      const keywordFilter = document.getElementById('keyword-filter');
+      const deadlineOptions = document.querySelectorAll('input[name="deadline"]');
+      const minAmountFilter = document.getElementById('min-amount');
+      const maxAmountFilter = document.getElementById('max-amount');
+      const categoryFilter = document.getElementById('category-filter');
+      const locationFilter = document.getElementById('location-filter');
+      const eligibilityContainer = document.querySelector('.eligibility-options');
+      
+      // Store all visible grants for initial state
+      const visibleGrants = Array.from(document.querySelectorAll('.g-card'));
+      
+      // Will store all grants from all pages
+      let allGrants = [];
+      let postsPerPage = 16; // Default, will be updated based on actual data
+      let totalPages = 1; // Will be updated after loading all grants
+      let currentPage = 1; // Current page in pagination
+      let currentPageParam = getQueryParam('paged') || getQueryParam('page') || 1;
+      currentPage = parseInt(currentPageParam);
+      
+      // Current active filters
+      let activeFilters = {
+        keyword: '',
+        deadline: 'all',
+        minAmount: '',
+        maxAmount: '',
+        category: '',
+        location: '',
+        eligibility: []
+      };
+      
+      // Get query parameter helper
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+      
+      // Function to fetch all grants from all pages
+      async function fetchAllGrants() {
+        // Show loading indicator
+        grantsLoading.classList.add('is-active');
         
-        if (nonceField) {
-          window.grantsFilterNonce = nonceField.value;
-          window.ajaxurl = nonceField.getAttribute('data-ajax-url');
+        try {
+          // Start with visible grants on the current page
+          allGrants = [...visibleGrants];
           
-          console.log('AJAX Configuration initialized:', {
-            nonceAvailable: !!window.grantsFilterNonce,
-            ajaxUrlAvailable: !!window.ajaxurl
-          });
-          
-          return checkConditions([!!window.grantsFilterNonce, !!window.ajaxurl]);
-        }
-        
-        console.warn('Grants filter nonce field not found, AJAX may not work correctly');
-        
-        // Fallback for ajaxurl if not set
-        if (typeof window.ajaxurl === 'undefined') {
-          window.ajaxurl = '/wp-admin/admin-ajax.php';
-          console.log('Using fallback AJAX URL:', window.ajaxurl);
-        }
-        
-        return false;
-      }
-      
-      // DOM Elements
-      const filterButton = document.getElementById('grants-filter-button');
-      const filterPopup = document.getElementById('grants-filter-popup');
-      const filterClose = document.querySelector('.filter-popup-close');
-      const filterForm = document.getElementById('grants-filter-form');
-      const resetButton = document.getElementById('filter-reset');
-      const applyButton = document.getElementById('filter-apply');
-      const filterCount = document.getElementById('filter-count');
-      const selectedFiltersContainer = document.getElementById('selected-filters');
-      const clearAllFilters = document.getElementById('clear-all-filters');
-      const eligibilityContainer = document.getElementById('eligibility-options');
-      const categorySelect = document.getElementById('category-filter');
-      const locationSelect = document.getElementById('location-filter');
-      const searchInput = document.getElementById('grant-search');
-      const filterError = document.getElementById('filter-error');
-      const filterEmpty = document.getElementById('filter-empty');
-      const filterLoading = document.getElementById('filter-loading');
-      
-      // State
-      let activeFilters = {};
-      let allEligibilityOptions = [];
-      let allCategories = [];
-      let allLocations = [];
-      let grantsContainer = document.querySelector('.grants-container');
-      
-      // Initialize
-      init();
-
-      function init() {
-        console.log('Initializing grants filter system...');
-        // Ensure AJAX configuration is set
-        const configSuccess = initAjaxConfig();
-        
-        if (configSuccess) {
-          console.log('AJAX configuration successful');
-          // Load filter options - Use the direct data approach first
-          if (window.grantauraData) {
-            console.log('Using direct data from page');
-            renderCategoryOptions(window.grantauraData.categories);
-            renderLocationOptions(window.grantauraData.locations);
-            renderEligibilityOptions(window.grantauraData.eligibility);
+          // Get pagination info from the original pagination
+          if (originalPagination) {
+            const paginationItems = originalPagination.querySelectorAll('.g-pagination__item');
+            const lastPageItem = Array.from(paginationItems).filter(item => {
+              const link = item.querySelector('a');
+              const span = item.querySelector('span');
+              return (link && !isNaN(parseInt(link.textContent))) || 
+                     (span && !isNaN(parseInt(span.textContent)));
+            }).pop();
             
-            // Store the data for reference
-            allCategories = window.grantauraData.categories;
-            allLocations = window.grantauraData.locations;
-            allEligibilityOptions = window.grantauraData.eligibility;
-          } else {
-            // Fallback to AJAX if direct data not available
-            console.log('Direct data not available, trying AJAX');
-            loadFilterOptions();
-          }
-        } else {
-          console.warn('AJAX configuration incomplete, trying direct data approach');
-          // Try direct data approach even without AJAX config
-          if (window.grantauraData) {
-            console.log('Using direct data from page as fallback');
-            renderCategoryOptions(window.grantauraData.categories);
-            renderLocationOptions(window.grantauraData.locations);
-            renderEligibilityOptions(window.grantauraData.eligibility);
-            
-            // Store the data for reference
-            allCategories = window.grantauraData.categories;
-            allLocations = window.grantauraData.locations;
-            allEligibilityOptions = window.grantauraData.eligibility;
-          } else {
-            // If both methods fail, show error
-            showError('Filter system configuration issue. Please refresh the page or contact support.');
-          }
-        }
-        
-        // Add event listeners
-        addEventListeners();
-        // Check URL for filter parameters
-        parseUrlHash();
-      }
-      
-      /* --- Event Handling --- */
-      function addEventListeners() {
-        // Open filter popup
-        if (filterButton) {
-          filterButton.addEventListener('click', toggleFilterPopup);
-        }
-        
-        // Close filter popup
-        if (filterClose) {
-          filterClose.addEventListener('click', closeFilterPopup);
-        }
-        
-        // Close on outside click
-        if (filterPopup) {
-          filterPopup.addEventListener('click', function(e) {
-            if (e.target === filterPopup) {
-              closeFilterPopup();
-            }
-          });
-        }
-        
-        // Apply filters
-        if (applyButton) {
-          applyButton.addEventListener('click', function() {
-            applyFilters();
-            closeFilterPopup();
-          });
-        }
-        
-        // Reset filters
-        if (resetButton) {
-          resetButton.addEventListener('click', resetFilters);
-        }
-        
-        // Clear all selected filters
-        if (clearAllFilters) {
-          clearAllFilters.addEventListener('click', resetFilters);
-        }
-        
-        // Listen for enter key in search input
-        if (searchInput) {
-          searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              applyFilters();
-            }
-          });
-        }
-        
-        // Add form input change listeners
-        if (filterForm) {
-          const formInputs = filterForm.querySelectorAll('input, select');
-          formInputs.forEach(input => {
-            input.addEventListener('change', updateSelectedFilters);
-          });
-        }
-        
-        // Close popup with escape key
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            closeFilterPopup();
-          }
-        });
-        
-        // Update hash when window is about to unload
-        window.addEventListener('beforeunload', function() {
-          if (Object.keys(activeFilters).length > 0) {
-            updateUrlHash();
-          }
-        });
-      }
-      
-      /* --- Popup Handling --- */
-      function toggleFilterPopup() {
-        const isActive = filterPopup.classList.contains('active');
-        if (isActive) {
-          closeFilterPopup();
-        } else {
-          openFilterPopup();
-        }
-      }
-
-      function openFilterPopup() {
-        filterPopup.classList.add('active');
-        filterButton.setAttribute('aria-expanded', 'true');
-        filterPopup.setAttribute('aria-hidden', 'false');
-        
-        // Trigger animation on the content
-        setTimeout(function() {
-          const content = document.querySelector('.filter-popup-content');
-          if (content) content.classList.add('active');
-        }, 10);
-        
-        // Prevent body scrolling
-        document.body.style.overflow = 'hidden';
-        
-        // Focus on search input
-        setTimeout(function() {
-          if (searchInput) searchInput.focus();
-        }, 300);
-      }
-
-      function closeFilterPopup() {
-        const content = document.querySelector('.filter-popup-content');
-        if (content) content.classList.remove('active');
-        
-        setTimeout(function() {
-          filterPopup.classList.remove('active');
-          filterButton.setAttribute('aria-expanded', 'false');
-          filterPopup.setAttribute('aria-hidden', 'true');
-          
-          // Restore body scrolling
-          document.body.style.overflow = '';
-        }, 300);
-      }
-      
-      /* --- AJAX Functions --- */
-      // Improved AJAX data fetching with better error handling
-      function fetchFilterOptions(optionType) {
-        console.log(`Fetching filter options for: ${optionType}`);
-        
-        // Check if we have direct data first
-        if (window.grantauraData && window.grantauraData[optionType]) {
-          console.log(`Using direct data for ${optionType}`);
-          return Promise.resolve({
-            success: true,
-            data: window.grantauraData[optionType],
-            message: `${optionType} loaded successfully from direct data`
-          });
-        }
-        
-        // If no direct data, fall back to AJAX
-        console.log(`No direct data for ${optionType}, using AJAX`);
-        
-        // Create form data for AJAX request
-        const formData = new FormData();
-        formData.append('action', 'load_filter_options');
-        formData.append('security', window.grantsFilterNonce || '');
-        formData.append('option_type', optionType);
-        
-        // Make sure ajaxurl is defined
-        const ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-        
-        // Make AJAX request
-        return fetch(ajaxUrl, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        })
-        .then(function(response) {
-          console.log(`${optionType} response status:`, response.status);
-          
-          if (!response.ok) {
-            return response.text().then(text => {
-              console.error('Error response body:', text);
-              throw new Error(`Network error: ${response.status} ${response.statusText}`);
-            });
-          }
-          
-          return response.json();
-        })
-        .then(function(data) {
-          console.log(`${optionType} data received:`, data);
-          return data;
-        })
-        .catch(function(error) {
-          console.error(`Error fetching ${optionType} options:`, error);
-          // Return a standardized error response object
-          return {
-            success: false,
-            data: [],
-            message: error.message || `Failed to load ${optionType} options`
-          };
-        });
-      }
-
-      function loadFilterOptions() {
-        // Show loading state for eligibility options
-        eligibilityContainer.innerHTML = `
-          <div class="filter-loading active">
-            <div class="filter-loading-spinner"></div>
-            <span>Loading eligibility options...</span>
-          </div>
-        `;
-        
-        // Load eligibility options
-        fetchFilterOptions('eligibility')
-          .then(function(response) {
-            if (response.success) {
-              allEligibilityOptions = response.data;
-              renderEligibilityOptions(response.data);
-            } else {
-              // Try fallback to hardcoded data
-              if (window.grantauraData && window.grantauraData.eligibility) {
-                allEligibilityOptions = window.grantauraData.eligibility;
-                renderEligibilityOptions(window.grantauraData.eligibility);
-              } else {
-                showError('Failed to load eligibility options: ' + response.message);
-              }
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading eligibility options: ' + error.message);
-          });
-        
-        // Load categories
-        fetchFilterOptions('categories')
-          .then(function(response) {
-            if (response.success) {
-              allCategories = response.data;
-              renderCategoryOptions(response.data);
-            } else {
-              // Try fallback to hardcoded data
-              if (window.grantauraData && window.grantauraData.categories) {
-                allCategories = window.grantauraData.categories;
-                renderCategoryOptions(window.grantauraData.categories);
-              } else {
-                showError('Failed to load categories: ' + response.message);
-              }
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading categories: ' + error.message);
-          });
-        
-        // Load locations
-        fetchFilterOptions('locations')
-          .then(function(response) {
-            if (response.success) {
-              allLocations = response.data;
-              renderLocationOptions(response.data);
-            } else {
-              // Try fallback to hardcoded data
-              if (window.grantauraData && window.grantauraData.locations) {
-                allLocations = window.grantauraData.locations;
-                renderLocationOptions(window.grantauraData.locations);
-              } else {
-                showError('Failed to load locations: ' + response.message);
-              }
-            }
-          })
-          .catch(function(error) {
-            showError('Error loading locations: ' + error.message);
-          });
-      }
-
-      function applyFilters() {
-        // Show loading state
-        showLoading(true);
-        hideError();
-        hideEmptyState();
-        console.log('Applying filters...');
-        
-        // Get all form values for the filter
-        const searchValue = searchInput.value.trim();
-        const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-        
-        if (!deadlineRadio) {
-          showError('Please select a deadline option.');
-          showLoading(false);
-          return;
-        }
-        
-        const deadlineValue = deadlineRadio.value;
-        const amountMinValue = document.getElementById('amount-min').value;
-        const amountMaxValue = document.getElementById('amount-max').value;
-        const categoryValue = categorySelect.value;
-        const locationValue = locationSelect.value;
-        
-        // Get eligibility values
-        const eligibilityValues = Array.from(
-          document.querySelectorAll('input[name="eligibility[]"]:checked')
-        ).map(checkbox => checkbox.value);
-        
-        // Update URL hash first (do this immediately regardless of AJAX result)
-        updateUrlHash();
-        
-        // IMPROVED: Use client-side filtering for immediate response
-        clientSideFiltering({
-          search: searchValue,
-          deadline: deadlineValue,
-          amountMin: amountMinValue,
-          amountMax: amountMaxValue,
-          category: categoryValue,
-          location: locationValue,
-          eligibility: eligibilityValues
-        });
-        
-        // Create form data for backend filtering (optional)
-        if (window.grantsFilterNonce) {
-          try {
-            const formData = new FormData();
-            formData.append('action', 'filter_grants');
-            formData.append('security', window.grantsFilterNonce);
-            
-            if (searchValue) formData.append('search', searchValue);
-            formData.append('deadline', deadlineValue || 'all');
-            if (amountMinValue) formData.append('amount_min', amountMinValue);
-            if (amountMaxValue) formData.append('amount_max', amountMaxValue);
-            if (categoryValue) formData.append('category', categoryValue);
-            if (locationValue) formData.append('location', locationValue);
-            
-            // Add eligibility values
-            eligibilityValues.forEach(value => {
-              formData.append('eligibility[]', value);
-            });
-            
-            // Make sure ajaxurl is defined
-            const ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-            
-            // Make non-blocking AJAX request to sync with server
-            fetch(ajaxUrl, {
-              method: 'POST',
-              body: formData,
-              credentials: 'same-origin'
-            })
-            .then(function(response) {
-              if (!response.ok) {
-                console.log('Server filter response not OK, but using client-side results');
-                return;
-              }
-              return response.json();
-            })
-            .then(function(data) {
-              console.log('Server filter response received:', data);
-              // Optional: You could use the server response to refine client-side results
-            })
-            .catch(function(error) {
-              console.log('Server filter error (continuing with client results):', error.message);
-            });
-          } catch (error) {
-            console.log('Error setting up server filter:', error.message);
-          }
-        }
-      }
-      
-      function clientSideFiltering(filters) {
-        console.log('Applying client-side filtering with:', filters);
-        
-        // Get all grant cards
-        const allGrantCards = document.querySelectorAll('.g-card');
-        if (!allGrantCards || allGrantCards.length === 0) {
-          console.error('No grant cards found on page!');
-          showError('Could not find grant cards to filter');
-          showLoading(false);
-          return;
-        }
-        
-        // Prepare for filtering
-        let matchedCards = [];
-        let visibleCount = 0;
-        
-        // Filter each card
-        allGrantCards.forEach(card => {
-          // Default to showing the card
-          let showCard = true;
-          
-          try {
-            // Apply each filter criterion
-            if (showCard && filters.search) {
-              // Search in title and description
-              const title = card.querySelector('.g-card__title')?.textContent?.toLowerCase() || '';
-              const excerpt = card.querySelector('.g-card__excerpt')?.textContent?.toLowerCase() || '';
-              const searchTerm = filters.search.toLowerCase();
-              
-              showCard = title.includes(searchTerm) || excerpt.includes(searchTerm);
-            }
-            
-            if (showCard && filters.deadline && filters.deadline !== 'all') {
-              // Filter by deadline
-              const status = card.querySelector('.g-card__status-badge')?.textContent?.trim().toLowerCase() || '';
-              const deadlineText = card.querySelector('.g-card__deadline-value')?.textContent?.trim().toLowerCase() || '';
-              
-              if (filters.deadline === 'today') {
-                // Show only grants due today
-                showCard = status === 'active' && deadlineText.includes('today');
-              } else if (filters.deadline === 'week') {
-                // Show only grants due this week
-                showCard = status === 'active' && (
-                  deadlineText.includes('today') || 
-                  (card.querySelector('.g-card__deadline-days') && 
-                   parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 7)
-                );
-              } else if (filters.deadline === 'month') {
-                // Show only grants due this month
-                showCard = status === 'active' && (
-                  deadlineText.includes('today') || 
-                  (card.querySelector('.g-card__deadline-days') && 
-                   parseInt(card.querySelector('.g-card__deadline-days-num')?.textContent || '0') <= 31)
-                );
-              } else if (filters.deadline === 'ongoing') {
-                // Show only ongoing grants
-                showCard = status === 'ongoing' || deadlineText.toLowerCase() === 'ongoing';
-              }
-            }
-            
-            if (showCard && (filters.amountMin || filters.amountMax)) {
-              // Filter by amount
-              const amountText = card.querySelector('.g-card__amount')?.textContent?.trim() || '';
-              if (amountText !== 'Various Benefits' && amountText !== 'Varies') {
-                const amountValue = parseInt(amountText.replace(/[^0-9]/g, '')) || 0;
+            if (lastPageItem) {
+              const lastPageNum = parseInt(lastPageItem.textContent);
+              if (!isNaN(lastPageNum) && lastPageNum > 1) {
+                totalPages = lastPageNum;
                 
-                if (filters.amountMin && amountValue < parseInt(filters.amountMin)) {
-                  showCard = false;
-                }
+                // Calculate posts per page based on visible grants and current page
+                postsPerPage = visibleGrants.length;
                 
-                if (filters.amountMax && amountValue > parseInt(filters.amountMax)) {
-                  showCard = false;
+                // For pages other than current, we need to fetch grants
+                // We'll use grant structure from current page to create placeholders
+                const grantsNeeded = totalPages * postsPerPage - allGrants.length;
+                
+                // Add placeholder grants with unique identifiers
+                if (grantsNeeded > 0) {
+                  const sampleGrant = visibleGrants[0].cloneNode(true);
+                  
+                  // Create a container for additional grants (hidden)
+                  const hiddenContainer = document.createElement('div');
+                  hiddenContainer.id = 'hidden-grants-container';
+                  hiddenContainer.style.display = 'none';
+                  document.body.appendChild(hiddenContainer);
+                  
+                  // Fetch all additional pages in parallel
+                  const pagePromises = [];
+                  for (let page = 1; page <= totalPages; page++) {
+                    if (page !== currentPage) { // Skip current page as we already have it
+                      pagePromises.push(fetchGrantsFromPage(page));
+                    }
+                  }
+                  
+                  // Wait for all pages to load
+                  const results = await Promise.all(pagePromises);
+                  
+                  // Process results and add to allGrants
+                  results.forEach(pageGrants => {
+                    if (pageGrants && pageGrants.length) {
+                      allGrants = allGrants.concat(pageGrants);
+                    }
+                  });
                 }
               }
             }
-            
-            if (showCard && filters.category) {
-              // Filter by category
-              const categoryLinks = card.querySelectorAll('.g-card__tag');
-              let categoryMatch = false;
-              
-              categoryLinks.forEach(link => {
-                const href = link.getAttribute('href') || '';
-                if (href.includes(`category-${filters.category}`) || href.includes(`=${filters.category}`)) {
-                  categoryMatch = true;
-                }
-              });
-              
-              showCard = categoryMatch;
-            }
-            
-            if (showCard && filters.location) {
-              // Filter by location
-              const locationLinks = card.querySelectorAll('.g-card__location-link');
-              let locationMatch = false;
-              
-              locationLinks.forEach(link => {
-                const href = link.getAttribute('href') || '';
-                if (href.includes(`location-${filters.location}`) || href.includes(`=${filters.location}`)) {
-                  locationMatch = true;
-                }
-              });
-              
-              showCard = locationMatch;
-            }
-            
-            if (showCard && filters.eligibility && filters.eligibility.length > 0) {
-              // Filter by eligibility
-              const eligibilityTexts = card.querySelectorAll('.g-card__meta-item:nth-of-type(2) span');
-              let eligibilityMatch = false;
-              
-              eligibilityTexts.forEach(span => {
-                const text = span.textContent?.trim() || '';
-                if (filters.eligibility.some(value => text.toLowerCase() === value.toLowerCase())) {
-                  eligibilityMatch = true;
-                }
-              });
-              
-              showCard = eligibilityMatch;
-            }
-          } catch (error) {
-            console.error('Error filtering card:', error);
-            showCard = true; // Default to showing on error
           }
           
-          // Apply visibility to the card
-          if (showCard) {
-            card.style.display = '';
-            matchedCards.push(card);
-            visibleCount++;
-          } else {
-            card.style.display = 'none';
-          }
-        });
-        
-        // Update counts and UI
-        updateResultCount(visibleCount);
-        
-        // Show empty state if no results
-        if (visibleCount === 0) {
-          showEmptyState();
-        } else {
-          hideEmptyState();
+          // Initialize filters after all grants are loaded
+          initializeFilters();
           
-          // Scroll to top of grants container for better UX
-          if (grantsContainer) {
-            setTimeout(() => {
-              window.scrollTo({
-                top: grantsContainer.offsetTop - 100,
-                behavior: 'smooth'
-              });
-            }, 300);
-          }
+        } catch (error) {
+          console.error('Error fetching all grants:', error);
+          // Fallback to just using visible grants
+          allGrants = [...visibleGrants];
+          initializeFilters();
+        } finally {
+          // Hide loading indicator
+          grantsLoading.classList.remove('is-active');
         }
-        
-        // Hide loading state
-        showLoading(false);
-        
-        console.log(`Filtered to ${visibleCount} visible cards out of ${allGrantCards.length} total`);
       }
       
-      /* --- Rendering Functions --- */
-      function renderEligibilityOptions(options) {
-        console.log('Rendering eligibility options:', options);
-        
-        // Clear loading state
-        eligibilityContainer.innerHTML = '';
-        
-        if (!Array.isArray(options) || options.length === 0) {
-          eligibilityContainer.innerHTML = '<p>No eligibility options available</p>';
-          return;
-        }
-        
-        // Sort options alphabetically
-        options.sort((a, b) => a.label.localeCompare(b.label));
-        
-        let html = '';
-        options.forEach(function(option) {
-          // Create a safe ID by sanitizing the value
-          const safeId = `eligibility-${option.value.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+      // Function to fetch grants from a specific page
+      async function fetchGrantsFromPage(pageNum) {
+        try {
+          // Construct URL for the page
+          let pageUrl = window.location.pathname;
+          const isHomepage = pageUrl === '/' || pageUrl.endsWith('/');
           
-          html += `
-            <div class="eligibility-option">
-              <input type="checkbox" id="${safeId}" 
-                name="eligibility[]" value="${option.value}">
-              <label for="${safeId}">${option.label}</label>
-            </div>
-          `;
-        });
-        
-        eligibilityContainer.innerHTML = html;
-        
-        // Add change event listeners
-        const checkboxes = eligibilityContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          checkbox.addEventListener('change', updateSelectedFilters);
-        });
-        
-        console.log('Eligibility options rendered successfully');
-        
-        // Restore any selected values from URL
-        setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-      }
-
-      function renderCategoryOptions(categories) {
-        console.log('Rendering category options:', categories);
-        
-        // Clear loading state
-        categorySelect.innerHTML = '<option value="">All Categories</option>';
-        
-        if (!Array.isArray(categories) || categories.length === 0) {
-          console.warn('No category options received or invalid data format');
-          return;
+          if (isHomepage) {
+            pageUrl = pageNum > 1 ? `/page/${pageNum}/` : '/';
+          } else {
+            // Add page parameter to current URL
+            const urlObj = new URL(window.location.href);
+            urlObj.searchParams.set('paged', pageNum);
+            pageUrl = urlObj.toString();
+          }
+          
+          // Fetch the page
+          const response = await fetch(pageUrl);
+          if (!response.ok) throw new Error(`Failed to fetch page ${pageNum}`);
+          
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          // Extract grants from the page
+          const pageGrants = Array.from(doc.querySelectorAll('.g-card'));
+          
+          return pageGrants.map(grant => {
+            const clone = grant.cloneNode(true);
+            clone.setAttribute('data-page', pageNum);
+            return clone;
+          });
+          
+        } catch (error) {
+          console.error(`Error fetching page ${pageNum}:`, error);
+          return [];
         }
+      }
+      
+      // Initialize filters after all grants are loaded
+      function initializeFilters() {
+        // Populate filter options
+        populateCategories();
+        populateLocations();
+        populateEligibility();
+        
+        // Read filters from URL if present
+        readFiltersFromUrl();
+        
+        // Set up event listeners
+        setupEventListeners();
+      }
+      
+      // Populate category options
+      function populateCategories() {
+        // Create a Set to track unique categories
+        const categories = new Set();
+        
+        // Loop through all grants to collect categories
+        allGrants.forEach(function(grant) {
+          const categoryTags = grant.querySelectorAll('.g-card__tag:not(.g-card__tag--more)');
+          
+          categoryTags.forEach(function(tag) {
+            const categoryName = tag.textContent.trim();
+            const categoryUrl = tag.getAttribute('href');
+            
+            if (categoryName && categoryUrl) {
+              // Use the URL as key and name as value
+              categories.add(JSON.stringify({
+                url: categoryUrl,
+                name: categoryName
+              }));
+            }
+          });
+        });
         
         // Sort categories alphabetically
-        categories.sort((a, b) => a.label.localeCompare(b.label));
+        const sortedCategories = Array.from(categories)
+          .map(item => JSON.parse(item))
+          .sort((a, b) => a.name.localeCompare(b.name));
         
-        // Create options HTML
-        let html = '<option value="">All Categories</option>';
-        
-        categories.forEach(function(category) {
-          if (category && category.value && category.label) {
-            html += `<option value="${category.value}">${category.label}</option>`;
-          }
+        // Add options to the select element
+        sortedCategories.forEach(function(category) {
+          const option = document.createElement('option');
+          option.value = category.url;
+          option.textContent = category.name;
+          categoryFilter.appendChild(option);
         });
-        
-        // Update select element
-        categorySelect.innerHTML = html;
-        console.log('Category options rendered successfully:', categories.length);
-        
-        // Restore any selected value from URL
-        setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
       }
-
-      function renderLocationOptions(locations) {
-        console.log('Rendering location options:', locations);
+      
+      // Populate location options
+      function populateLocations() {
+        // Create a Set to track unique locations
+        const locations = new Set();
         
-        // Clear loading state
-        locationSelect.innerHTML = '<option value="">All Locations</option>';
-        
-        if (!Array.isArray(locations) || locations.length === 0) {
-          console.warn('No location options received or invalid data format');
-          return;
-        }
+        // Loop through all grants to collect locations
+        allGrants.forEach(function(grant) {
+          const locationLinks = grant.querySelectorAll('.g-card__location-link');
+          
+          locationLinks.forEach(function(link) {
+            const locationName = link.textContent.trim();
+            const locationUrl = link.getAttribute('href');
+            
+            if (locationName && locationUrl) {
+              // Use the URL as key and name as value
+              locations.add(JSON.stringify({
+                url: locationUrl,
+                name: locationName
+              }));
+            }
+          });
+        });
         
         // Sort locations alphabetically
-        locations.sort((a, b) => a.label.localeCompare(b.label));
+        const sortedLocations = Array.from(locations)
+          .map(item => JSON.parse(item))
+          .sort((a, b) => a.name.localeCompare(b.name));
         
-        // Create options HTML
-        let html = '<option value="">All Locations</option>';
+        // Add options to the select element
+        sortedLocations.forEach(function(location) {
+          const option = document.createElement('option');
+          option.value = location.url;
+          option.textContent = location.name;
+          locationFilter.appendChild(option);
+        });
+      }
+      
+      // Populate eligibility options - FIXED IMPLEMENTATION
+      function populateEligibility() {
+        // Create a Set to track unique eligibility criteria
+        const eligibilityCriteria = new Set();
         
-        locations.forEach(function(location) {
-          if (location && location.value && location.label) {
-            html += `<option value="${location.value}">${location.label}</option>`;
+        // Loop through all grants to collect eligibility criteria
+        allGrants.forEach(function(grant) {
+          // Find the second meta item that contains eligibility info
+          const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item'))
+            .find(item => item.textContent.includes('Eligible:'));
+          
+          if (eligibilitySection) {
+            // Get all spans except those with 'more' class
+            const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
+            
+            eligibilityItems.forEach(function(item) {
+              // Clean up text (remove commas)
+              const criteria = item.textContent.replace(',', '').trim();
+              if (criteria && !criteria.includes('+') && criteria !== ',') {
+                eligibilityCriteria.add(criteria);
+              }
+            });
           }
         });
         
-        // Update select element
-        locationSelect.innerHTML = html;
-        console.log('Location options rendered successfully:', locations.length);
+        // Sort eligibility alphabetically
+        const sortedEligibility = Array.from(eligibilityCriteria).sort();
         
-        // Restore any selected value from URL
-        setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
-      }
-
-      function updateSelectedFilters() {
-        // Get all form values
-        const searchValue = searchInput.value.trim();
-        const deadlineRadio = document.querySelector('input[name="deadline"]:checked');
-        const deadlineValue = deadlineRadio ? deadlineRadio.value : 'all';
-        const amountMinValue = document.getElementById('amount-min').value;
-        const amountMaxValue = document.getElementById('amount-max').value;
-        const categoryValue = categorySelect.value;
-        const locationValue = locationSelect.value;
+        // Clear existing content
+        eligibilityContainer.innerHTML = '';
         
-        // Get eligibility values
-        const eligibilityValues = Array.from(
-          document.querySelectorAll('input[name="eligibility[]"]:checked')
-        ).map(checkbox => checkbox.value);
-        
-        // Update active filters object
-        activeFilters = {};
-        
-        if (searchValue) activeFilters.search = searchValue;
-        if (deadlineValue && deadlineValue !== 'all') activeFilters.deadline = deadlineValue;
-        if (amountMinValue) activeFilters.amount_min = amountMinValue;
-        if (amountMaxValue) activeFilters.amount_max = amountMaxValue;
-        if (categoryValue) activeFilters.category = categoryValue;
-        if (locationValue) activeFilters.location = locationValue;
-        if (eligibilityValues.length > 0) activeFilters.eligibility = eligibilityValues;
-        
-        // Render selected filters display
-        renderSelectedFilters();
-        
-        // Update button state
-        updateFilterButtonState();
-      }
-
-      function renderSelectedFilters() {
-        // Clear current selected filters
-        while (selectedFiltersContainer.firstChild) {
-          if (selectedFiltersContainer.firstChild === clearAllFilters) {
-            break;
-          }
-          selectedFiltersContainer.removeChild(selectedFiltersContainer.firstChild);
-        }
-        
-        // Show/hide container based on if there are active filters
-        const hasActiveFilters = Object.keys(activeFilters).length > 0;
-        
-        if (hasActiveFilters) {
-          selectedFiltersContainer.classList.add('has-filters');
-        } else {
-          selectedFiltersContainer.classList.remove('has-filters');
-          return;
-        }
-        
-        // Add selected filters
-        for (const [key, value] of Object.entries(activeFilters)) {
-          let filterValue = value;
-          let filterLabel = getFilterLabel(key, value);
+        // Create checkboxes for each eligibility criteria
+        sortedEligibility.forEach(function(criteria, index) {
+          const optionId = 'eligibility-' + index;
           
-          // Add filter tag
-          const filterTag = document.createElement('div');
-          filterTag.className = 'selected-filter';
-          filterTag.setAttribute('data-filter-key', key);
+          const optionDiv = document.createElement('div');
+          optionDiv.className = 'eligibility-option';
           
-          if (Array.isArray(value)) {
-            // For eligibility (array values), create multiple tags
-            value.forEach(val => {
-              const tagClone = filterTag.cloneNode(true);
-              tagClone.setAttribute('data-filter-value', val);
-              tagClone.innerHTML = `
-                ${getFilterLabel(key, val)}
-                <button class="remove-filter" aria-label="Remove filter ${getFilterLabel(key, val)}">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              `;
-              
-              // Add click handler to remove button
-              const removeBtn = tagClone.querySelector('.remove-filter');
-              removeBtn.addEventListener('click', function() {
-                removeFilter(key, val);
-              });
-              
-              // Insert before the clear all button
-              selectedFiltersContainer.insertBefore(tagClone, clearAllFilters);
-            });
-          } else {
-            // For single value filters
-            filterTag.setAttribute('data-filter-value', value);
-            filterTag.innerHTML = `
-              ${filterLabel}
-              <button class="remove-filter" aria-label="Remove filter ${filterLabel}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            `;
-            
-            // Add click handler to remove button
-            const removeBtn = filterTag.querySelector('.remove-filter');
-            removeBtn.addEventListener('click', function() {
-              removeFilter(key, value);
-            });
-            
-            // Insert before the clear all button
-            selectedFiltersContainer.insertBefore(filterTag, clearAllFilters);
-          }
-        }
-      }
-
-      function getFilterLabel(key, value) {
-        // Return human-readable label for each filter type and value
-        switch (key) {
-          case 'search':
-            return `Search: ${value}`;
-          case 'deadline':
-            switch (value) {
-              case 'today':
-                return 'Due Today';
-              case 'week':
-                return 'Due This Week';
-              case 'month':
-                return 'Due This Month';
-              case 'ongoing':
-                return 'Ongoing';
-              default:
-                return `Deadline: ${value}`;
-            }
-          case 'amount_min':
-            return `Min: $${value}`;
-          case 'amount_max':
-            return `Max: $${value}`;
-          case 'category':
-            // Find category label from value
-            const category = allCategories.find(c => c.value.toString() === value.toString());
-            return category ? category.label : `Category: ${value}`;
-          case 'location':
-            // Find location label from value
-            const location = allLocations.find(l => l.value.toString() === value.toString());
-            return location ? location.label : `Location: ${value}`;
-          case 'eligibility':
-            return `Eligibility: ${value}`;
-          default:
-            return value;
-        }
-      }
-
-      function removeFilter(key, value) {
-        if (key === 'eligibility') {
-          // Remove just one eligibility value
-          activeFilters.eligibility = activeFilters.eligibility.filter(v => v !== value);
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.name = 'eligibility';
+          input.id = optionId;
+          input.value = criteria;
           
-          if (activeFilters.eligibility.length === 0) {
-            delete activeFilters.eligibility;
-          }
+          const label = document.createElement('label');
+          label.setAttribute('for', optionId);
+          label.textContent = criteria;
           
-          // Uncheck the corresponding checkbox
-          const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-          if (checkbox) checkbox.checked = false;
-        } else {
-          // Remove the entire key
-          delete activeFilters[key];
-          
-          // Reset the corresponding form control
-          switch (key) {
-            case 'search':
-              searchInput.value = '';
-              break;
-            case 'deadline':
-              document.getElementById('deadline-all').checked = true;
-              break;
-            case 'amount_min':
-              document.getElementById('amount-min').value = '';
-              break;
-            case 'amount_max':
-              document.getElementById('amount-max').value = '';
-              break;
-            case 'category':
-              categorySelect.value = '';
-              break;
-            case 'location':
-              locationSelect.value = '';
-              break;
-          }
-        }
-        
-        // Update filters display
-        renderSelectedFilters();
-        
-        // Update filter button state
-        updateFilterButtonState();
-        
-        // Apply filters immediately
-        applyFilters();
-      }
-
-      function updateFilterButtonState() {
-        const filterCount = Object.keys(activeFilters).length;
-        const countElement = filterButton.querySelector('.filter-count');
-        
-        if (filterCount > 0) {
-          filterButton.classList.add('has-active-filters');
-          countElement.textContent = filterCount;
-        } else {
-          filterButton.classList.remove('has-active-filters');
-          countElement.textContent = '0';
-        }
-      }
-
-      function resetFilters() {
-        // Reset form inputs
-        filterForm.reset();
-        
-        // Clear active filters
-        activeFilters = {};
-        
-        // Update UI
-        renderSelectedFilters();
-        updateFilterButtonState();
-        
-        // Apply filters to reset to default state
-        applyFilters();
-        
-        // Clear URL hash
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+          optionDiv.appendChild(input);
+          optionDiv.appendChild(label);
+          eligibilityContainer.appendChild(optionDiv);
+        });
       }
       
-      /* --- UI State Management --- */
-      function updateResultCount(count) {
-        // Update count in filter modal
-        if (count === 0) {
-          filterCount.textContent = 'No';
-        } else {
-          filterCount.textContent = count;
-        }
-      }
-      
-      function showLoading(isLoading) {
-        if (isLoading) {
-          filterLoading.classList.add('active');
-          
-          // Add loading state to grant container
-          if (grantsContainer) {
-            grantsContainer.classList.add('loading');
-            
-            // Add loading class to pagination if present
-            const pagination = document.querySelector('.g-pagination');
-            if (pagination) {
-              pagination.classList.add('loading');
-            }
-          }
-        } else {
-          filterLoading.classList.remove('active');
-          
-          // Remove loading state from grant container
-          if (grantsContainer) {
-            grantsContainer.classList.remove('loading');
-            
-            // Remove loading class from pagination
-            const pagination = document.querySelector('.g-pagination');
-            if (pagination) {
-              pagination.classList.remove('loading');
-            }
-          }
-        }
-      }
-
-      function showError(message) {
-        console.error('Filter error:', message);
-        filterError.classList.add('active');
-        filterError.querySelector('span').textContent = message;
-        showLoading(false);
-      }
-
-      function hideError() {
-        filterError.classList.remove('active');
-      }
-
-      function showEmptyState() {
-        filterEmpty.classList.add('active');
-      }
-
-      function hideEmptyState() {
-        filterEmpty.classList.remove('active');
-      }
-      
-      /* --- URL & Hash Management --- */
-      function updateUrlHash() {
-        console.log('Updating URL hash with active filters:', activeFilters);
+      // Set up event listeners
+      function setupEventListeners() {
+        filterTrigger.addEventListener('click', openFilterModal);
+        filterClose.addEventListener('click', closeFilterModal);
+        filterReset.addEventListener('click', resetFilters);
+        resetFiltersEmpty.addEventListener('click', resetFilters);
         
-        // Create URL hash from active filters
-        if (Object.keys(activeFilters).length === 0) {
-          // Clear hash if no active filters
-          console.log('No active filters, clearing hash');
-          
-          try {
-            history.pushState("", document.title, window.location.pathname + window.location.search);
-          } catch (e) {
-            console.error('Failed to update history:', e);
-            // Fallback for older browsers
-            window.location.hash = '';
-          }
-          
-          return;
-        }
-        
-        // Create hash string
-        const hashParts = [];
-        
-        for (const [key, value] of Object.entries(activeFilters)) {
-          if (Array.isArray(value)) {
-            // Handle array values (eligibility)
-            value.forEach(val => {
-              if (val) { // Only add non-empty values
-                hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
-              }
-            });
-          } else {
-            // Handle single values
-            if (value) { // Only add non-empty values
-              hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-            }
-          }
-        }
-        
-        // Create the hash string
-        const hashString = hashParts.join('&');
-        console.log('New hash string:', hashString);
-        
-        // Update URL hash
-        try {
-          // Use history API for better user experience (no page jump)
-          const newUrl = window.location.pathname + window.location.search + '#' + hashString;
-          history.pushState(activeFilters, document.title, newUrl);
-        } catch (e) {
-          console.error('Failed to update history, falling back to direct hash update:', e);
-          // Fallback for older browsers
-          window.location.hash = hashString;
-        }
-      }
-
-      function parseUrlHash() {
-        // Get hash without the # symbol
-        const hash = window.location.hash.substring(1);
-        console.log('Parsing URL hash:', hash);
-        
-        if (!hash) {
-          console.log('No hash found in URL');
-          return;
-        }
-        
-        // Split into key-value pairs
-        const hashParts = hash.split('&');
-        let tempFilters = {};
-        
-        hashParts.forEach(part => {
-          const [key, value] = part.split('=');
-          
-          if (key && value) {
-            try {
-              const decodedKey = decodeURIComponent(key);
-              const decodedValue = decodeURIComponent(value);
-              console.log(`Parsed hash parameter: ${decodedKey} = ${decodedValue}`);
-              
-              // Handle eligibility (array values)
-              if (decodedKey === 'eligibility') {
-                if (!tempFilters.eligibility) {
-                  tempFilters.eligibility = [];
-                }
-                tempFilters.eligibility.push(decodedValue);
-              } else {
-                tempFilters[decodedKey] = decodedValue;
-              }
-            } catch (e) {
-              console.error('Error decoding URL parameter:', e);
-            }
+        // Close modal when clicking outside the content
+        filterModal.addEventListener('click', function(e) {
+          if (e.target === filterModal) {
+            closeFilterModal();
           }
         });
         
-        console.log('Parsed filters from URL:', tempFilters);
+        // Handle form submission
+        filterForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Update active filters from form
+          activeFilters.keyword = keywordFilter.value.trim();
+          
+          // Get selected deadline
+          document.querySelectorAll('input[name="deadline"]').forEach(function(input) {
+            if (input.checked) {
+              activeFilters.deadline = input.value;
+            }
+          });
+          
+          activeFilters.minAmount = minAmountFilter.value.trim();
+          activeFilters.maxAmount = maxAmountFilter.value.trim();
+          activeFilters.category = categoryFilter.value;
+          activeFilters.location = locationFilter.value;
+          
+          // Get selected eligibility options
+          activeFilters.eligibility = [];
+          document.querySelectorAll('input[name="eligibility"]:checked').forEach(function(input) {
+            activeFilters.eligibility.push(input.value);
+          });
+          
+          // Apply the filters
+          applyFilters();
+        });
         
-        // Update active filters
-        activeFilters = tempFilters;
+        // Set up browser history navigation
+        window.addEventListener('popstate', function() {
+          readFiltersFromUrl();
+        });
         
-        // We'll restore form values after option loading is complete
-        // The actual restoration happens in renderXXXOptions functions
+        // Page navigation for filtered results
+        document.addEventListener('click', function(e) {
+          // Check if clicked element is a filtered pagination link
+          if (e.target.closest('#filtered-pagination a')) {
+            e.preventDefault();
+            const pageLink = e.target.closest('#filtered-pagination a');
+            const pageNum = parseInt(pageLink.getAttribute('data-page'));
+            if (!isNaN(pageNum)) {
+              navigateToFilteredPage(pageNum);
+            }
+          }
+        });
       }
-
-      function restoreFormValues() {
-        // Check if we have active filters from URL
-        if (Object.keys(activeFilters).length === 0) return;
+      
+      // Function to update URL with current filters
+      function updateUrl() {
+        if (!history.pushState) return; // Skip if browser doesn't support history API
         
-        console.log('Restoring form values from URL hash...');
+        const url = new URL(window.location.href);
         
-        // Restore search value
-        if (activeFilters.search) {
-          searchInput.value = activeFilters.search;
+        // Clear existing filter params
+        url.searchParams.delete('keyword');
+        url.searchParams.delete('deadline');
+        url.searchParams.delete('min_amount');
+        url.searchParams.delete('max_amount');
+        url.searchParams.delete('category');
+        url.searchParams.delete('location');
+        url.searchParams.delete('eligibility');
+        url.searchParams.delete('filter_page');
+        
+        // Add current filter values
+        if (activeFilters.keyword) {
+          url.searchParams.set('keyword', activeFilters.keyword);
         }
         
-        // Restore deadline selection
-        if (activeFilters.deadline) {
-          const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
-          if (deadlineRadio) deadlineRadio.checked = true;
+        if (activeFilters.deadline !== 'all') {
+          url.searchParams.set('deadline', activeFilters.deadline);
         }
         
-        // Restore amount values
-        if (activeFilters.amount_min) {
-          document.getElementById('amount-min').value = activeFilters.amount_min;
+        if (activeFilters.minAmount) {
+          url.searchParams.set('min_amount', activeFilters.minAmount);
         }
         
-        if (activeFilters.amount_max) {
-          document.getElementById('amount-max').value = activeFilters.amount_max;
+        if (activeFilters.maxAmount) {
+          url.searchParams.set('max_amount', activeFilters.maxAmount);
         }
         
-        // Restore category selection
-        if (activeFilters.category && categorySelect.options.length > 1) {
-          categorySelect.value = activeFilters.category;
+        if (activeFilters.category) {
+          url.searchParams.set('category', activeFilters.category);
         }
         
-        // Restore location selection
-        if (activeFilters.location && locationSelect.options.length > 1) {
-          locationSelect.value = activeFilters.location;
+        if (activeFilters.location) {
+          url.searchParams.set('location', activeFilters.location);
         }
         
-        // Restore eligibility checkboxes
-        if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
-          activeFilters.eligibility.forEach(value => {
-            const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-            if (checkbox) checkbox.checked = true;
+        if (activeFilters.eligibility.length > 0) {
+          url.searchParams.set('eligibility', activeFilters.eligibility.join(','));
+        }
+        
+        // Add current page for filtered results
+        if (hasActiveFilters() && currentPage > 1) {
+          url.searchParams.set('filter_page', currentPage);
+        }
+        
+        // Update URL without reloading the page
+        history.pushState({}, '', url);
+      }
+      
+      // Function to read filters from URL
+      function readFiltersFromUrl() {
+        const url = new URL(window.location.href);
+        
+        // Read each filter param
+        activeFilters.keyword = url.searchParams.get('keyword') || '';
+        activeFilters.deadline = url.searchParams.get('deadline') || 'all';
+        activeFilters.minAmount = url.searchParams.get('min_amount') || '';
+        activeFilters.maxAmount = url.searchParams.get('max_amount') || '';
+        activeFilters.category = url.searchParams.get('category') || '';
+        activeFilters.location = url.searchParams.get('location') || '';
+        
+        const eligibilityParam = url.searchParams.get('eligibility') || '';
+        activeFilters.eligibility = eligibilityParam ? eligibilityParam.split(',') : [];
+        
+        // Read filtered page number
+        const filterPage = url.searchParams.get('filter_page');
+        if (filterPage) {
+          currentPage = parseInt(filterPage) || 1;
+        } else {
+          currentPage = 1;
+        }
+        
+        // Update form fields to match URL parameters
+        keywordFilter.value = activeFilters.keyword;
+        
+        document.querySelectorAll('input[name="deadline"]').forEach(function(input) {
+          input.checked = input.value === activeFilters.deadline;
+        });
+        
+        minAmountFilter.value = activeFilters.minAmount;
+        maxAmountFilter.value = activeFilters.maxAmount;
+        categoryFilter.value = activeFilters.category;
+        locationFilter.value = activeFilters.location;
+        
+        // Update eligibility checkboxes
+        document.querySelectorAll('input[name="eligibility"]').forEach(function(checkbox) {
+          checkbox.checked = activeFilters.eligibility.includes(checkbox.value);
+        });
+        
+        // Apply the filters
+        if (hasActiveFilters()) {
+          applyFilters(false); // Don't update URL again to avoid loops
+        }
+      }
+      
+      // Function to check if there are any active filters
+      function hasActiveFilters() {
+        return (
+          activeFilters.keyword !== '' ||
+          activeFilters.deadline !== 'all' ||
+          activeFilters.minAmount !== '' ||
+          activeFilters.maxAmount !== '' ||
+          activeFilters.category !== '' ||
+          activeFilters.location !== '' ||
+          activeFilters.eligibility.length > 0
+        );
+      }
+      
+      // Function to update active filters display
+      function updateActiveFiltersDisplay() {
+        // Clear existing filters
+        activeFiltersContainer.innerHTML = '';
+        
+        // Only show if we have active filters
+        if (!hasActiveFilters()) {
+          return;
+        }
+        
+        // Add reset all button
+        const resetAllButton = document.createElement('button');
+        resetAllButton.type = 'button';
+        resetAllButton.className = 'reset-all-filters';
+        resetAllButton.textContent = 'Reset All';
+        resetAllButton.addEventListener('click', resetFilters);
+        activeFiltersContainer.appendChild(resetAllButton);
+        
+        // Add keyword filter
+        if (activeFilters.keyword) {
+          addActiveFilterTag('Keyword', activeFilters.keyword, function() {
+            activeFilters.keyword = '';
+            keywordFilter.value = '';
+            updateActiveFiltersDisplay();
+            applyFilters();
           });
         }
         
-        // Update UI to reflect restored filters
-        renderSelectedFilters();
-        updateFilterButtonState();
+        // Add deadline filter
+        if (activeFilters.deadline !== 'all') {
+          const deadlineLabel = document.querySelector(`label[for="deadline-${activeFilters.deadline}"]`).textContent;
+          addActiveFilterTag('Deadline', deadlineLabel, function() {
+            activeFilters.deadline = 'all';
+            document.getElementById('deadline-all').checked = true;
+            updateActiveFiltersDisplay();
+            applyFilters();
+          });
+        }
         
-        // Apply the filters
+        // Add amount filters
+        if (activeFilters.minAmount) {
+          addActiveFilterTag('Min Amount', '$' + activeFilters.minAmount, function() {
+            activeFilters.minAmount = '';
+            minAmountFilter.value = '';
+            updateActiveFiltersDisplay();
+            applyFilters();
+          });
+        }
+        
+        if (activeFilters.maxAmount) {
+          addActiveFilterTag('Max Amount', '$' + activeFilters.maxAmount, function() {
+            activeFilters.maxAmount = '';
+            maxAmountFilter.value = '';
+            updateActiveFiltersDisplay();
+            applyFilters();
+          });
+        }
+        
+        // Add category filter
+        if (activeFilters.category) {
+          const categoryOption = categoryFilter.querySelector(`option[value="${activeFilters.category}"]`);
+          if (categoryOption) {
+            addActiveFilterTag('Category', categoryOption.textContent, function() {
+              activeFilters.category = '';
+              categoryFilter.value = '';
+              updateActiveFiltersDisplay();
+              applyFilters();
+            });
+          }
+        }
+        
+        // Add location filter
+        if (activeFilters.location) {
+          const locationOption = locationFilter.querySelector(`option[value="${activeFilters.location}"]`);
+          if (locationOption) {
+            addActiveFilterTag('Location', locationOption.textContent, function() {
+              activeFilters.location = '';
+              locationFilter.value = '';
+              updateActiveFiltersDisplay();
+              applyFilters();
+            });
+          }
+        }
+        
+        // Add eligibility filters
+        activeFilters.eligibility.forEach(function(eligibility) {
+          addActiveFilterTag('Eligibility', eligibility, function() {
+            activeFilters.eligibility = activeFilters.eligibility.filter(e => e !== eligibility);
+            
+            // Update checkbox state
+            document.querySelectorAll('input[name="eligibility"]').forEach(function(checkbox) {
+              if (checkbox.value === eligibility) {
+                checkbox.checked = false;
+              }
+            });
+            
+            updateActiveFiltersDisplay();
+            applyFilters();
+          });
+        });
+      }
+      
+      // Helper function to add an active filter tag
+      function addActiveFilterTag(label, value, removeCallback) {
+        const filterTag = document.createElement('div');
+        filterTag.className = 'active-filter';
+        
+        const filterLabel = document.createElement('span');
+        filterLabel.className = 'active-filter-label';
+        filterLabel.textContent = label + ': ';
+        
+        const filterValue = document.createElement('span');
+        filterValue.className = 'active-filter-value';
+        filterValue.textContent = value;
+        
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'active-filter-remove';
+        removeButton.setAttribute('aria-label', `Remove ${label} filter: ${value}`);
+        removeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        removeButton.addEventListener('click', removeCallback);
+        
+        filterTag.appendChild(filterLabel);
+        filterTag.appendChild(filterValue);
+        filterTag.appendChild(removeButton);
+        
+        activeFiltersContainer.appendChild(filterTag);
+      }
+      
+      // Function to apply all filters
+      function applyFilters(updateUrlFlag = true) {
+        // Show loading indicator
+        grantsLoading.classList.add('is-active');
+        
+        // Short delay to ensure loading indicator appears
         setTimeout(function() {
-          console.log('Applying filters from URL hash');
-          applyFilters();
+          // Filter all grants
+          const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant));
+          
+          // Update filters display
+          updateActiveFiltersDisplay();
+          
+          if (hasActiveFilters()) {
+            // Show filtered pagination, hide original
+            if (originalPagination) originalPagination.style.display = 'none';
+            
+            // Calculate total pages for filtered results
+            const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage);
+            
+            // Make sure current page is valid
+            currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages || 1);
+            
+            // Calculate which grants to show on current page
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = Math.min(startIndex + postsPerPage, filteredGrants.length);
+            const grantsToShow = filteredGrants.slice(startIndex, endIndex);
+            
+            // Clear grants container
+            grantsContainer.innerHTML = '';
+            
+            // Add grants for current page
+            if (grantsToShow.length > 0) {
+              grantsToShow.forEach(grant => {
+                grantsContainer.appendChild(grant.cloneNode(true));
+              });
+              
+              // Show filtered pagination
+              updateFilteredPagination(filteredGrants.length, totalFilteredPages);
+              noMatchingGrants.classList.remove('is-visible');
+            } else {
+              // No matching grants
+              noMatchingGrants.classList.add('is-visible');
+              filteredPagination.style.display = 'none';
+            }
+            
+            // Update grants counter
+            updateGrantsCounter(filteredGrants.length);
+          } else {
+            // Reset to original state
+            resetToOriginalState();
+          }
+          
+          // Update URL if requested
+          if (updateUrlFlag) {
+            updateUrl();
+          }
+          
+          // Hide loading indicator
+          grantsLoading.classList.remove('is-active');
+          
+          // Close modal after applying filters
+          closeFilterModal();
+          
+          // Initialize any JavaScript needed for the newly added grants
+          initGrantsScripts();
         }, 300);
       }
+      
+      // Reset to original unfiltered state
+      function resetToOriginalState() {
+        // Clear and repopulate grants container with original visible grants
+        grantsContainer.innerHTML = '';
+        visibleGrants.forEach(grant => {
+          grantsContainer.appendChild(grant.cloneNode(true));
+        });
+        
+        // Show original pagination, hide filtered
+        if (originalPagination) originalPagination.style.display = '';
+        filteredPagination.style.display = 'none';
+        
+        // Hide no matching message
+        noMatchingGrants.classList.remove('is-visible');
+        
+        // Update grants counter
+        updateGrantsCounter(visibleGrants.length);
+      }
+      
+      // Update filtered pagination
+      function updateFilteredPagination(totalItems, totalPages) {
+        // Show filtered pagination
+        filteredPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+        
+        // Clear pagination list
+        filteredPaginationList.innerHTML = '';
+        
+        if (totalPages <= 1) return;
+        
+        // Previous page
+        if (currentPage > 1) {
+          filteredPaginationList.appendChild(createPaginationItem('prev', currentPage - 1, 'Prev'));
+        }
+        
+        // Calculate page range to show
+        let startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(startPage + 4, totalPages);
+        
+        // First page and ellipsis if needed
+        if (startPage > 1) {
+          filteredPaginationList.appendChild(createPaginationItem('page', 1));
+          
+          if (startPage > 2) {
+            filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
+          }
+        }
+        
+        // Page numbers
+        for (let i = startPage; i <= endPage; i++) {
+          filteredPaginationList.appendChild(createPaginationItem(i === currentPage ? 'current' : 'page', i));
+        }
+        
+        // Last page and ellipsis if needed
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
+          }
+          
+          filteredPaginationList.appendChild(createPaginationItem('page', totalPages));
+        }
+        
+        // Next page
+        if (currentPage < totalPages) {
+          filteredPaginationList.appendChild(createPaginationItem('next', currentPage + 1, 'Next'));
+        }
+      }
+      
+      // Helper to create pagination item
+      function createPaginationItem(type, page, text = null) {
+        const item = document.createElement('li');
+        item.className = 'g-pagination__item';
+        
+        if (type === 'current') {
+          item.className += ' g-pagination__item--current';
+          const span = document.createElement('span');
+          span.textContent = page;
+          item.appendChild(span);
+        } else if (type === 'dots') {
+          item.className += ' g-pagination__item--dots';
+          const span = document.createElement('span');
+          span.textContent = text || '...';
+          item.appendChild(span);
+        } else {
+          if (type === 'prev') {
+            item.className += ' g-pagination__item--prev';
+          } else if (type === 'next') {
+            item.className += ' g-pagination__item--next';
+          }
+          
+          const link = document.createElement('a');
+          link.href = '#';
+          link.setAttribute('data-page', page);
+          
+          if (type === 'prev') {
+            link.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              ${text || 'Prev'}
+            `;
+          } else if (type === 'next') {
+            link.innerHTML = `
+              ${text || 'Next'}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            `;
+          } else {
+            link.textContent = text || page;
+          }
+          
+          item.appendChild(link);
+        }
+        
+        return item;
+      }
+      
+      // Navigate to a specific page in filtered results
+      function navigateToFilteredPage(pageNum) {
+        currentPage = pageNum;
+        applyFilters();
+        
+        // Scroll to top of grants container
+        window.scrollTo({
+          top: grantsContainer.offsetTop - 100,
+          behavior: 'smooth'
+        });
+      }
+      
+      // Function to check if a grant matches all active filters
+      function doesGrantMatchFilters(grant) {
+        // Keyword filter
+        if (activeFilters.keyword) {
+          const title = grant.querySelector('.g-card__title a').textContent.toLowerCase();
+          const excerpt = grant.querySelector('.g-card__excerpt').textContent.toLowerCase();
+          const keyword = activeFilters.keyword.toLowerCase();
+          
+          if (!title.includes(keyword) && !excerpt.includes(keyword)) {
+            return false;
+          }
+        }
+        
+        // Deadline filter
+        if (activeFilters.deadline !== 'all') {
+          const statusBadge = grant.querySelector('.g-card__status-badge');
+          const statusText = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+          const deadlineText = grant.querySelector('.g-card__deadline-value') ? 
+                               grant.querySelector('.g-card__deadline-value').textContent.trim() : '';
+          const deadlineMatch = getDeadlineMatch(statusText, deadlineText, activeFilters.deadline);
+          
+          if (!deadlineMatch) {
+            return false;
+          }
+        }
+        
+        // Amount filter
+        const amountText = grant.querySelector('.g-card__amount').textContent.trim();
+        const amountValue = parseAmount(amountText);
+        
+        if (activeFilters.minAmount && !isNaN(amountValue) && amountValue < parseInt(activeFilters.minAmount)) {
+          return false;
+        }
+        
+        if (activeFilters.maxAmount && !isNaN(amountValue) && amountValue > parseInt(activeFilters.maxAmount)) {
+          return false;
+        }
+        
+        // Category filter
+        if (activeFilters.category) {
+          const categoryLinks = grant.querySelectorAll('.g-card__tag');
+          let categoryMatch = false;
+          
+          categoryLinks.forEach(function(link) {
+            if (link.getAttribute('href') === activeFilters.category) {
+              categoryMatch = true;
+            }
+          });
+          
+          if (!categoryMatch) {
+            return false;
+          }
+        }
+        
+        // Location filter
+        if (activeFilters.location) {
+          const locationLinks = grant.querySelectorAll('.g-card__location-link');
+          let locationMatch = false;
+          
+          locationLinks.forEach(function(link) {
+            if (link.getAttribute('href') === activeFilters.location) {
+              locationMatch = true;
+            }
+          });
+          
+          if (!locationMatch) {
+            return false;
+          }
+        }
+        
+        // Eligibility filter
+        if (activeFilters.eligibility.length > 0) {
+          // Find the second meta item that contains eligibility info (Updated selector)
+          const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item'))
+            .find(item => item.textContent.includes('Eligible:'));
+          
+          if (!eligibilitySection) {
+            return false;
+          }
+          
+          const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
+          const grantEligibility = Array.from(eligibilityItems).map(item => item.textContent.replace(',', '').trim());
+          
+          // Check if any of the selected eligibility criteria match
+          let matchesAny = false;
+          for (let i = 0; i < activeFilters.eligibility.length; i++) {
+            if (grantEligibility.includes(activeFilters.eligibility[i])) {
+              matchesAny = true;
+              break;
+            }
+          }
+          
+          if (!matchesAny) {
+            return false;
+          }
+        }
+        
+        // If we get here, all filters match
+        return true;
+      }
+      
+      // Helper function to determine if a grant matches deadline filter
+      function getDeadlineMatch(status, deadline, filterValue) {
+        switch (filterValue) {
+          case 'today':
+            return deadline.includes(getTodayFormatted());
+          case 'week':
+            return isWithinThisWeek(deadline);
+          case 'month':
+            return isWithinThisMonth(deadline);
+          case 'ongoing':
+            return deadline.toLowerCase() === 'ongoing' || status.toLowerCase() === 'ongoing';
+          case 'active':
+            return status.toLowerCase() === 'active';
+          default:
+            return true;
+        }
+      }
+      
+      // Helper function to get today's date formatted like "April 28, 2025"
+      function getTodayFormatted() {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const today = new Date();
+        return months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+      }
+      
+      // Helper function to check if date is within this week
+      function isWithinThisWeek(dateStr) {
+        if (dateStr.toLowerCase() === 'ongoing') return false;
+        
+        try {
+          const today = new Date();
+          const deadline = new Date(dateStr);
+          
+          // Get the first day of the current week (Sunday)
+          const firstDayOfWeek = new Date(today);
+          firstDayOfWeek.setDate(today.getDate() - today.getDay());
+          firstDayOfWeek.setHours(0, 0, 0, 0);
+          
+          // Get the last day of the current week (Saturday)
+          const lastDayOfWeek = new Date(firstDayOfWeek);
+          lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+          lastDayOfWeek.setHours(23, 59, 59, 999);
+          
+          return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      // Helper function to check if date is within this month
+      function isWithinThisMonth(dateStr) {
+        if (dateStr.toLowerCase() === 'ongoing') return false;
+        
+        try {
+          const today = new Date();
+          const deadline = new Date(dateStr);
+          
+          return deadline.getMonth() === today.getMonth() && 
+                 deadline.getFullYear() === today.getFullYear();
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      // Helper function to parse amount from text
+      function parseAmount(amountText) {
+        // Handle "Various Benefits" or non-numeric amount
+        if (amountText.includes('Various Benefits') || !amountText.includes('$')) {
+          return NaN;
+        }
+        
+        // Extract numeric value from format like "$10,000"
+        return parseInt(amountText.replace(/[$,]/g, ''));
+      }
+      
+      // Function to update the grants counter
+      function updateGrantsCounter(count) {
+        if (!hasActiveFilters()) {
+          grantsCounter.innerHTML = `Showing <strong>All</strong> Grants`;
+        } else {
+          grantsCounter.innerHTML = `Showing <strong>${count}</strong> of ${allGrants.length} Grants`;
+        }
+      }
+      
+      // Function to reset all filters
+      function resetFilters() {
+        // Reset filter state
+        activeFilters = {
+          keyword: '',
+          deadline: 'all',
+          minAmount: '',
+          maxAmount: '',
+          category: '',
+          location: '',
+          eligibility: []
+        };
+        
+        // Reset current page
+        currentPage = 1;
+        
+        // Reset form elements
+        filterForm.reset();
+        
+        // Update UI and apply (empty) filters
+        updateActiveFiltersDisplay();
+        applyFilters();
+      }
+      
+      // Function to open filter modal
+      function openFilterModal() {
+        filterModal.classList.add('is-active');
+        filterModal.setAttribute('aria-hidden', 'false');
+        filterTrigger.setAttribute('aria-expanded', 'true');
+        
+        // Set focus to the first input element
+        setTimeout(function() {
+          keywordFilter.focus();
+        }, 100);
+        
+        // Add key event listener to modal
+        document.addEventListener('keydown', handleModalKeydown);
+      }
+      
+      // Function to close filter modal
+      function closeFilterModal() {
+        filterModal.classList.remove('is-active');
+        filterModal.setAttribute('aria-hidden', 'true');
+        filterTrigger.setAttribute('aria-expanded', 'false');
+        
+        // Remove key event listener
+        document.removeEventListener('keydown', handleModalKeydown);
+      }
+      
+      // Function to handle keydown events for modal
+      function handleModalKeydown(e) {
+        if (e.key === 'Escape') {
+          closeFilterModal();
+        }
+      }
+      
+      // Initialize countdown timers for filtered grants
+      function initGrantsScripts() {
+        // Initialize countdown timers
+        const countdownElements = document.querySelectorAll('[data-deadline]');
+        
+        countdownElements.forEach(function(element) {
+          const deadline = parseInt(element.dataset.deadline, 10) * 1000;
+          const countdownId = element.id;
+          
+          if (!countdownId) return;
+          
+          const countdown = document.getElementById(countdownId);
+          if (!countdown) return;
+          
+          const hoursElement = countdown.querySelector('[data-hours]');
+          const minutesElement = countdown.querySelector('[data-minutes]');
+          const secondsElement = countdown.querySelector('[data-seconds]');
+          
+          function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = deadline - now;
+            
+            if (distance <= 0) {
+              // Handle expired timer
+              if (hoursElement) hoursElement.textContent = '00';
+              if (minutesElement) minutesElement.textContent = '00';
+              if (secondsElement) secondsElement.textContent = '00';
+              return;
+            }
+            
+            // Calculate time units
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update the elements
+            if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
+            if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
+            if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
+          }
+          
+          // Initial update
+          updateCountdown();
+          
+          // Update every second
+          setInterval(updateCountdown, 1000);
+        });
+      }
+      
+      // Start by fetching all grants
+      fetchAllGrants();
     });
   </script>
-
-  <!-- Add CSS for loading state -->
-  <style>
-    .grants-container.loading {
-      position: relative;
-      min-height: 300px;
-    }
-
-    .grants-container.loading::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.8);
-      z-index: 10;
-    }
-
-    .grants-container.loading::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(90, 59, 140, 0.2);
-      border-top-color: var(--grantaura-primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      z-index: 11;
-    }
-
-    .g-pagination.loading {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    @keyframes spin {
-      to {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-    }
-  </style>
 </section>
