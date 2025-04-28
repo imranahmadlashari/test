@@ -1,4 +1,4 @@
-<!-- Grants Filter System - OPTIMIZED VERSION -->
+<!-- Grants Filter System - ENHANCED VERSION -->
 <section class="grants-filter-section" data-section-id="grants-filter-system">
   <style>
     .grants-filter-section {
@@ -365,7 +365,7 @@
       </div>
 
       <div class="filter-popup-body">
-        <div class="filter-form" id="grants-filter-form">
+        <form class="filter-form" id="grants-filter-form" method="get" action="">
           <style>
             .filter-form {
               display: grid;
@@ -809,7 +809,7 @@
 
           <!-- Selected Filters Display -->
           <div class="selected-filters" id="selected-filters">
-            <button class="clear-all-filters" id="clear-all-filters">Clear All</button>
+            <button type="button" class="clear-all-filters" id="clear-all-filters">Clear All</button>
           </div>
 
           <!-- Error Message -->
@@ -830,6 +830,10 @@
             </svg>
             <span>No grants match your selected filters. Try adjusting your criteria.</span>
           </div>
+
+          <!-- Hidden fields for non-AJAX fallback -->
+          <input type="hidden" name="filter_grants" value="1">
+          <input type="hidden" name="filter_nonce" value="">
 
           <!-- Search All Grants -->
           <div class="filter-form-section">
@@ -921,6 +925,7 @@
               <select id="category-filter" name="category" class="filter-select" aria-label="Filter by category">
                 <option value="">All Categories</option>
                 <!-- Categories will be loaded dynamically -->
+                <option value="loading" disabled>Loading categories...</option>
               </select>
               <div class="filter-select-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -943,6 +948,7 @@
               <select id="location-filter" name="location" class="filter-select" aria-label="Filter by location">
                 <option value="">All Locations</option>
                 <!-- Locations will be loaded dynamically -->
+                <option value="loading" disabled>Loading locations...</option>
               </select>
               <div class="filter-select-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -977,7 +983,7 @@
             <div class="filter-loading-spinner"></div>
             <span>Loading grants...</span>
           </div>
-        </div>
+        </form>
       </div>
 
       <div class="filter-popup-footer">
@@ -985,8 +991,8 @@
           Showing <strong id="filter-count">All</strong> Grants
         </div>
         <div class="filter-buttons">
-          <button id="filter-reset" class="filter-reset-btn">Reset Filters</button>
-          <button id="filter-apply" class="filter-apply-btn">
+          <button type="button" id="filter-reset" class="filter-reset-btn">Reset Filters</button>
+          <button type="button" id="filter-apply" class="filter-apply-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 11 12 14 22 4"></polyline>
               <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
@@ -998,75 +1004,191 @@
     </div>
   </div>
 
-  <!-- Hidden field for AJAX nonce -->
-  <input type="hidden" id="grants-filter-nonce" value="" data-ajax-url="" />
-
   <!-- PHP for AJAX Setup - ENHANCED VERSION -->
   [php]
-  // Generate a secure nonce for AJAX operations
+  // Generate a secure nonce for AJAX operations and form security
   $grants_filter_nonce = wp_create_nonce('grants_filter_nonce');
   $admin_ajax_url = admin_url('admin-ajax.php');
   
-  // These are hardcoded data arrays to avoid function definitions that might conflict
-  $categories_data = array(
-    array('value' => '54', 'label' => 'Grants For For-Profit Businesses'),
-    array('value' => '63', 'label' => 'Grants For Non-Profit Organizations'),
-    array('value' => '51', 'label' => 'Grants For Individuals'),
-    array('value' => '55', 'label' => 'Grants For Women Entrepreneurs'),
-    array('value' => '61', 'label' => 'Grants For Startups'),
-    array('value' => '62', 'label' => 'Grants For Projects'),
-    array('value' => '70', 'label' => 'Grants For Educational Institutions'),
-    array('value' => '69', 'label' => 'Grants For Research'),
-    array('value' => '120', 'label' => 'Grants For Minority Entrepreneurs'),
-    array('value' => '121', 'label' => 'Grants For Black-Owned Businesses'),
-    array('value' => '113', 'label' => 'Community Development Financial Institutions (CDFIs)'),
-    array('value' => '94', 'label' => 'Grants For Agricultural Businesses'),
-    array('value' => '93', 'label' => 'Grants For Brick & Mortar Stores'),
-    array('value' => '230', 'label' => 'Grants For E-Commerce Businesses'),
-    array('value' => '135', 'label' => 'Grants For BIPOC-Owned Businesses'),
-    array('value' => '134', 'label' => 'Grants For Non-Binary Entrepreneurs'),
-    array('value' => '138', 'label' => 'Grants For Restaurants'),
-    array('value' => '231', 'label' => 'Grants For Service-Based Businesses'),
-    array('value' => '57', 'label' => 'Grants For Veteran Entrepreneurs'),
-    array('value' => '143', 'label' => 'Grants For Women Veterans'),
-    array('value' => '137', 'label' => 'Grants For Latina Entrepreneurs'),
-    array('value' => '125', 'label' => 'Grants For Women Of Color Entrepreneurs')
-  );
+  // Function to get categories from WordPress taxonomy
+  function get_grant_categories() {
+    $categories = array();
+    $terms = get_terms(array(
+      'taxonomy' => 'at_biz_dir-category',
+      'hide_empty' => true,
+      'orderby' => 'name',
+      'order' => 'ASC',
+      'number' => 100 // Limit to prevent performance issues
+    ));
+    
+    if (!is_wp_error($terms) && !empty($terms)) {
+      foreach ($terms as $term) {
+        $categories[] = array(
+          'value' => $term->term_id,
+          'label' => $term->name
+        );
+      }
+    }
+    
+    return $categories;
+  }
   
-  $locations_data = array(
-    array('value' => '28', 'label' => 'Global'),
-    array('value' => '27', 'label' => 'United States'),
-    array('value' => '72', 'label' => 'Canada'),
-    array('value' => '92', 'label' => 'California'),
-    array('value' => '141', 'label' => 'Chicago'),
-    array('value' => '32', 'label' => 'Texas'),
-    array('value' => '206', 'label' => 'Minnesota'),
-    array('value' => '29', 'label' => 'New Jersey'),
-    array('value' => '127', 'label' => 'Massachusetts'),
-    array('value' => '99', 'label' => 'Illinois'),
-    array('value' => '107', 'label' => 'Africa'),
-    array('value' => '108', 'label' => 'Asia')
-  );
+  // Function to get locations from WordPress taxonomy
+  function get_grant_locations() {
+    $locations = array();
+    $terms = get_terms(array(
+      'taxonomy' => 'at_biz_dir-location',
+      'hide_empty' => true,
+      'orderby' => 'name',
+      'order' => 'ASC',
+      'number' => 100 // Limit to prevent performance issues
+    ));
+    
+    if (!is_wp_error($terms) && !empty($terms)) {
+      foreach ($terms as $term) {
+        $locations[] = array(
+          'value' => $term->term_id,
+          'label' => $term->name
+        );
+      }
+    }
+    
+    return $locations;
+  }
   
-  $eligibility_data = array(
-    array('value' => 'Businesses', 'label' => 'Businesses'),
-    array('value' => 'Startups', 'label' => 'Startups'),
-    array('value' => 'Nonprofits', 'label' => 'Nonprofits'),
-    array('value' => 'Individuals', 'label' => 'Individuals'),
-    array('value' => 'Artists', 'label' => 'Artists'),
-    array('value' => 'Group', 'label' => 'Group'),
-    array('value' => 'LGBTQ+', 'label' => 'LGBTQ+'),
-    array('value' => 'African Americans', 'label' => 'Black People'),
-    array('value' => 'Asian Americans', 'label' => 'Asian Americans'),
-    array('value' => 'Females', 'label' => 'Women'),
-    array('value' => 'Veterans', 'label' => 'Military Veterans'),
-    array('value' => 'Disabled', 'label' => 'Disabled/Special Persons')
-  );
-
-  // Output directly to the page - avoids function definitions
+  // Function to get eligibility options from custom field
+  function get_grant_eligibility_options() {
+    $eligibility_options = array();
+    
+    // Get eligibility options from the database - first try direct meta query
+    global $wpdb;
+    $meta_values = $wpdb->get_col(
+      $wpdb->prepare(
+        "SELECT DISTINCT meta_value 
+         FROM $wpdb->postmeta 
+         WHERE meta_key = %s 
+         AND meta_value != ''
+         LIMIT 100",
+        'custom-checkbox'
+      )
+    );
+    
+    if (!empty($meta_values)) {
+      $all_options = array();
+      
+      // Process each meta value (which might be serialized array)
+      foreach ($meta_values as $meta_value) {
+        $unserialized = maybe_unserialize($meta_value);
+        
+        if (is_array($unserialized)) {
+          foreach ($unserialized as $option) {
+            if (!empty($option) && !in_array($option, $all_options)) {
+              $all_options[] = $option;
+            }
+          }
+        } elseif (!empty($unserialized) && !in_array($unserialized, $all_options)) {
+          $all_options[] = $unserialized;
+        }
+      }
+      
+      // Sort options alphabetically
+      sort($all_options);
+      
+      // Format for output
+      foreach ($all_options as $option) {
+        $eligibility_options[] = array(
+          'value' => $option,
+          'label' => $option
+        );
+      }
+    }
+    
+    // If no options found, try to parse from form structure
+    if (empty($eligibility_options)) {
+      // Parse the checkbox structure from the form (fallback)
+      $parsed_options = parse_eligibility_from_form_html();
+      
+      if (!empty($parsed_options)) {
+        foreach ($parsed_options as $option) {
+          $eligibility_options[] = array(
+            'value' => $option['value'],
+            'label' => $option['label']
+          );
+        }
+      }
+    }
+    
+    return $eligibility_options;
+  }
+  
+  // Function to parse eligibility options from form HTML (fallback method)
+  function parse_eligibility_from_form_html() {
+    $options = array();
+    $form_sample = '
+      <div class="directorist-form-group directorist-custom-field-checkbox">
+        <label class="directorist-form-label" for="custom-checkbox">Eligibility:</label>
+        <div class="directorist-checkbox directorist-mb-10">
+          <input type="checkbox" id="Businesses-2779374240" name="custom-checkbox[]" value="Businesses">
+          <label for="Businesses-2779374240" class="directorist-checkbox__label">Businesses</label>
+        </div>
+        <div class="directorist-checkbox directorist-mb-10">
+          <input type="checkbox" id="Startups-1299193414" name="custom-checkbox[]" value="Startups">
+          <label for="Startups-1299193414" class="directorist-checkbox__label">Startups</label>
+        </div>
+        <!-- and so on -->
+      </div>
+    ';
+    
+    // Parse the HTML to extract checkbox values and labels
+    preg_match_all('/<input type="checkbox" id="(.*?)" name="custom-checkbox\[\]" value="(.*?)">/i', $form_sample, $matches, PREG_SET_ORDER);
+    
+    if (!empty($matches)) {
+      foreach ($matches as $match) {
+        if (isset($match[2])) {
+          $value = $match[2];
+          
+          // Also get the label
+          preg_match('/<label for="' . preg_quote($match[1], '/') . '" class="directorist-checkbox__label">(.*?)<\/label>/i', $form_sample, $label_match);
+          $label = isset($label_match[1]) ? $label_match[1] : $value;
+          
+          $options[] = array(
+            'value' => $value,
+            'label' => $label
+          );
+        }
+      }
+    }
+    
+    // If still no options, use hardcoded fallback
+    if (empty($options)) {
+      $options = array(
+        array('value' => 'Businesses', 'label' => 'Businesses'),
+        array('value' => 'Startups', 'label' => 'Startups'),
+        array('value' => 'Nonprofits', 'label' => 'Nonprofits'),
+        array('value' => 'Individuals', 'label' => 'Individuals'),
+        array('value' => 'Artists', 'label' => 'Artists'),
+        array('value' => 'Group', 'label' => 'Group'),
+        array('value' => 'LGBTQ+', 'label' => 'LGBTQ+'),
+        array('value' => 'African Americans', 'label' => 'Black People'),
+        array('value' => 'Asian Americans', 'label' => 'Asian Americans'),
+        array('value' => 'Females', 'label' => 'Women'),
+        array('value' => 'Veterans', 'label' => 'Military Veterans'),
+        array('value' => 'Disabled', 'label' => 'Disabled/Special Persons')
+      );
+    }
+    
+    return $options;
+  }
+  
+  // Get data dynamically
+  $categories_data = get_grant_categories();
+  $locations_data = get_grant_locations();
+  $eligibility_data = get_grant_eligibility_options();
+  
+  // Output the data as JavaScript variables
   echo '<script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function() {
-    // Store hardcoded data directly in global variables
+    // Store dynamically fetched data in global variables
     window.grantauraData = {
       categories: ' . json_encode($categories_data) . ',
       locations: ' . json_encode($locations_data) . ',
@@ -1074,15 +1196,17 @@
     };
     
     // Set up the nonce and AJAX URL
-    var nonceField = document.getElementById("grants-filter-nonce");
+    window.grantsFilterNonce = "' . esc_js($grants_filter_nonce) . '";
+    window.ajaxurl = "' . esc_js($admin_ajax_url) . '";
+    
+    // Set nonce for non-AJAX fallback form
+    var nonceField = document.querySelector(\'input[name="filter_nonce"]\');
     if (nonceField) {
       nonceField.value = "' . esc_js($grants_filter_nonce) . '";
-      nonceField.setAttribute("data-ajax-url", "' . esc_js($admin_ajax_url) . '");
     }
   });
   </script>';
   
-  // Enhanced AJAX handler registration
   // Register the filter grants function to handle AJAX requests
   if (!function_exists('register_grants_filter_ajax')) {
     function register_grants_filter_ajax() {
@@ -1092,210 +1216,440 @@
     add_action('init', 'register_grants_filter_ajax');
   }
   
-  // Enhanced AJAX handler with improved filtering capabilities
+  // Enhanced AJAX handler with robust error handling
   if (!function_exists('grants_filter_ajax_handler')) {
     function grants_filter_ajax_handler() {
-      check_ajax_referer('grants_filter_nonce', 'security');
-      
-      // Get filter parameters
-      $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-      $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
-      $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
-      $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
-      $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-      $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
-      $eligibility = isset($_POST['eligibility']) ? (array)$_POST['eligibility'] : array();
-      $eligibility = array_map('sanitize_text_field', $eligibility);
-      $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-      
-      // Default posts per page from WordPress settings
-      $posts_per_page = get_option('posts_per_page', 10);
-      
-      // Build query args
-      $query_args = array(
-        'post_type' => 'at_biz_dir',
-        'posts_per_page' => $posts_per_page,
-        'paged' => $page,
-        'post_status' => 'publish'
-      );
-      
-      // Add search term
-      if (!empty($search)) {
-        $query_args['s'] = $search;
+      // Verify nonce
+      if (!check_ajax_referer('grants_filter_nonce', 'security', false)) {
+        wp_send_json(array(
+          'success' => false,
+          'message' => 'Security verification failed. Please refresh the page and try again.',
+          'error_code' => 'invalid_nonce'
+        ));
+        wp_die();
       }
       
-      // Add taxonomy filters (category, location)
-      $tax_query = array();
-      
-      if (!empty($category)) {
-        $tax_query[] = array(
-          'taxonomy' => 'at_biz_dir-category',
-          'field' => 'term_id',
-          'terms' => $category
+      try {
+        // Get filter parameters with proper validation
+        $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+        $deadline = isset($_POST['deadline']) ? sanitize_text_field($_POST['deadline']) : 'all';
+        $amount_min = isset($_POST['amount_min']) ? intval($_POST['amount_min']) : 0;
+        $amount_max = isset($_POST['amount_max']) ? intval($_POST['amount_max']) : 0;
+        $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+        $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
+        $eligibility = isset($_POST['eligibility']) ? (array)$_POST['eligibility'] : array();
+        $eligibility = array_map('sanitize_text_field', $eligibility);
+        $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
+        
+        // Default posts per page from WordPress settings
+        $posts_per_page = get_option('posts_per_page', 10);
+        
+        // Build query args
+        $query_args = array(
+          'post_type' => 'at_biz_dir',
+          'posts_per_page' => $posts_per_page,
+          'paged' => $page,
+          'post_status' => 'publish'
         );
-      }
-      
-      if (!empty($location)) {
-        $tax_query[] = array(
-          'taxonomy' => 'at_biz_dir-location',
-          'field' => 'term_id',
-          'terms' => $location
-        );
-      }
-      
-      if (!empty($tax_query)) {
-        $query_args['tax_query'] = $tax_query;
-      }
-      
-      // Add meta query for deadline and amount
-      $meta_query = array();
-      
-      // Deadline filter
-      if ($deadline !== 'all') {
-        $today = date('Y-m-d');
         
-        if ($deadline === 'today') {
-          $meta_query[] = array(
-            'key' => '_custom-date',
-            'value' => $today,
-            'compare' => '=',
-            'type' => 'DATE'
-          );
-        } else if ($deadline === 'week') {
-          $week_later = date('Y-m-d', strtotime('+7 days'));
-          $meta_query[] = array(
-            'key' => '_custom-date',
-            'value' => array($today, $week_later),
-            'compare' => 'BETWEEN',
-            'type' => 'DATE'
-          );
-        } else if ($deadline === 'month') {
-          $month_later = date('Y-m-d', strtotime('+30 days'));
-          $meta_query[] = array(
-            'key' => '_custom-date',
-            'value' => array($today, $month_later),
-            'compare' => 'BETWEEN',
-            'type' => 'DATE'
-          );
-        } else if ($deadline === 'ongoing') {
-          $meta_query[] = array(
-            'key' => '_custom-date',
-            'value' => '',
-            'compare' => '='
-          );
-        }
-      }
-      
-      // Amount filter
-      if ($amount_min > 0 || $amount_max > 0) {
-        $price_query = array('key' => '_price');
-        
-        if ($amount_min > 0 && $amount_max > 0) {
-          $price_query['value'] = array($amount_min, $amount_max);
-          $price_query['compare'] = 'BETWEEN';
-          $price_query['type'] = 'NUMERIC';
-        } else if ($amount_min > 0) {
-          $price_query['value'] = $amount_min;
-          $price_query['compare'] = '>=';
-          $price_query['type'] = 'NUMERIC';
-        } else if ($amount_max > 0) {
-          $price_query['value'] = $amount_max;
-          $price_query['compare'] = '<=';
-          $price_query['type'] = 'NUMERIC';
+        // Add search term
+        if (!empty($search)) {
+          $query_args['s'] = $search;
         }
         
-        $meta_query[] = $price_query;
-      }
-      
-      // Eligibility filter
-      if (!empty($eligibility)) {
-        // We need to use a special LIKE query for arrays stored as serialized strings
-        $eligibility_queries = array('relation' => 'OR');
+        // Add taxonomy filters (category, location)
+        $tax_query = array();
         
-        foreach ($eligibility as $eligibility_value) {
-          $eligibility_queries[] = array(
-            'key' => 'custom-checkbox',
-            'value' => $eligibility_value,
-            'compare' => 'LIKE'
+        if (!empty($category)) {
+          $tax_query[] = array(
+            'taxonomy' => 'at_biz_dir-category',
+            'field' => 'term_id',
+            'terms' => $category
           );
         }
         
-        $meta_query[] = $eligibility_queries;
-      }
-      
-      if (!empty($meta_query)) {
-        $query_args['meta_query'] = $meta_query;
-      }
-      
-      // Run the query to get all matching grants
-      $grants_query = new WP_Query($query_args);
-      $total_found = $grants_query->found_posts;
-      
-      // Start output buffer to capture HTML
-      ob_start();
-      
-      if ($grants_query->have_posts()) {
-        // Generate the HTML for the grant cards
-        $post_ids_found = array();
-        while ($grants_query->have_posts()) {
-          $grants_query->the_post();
-          $post_ids_found[] = get_the_ID();
+        if (!empty($location)) {
+          $tax_query[] = array(
+            'taxonomy' => 'at_biz_dir-location',
+            'field' => 'term_id',
+            'terms' => $location
+          );
+        }
+        
+        if (!empty($tax_query)) {
+          if (count($tax_query) > 1) {
+            $tax_query['relation'] = 'AND';
+          }
+          $query_args['tax_query'] = $tax_query;
+        }
+        
+        // Add meta query for deadline and amount
+        $meta_query = array();
+        
+        // Deadline filter
+        if ($deadline !== 'all') {
+          $today = current_time('Y-m-d');
           
-          // Include the grant card template
-          // First try theme-specific template, fall back to default content template
-          $template_path = locate_template('template-parts/content-grant-card.php');
-          if ($template_path) {
-            include($template_path);
-          } else {
-            // Fall back to standard content template
-            get_template_part('template-parts/content', get_post_type());
+          if ($deadline === 'today') {
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => $today,
+              'compare' => '=',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'week') {
+            $week_later = date('Y-m-d', strtotime('+7 days', current_time('timestamp')));
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => array($today, $week_later),
+              'compare' => 'BETWEEN',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'month') {
+            $month_later = date('Y-m-d', strtotime('+30 days', current_time('timestamp')));
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => array($today, $month_later),
+              'compare' => 'BETWEEN',
+              'type' => 'DATE'
+            );
+          } else if ($deadline === 'ongoing') {
+            $meta_query[] = array(
+              'key' => '_custom-date',
+              'value' => '',
+              'compare' => '='
+            );
           }
         }
-      } else {
-        echo '<div class="no-grants-found">No grants found matching your criteria.</div>';
-      }
-      
-      $html = ob_get_clean();
-      
-      // Generate pagination for filtered results
-      $pagination = '';
-      if ($grants_query->max_num_pages > 1) {
+        
+        // Amount filter
+        if ($amount_min > 0 || $amount_max > 0) {
+          $price_query = array('key' => '_price');
+          
+          if ($amount_min > 0 && $amount_max > 0) {
+            $price_query['value'] = array($amount_min, $amount_max);
+            $price_query['compare'] = 'BETWEEN';
+            $price_query['type'] = 'NUMERIC';
+          } else if ($amount_min > 0) {
+            $price_query['value'] = $amount_min;
+            $price_query['compare'] = '>=';
+            $price_query['type'] = 'NUMERIC';
+          } else if ($amount_max > 0) {
+            $price_query['value'] = $amount_max;
+            $price_query['compare'] = '<=';
+            $price_query['type'] = 'NUMERIC';
+          }
+          
+          $meta_query[] = $price_query;
+        }
+        
+        // Eligibility filter - improved for better matching
+        if (!empty($eligibility)) {
+          $eligibility_queries = array('relation' => 'OR');
+          
+          foreach ($eligibility as $eligibility_value) {
+            // Try to match serialized arrays containing the value
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => serialize(array($eligibility_value)),
+              'compare' => 'LIKE'
+            );
+            
+            // Also try to match serialized arrays where this value is one of many
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => 's:' . strlen($eligibility_value) . ':"' . $eligibility_value . '";',
+              'compare' => 'LIKE'
+            );
+            
+            // Also try simple meta match
+            $eligibility_queries[] = array(
+              'key' => 'custom-checkbox',
+              'value' => $eligibility_value,
+              'compare' => 'LIKE'
+            );
+          }
+          
+          $meta_query[] = $eligibility_queries;
+        }
+        
+        if (!empty($meta_query)) {
+          if (count($meta_query) > 1) {
+            $meta_query['relation'] = 'AND';
+          }
+          $query_args['meta_query'] = $meta_query;
+        }
+        
+        // Run the query with error handling
+        $grants_query = new WP_Query($query_args);
+        $total_found = $grants_query->found_posts;
+        
+        // Start output buffer to capture HTML
         ob_start();
         
-        // Format the pagination base URL
-        $big = 999999999; // an unlikely integer
-        echo paginate_links(array(
-          'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
-          'format' => '?paged=%#%',
-          'current' => max(1, $page),
-          'total' => $grants_query->max_num_pages,
-          'prev_text' => '&laquo;',
-          'next_text' => '&raquo;',
-          'type' => 'list'
-        ));
+        if ($grants_query->have_posts()) {
+          // Generate the HTML for the grant cards
+          $post_ids_found = array();
+          while ($grants_query->have_posts()) {
+            $grants_query->the_post();
+            $post_ids_found[] = get_the_ID();
+            
+            // Include the grant card template
+            // First try theme-specific template, fall back to default content template
+            $template_path = locate_template('template-parts/content-grant-card.php');
+            $is_template_exists = !empty($template_path) && file_exists($template_path);
+            
+            if ($is_template_exists) {
+              include($template_path);
+            } else {
+              // Fall back to standard content template
+              get_template_part('template-parts/content', get_post_type());
+            }
+          }
+        } else {
+          echo '<div class="no-grants-found">No grants found matching your criteria.</div>';
+        }
         
-        $pagination = ob_get_clean();
+        $html = ob_get_clean();
+        
+        // Generate pagination for filtered results
+        $pagination = '';
+        if ($grants_query->max_num_pages > 1) {
+          ob_start();
+          
+          // Format the pagination base URL
+          $big = 999999999; // an unlikely integer
+          echo paginate_links(array(
+            'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+            'format' => '?paged=%#%',
+            'current' => max(1, $page),
+            'total' => $grants_query->max_num_pages,
+            'prev_text' => '&laquo;',
+            'next_text' => '&raquo;',
+            'type' => 'list',
+            'add_args' => array(
+              'filter_grants' => '1',
+              'grant-search' => $search,
+              'deadline' => $deadline,
+              'amount-min' => $amount_min,
+              'amount-max' => $amount_max,
+              'category' => $category,
+              'location' => $location,
+              // Eligibility is handled specially for array values
+            )
+          ));
+          
+          $pagination = ob_get_clean();
+        }
+        
+        wp_reset_postdata();
+        
+        // Return JSON response with all needed data
+        wp_send_json(array(
+          'success' => true,
+          'html' => $html,
+          'pagination' => $pagination,
+          'count' => $total_found,
+          'max_pages' => $grants_query->max_num_pages,
+          'filtered_ids' => $post_ids_found
+        ));
+      } catch (Exception $e) {
+        // Handle any exceptions
+        wp_send_json(array(
+          'success' => false,
+          'message' => 'An error occurred: ' . $e->getMessage(),
+          'error_code' => 'exception'
+        ));
       }
-      
-      wp_reset_postdata();
-      
-      // Return JSON response with all needed data
-      wp_send_json(array(
-        'success' => true,
-        'html' => $html,
-        'pagination' => $pagination,
-        'count' => $total_found,
-        'max_pages' => $grants_query->max_num_pages,
-        'filtered_ids' => $post_ids_found
-      ));
       
       wp_die();
     }
+  }
+  
+  // Add non-AJAX filter functionality (fallback)
+  if (!function_exists('handle_grant_filter_request')) {
+    function handle_grant_filter_request($query) {
+      // Only modify main query on frontend
+      $is_main_query = $query->is_main_query();
+      $is_admin = is_admin();
+      $is_filter_request = isset($_GET['filter_grants']) && $_GET['filter_grants'] == '1';
+      
+      if ($is_main_query && !$is_admin && $is_filter_request) {
+        // Verify nonce for security
+        $verify_nonce = isset($_GET['filter_nonce']) ? wp_verify_nonce($_GET['filter_nonce'], 'grants_filter_nonce') : false;
+        
+        if (!$verify_nonce) {
+          return; // Exit if nonce verification fails
+        }
+        
+        // Only modify queries for grant listings - could be archive or homepage
+        if ($query->get('post_type') === 'at_biz_dir' || is_post_type_archive('at_biz_dir') || is_home() || is_front_page()) {
+          // Set post type to grants
+          $query->set('post_type', 'at_biz_dir');
+          
+          // Get filter parameters with proper validation
+          $search = isset($_GET['grant-search']) ? sanitize_text_field($_GET['grant-search']) : '';
+          $deadline = isset($_GET['deadline']) ? sanitize_text_field($_GET['deadline']) : 'all';
+          $amount_min = isset($_GET['amount-min']) ? intval($_GET['amount-min']) : 0;
+          $amount_max = isset($_GET['amount-max']) ? intval($_GET['amount-max']) : 0;
+          $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
+          $location = isset($_GET['location']) ? sanitize_text_field($_GET['location']) : '';
+          $eligibility = isset($_GET['eligibility']) ? (array)$_GET['eligibility'] : array();
+          $eligibility = array_map('sanitize_text_field', $eligibility);
+          
+          // Add search term
+          if (!empty($search)) {
+            $query->set('s', $search);
+          }
+          
+          // Add taxonomy filters (category, location)
+          $tax_query = array();
+          
+          if (!empty($category)) {
+            $tax_query[] = array(
+              'taxonomy' => 'at_biz_dir-category',
+              'field' => 'term_id',
+              'terms' => $category
+            );
+          }
+          
+          if (!empty($location)) {
+            $tax_query[] = array(
+              'taxonomy' => 'at_biz_dir-location',
+              'field' => 'term_id',
+              'terms' => $location
+            );
+          }
+          
+          if (!empty($tax_query)) {
+            if (count($tax_query) > 1) {
+              $tax_query['relation'] = 'AND';
+            }
+            
+            // Merge with existing tax query if any
+            $existing_tax_query = $query->get('tax_query');
+            if (!empty($existing_tax_query)) {
+              $tax_query = array_merge($existing_tax_query, $tax_query);
+              $tax_query['relation'] = 'AND';
+            }
+            
+            $query->set('tax_query', $tax_query);
+          }
+          
+          // Add meta query for deadline and amount
+          $meta_query = array();
+          
+          // Deadline filter
+          if ($deadline !== 'all') {
+            $today = current_time('Y-m-d');
+            
+            if ($deadline === 'today') {
+              $meta_query[] = array(
+                'key' => '_custom-date',
+                'value' => $today,
+                'compare' => '=',
+                'type' => 'DATE'
+              );
+            } else if ($deadline === 'week') {
+              $week_later = date('Y-m-d', strtotime('+7 days', current_time('timestamp')));
+              $meta_query[] = array(
+                'key' => '_custom-date',
+                'value' => array($today, $week_later),
+                'compare' => 'BETWEEN',
+                'type' => 'DATE'
+              );
+            } else if ($deadline === 'month') {
+              $month_later = date('Y-m-d', strtotime('+30 days', current_time('timestamp')));
+              $meta_query[] = array(
+                'key' => '_custom-date',
+                'value' => array($today, $month_later),
+                'compare' => 'BETWEEN',
+                'type' => 'DATE'
+              );
+            } else if ($deadline === 'ongoing') {
+              $meta_query[] = array(
+                'key' => '_custom-date',
+                'value' => '',
+                'compare' => '='
+              );
+            }
+          }
+          
+          // Amount filter
+          if ($amount_min > 0 || $amount_max > 0) {
+            $price_query = array('key' => '_price');
+            
+            if ($amount_min > 0 && $amount_max > 0) {
+              $price_query['value'] = array($amount_min, $amount_max);
+              $price_query['compare'] = 'BETWEEN';
+              $price_query['type'] = 'NUMERIC';
+            } else if ($amount_min > 0) {
+              $price_query['value'] = $amount_min;
+              $price_query['compare'] = '>=';
+              $price_query['type'] = 'NUMERIC';
+            } else if ($amount_max > 0) {
+              $price_query['value'] = $amount_max;
+              $price_query['compare'] = '<=';
+              $price_query['type'] = 'NUMERIC';
+            }
+            
+            $meta_query[] = $price_query;
+          }
+          
+          // Eligibility filter
+          if (!empty($eligibility)) {
+            $eligibility_queries = array('relation' => 'OR');
+            
+            foreach ($eligibility as $eligibility_value) {
+              // Try to match serialized arrays containing the value
+              $eligibility_queries[] = array(
+                'key' => 'custom-checkbox',
+                'value' => serialize(array($eligibility_value)),
+                'compare' => 'LIKE'
+              );
+              
+              // Also try to match serialized arrays where this value is one of many
+              $eligibility_queries[] = array(
+                'key' => 'custom-checkbox',
+                'value' => 's:' . strlen($eligibility_value) . ':"' . $eligibility_value . '";',
+                'compare' => 'LIKE'
+              );
+              
+              // Also try simple meta match
+              $eligibility_queries[] = array(
+                'key' => 'custom-checkbox',
+                'value' => $eligibility_value,
+                'compare' => 'LIKE'
+              );
+            }
+            
+            $meta_query[] = $eligibility_queries;
+          }
+          
+          if (!empty($meta_query)) {
+            if (count($meta_query) > 1) {
+              $meta_query['relation'] = 'AND';
+            }
+            
+            // Merge with existing meta query if any
+            $existing_meta_query = $query->get('meta_query');
+            if (!empty($existing_meta_query)) {
+              $meta_query = array_merge($existing_meta_query, $meta_query);
+              $meta_query['relation'] = 'AND';
+            }
+            
+            $query->set('meta_query', $meta_query);
+          }
+        }
+      }
+    }
+    add_action('pre_get_posts', 'handle_grant_filter_request');
   }
   [/php]
 
   <!-- JavaScript for Filter Functionality - ENHANCED VERSION -->
   <script>
+  //<![CDATA[
   document.addEventListener('DOMContentLoaded', function() {
     // Function to check if values in an array are all true - safer alternative to && operator
     function checkConditions(conditions) {
@@ -1332,6 +1686,7 @@
     let allLocations = [];
     let grantsContainer = null;
     let paginationContainer = null;
+    let ajaxEnabled = true; // Flag to control AJAX vs form submission
     
     // Initialize
     init();
@@ -1340,31 +1695,21 @@
       // Find the grants container and pagination
       findGrantsContainer();
       
-      // Get AJAX configuration
-      initAjaxConfig();
+      // Check if AJAX filtering should be enabled
+      checkAjaxSupport();
       
-      // Use direct data from page
-      if (window.grantauraData) {
-        renderCategoryOptions(window.grantauraData.categories);
-        renderLocationOptions(window.grantauraData.locations);
-        renderEligibilityOptions(window.grantauraData.eligibility);
-        
-        // Store data for reference
-        allCategories = window.grantauraData.categories;
-        allLocations = window.grantauraData.locations;
-        allEligibilityOptions = window.grantauraData.eligibility;
-      }
+      // Render filter options
+      loadFilterOptions();
       
       // Add event listeners
       addEventListeners();
       
       // Check URL for filter parameters
-      parseUrlHash();
+      parseUrlParams();
     }
     
     function findGrantsContainer() {
       // Try to find the grants container based on common class names
-      // The order is important - try the most specific first
       const possibleContainerSelectors = [
         '.grants-container',
         '.at-biz-dir-listings',
@@ -1411,23 +1756,135 @@
       }
     }
     
-    function initAjaxConfig() {
-      // Get configuration from the hidden input field
-      var nonceField = document.getElementById('grants-filter-nonce');
+    function checkAjaxSupport() {
+      // Check if AJAX is supported and all required elements exist
+      let hasRequiredElements = checkConditions([
+        !!filterForm,
+        !!applyButton,
+        !!grantsContainer,
+        typeof window.grantsFilterNonce !== 'undefined',
+        typeof window.ajaxurl !== 'undefined'
+      ]);
       
-      if (nonceField) {
-        window.grantsFilterNonce = nonceField.value;
-        window.ajaxurl = nonceField.getAttribute('data-ajax-url');
+      // Check if fetch API is supported
+      let hasFetchSupport = 'fetch' in window;
+      
+      // Set AJAX mode based on checks
+      ajaxEnabled = hasRequiredElements && hasFetchSupport;
+      
+      // Configure form for non-AJAX mode if needed
+      if (!ajaxEnabled) {
+        if (filterForm) {
+          filterForm.setAttribute('action', window.location.href);
+          filterForm.setAttribute('method', 'get');
+          
+          // Change button type for form submission
+          if (applyButton) {
+            applyButton.setAttribute('type', 'submit');
+          }
+        }
+      }
+    }
+    
+    function loadFilterOptions() {
+      // Load options from window.grantauraData if available
+      if (window.grantauraData) {
+        renderCategoryOptions(window.grantauraData.categories);
+        renderLocationOptions(window.grantauraData.locations);
+        renderEligibilityOptions(window.grantauraData.eligibility);
         
-        return checkConditions([!!window.grantsFilterNonce, !!window.ajaxurl]);
+        // Store data for reference
+        allCategories = window.grantauraData.categories;
+        allLocations = window.grantauraData.locations;
+        allEligibilityOptions = window.grantauraData.eligibility;
+      } else {
+        // Fallback to AJAX loading if needed
+        loadOptionsByAjax();
+      }
+    }
+    
+    function loadOptionsByAjax() {
+      if (!ajaxEnabled) {
+        // Show error if AJAX isn't available but we're trying to use it
+        showError('AJAX filtering is not available. Please use the form submission method instead.');
+        return;
       }
       
-      // Fallback for ajaxurl if not set
-      if (typeof window.ajaxurl === 'undefined') {
-        window.ajaxurl = '/wp-admin/admin-ajax.php';
-      }
+      // Prepare data
+      const data = new FormData();
+      data.append('action', 'get_filter_options');
+      data.append('security', window.grantsFilterNonce);
       
-      return false;
+      // Fetch options
+      fetch(window.ajaxurl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: data
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (result.success) {
+          // Render options
+          if (result.categories) {
+            renderCategoryOptions(result.categories);
+            allCategories = result.categories;
+          }
+          
+          if (result.locations) {
+            renderLocationOptions(result.locations);
+            allLocations = result.locations;
+          }
+          
+          if (result.eligibility) {
+            renderEligibilityOptions(result.eligibility);
+            allEligibilityOptions = result.eligibility;
+          }
+        } else {
+          throw new Error(result.message || 'Failed to load filter options');
+        }
+      })
+      .catch(error => {
+        console.error('Error loading filter options:', error);
+        
+        // Use fallback data if needed
+        useFallbackData();
+      });
+    }
+    
+    function useFallbackData() {
+      // These are fallback options in case AJAX fails
+      const fallbackCategories = [
+        {value: "54", label: "Grants For For-Profit Businesses"},
+        {value: "63", label: "Grants For Non-Profit Organizations"},
+        {value: "51", label: "Grants For Individuals"},
+        {value: "55", label: "Grants For Women Entrepreneurs"}
+      ];
+      
+      const fallbackLocations = [
+        {value: "28", label: "Global"},
+        {value: "27", label: "United States"},
+        {value: "72", label: "Canada"}
+      ];
+      
+      const fallbackEligibility = [
+        {value: "Businesses", label: "Businesses"},
+        {value: "Startups", label: "Startups"},
+        {value: "Nonprofits", label: "Nonprofits"},
+        {value: "Individuals", label: "Individuals"}
+      ];
+      
+      renderCategoryOptions(fallbackCategories);
+      renderLocationOptions(fallbackLocations);
+      renderEligibilityOptions(fallbackEligibility);
+      
+      allCategories = fallbackCategories;
+      allLocations = fallbackLocations;
+      allEligibilityOptions = fallbackEligibility;
     }
     
     function addEventListeners() {
@@ -1454,26 +1911,29 @@
       if (applyButton) {
         applyButton.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
-          applyFilters();
+          
+          // Use AJAX or form submission based on capability
+          if (ajaxEnabled) {
+            applyFiltersAjax();
+          } else {
+            filterForm.submit();
+          }
         });
       }
       
-      // Reset filters - FIXED: Add event parameter and explicitly prevent defaults
+      // Reset filters
       if (resetButton) {
         resetButton.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
-          resetFilters(e);
+          resetFilters();
         });
       }
       
-      // Clear all selected filters - FIXED: Add event parameter
+      // Clear all selected filters
       if (clearAllFilters) {
         clearAllFilters.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
-          resetFilters(e);
+          resetFilters();
         });
       }
       
@@ -1482,7 +1942,12 @@
         searchInput.addEventListener('keydown', function(e) {
           if (e.key === 'Enter') {
             e.preventDefault();
-            applyFilters();
+            
+            if (ajaxEnabled) {
+              applyFiltersAjax();
+            } else {
+              filterForm.submit();
+            }
           }
         });
       }
@@ -1499,13 +1964,6 @@
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           closeFilterPopup();
-        }
-      });
-      
-      // Update hash when window is about to unload
-      window.addEventListener('beforeunload', function() {
-        if (Object.keys(activeFilters).length > 0) {
-          updateUrlHash();
         }
       });
     }
@@ -1587,8 +2045,8 @@
         checkbox.addEventListener('change', updateSelectedFilters);
       });
       
-      // Restore any selected values from URL
-      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+      // Restore any selected values
+      setTimeout(restoreFormValues, 100);
     }
 
     function renderCategoryOptions(categories) {
@@ -1614,8 +2072,8 @@
       // Update select element
       categorySelect.innerHTML = html;
       
-      // Restore any selected value from URL
-      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+      // Restore any selected value
+      setTimeout(restoreFormValues, 100);
     }
 
     function renderLocationOptions(locations) {
@@ -1641,12 +2099,17 @@
       // Update select element
       locationSelect.innerHTML = html;
       
-      // Restore any selected value from URL
-      setTimeout(restoreFormValues, 100); // Small delay to ensure DOM is updated
+      // Restore any selected value
+      setTimeout(restoreFormValues, 100);
     }
     
-    // ENHANCED: Server-side filtering function
-    function applyFilters(page = 1) {
+    function applyFiltersAjax(page = 1) {
+      // Check if AJAX is enabled
+      if (!ajaxEnabled) {
+        filterForm.submit();
+        return;
+      }
+      
       // Show loading state
       showLoading(true);
       hideError();
@@ -1676,7 +2139,7 @@
       // Update active filters
       updateSelectedFilters();
       
-      // Update URL hash
+      // Update URL hash (for browser history)
       updateUrlHash();
       
       // Prepare data for AJAX request
@@ -1696,7 +2159,7 @@
         filterData.append('eligibility[]', value);
       });
       
-      // Send AJAX request using Fetch API
+      // Send AJAX request using Fetch API with improved error handling
       fetch(window.ajaxurl, {
         method: 'POST',
         credentials: 'same-origin',
@@ -1704,7 +2167,7 @@
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Network error: ${response.status} ${response.statusText}`);
         }
         return response.json();
       })
@@ -1713,6 +2176,9 @@
           // Update the grants container with filtered results
           if (grantsContainer && data.html) {
             grantsContainer.innerHTML = data.html;
+            
+            // Initialize any scripts needed for the new content
+            initCountdowns();
           }
           
           // Update the pagination with new pagination for filtered results
@@ -1744,19 +2210,33 @@
           // Close filter popup
           closeFilterPopup();
         } else {
-          showError(data.message || 'An error occurred while filtering grants.');
+          throw new Error(data.message || 'An error occurred while filtering grants.');
         }
       })
       .catch(error => {
-        console.error('Error:', error);
-        showError('Failed to load filtered grants. Please try again.');
+        console.error('Filtering Error:', error);
+        
+        // Show fallback error to user
+        showError('Failed to load filtered grants. Please try again or use the regular search method.');
+        
+        // If AJAX fails repeatedly, switch to non-AJAX mode
+        if (error.message && error.message.includes('Network error')) {
+          ajaxEnabled = false;
+          
+          // Update form for standard submission
+          filterForm.setAttribute('action', window.location.href);
+          filterForm.setAttribute('method', 'get');
+          
+          // Add message to error
+          showError('AJAX filtering is not working. The system will use standard form submission instead.');
+        }
       })
       .finally(() => {
         showLoading(false);
       });
     }
     
-    // NEW: Bind pagination links to maintain filters when changing pages
+    // Bind pagination links to maintain filters
     function bindPaginationLinks() {
       if (!paginationContainer) return;
       
@@ -1764,6 +2244,8 @@
       
       paginationLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+          if (!ajaxEnabled) return; // Let the default link behavior work
+          
           e.preventDefault();
           
           // Extract page number from the URL
@@ -1777,7 +2259,7 @@
           }
           
           // Apply the same filters but for the new page
-          applyFilters(page);
+          applyFiltersAjax(page);
         });
       });
     }
@@ -1816,7 +2298,7 @@
     }
 
     function renderSelectedFilters() {
-      // Clear current selected filters
+      // Clear current selected filters except the clear all button
       while (selectedFiltersContainer.firstChild) {
         if (selectedFiltersContainer.firstChild === clearAllFilters) {
           break;
@@ -1929,7 +2411,6 @@
       }
     }
 
-    // FIXED: Improved removeFilter function that properly updates form state
     function removeFilter(key, value) {
       if (key === 'eligibility') {
         // Remove just one eligibility value
@@ -1947,301 +2428,397 @@
         delete activeFilters[key];
         
         // Reset the corresponding form control
-        switch (key) {
-          case 'search':
-            if (searchInput) searchInput.value = '';
-            break;
-          case 'deadline':
-            const allRadio = document.getElementById('deadline-all');
-            if (allRadio) allRadio.checked = true;
-            break;
-          case 'amount_min':
-            const amountMin = document.getElementById('amount-min');
-            if (amountMin) amountMin.value = '';
-            break;
-          case 'amount_max':
-            const amountMax = document.getElementById('amount-max');
-            if (amountMax) amountMax.value = '';
-            break;
-          case 'category':
-            if (categorySelect) categorySelect.value = '';
-            break;
-          case 'location':
-            if (locationSelect) locationSelect.value = '';
-            break;
-        }
-      }
-      
-      // Update filters display
-      renderSelectedFilters();
-      
-      // Update filter button state
-      updateFilterButtonState();
-      
-      // Apply filters immediately
-      applyFilters();
-    }
-
-    function updateFilterButtonState() {
-      const filterCount = Object.keys(activeFilters).length;
-      const countElement = filterButton.querySelector('.filter-count');
-      
-      if (filterCount > 0) {
-        filterButton.classList.add('has-active-filters');
-        countElement.textContent = filterCount;
-      } else {
-        filterButton.classList.remove('has-active-filters');
-        countElement.textContent = '0';
-      }
-    }
-
-    // FIXED: Properly reset all form elements and reload grants
-    function resetFilters(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      
-      // Explicitly reset all form inputs
-      if (searchInput) searchInput.value = '';
-      
-      // Reset radio buttons
-      const allRadio = document.getElementById('deadline-all');
-      if (allRadio) allRadio.checked = true;
-      
-      // Reset amount fields
-      const amountMin = document.getElementById('amount-min');
-      const amountMax = document.getElementById('amount-max');
-      if (amountMin) amountMin.value = '';
-      if (amountMax) amountMax.value = '';
-      
-      // Reset select elements
-      if (categorySelect) categorySelect.value = '';
-      if (locationSelect) locationSelect.value = '';
-      
-      // Reset eligibility checkboxes
-      const eligibilityCheckboxes = document.querySelectorAll('input[name="eligibility[]"]');
-      eligibilityCheckboxes.forEach(checkbox => {
-        checkbox.checked = false;
-      });
-      
-      // Clear active filters object
-      activeFilters = {};
-      
-      // Update UI
-      renderSelectedFilters();
-      updateFilterButtonState();
-      
-      // Apply reset filters to reload default grants
-      applyFilters();
-      
-      // Clear URL hash
-      history.pushState("", document.title, window.location.pathname + window.location.search);
-    }
-    
-    function updateResultCount(count) {
-      // Update count in filter modal
-      if (count === 0) {
-        filterCount.textContent = 'No';
-      } else {
-        filterCount.textContent = count;
-      }
-    }
-    
-    function showLoading(isLoading) {
-      if (isLoading) {
-        filterLoading.classList.add('active');
-        
-        // Add loading state to grant container
-        if (grantsContainer) {
-          grantsContainer.classList.add('loading');
-          
-          // Add loading class to pagination if present
-          if (paginationContainer) {
-            paginationContainer.classList.add('loading');
-          }
-        }
-      } else {
-        filterLoading.classList.remove('active');
-        
-        // Remove loading state from grant container
-        if (grantsContainer) {
-          grantsContainer.classList.remove('loading');
-          
-          // Remove loading class from pagination
-          if (paginationContainer) {
-            paginationContainer.classList.remove('loading');
-          }
-        }
-      }
-    }
-
-    function showError(message) {
-      filterError.classList.add('active');
-      filterError.querySelector('span').textContent = message;
-      showLoading(false);
-    }
-
-    function hideError() {
-      filterError.classList.remove('active');
-    }
-
-    function showEmptyState() {
-      filterEmpty.classList.add('active');
-    }
-
-    function hideEmptyState() {
-      filterEmpty.classList.remove('active');
-    }
-    
-    function updateUrlHash() {
-      // Create URL hash from active filters
-      if (Object.keys(activeFilters).length === 0) {
-        // Clear hash if no active filters
-        try {
-          history.pushState("", document.title, window.location.pathname + window.location.search);
-        } catch (e) {
-          // Fallback for older browsers
-          window.location.hash = '';
-        }
-        
-        return;
-      }
-      
-      // Create hash string
-      const hashParts = [];
-      
-      for (const [key, value] of Object.entries(activeFilters)) {
-        if (Array.isArray(value)) {
-          // Handle array values (eligibility)
-          value.forEach(val => {
-            if (val) { // Only add non-empty values
-              hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
-            }
-          });
-        } else {
-          // Handle single values
-          if (value) { // Only add non-empty values
-            hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-          }
-        }
-      }
-      
-      // Create the hash string
-      const hashString = hashParts.join('&');
-      
-      // Update URL hash
-      try {
-        // Use history API for better user experience (no page jump)
-        const newUrl = window.location.pathname + window.location.search + '#' + hashString;
-        history.pushState(activeFilters, document.title, newUrl);
-      } catch (e) {
-        // Fallback for older browsers
-        window.location.hash = hashString;
-      }
-    }
-
-    function parseUrlHash() {
-      // Get hash without the # symbol
-      const hash = window.location.hash.substring(1);
-      
-      if (!hash) {
-        return;
-      }
-      
-      // Split into key-value pairs
-      const hashParts = hash.split('&');
-      let tempFilters = {};
-      
-      hashParts.forEach(part => {
-        const [key, value] = part.split('=');
-        
-        if (key && value) {
-          try {
-            const decodedKey = decodeURIComponent(key);
-            const decodedValue = decodeURIComponent(value);
-            
-            // Handle eligibility (array values)
-            if (decodedKey === 'eligibility') {
-              if (!tempFilters.eligibility) {
-                tempFilters.eligibility = [];
-              }
-              tempFilters.eligibility.push(decodedValue);
-            } else {
-              tempFilters[decodedKey] = decodedValue;
-            }
-          } catch (e) {
-            // Silent error handling
-          }
-        }
-      });
-      
-      // Update active filters
-      activeFilters = tempFilters;
-      
-      // Apply filters if we have any from URL
-      if (Object.keys(activeFilters).length > 0) {
-        setTimeout(function() {
-          restoreFormValues();
-        }, 200);
-      }
-    }
-
-    function restoreFormValues() {
-      // Check if we have active filters from URL
-      if (Object.keys(activeFilters).length === 0) return;
-      
-      // Restore search value
-      if (activeFilters.search && searchInput) {
-        searchInput.value = activeFilters.search;
-      }
-      
-      // Restore deadline selection
-      if (activeFilters.deadline) {
-        const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
-        if (deadlineRadio) deadlineRadio.checked = true;
-      }
-      
-      // Restore amount values
-      if (activeFilters.amount_min) {
+    switch (key) {
+      case 'search':
+        if (searchInput) searchInput.value = '';
+        break;
+      case 'deadline':
+        const allRadio = document.getElementById('deadline-all');
+        if (allRadio) allRadio.checked = true;
+        break;
+      case 'amount_min':
         const amountMin = document.getElementById('amount-min');
-        if (amountMin) amountMin.value = activeFilters.amount_min;
-      }
-      
-      if (activeFilters.amount_max) {
+        if (amountMin) amountMin.value = '';
+        break;
+      case 'amount_max':
         const amountMax = document.getElementById('amount-max');
-        if (amountMax) amountMax.value = activeFilters.amount_max;
+        if (amountMax) amountMax.value = '';
+        break;
+      case 'category':
+        if (categorySelect) categorySelect.value = '';
+        break;
+      case 'location':
+        if (locationSelect) locationSelect.value = '';
+        break;
+    }
+  }
+  
+  // Update filters display
+  renderSelectedFilters();
+  
+  // Update filter button state
+  updateFilterButtonState();
+  
+  // Apply filters immediately if using AJAX
+  if (ajaxEnabled) {
+    applyFiltersAjax();
+  }
+}
+
+function updateFilterButtonState() {
+  const filterCount = Object.keys(activeFilters).length;
+  const countElement = filterButton.querySelector('.filter-count');
+  
+  if (filterCount > 0) {
+    filterButton.classList.add('has-active-filters');
+    countElement.textContent = filterCount;
+  } else {
+    filterButton.classList.remove('has-active-filters');
+    countElement.textContent = '0';
+  }
+}
+
+function resetFilters() {
+  // Explicitly reset all form inputs
+  if (searchInput) searchInput.value = '';
+  
+  // Reset radio buttons
+  const allRadio = document.getElementById('deadline-all');
+  if (allRadio) allRadio.checked = true;
+  
+  // Reset amount fields
+  const amountMin = document.getElementById('amount-min');
+  const amountMax = document.getElementById('amount-max');
+  if (amountMin) amountMin.value = '';
+  if (amountMax) amountMax.value = '';
+  
+  // Reset select elements
+  if (categorySelect) categorySelect.value = '';
+  if (locationSelect) locationSelect.value = '';
+  
+  // Reset eligibility checkboxes
+  const eligibilityCheckboxes = document.querySelectorAll('input[name="eligibility[]"]');
+  eligibilityCheckboxes.forEach(checkbox => {
+    checkbox.checked = false;
+  });
+  
+  // Clear active filters object
+  activeFilters = {};
+  
+  // Update UI
+  renderSelectedFilters();
+  updateFilterButtonState();
+  
+  // Apply reset filters 
+  if (ajaxEnabled) {
+    applyFiltersAjax();
+  } else {
+    // For non-AJAX mode, reset form or redirect to base URL
+    if (filterForm) {
+      // Remove any existing URL parameters and reload
+      window.location.href = window.location.pathname;
+    }
+  }
+}
+
+function updateResultCount(count) {
+  // Update count in filter modal
+  if (count === 0) {
+    filterCount.textContent = 'No';
+  } else {
+    filterCount.textContent = count;
+  }
+}
+
+function showLoading(isLoading) {
+  if (isLoading) {
+    filterLoading.classList.add('active');
+    
+    // Add loading state to grant container
+    if (grantsContainer) {
+      grantsContainer.classList.add('loading');
+      
+      // Add loading class to pagination if present
+      if (paginationContainer) {
+        paginationContainer.classList.add('loading');
       }
+    }
+  } else {
+    filterLoading.classList.remove('active');
+    
+    // Remove loading state from grant container
+    if (grantsContainer) {
+      grantsContainer.classList.remove('loading');
       
-      // Restore category selection
-      if (activeFilters.category && categorySelect && categorySelect.options.length > 1) {
-        categorySelect.value = activeFilters.category;
+      // Remove loading class from pagination
+      if (paginationContainer) {
+        paginationContainer.classList.remove('loading');
       }
-      
-      // Restore location selection
-      if (activeFilters.location && locationSelect && locationSelect.options.length > 1) {
-        locationSelect.value = activeFilters.location;
+    }
+  }
+}
+
+function showError(message) {
+  filterError.classList.add('active');
+  filterError.querySelector('span').textContent = message;
+  showLoading(false);
+}
+
+function hideError() {
+  filterError.classList.remove('active');
+}
+
+function showEmptyState() {
+  filterEmpty.classList.add('active');
+}
+
+function hideEmptyState() {
+  filterEmpty.classList.remove('active');
+}
+
+function updateUrlHash() {
+  // Create URL hash from active filters
+  if (Object.keys(activeFilters).length === 0) {
+    // Clear hash if no active filters
+    try {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    } catch (e) {
+      // Fallback for older browsers
+      window.location.hash = '';
+    }
+    
+    return;
+  }
+  
+  // Create hash string
+  const hashParts = [];
+  
+  for (const [key, value] of Object.entries(activeFilters)) {
+    if (Array.isArray(value)) {
+      // Handle array values (eligibility)
+      value.forEach(val => {
+        if (val) { // Only add non-empty values
+          hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+        }
+      });
+    } else {
+      // Handle single values
+      if (value) { // Only add non-empty values
+        hashParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
       }
-      
-      // Restore eligibility checkboxes
-      if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
-        activeFilters.eligibility.forEach(value => {
-          const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
-          if (checkbox) checkbox.checked = true;
-        });
+    }
+  }
+  
+  // Create the hash string
+  const hashString = hashParts.join('&');
+  
+  // Update URL hash
+  try {
+    // Use history API for better user experience (no page jump)
+    const newUrl = window.location.pathname + window.location.search + '#' + hashString;
+    history.pushState(activeFilters, document.title, newUrl);
+  } catch (e) {
+    // Fallback for older browsers
+    window.location.hash = hashString;
+  }
+}
+
+// Parse URL parameters (for both hash and query string)
+function parseUrlParams() {
+  // First check hash (for AJAX filtering)
+  const hash = window.location.hash.substring(1);
+  
+  if (hash) {
+    parseParamString(hash);
+  } else {
+    // Then check query string (for non-AJAX filtering)
+    const queryString = window.location.search.substring(1);
+    if (queryString) {
+      parseParamString(queryString);
+    }
+  }
+  
+  // Update UI based on parsed parameters
+  if (Object.keys(activeFilters).length > 0) {
+    setTimeout(restoreFormValues, 200);
+  }
+}
+
+function parseParamString(paramString) {
+  // Split into key-value pairs
+  const paramParts = paramString.split('&');
+  let tempFilters = {};
+  
+  paramParts.forEach(part => {
+    const [key, value] = part.split('=');
+    
+    if (key && value) {
+      try {
+        const decodedKey = decodeURIComponent(key);
+        const decodedValue = decodeURIComponent(value);
+        
+        // Special handling for form parameter names that might differ from our object keys
+        let filterKey = decodedKey;
+        
+        // Map form field names to our filter object keys
+        if (filterKey === 'grant-search') filterKey = 'search';
+        if (filterKey === 'amount-min') filterKey = 'amount_min';
+        if (filterKey === 'amount-max') filterKey = 'amount_max';
+        
+        // Handle eligibility (array values)
+        if (filterKey === 'eligibility[]' || filterKey === 'eligibility') {
+          if (!tempFilters.eligibility) {
+            tempFilters.eligibility = [];
+          }
+          tempFilters.eligibility.push(decodedValue);
+        } else {
+          tempFilters[filterKey] = decodedValue;
+        }
+      } catch (e) {
+        // Silent error handling for malformed parameters
+        console.warn('Error parsing URL parameter:', e);
       }
-      
-      // Update UI to reflect restored filters
-      renderSelectedFilters();
-      updateFilterButtonState();
-      
-      // Apply the filters
-      setTimeout(function() {
-        applyFilters();
-      }, 300);
     }
   });
-  </script>
+  
+  // Update active filters
+  activeFilters = tempFilters;
+}
+
+function restoreFormValues() {
+  // Check if we have active filters
+  if (Object.keys(activeFilters).length === 0) return;
+  
+  // Restore search value
+  if (activeFilters.search && searchInput) {
+    searchInput.value = activeFilters.search;
+  }
+  
+  // Restore deadline selection
+  if (activeFilters.deadline) {
+    const deadlineRadio = document.getElementById(`deadline-${activeFilters.deadline}`);
+    if (deadlineRadio) deadlineRadio.checked = true;
+  }
+  
+  // Restore amount values
+  if (activeFilters.amount_min) {
+    const amountMin = document.getElementById('amount-min');
+    if (amountMin) amountMin.value = activeFilters.amount_min;
+  }
+  
+  if (activeFilters.amount_max) {
+    const amountMax = document.getElementById('amount-max');
+    if (amountMax) amountMax.value = activeFilters.amount_max;
+  }
+  
+  // Restore category selection
+  if (activeFilters.category && categorySelect) {
+    // Wait for categories to load if needed
+    if (categorySelect.options.length <= 1) {
+      setTimeout(() => {
+        if (categorySelect.options.length > 1) {
+          categorySelect.value = activeFilters.category;
+        }
+      }, 500);
+    } else {
+      categorySelect.value = activeFilters.category;
+    }
+  }
+  
+  // Restore location selection
+  if (activeFilters.location && locationSelect) {
+    // Wait for locations to load if needed
+    if (locationSelect.options.length <= 1) {
+      setTimeout(() => {
+        if (locationSelect.options.length > 1) {
+          locationSelect.value = activeFilters.location;
+        }
+      }, 500);
+    } else {
+      locationSelect.value = activeFilters.location;
+    }
+  }
+  
+  // Restore eligibility checkboxes
+  if (activeFilters.eligibility && Array.isArray(activeFilters.eligibility)) {
+    // Function to check eligibility boxes with retry
+    const checkEligibilityBoxes = (retries = 3) => {
+      const allChecked = activeFilters.eligibility.every(value => {
+        const checkbox = document.querySelector(`input[name="eligibility[]"][value="${value}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+          return true;
+        }
+        return false;
+      });
+      
+      // If not all checkboxes found and we have retries left, try again
+      if (!allChecked && retries > 0) {
+        setTimeout(() => checkEligibilityBoxes(retries - 1), 300);
+      }
+    };
+    
+    checkEligibilityBoxes();
+  }
+  
+  // Update UI to reflect restored filters
+  renderSelectedFilters();
+  updateFilterButtonState();
+}
+
+// Initialize countdown timers for grant cards
+function initCountdowns() {
+  const countdownElements = document.querySelectorAll('[data-deadline]');
+  
+  countdownElements.forEach(function(element) {
+    const deadline = parseInt(element.getAttribute('data-deadline'), 10) * 1000;
+    const countdownId = element.id;
+    
+    if (!countdownId) return;
+    
+    const countdown = document.getElementById(countdownId);
+    if (!countdown) return;
+    
+    const hoursElement = countdown.querySelector('[data-hours]');
+    const minutesElement = countdown.querySelector('[data-minutes]');
+    const secondsElement = countdown.querySelector('[data-seconds]');
+    
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = deadline - now;
+      
+      if (distance <= 0) {
+        // Handle expired timer
+        if (hoursElement) hoursElement.textContent = '00';
+        if (minutesElement) minutesElement.textContent = '00';
+        if (secondsElement) secondsElement.textContent = '00';
+        return;
+      }
+      
+      // Calculate time units
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Update the elements
+      if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
+      if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
+      if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    // Initial update
+    updateCountdown();
+    
+    // Update every second
+    setInterval(updateCountdown, 1000);
+  });
+}
+
+// Handle any countdowns on page load
+setTimeout(initCountdowns, 500);
+});
+//]]>
+</script>
 
   <!-- Add CSS for loading state and pagination -->
   <style>
