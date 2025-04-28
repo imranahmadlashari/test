@@ -229,7 +229,6 @@ When generating code for Grantaura, implement these strategies to avoid content 
 		○ Keep responses focused on single aspects of functionality
 	2. Alternative Implementations for Sensitive Areas
 		○ Avoid direct implementation of email configuration details
-		○ Use placeholders for sensitive credentials with clear comments
 		○ Implement form processing in stages rather than complete solutions
 		○ Use WordPress native functions instead of direct PHP implementations where possible
 	3. Form Processing Considerations
@@ -246,7 +245,6 @@ When generating code for Grantaura, implement these strategies to avoid content 
 		○ Describe security measures conceptually before implementation
 		○ Use approved WordPress security functions rather than custom implementations
 		○ Segment authentication and validation code into separate, focused blocks
-		○ Present security-related code with clear educational comments
 	6. Progressive Enhancement Method
 		○ Start with basic implementations and enhance iteratively
 		○ Focus on architecture and patterns before detailed implementation
@@ -472,6 +470,10 @@ I (Imran) am not a developer, so he doesn't understand how to write or update/mo
 		○ Adhere to performance and SEO best practices
 		○ Ensure accessibility compliance
 		○ Prioritize user experience above all else
+		○ Be careful with comments, instead of writing the long comments and writing everywhere, just write what's needed and where is needed to give an insight back to other developers. As you know, developers already understand the code, the issues, etc. just providing them short hints, clues, references, etc. would be enough instead of writing long comments. And if there are existing comments about fixes, rewrite those comments with the updated insights but even shortly to providing a summary of all previous fixes and the new fix that you're going to add. Even you're allowed to remove existing comments which are not necessary or currently become ineffective or don't provide any value for the current fixing and current development.
+		
+		Make sure to comment where absolutely needed only, not everywhere. And comment short and concise. Doing so will make sure you write more code instead of comments everywhere. Focus on solution, not comments.
+		
 
 # Grantaura Writing Style Guide
 
