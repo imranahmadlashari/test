@@ -929,1183 +929,1341 @@
   <!-- Template container to hold card styles & structure -->
   <div id="grant-card-templates" style="display: none !important;" aria-hidden="true"></div>
 
+ 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Function to safely check multiple conditions (alternative to && operator)
-      function checkConditions(conditions) {
-        for (var i = 0; i < conditions.length; i++) {
-          if (!conditions[i]) {
-            return false;
-          }
-        }
-        return true;
+  // Function to safely check multiple conditions (alternative to && operator)
+  function checkConditions(conditions) {
+    for (var i = 0; i < conditions.length; i++) {
+      if (!conditions[i]) {
+        return false;
       }
+    }
+    return true;
+  }
 
-      // --- Element References ---
-      const filterTrigger = document.getElementById('filter-trigger');
-      const filterModal = document.getElementById('filter-modal');
-      const filterClose = document.getElementById('filter-close');
-      const filterForm = document.getElementById('filter-form');
-      const filterReset = document.getElementById('filter-reset');
-      const resetFiltersEmpty = document.getElementById('reset-filters-empty');
-      const activeFiltersContainer = document.getElementById('active-filters');
-      const grantsCounter = document.getElementById('grants-counter');
-      const grantsLoading = document.getElementById('grants-loading');
-      const noMatchingGrants = document.getElementById('no-matching-grants');
-      const filteredPagination = document.getElementById('filtered-pagination');
-      const filteredPaginationList = document.getElementById('filtered-pagination-list');
-      const templateContainer = document.getElementById('grant-card-templates');
-      const originalStructureTemplate = document.getElementById('original-structure-template');
-      const grantsListPlaceholder = document.getElementById('grants-list-placeholder');
+  // --- Element References ---
+  const filterTrigger = document.getElementById('filter-trigger');
+  const filterModal = document.getElementById('filter-modal');
+  const filterClose = document.getElementById('filter-close');
+  const filterForm = document.getElementById('filter-form');
+  const filterReset = document.getElementById('filter-reset');
+  const resetFiltersEmpty = document.getElementById('reset-filters-empty');
+  const activeFiltersContainer = document.getElementById('active-filters');
+  const grantsCounter = document.getElementById('grants-counter');
+  const grantsLoading = document.getElementById('grants-loading');
+  const noMatchingGrants = document.getElementById('no-matching-grants');
+  const filteredPagination = document.getElementById('filtered-pagination');
+  const filteredPaginationList = document.getElementById('filtered-pagination-list');
+  const templateContainer = document.getElementById('grant-card-templates');
+  const originalStructureTemplate = document.getElementById('original-structure-template');
+  const grantsListPlaceholder = document.getElementById('grants-list-placeholder');
 
-      // Filter elements
-      const keywordFilter = document.getElementById('keyword-filter');
-      const deadlineOptions = document.querySelectorAll('input[name="deadline"]');
-      const minAmountFilter = document.getElementById('min-amount');
-      const maxAmountFilter = document.getElementById('max-amount');
-      const categoryFilter = document.getElementById('category-filter');
-      const locationFilter = document.getElementById('location-filter');
-      const eligibilityContainer = document.querySelector('.eligibility-options');
+  // Filter elements
+  const keywordFilter = document.getElementById('keyword-filter');
+  const deadlineOptions = document.querySelectorAll('input[name="deadline"]');
+  const minAmountFilter = document.getElementById('min-amount');
+  const maxAmountFilter = document.getElementById('max-amount');
+  const categoryFilter = document.getElementById('category-filter');
+  const locationFilter = document.getElementById('location-filter');
+  const eligibilityContainer = document.querySelector('.eligibility-options');
 
-      // --- State Variables ---
-      let allGrants = []; // Stores { id: string, element: Node, data: object }
-      let postsPerPage = 16;
-      let totalInitialPages = 1;
-      let initialCurrentPage = 1;
-      let currentPage = 1; // For filtered results pagination
-      let originalPaginationElement = null; // Store the original pagination element
-      let grantsListingSection = null; // Reference to the current grants list section
-      let grantsContainer = null; // Reference to the current grants list container
-      let isFetching = false; // Flag to prevent concurrent fetches
-      let initialLoadComplete = false; // Flag to track initial data load
+  // --- State Variables ---
+  let allGrants = []; // Stores { id: string, element: Node, data: object }
+  let postsPerPage = 16;
+  let totalInitialPages = 1;
+  let initialCurrentPage = 1;
+  let currentPage = 1; // For filtered results pagination
+  let originalPaginationElement = null; // Store the original pagination element
+  let grantsListingSection = null; // Reference to the current grants list section
+  let grantsContainer = null; // Reference to the current grants list container
+  let isFetching = false; // Flag to prevent concurrent fetches
+  let initialLoadComplete = false; // Flag to track initial data load
 
-      let activeFilters = {
-        keyword: '',
-        deadline: 'all',
-        minAmount: '',
-        maxAmount: '',
-        category: '',
-        location: '',
-        eligibility: []
-      };
+  let activeFilters = {
+    keyword: '',
+    deadline: 'all',
+    minAmount: '',
+    maxAmount: '',
+    category: '',
+    location: '',
+    eligibility: []
+  };
 
-      // --- Initialization ---
+  // --- Initialization ---
 
-      // 1. Move the initial grants list into the placeholder
-      const initialGrantsListSection = document.querySelector('.grants-listing-section');
-      if (initialGrantsListSection) {
-          grantsListingSection = initialGrantsListSection; // Set initial reference
-          originalPaginationElement = grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)');
-          if (originalPaginationElement) {
-              originalPaginationElement.remove(); // Remove original pagination from initial list display
-          }
-          grantsListPlaceholder.appendChild(grantsListingSection);
-          grantsContainer = grantsListingSection.querySelector('.grants-container'); // Set initial reference
-      } else {
-          console.error("Grantaura Filter Error: Initial grants list section (.grants-listing-section) not found.");
-          grantsCounter.textContent = "Error loading grants.";
-          return; // Stop execution if initial list is missing
+  // 1. Move the initial grants list into the placeholder
+  const initialGrantsListSection = document.querySelector('.grants-listing-section');
+  if (initialGrantsListSection) {
+      grantsListingSection = initialGrantsListSection; // Set initial reference
+      originalPaginationElement = grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)');
+      if (originalPaginationElement) {
+          originalPaginationElement.remove(); // Remove original pagination from initial list display
       }
+      grantsListPlaceholder.appendChild(grantsListingSection);
+      grantsContainer = grantsListingSection.querySelector('.grants-container'); // Set initial reference
+  } else {
+      console.error("Grantaura Filter Error: Initial grants list section (.grants-listing-section) not found.");
+      grantsCounter.textContent = "Error loading grants.";
+      return; // Stop execution if initial list is missing
+  }
 
-      // 2. Store original structure template
-      storeOriginalStructure();
+  // 2. Store original structure template
+  storeOriginalStructure();
 
-      // 3. Start fetching all grant data
-      fetchAllGrants();
+  // 3. Start fetching all grant data
+  fetchAllGrants();
 
 
-      // --- Core Functions ---
+  // --- Core Functions ---
 
-      // Stores the initial grants list section structure
-      function storeOriginalStructure() {
-        if (grantsListingSection && !originalStructureTemplate.hasChildNodes()) {
-            const clone = grantsListingSection.cloneNode(true);
-            originalStructureTemplate.appendChild(clone);
-            console.log('Original structure stored.');
-        } else if (originalStructureTemplate.hasChildNodes()) {
-            console.log('Original structure already stored.');
-        } else {
-            console.error('Grantaura Filter Error: Cannot store original structure, initial section missing.');
-        }
-      }
+  // Stores the initial grants list section structure
+  function storeOriginalStructure() {
+    if (grantsListingSection && !originalStructureTemplate.hasChildNodes()) {
+        const clone = grantsListingSection.cloneNode(true);
+        originalStructureTemplate.appendChild(clone);
+        console.log('Original structure stored.');
+    } else if (originalStructureTemplate.hasChildNodes()) {
+        console.log('Original structure already stored.');
+    } else {
+        console.error('Grantaura Filter Error: Cannot store original structure, initial section missing.');
+    }
+  }
 
-      // Fetches grant data from all pages
-      async function fetchAllGrants() {
-        if (isFetching) return;
-        isFetching = true;
-        grantsLoading.classList.add('is-active');
-        console.log('Starting fetchAllGrants...');
+  // Fetches grant data from all pages
+  async function fetchAllGrants() {
+    if (isFetching) return;
+    isFetching = true;
+    grantsLoading.classList.add('is-active');
+    console.log('Starting fetchAllGrants...');
 
-        try {
-            // Store grants visible on the current page
-            const visibleGrantElements = grantsContainer ? Array.from(grantsContainer.querySelectorAll('.g-card')) : [];
-            console.log(`Found ${visibleGrantElements.length} grants on initial page.`);
+    try {
+        // Store grants visible on the current page
+        const visibleGrantElements = grantsContainer ? Array.from(grantsContainer.querySelectorAll('.g-card')) : [];
+        console.log(`Found ${visibleGrantElements.length} grants on initial page.`);
 
-            // Determine initial page and posts per page
-            determineInitialPagination();
-            postsPerPage = Math.max(1, visibleGrantElements.length || postsPerPage); // Use visible count if available
+        // Determine initial page and posts per page
+        determineInitialPagination();
+        postsPerPage = Math.max(1, visibleGrantElements.length || postsPerPage); // Use visible count if available
 
-            // Process and store visible grants
-            processGrantElements(visibleGrantElements, initialCurrentPage);
+        // Process and store visible grants
+        processGrantElements(visibleGrantElements, initialCurrentPage);
 
-            // Fetch grants from other pages if necessary
-            if (totalInitialPages > 1) {
-                const pagePromises = [];
-                for (let page = 1; page <= totalInitialPages; page++) {
-                    if (page !== initialCurrentPage) {
-                        pagePromises.push(fetchGrantsFromPage(page));
-                    }
+        // Fetch grants from other pages if necessary
+        if (totalInitialPages > 1) {
+            const pagePromises = [];
+            for (let page = 1; page <= totalInitialPages; page++) {
+                if (page !== initialCurrentPage) {
+                    pagePromises.push(fetchGrantsFromPage(page));
                 }
-                await Promise.all(pagePromises);
             }
-
-            console.log(`Total grants stored: ${allGrants.length}`);
-            initialLoadComplete = true;
-            updateGrantsCounter(allGrants.length); // Update counter after loading all
-            initializeFilters(); // Populate dropdowns etc.
-            readFiltersFromUrl(); // Apply URL filters after everything is loaded
-
-        } catch (error) {
-            console.error('Grantaura Filter Error fetching grants:', error);
-            grantsCounter.textContent = 'Error loading grants.';
-            // Optionally show only initially loaded grants or an error message
-        } finally {
-            isFetching = false;
-            grantsLoading.classList.remove('is-active');
-            console.log('Finished fetchAllGrants.');
+            await Promise.all(pagePromises);
         }
-      }
 
-       // Determine initial pagination state from the original (now removed) pagination
-       function determineInitialPagination() {
-           if (originalPaginationElement) {
-               try {
-                   const pageLinks = originalPaginationElement.querySelectorAll('.g-pagination__item a[href]');
-                   const currentSpan = originalPaginationElement.querySelector('.g-pagination__item--current span');
+        console.log(`Total grants stored: ${allGrants.length}`);
+        initialLoadComplete = true;
+        updateGrantsCounter(allGrants.length); // Update counter after loading all
+        initializeFilters(); // Populate dropdowns etc.
+        readFiltersFromUrl(); // Apply URL filters after everything is loaded
 
-                   if (currentSpan && !isNaN(parseInt(currentSpan.textContent))) {
-                       initialCurrentPage = parseInt(currentSpan.textContent);
-                   } else {
-                       // Fallback: check URL params 'page' or 'paged'
-                       const urlParams = new URLSearchParams(window.location.search);
-                       initialCurrentPage = parseInt(urlParams.get('page') || urlParams.get('paged') || '1');
-                   }
+    } catch (error) {
+        console.error('Grantaura Filter Error fetching grants:', error);
+        grantsCounter.textContent = 'Error loading grants.';
+        // Optionally show only initially loaded grants or an error message
+    } finally {
+        isFetching = false;
+        grantsLoading.classList.remove('is-active');
+        console.log('Finished fetchAllGrants.');
+    }
+  }
 
-                   let maxPage = initialCurrentPage;
-                   pageLinks.forEach(link => {
-                       const pageNum = parseInt(link.textContent);
-                       if (!isNaN(pageNum)) {
-                           maxPage = Math.max(maxPage, pageNum);
-                       }
-                       // Check href for /page/X/ structure
-                       const hrefMatch = link.getAttribute('href').match(/\/page\/(\d+)\/?$/);
-                       if (hrefMatch && hrefMatch[1]) {
-                           maxPage = Math.max(maxPage, parseInt(hrefMatch[1]));
-                       }
-                   });
-                   if (currentSpan && !isNaN(parseInt(currentSpan.textContent))) {
-                        maxPage = Math.max(maxPage, parseInt(currentSpan.textContent));
-                   }
+   // Determine initial pagination state from the original (now removed) pagination
+   function determineInitialPagination() {
+       if (originalPaginationElement) {
+           try {
+               const pageLinks = originalPaginationElement.querySelectorAll('.g-pagination__item a[href]');
+               const currentSpan = originalPaginationElement.querySelector('.g-pagination__item--current span');
 
-                   totalInitialPages = maxPage > 0 ? maxPage : 1;
-
-                   console.log(`Initial Pagination: currentPage=${initialCurrentPage}, totalPages=${totalInitialPages}`);
-
-               } catch (e) {
-                   console.error("Error determining initial pagination:", e);
-                   initialCurrentPage = 1;
-                   totalInitialPages = 1;
+               if (currentSpan && !isNaN(parseInt(currentSpan.textContent))) {
+                   initialCurrentPage = parseInt(currentSpan.textContent);
+               } else {
+                   // Fallback: check URL params 'page' or 'paged'
+                   const urlParams = new URLSearchParams(window.location.search);
+                   initialCurrentPage = parseInt(urlParams.get('page') || urlParams.get('paged') || '1');
                }
-           } else {
-                // Fallback if original pagination wasn't found
-                const urlParams = new URLSearchParams(window.location.search);
-                initialCurrentPage = parseInt(urlParams.get('page') || urlParams.get('paged') || '1');
-                totalInitialPages = 1; // Assume 1 page if no pagination found
-                console.warn("Original pagination element not found. Falling back to URL params or default.");
-                console.log(`Fallback Pagination: currentPage=${initialCurrentPage}, totalPages=${totalInitialPages}`);
+
+               let maxPage = initialCurrentPage;
+               pageLinks.forEach(link => {
+                   const pageNum = parseInt(link.textContent);
+                   if (!isNaN(pageNum)) {
+                       maxPage = Math.max(maxPage, pageNum);
+                   }
+                   // Check href for /page/X/ structure
+                   const hrefMatch = link.getAttribute('href').match(/\/page\/(\d+)\/?$/);
+                   if (hrefMatch && hrefMatch[1]) {
+                       maxPage = Math.max(maxPage, parseInt(hrefMatch[1]));
+                   }
+               });
+               if (currentSpan && !isNaN(parseInt(currentSpan.textContent))) {
+                    maxPage = Math.max(maxPage, parseInt(currentSpan.textContent));
+               }
+
+               totalInitialPages = maxPage > 0 ? maxPage : 1;
+
+               console.log(`Initial Pagination: currentPage=${initialCurrentPage}, totalPages=${totalInitialPages}`);
+
+           } catch (e) {
+               console.error("Error determining initial pagination:", e);
+               initialCurrentPage = 1;
+               totalInitialPages = 1;
            }
-           // Ensure currentPage for filtering starts at 1 unless read from URL later
-           currentPage = 1;
+       } else {
+            // Fallback if original pagination wasn't found
+            const urlParams = new URLSearchParams(window.location.search);
+            initialCurrentPage = parseInt(urlParams.get('page') || urlParams.get('paged') || '1');
+            totalInitialPages = 1; // Assume 1 page if no pagination found
+            console.warn("Original pagination element not found. Falling back to URL params or default.");
+            console.log(`Fallback Pagination: currentPage=${initialCurrentPage}, totalPages=${totalInitialPages}`);
        }
+       // Ensure currentPage for filtering starts at 1 unless read from URL later
+       currentPage = 1;
+   }
 
-      // Fetches grants from a specific page number
-      async function fetchGrantsFromPage(pageNum) {
-          console.log(`Fetching grants from page ${pageNum}...`);
-          try {
-              let pageUrl;
-              const baseUrl = window.location.origin + window.location.pathname.replace(/\/page\/\d+\/?$/, ''); // Clean base path
-              const isHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/page/1/');
+  // Fetches grants from a specific page number
+  async function fetchGrantsFromPage(pageNum) {
+      console.log(`Fetching grants from page ${pageNum}...`);
+      try {
+          let pageUrl;
+          const baseUrl = window.location.origin + window.location.pathname.replace(/\/page\/\d+\/?$/, ''); // Clean base path
+          const isHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/page/1/');
 
-              if (isHomepage || baseUrl.endsWith('/')) {
-                   pageUrl = pageNum > 1 ? `${baseUrl.replace(/\/$/,'')}/page/${pageNum}/` : baseUrl;
-              } else {
-                   // Handle non-homepage archives - assumes /page/ structure might still work or paged query param
-                   pageUrl = `${baseUrl.replace(/\/$/,'')}/page/${pageNum}/`;
-                   // Alternative: use query param
-                   // const urlObj = new URL(window.location.href);
-                   // urlObj.searchParams.set('paged', pageNum);
-                   // pageUrl = urlObj.toString();
-              }
-
-              const response = await fetch(pageUrl);
-              if (!response.ok) throw new Error(`HTTP error! status: ${response.status} for ${pageUrl}`);
-
-              const html = await response.text();
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(html, 'text/html');
-              const grantElements = doc.querySelectorAll('.grants-listing-section .grants-container .g-card');
-              console.log(`Fetched ${grantElements.length} grants from page ${pageNum}.`);
-
-              processGrantElements(grantElements, pageNum);
-
-          } catch (error) {
-              console.error(`Grantaura Filter Error fetching page ${pageNum} (${pageUrl}):`, error);
-              // Don't add grants for this page if fetch fails
+          if (isHomepage || baseUrl.endsWith('/')) {
+               pageUrl = pageNum > 1 ? `${baseUrl.replace(/\/$/,'')}/page/${pageNum}/` : baseUrl;
+          } else {
+               // Handle non-homepage archives - assumes /page/ structure might still work or paged query param
+               pageUrl = `${baseUrl.replace(/\/$/,'')}/page/${pageNum}/`;
+               // Alternative: use query param
+               // const urlObj = new URL(window.location.href);
+               // urlObj.searchParams.set('paged', pageNum);
+               // pageUrl = urlObj.toString();
           }
+
+          const response = await fetch(pageUrl);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status} for ${pageUrl}`);
+
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const grantElements = doc.querySelectorAll('.grants-listing-section .grants-container .g-card');
+          console.log(`Fetched ${grantElements.length} grants from page ${pageNum}.`);
+
+          processGrantElements(grantElements, pageNum);
+
+      } catch (error) {
+          console.error(`Grantaura Filter Error fetching page ${pageNum} (${pageUrl}):`, error);
+          // Don't add grants for this page if fetch fails
       }
+  }
 
-      // Processes grant elements and stores them
-       function processGrantElements(elements, pageNum) {
-           elements.forEach(element => {
-               const grantId = element.dataset.grantId || `grant-${pageNum}-${Math.random().toString(36).substring(2, 9)}`;
-               element.id = `grant-${grantId}`; // Ensure unique ID in the DOM for potential targeting
+  // Processes grant elements and stores them
+   function processGrantElements(elements, pageNum) {
+       elements.forEach(element => {
+           const grantId = element.dataset.grantId || `grant-${pageNum}-${Math.random().toString(36).substring(2, 9)}`;
+           element.id = `grant-${grantId}`; // Ensure unique ID in the DOM for potential targeting
 
-               // Prevent duplicates
-               if (allGrants.some(g => g.id === grantId)) {
-                  // console.log(`Skipping duplicate grant ID: ${grantId}`);
-                  return;
-               }
-
-               const cardTemplate = element.cloneNode(true);
-               cardTemplate.id = `template-${grantId}`;
-               templateContainer.appendChild(cardTemplate);
-
-               // Extract relevant data for filtering
-               const grantData = extractGrantData(element);
-               grantData.page = pageNum; // Store original page number
-
-               allGrants.push({
-                   id: grantId,
-                   templateId: cardTemplate.id,
-                   data: grantData,
-                   // Keep the original classes/styles for potential restoration (though template is preferred)
-                   originalClasses: element.className,
-                   originalStyle: element.getAttribute('style') || ''
-               });
-           });
-       }
-
-       // Extracts data from a grant element for filtering
-       function extractGrantData(grantElement) {
-            const title = grantElement.querySelector('.g-card__title a')?.textContent.toLowerCase() || '';
-            const excerpt = grantElement.querySelector('.g-card__excerpt')?.textContent.toLowerCase() || '';
-            const statusBadge = grantElement.querySelector('.g-card__status-badge');
-            const statusText = statusBadge?.textContent.trim().toLowerCase() || '';
-            const deadlineEl = grantElement.querySelector('.g-card__deadline-value, [class*="deadline"]');
-            const deadlineText = deadlineEl?.textContent.trim() || '';
-            const deadlineTimestamp = grantElement.querySelector('[data-deadline]')?.dataset.deadline || null;
-            const amountEl = grantElement.querySelector('.g-card__amount, [class*="amount"]');
-            const amountText = amountEl?.textContent.trim() || '';
-            const amountValue = parseAmount(amountText);
-
-            const categories = Array.from(grantElement.querySelectorAll('.g-card__tag:not(.g-card__tag--more)'))
-                                .map(tag => ({ name: tag.textContent.trim(), url: tag.getAttribute('href') }))
-                                .filter(cat => cat.url); // Ensure URL exists
-
-            const locations = Array.from(grantElement.querySelectorAll('.g-card__location-link'))
-                                .map(link => ({ name: link.textContent.trim(), url: link.getAttribute('href') }))
-                                .filter(loc => loc.url); // Ensure URL exists
-
-            // Improved eligibility extraction
-            let eligibility = [];
-            const eligibilityMetaItem = Array.from(grantElement.querySelectorAll('.g-card__meta-item'))
-                .find(item => item.textContent.includes('Eligible:'));
-
-            if (eligibilityMetaItem) {
-                 eligibility = Array.from(eligibilityMetaItem.querySelectorAll('span:not(.g-card__location-more)'))
-                    .map(span => span.textContent.replace(',', '').trim())
-                    .filter(e => e && !e.includes('+') && e !== 'Eligible:'); // Filter out noise
-            }
-            // Add fallback extraction if needed
-
-            return {
-                title: title,
-                excerpt: excerpt,
-                status: statusText,
-                deadlineText: deadlineText,
-                deadlineTimestamp: deadlineTimestamp ? parseInt(deadlineTimestamp) : null,
-                amountValue: amountValue,
-                amountText: amountText, // Keep original text for display/edge cases
-                categories: categories, // Array of {name, url}
-                locations: locations, // Array of {name, url}
-                eligibility: eligibility // Array of strings
-            };
-       }
-
-
-      // Populates filter dropdowns and checkboxes
-      function initializeFilters() {
-          console.log('Initializing filters...');
-          populateSelectFilter(categoryFilter, 'Categories', extractUniqueTaxonomies('categories'));
-          populateSelectFilter(locationFilter, 'Locations', extractUniqueTaxonomies('locations'));
-          populateEligibilityCheckboxes(extractUniqueEligibility());
-          setupEventListeners();
-          console.log('Filters initialized.');
-      }
-
-      // Extracts unique taxonomies (categories/locations) from allGrants
-      function extractUniqueTaxonomies(type) {
-          const taxonomies = new Map(); // Use Map for uniqueness based on URL
-          allGrants.forEach(grant => {
-              grant.data[type].forEach(tax => {
-                   if (tax.url && !taxonomies.has(tax.url)) {
-                      taxonomies.set(tax.url, tax.name);
-                   }
-              });
-          });
-          // Convert map to array and sort alphabetically by name
-          return Array.from(taxonomies.entries())
-              .map(([url, name]) => ({ url, name }))
-              .sort((a, b) => a.name.localeCompare(b.name));
-      }
-
-      // Extracts unique eligibility criteria
-       function extractUniqueEligibility() {
-           const eligibilitySet = new Set();
-           allGrants.forEach(grant => {
-               grant.data.eligibility.forEach(e => {
-                   if (e) eligibilitySet.add(e.trim()); // Add trimmed, non-empty criteria
-               });
-           });
-           if (eligibilitySet.size === 0) {
-               console.warn("No eligibility criteria found in grant data. Adding fallbacks.");
-               const fallbackTypes = ['Small Businesses', 'Nonprofits', 'Individuals', 'Startups'];
-               fallbackTypes.forEach(type => eligibilitySet.add(type));
+           // Prevent duplicates
+           if (allGrants.some(g => g.id === grantId)) {
+              // console.log(`Skipping duplicate grant ID: ${grantId}`);
+              return;
            }
-           return Array.from(eligibilitySet).sort();
-       }
 
+           const cardTemplate = element.cloneNode(true);
+           cardTemplate.id = `template-${grantId}`;
+           templateContainer.appendChild(cardTemplate);
 
-      // Populates a select dropdown filter
-      function populateSelectFilter(selectElement, defaultOptionText, options) {
-        if (!selectElement) return;
-        // Keep the first option ("All X")
-        selectElement.length = 1;
-        selectElement.options[0].textContent = `All ${defaultOptionText}`;
+           // Extract relevant data for filtering
+           const grantData = extractGrantData(element);
+           grantData.page = pageNum; // Store original page number
 
-        options.forEach(optionData => {
-          const option = document.createElement('option');
-          option.value = optionData.url; // Use URL as value
-          option.textContent = optionData.name;
-          selectElement.appendChild(option);
-        });
-      }
+           allGrants.push({
+               id: grantId,
+               templateId: cardTemplate.id,
+               data: grantData,
+               // Keep the original classes/styles for potential restoration (though template is preferred)
+               originalClasses: element.className,
+               originalStyle: element.getAttribute('style') || ''
+           });
+       });
+   }
 
-      // Populates eligibility checkboxes
-      function populateEligibilityCheckboxes(options) {
-        if (!eligibilityContainer) return;
-        eligibilityContainer.innerHTML = ''; // Clear loading/previous options
+   // Extracts data from a grant element for filtering
+   function extractGrantData(grantElement) {
+        const title = grantElement.querySelector('.g-card__title a')?.textContent.toLowerCase() || '';
+        const excerpt = grantElement.querySelector('.g-card__excerpt')?.textContent.toLowerCase() || '';
+        const statusBadge = grantElement.querySelector('.g-card__status-badge');
+        const statusText = statusBadge?.textContent.trim().toLowerCase() || '';
+        const deadlineEl = grantElement.querySelector('.g-card__deadline-value, [class*="deadline"]');
+        const deadlineText = deadlineEl?.textContent.trim() || '';
+        const deadlineTimestamp = grantElement.querySelector('[data-deadline]')?.dataset.deadline || null;
+        const amountEl = grantElement.querySelector('.g-card__amount, [class*="amount"]');
+        const amountText = amountEl?.textContent.trim() || '';
+        const amountValue = parseAmount(amountText);
 
-        if (options.length === 0) {
-            eligibilityContainer.innerHTML = '<p>No eligibility options available.</p>';
-            return;
-        }
+        const categories = Array.from(grantElement.querySelectorAll('.g-card__tag:not(.g-card__tag--more)'))
+                            .map(tag => ({ name: tag.textContent.trim(), url: tag.getAttribute('href') }))
+                            .filter(cat => cat.url); // Ensure URL exists
 
-        options.forEach((criteria, index) => {
-          const optionId = `eligibility-${index}`;
-          const optionDiv = document.createElement('div');
-          optionDiv.className = 'eligibility-option';
+        const locations = Array.from(grantElement.querySelectorAll('.g-card__location-link'))
+                            .map(link => ({ name: link.textContent.trim(), url: link.getAttribute('href') }))
+                            .filter(loc => loc.url); // Ensure URL exists
 
-          const input = document.createElement('input');
-          input.type = 'checkbox';
-          input.name = 'eligibility';
-          input.id = optionId;
-          input.value = criteria;
+        // Improved eligibility extraction
+        let eligibility = [];
+        // FIXED: Enhanced eligibility extraction to capture all values correctly
+        const eligibilityMetaItem = Array.from(grantElement.querySelectorAll('.g-card__meta-item'))
+            .find(item => item.textContent.toLowerCase().includes('eligible:'));
 
-          const label = document.createElement('label');
-          label.htmlFor = optionId;
-          label.textContent = criteria;
-
-          optionDiv.appendChild(input);
-          optionDiv.appendChild(label);
-          eligibilityContainer.appendChild(optionDiv);
-        });
-      }
-
-      // Sets up main event listeners
-      function setupEventListeners() {
-        filterTrigger.addEventListener('click', openFilterModal);
-        filterClose.addEventListener('click', closeFilterModal);
-        filterReset.addEventListener('click', resetFilters);
-        resetFiltersEmpty.addEventListener('click', resetFilters);
-
-        filterModal.addEventListener('click', (e) => {
-          if (e.target === filterModal) closeFilterModal();
-        });
-
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            updateFiltersFromForm();
-            currentPage = 1; // Reset to first page on new filter submission
-            applyFilters();
-            closeFilterModal(); // Close modal after applying
-        });
-
-        // Use event delegation for pagination clicks
-        document.body.addEventListener('click', (e) => {
-             const paginationLink = e.target.closest('.filtered-pagination a[data-page]');
-             if (paginationLink) {
-                 e.preventDefault();
-                 const pageNum = parseInt(paginationLink.dataset.page);
-                 if (!isNaN(pageNum) && pageNum !== currentPage) {
-                     navigateToFilteredPage(pageNum);
-                 }
-             }
-        });
-
-        window.addEventListener('popstate', handlePopState);
-
-        // Prevent implicit form submission on Enter key press in text inputs
-        keywordFilter.addEventListener('keydown', handleEnterKey);
-        minAmountFilter.addEventListener('keydown', handleEnterKey);
-        maxAmountFilter.addEventListener('keydown', handleEnterKey);
-      }
-
-       // Prevent form submission on Enter in specific inputs
-       function handleEnterKey(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                // Optionally trigger filter apply here if desired,
-                // but standard behavior is to use the Apply button
-                // document.getElementById('filter-apply').click();
+        if (eligibilityMetaItem) {
+            // Get spans but exclude "more" indicators
+            eligibility = Array.from(eligibilityMetaItem.querySelectorAll('span:not(.g-card__location-more)'))
+                .map(span => span.textContent.replace(/,/g, '').trim()) // Replace ALL commas, not just first one
+                .filter(e => e && !e.includes('+') && e.toLowerCase() !== 'eligible:') // Filter noise
+                .map(e => e.trim()); // Extra trim to ensure no whitespace
+            
+            // Fallback: If no spans found with expected format, try extracting directly from text
+            if (eligibility.length === 0) {
+                const eligibilityText = eligibilityMetaItem.textContent
+                    .replace(/eligible:?/i, '')
+                    .split(',')
+                    .map(e => e.trim())
+                    .filter(e => e && !e.includes('+'));
+                
+                eligibility = eligibilityText;
             }
-       }
+        }
 
-      // Reads filter state from URL parameters
-      function readFiltersFromUrl() {
-        if (!initialLoadComplete) return; // Don't apply URL filters until all data loaded
-        console.log('Reading filters from URL...');
-        const url = new URL(window.location.href);
-        let filtersChanged = false;
-
-        const newFilters = {
-            keyword: url.searchParams.get('keyword') || '',
-            deadline: url.searchParams.get('deadline') || 'all',
-            minAmount: url.searchParams.get('min_amount') || '',
-            maxAmount: url.searchParams.get('max_amount') || '',
-            category: url.searchParams.get('category') || '',
-            location: url.searchParams.get('location') || '',
-            eligibility: (url.searchParams.get('eligibility') || '').split(',').filter(Boolean)
+        return {
+            title: title,
+            excerpt: excerpt,
+            status: statusText,
+            deadlineText: deadlineText,
+            deadlineTimestamp: deadlineTimestamp ? parseInt(deadlineTimestamp) : null,
+            amountValue: amountValue,
+            amountText: amountText, // Keep original text for display/edge cases
+            categories: categories, // Array of {name, url}
+            locations: locations, // Array of {name, url}
+            eligibility: eligibility // Array of strings
         };
-        const filterPage = parseInt(url.searchParams.get('filter_page') || '1');
-
-        // Check if filters actually changed compared to current state
-        if (JSON.stringify(newFilters) !== JSON.stringify({
-            keyword: activeFilters.keyword, deadline: activeFilters.deadline, minAmount: activeFilters.minAmount, maxAmount: activeFilters.maxAmount, category: activeFilters.category, location: activeFilters.location, eligibility: activeFilters.eligibility
-        })) {
-            filtersChanged = true;
-            activeFilters = newFilters;
-            updateFormFromFilters(); // Update form fields
-            currentPage = 1; // Reset page if filters changed
-            console.log('Filters changed based on URL.');
-        }
-
-        // Check if page changed
-        if(filterPage !== currentPage && hasActiveFilters()){
-            currentPage = filterPage;
-            filtersChanged = true; // Consider page change as a change needing re-render
-            console.log('Filter page changed based on URL.');
-        } else if (!hasActiveFilters() && currentPage !== 1) {
-             // If no filters active, ensure we are on page 1
-             currentPage = 1;
-             filtersChanged = true;
-        }
+   }
 
 
-        // If any filters or page changed, re-apply
-        if (filtersChanged) {
-            applyFilters(false); // Apply without pushing state again
-        } else {
-            // If only the base URL changed (e.g., removing params), reset if needed
-             if (!hasActiveFilters() && grantsListPlaceholder.querySelector('.filtered-pagination.is-visible')) {
-                resetFilters(false); // Reset visually if filter params removed from URL
+  // Populates filter dropdowns and checkboxes
+  function initializeFilters() {
+      console.log('Initializing filters...');
+      populateSelectFilter(categoryFilter, 'Categories', extractUniqueTaxonomies('categories'));
+      populateSelectFilter(locationFilter, 'Locations', extractUniqueTaxonomies('locations'));
+      populateEligibilityCheckboxes(extractUniqueEligibility());
+      setupEventListeners();
+      console.log('Filters initialized.');
+  }
+
+  // Extracts unique taxonomies (categories/locations) from allGrants
+  function extractUniqueTaxonomies(type) {
+      const taxonomies = new Map(); // Use Map for uniqueness based on URL
+      allGrants.forEach(grant => {
+          grant.data[type].forEach(tax => {
+               if (tax.url && !taxonomies.has(tax.url)) {
+                  taxonomies.set(tax.url, tax.name);
+               }
+          });
+      });
+      // Convert map to array and sort alphabetically by name
+      return Array.from(taxonomies.entries())
+          .map(([url, name]) => ({ url, name }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // Extracts unique eligibility criteria
+   function extractUniqueEligibility() {
+       const eligibilitySet = new Set();
+       allGrants.forEach(grant => {
+           grant.data.eligibility.forEach(e => {
+               if (e) eligibilitySet.add(e.trim()); // Add trimmed, non-empty criteria
+           });
+       });
+       if (eligibilitySet.size === 0) {
+           console.warn("No eligibility criteria found in grant data. Adding fallbacks.");
+           const fallbackTypes = ['Small Businesses', 'Nonprofits', 'Individuals', 'Startups'];
+           fallbackTypes.forEach(type => eligibilitySet.add(type));
+       }
+       return Array.from(eligibilitySet).sort();
+   }
+
+
+  // Populates a select dropdown filter
+  function populateSelectFilter(selectElement, defaultOptionText, options) {
+    if (!selectElement) return;
+    // Keep the first option ("All X")
+    selectElement.length = 1;
+    selectElement.options[0].textContent = `All ${defaultOptionText}`;
+
+    options.forEach(optionData => {
+      const option = document.createElement('option');
+      option.value = optionData.url; // Use URL as value
+      option.textContent = optionData.name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Populates eligibility checkboxes
+  function populateEligibilityCheckboxes(options) {
+    if (!eligibilityContainer) return;
+    eligibilityContainer.innerHTML = ''; // Clear loading/previous options
+
+    if (options.length === 0) {
+        eligibilityContainer.innerHTML = '<p>No eligibility options available.</p>';
+        return;
+    }
+
+    options.forEach((criteria, index) => {
+      const optionId = `eligibility-${index}`;
+      const optionDiv = document.createElement('div');
+      optionDiv.className = 'eligibility-option';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.name = 'eligibility';
+      input.id = optionId;
+      input.value = criteria;
+
+      const label = document.createElement('label');
+      label.htmlFor = optionId;
+      label.textContent = criteria;
+
+      optionDiv.appendChild(input);
+      optionDiv.appendChild(label);
+      eligibilityContainer.appendChild(optionDiv);
+    });
+  }
+
+  // Sets up main event listeners
+  function setupEventListeners() {
+    filterTrigger.addEventListener('click', openFilterModal);
+    filterClose.addEventListener('click', closeFilterModal);
+    filterReset.addEventListener('click', resetFilters);
+    resetFiltersEmpty.addEventListener('click', resetFilters);
+
+    filterModal.addEventListener('click', (e) => {
+      if (e.target === filterModal) closeFilterModal();
+    });
+
+    filterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        updateFiltersFromForm();
+        currentPage = 1; // Reset to first page on new filter submission
+        applyFilters();
+        closeFilterModal(); // Close modal after applying
+    });
+
+    // Use event delegation for pagination clicks
+    document.body.addEventListener('click', (e) => {
+         const paginationLink = e.target.closest('.filtered-pagination a[data-page]');
+         if (paginationLink) {
+             e.preventDefault();
+             const pageNum = parseInt(paginationLink.dataset.page);
+             if (!isNaN(pageNum) && pageNum !== currentPage) {
+                 navigateToFilteredPage(pageNum);
              }
-             console.log('No filter changes detected in URL.');
+         }
+    });
+
+    window.addEventListener('popstate', handlePopState);
+
+    // Prevent implicit form submission on Enter key press in text inputs
+    keywordFilter.addEventListener('keydown', handleEnterKey);
+    minAmountFilter.addEventListener('keydown', handleEnterKey);
+    maxAmountFilter.addEventListener('keydown', handleEnterKey);
+  }
+
+   // Prevent form submission on Enter in specific inputs
+   function handleEnterKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            // Optionally trigger filter apply here if desired,
+            // but standard behavior is to use the Apply button
+            // document.getElementById('filter-apply').click();
         }
+   }
 
-        updateActiveFiltersDisplay(); // Always update tags display
-      }
+  // Reads filter state from URL parameters
+  function readFiltersFromUrl() {
+    if (!initialLoadComplete) return; // Don't apply URL filters until all data loaded
+    console.log('Reading filters from URL...');
+    const url = new URL(window.location.href);
+    let filtersChanged = false;
 
-      // Updates the filter form fields based on the activeFilters object
-       function updateFormFromFilters() {
-            keywordFilter.value = activeFilters.keyword;
-            document.querySelectorAll('input[name="deadline"]').forEach(input => input.checked = input.value === activeFilters.deadline);
-            minAmountFilter.value = activeFilters.minAmount;
-            maxAmountFilter.value = activeFilters.maxAmount;
-            categoryFilter.value = activeFilters.category;
-            locationFilter.value = activeFilters.location;
+    // FIXED: Improved URL parameter handling for the keyword/search field
+    // Previous issue: URL parameters were persisting after reset and not being correctly applied
+    const newFilters = {
+        keyword: url.searchParams.get('keyword') || '',
+        deadline: url.searchParams.get('deadline') || 'all',
+        minAmount: url.searchParams.get('min_amount') || '',
+        maxAmount: url.searchParams.get('max_amount') || '',
+        category: url.searchParams.get('category') || '',
+        location: url.searchParams.get('location') || '',
+        eligibility: (url.searchParams.get('eligibility') || '').split(',').filter(Boolean)
+    };
+    
+    // Parse page number from URL
+    const filterPage = parseInt(url.searchParams.get('filter_page') || '1');
+
+    // Check if filters actually changed compared to current state
+    const currentFilterState = {
+        keyword: activeFilters.keyword, 
+        deadline: activeFilters.deadline, 
+        minAmount: activeFilters.minAmount, 
+        maxAmount: activeFilters.maxAmount, 
+        category: activeFilters.category, 
+        location: activeFilters.location, 
+        eligibility: activeFilters.eligibility
+    };
+
+    if (JSON.stringify(newFilters) !== JSON.stringify(currentFilterState)) {
+        filtersChanged = true;
+        activeFilters = newFilters;
+        updateFormFromFilters(); // Update form fields
+        currentPage = 1; // Reset page if filters changed
+        console.log('Filters changed based on URL.');
+    }
+
+    // Check if page changed
+    if(filterPage !== currentPage && hasActiveFilters()){
+        currentPage = filterPage;
+        filtersChanged = true; // Consider page change as a change needing re-render
+        console.log('Filter page changed based on URL.');
+    } else if (!hasActiveFilters() && currentPage !== 1) {
+         // If no filters active, ensure we are on page 1
+         currentPage = 1;
+         filtersChanged = true;
+    }
+
+    // If any filters or page changed, re-apply
+    if (filtersChanged) {
+        applyFilters(false); // Apply without pushing state again
+    } else {
+        // If only the base URL changed (e.g., removing params), reset if needed
+         if (!hasActiveFilters() && grantsListPlaceholder.querySelector('.filtered-pagination.is-visible')) {
+            resetFilters(false); // Reset visually if filter params removed from URL
+         }
+         console.log('No filter changes detected in URL.');
+    }
+
+    updateActiveFiltersDisplay(); // Always update tags display
+  }
+
+  // Updates the filter form fields based on the activeFilters object
+   function updateFormFromFilters() {
+        // FIXED: Improved form field updating to ensure all fields are correctly set
+        // Previous issue: Some fields might not update completely with activeFilters state
+        
+        // Update text inputs with explicit value setting
+        if (keywordFilter) keywordFilter.value = activeFilters.keyword || '';
+        if (minAmountFilter) minAmountFilter.value = activeFilters.minAmount || '';
+        if (maxAmountFilter) maxAmountFilter.value = activeFilters.maxAmount || '';
+        
+        // Update radio buttons for deadline
+        const deadlineRadio = document.querySelector(`input[name="deadline"][value="${activeFilters.deadline || 'all'}"]`);
+        if (deadlineRadio) {
+            deadlineRadio.checked = true;
+        } else {
+            // Fallback if the value doesn't match any radio button
+            const defaultRadio = document.getElementById('deadline-all');
+            if (defaultRadio) defaultRadio.checked = true;
+        }
+        
+        // Update select dropdowns
+        if (categoryFilter) categoryFilter.value = activeFilters.category || '';
+        if (locationFilter) locationFilter.value = activeFilters.location || '';
+        
+        // Update eligibility checkboxes - first uncheck all
+        document.querySelectorAll('input[name="eligibility"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Then check only those in activeFilters.eligibility
+        if (activeFilters.eligibility && activeFilters.eligibility.length > 0) {
             document.querySelectorAll('input[name="eligibility"]').forEach(checkbox => {
                 checkbox.checked = activeFilters.eligibility.includes(checkbox.value);
             });
-       }
-
-       // Updates the activeFilters object based on the current form state
-       function updateFiltersFromForm() {
-            activeFilters.keyword = keywordFilter.value.trim();
-            document.querySelectorAll('input[name="deadline"]').forEach(input => {
-                if (input.checked) activeFilters.deadline = input.value;
-            });
-            activeFilters.minAmount = minAmountFilter.value.trim();
-            activeFilters.maxAmount = maxAmountFilter.value.trim();
-            activeFilters.category = categoryFilter.value;
-            activeFilters.location = locationFilter.value;
-            activeFilters.eligibility = [];
-            document.querySelectorAll('input[name="eligibility"]:checked').forEach(input => {
-                activeFilters.eligibility.push(input.value);
-            });
-       }
-
-      // Handles browser back/forward navigation
-      function handlePopState() {
-        console.log('Popstate event triggered.');
-        readFiltersFromUrl(); // Re-read filters from the new URL state
-      }
-
-      // Updates the URL with current filter state
-      function updateUrl(page = null) {
-        if (!history.pushState || !initialLoadComplete) return;
-
-        const url = new URL(window.location.origin + window.location.pathname); // Start fresh path
-
-        // Add filter parameters only if they are active
-        if (activeFilters.keyword) url.searchParams.set('keyword', activeFilters.keyword);
-        if (activeFilters.deadline !== 'all') url.searchParams.set('deadline', activeFilters.deadline);
-        if (activeFilters.minAmount) url.searchParams.set('min_amount', activeFilters.minAmount);
-        if (activeFilters.maxAmount) url.searchParams.set('max_amount', activeFilters.maxAmount);
-        if (activeFilters.category) url.searchParams.set('category', activeFilters.category);
-        if (activeFilters.location) url.searchParams.set('location', activeFilters.location);
-        if (activeFilters.eligibility.length > 0) url.searchParams.set('eligibility', activeFilters.eligibility.join(','));
-
-        // Determine the page number to set in URL
-        const pageToSet = page !== null ? page : currentPage;
-        if (hasActiveFilters() && pageToSet > 1) {
-            url.searchParams.set('filter_page', pageToSet);
         }
+   }
 
-        // Use replaceState for page navigation within filters, pushState for initial filter application/reset
-        const isNavigatingPage = page !== null && hasActiveFilters();
-        const stateAction = isNavigatingPage ? 'replaceState' : 'pushState';
+   // Updates the activeFilters object based on the current form state
+   function updateFiltersFromForm() {
+        activeFilters.keyword = keywordFilter.value.trim();
+        document.querySelectorAll('input[name="deadline"]').forEach(input => {
+            if (input.checked) activeFilters.deadline = input.value;
+        });
+        activeFilters.minAmount = minAmountFilter.value.trim();
+        activeFilters.maxAmount = maxAmountFilter.value.trim();
+        activeFilters.category = categoryFilter.value;
+        activeFilters.location = locationFilter.value;
+        activeFilters.eligibility = [];
+        document.querySelectorAll('input[name="eligibility"]:checked').forEach(input => {
+            activeFilters.eligibility.push(input.value);
+        });
+   }
 
-        // Prevent pushing same state repeatedly
-        if (url.toString() !== window.location.href) {
-            history[stateAction]({}, '', url);
-            console.log(`URL updated (${stateAction}): ${url}`);
-        }
-      }
+  // Handles browser back/forward navigation
+  function handlePopState() {
+    console.log('Popstate event triggered.');
+    readFiltersFromUrl(); // Re-read filters from the new URL state
+  }
+
+  // Updates the URL with current filter state
+  function updateUrl(page = null) {
+    if (!history.pushState || !initialLoadComplete) return;
+
+    const url = new URL(window.location.origin + window.location.pathname); // Start fresh path
+
+    // Add filter parameters only if they are active
+    if (activeFilters.keyword) url.searchParams.set('keyword', activeFilters.keyword);
+    if (activeFilters.deadline !== 'all') url.searchParams.set('deadline', activeFilters.deadline);
+    if (activeFilters.minAmount) url.searchParams.set('min_amount', activeFilters.minAmount);
+    if (activeFilters.maxAmount) url.searchParams.set('max_amount', activeFilters.maxAmount);
+    if (activeFilters.category) url.searchParams.set('category', activeFilters.category);
+    if (activeFilters.location) url.searchParams.set('location', activeFilters.location);
+    if (activeFilters.eligibility.length > 0) url.searchParams.set('eligibility', activeFilters.eligibility.join(','));
+
+    // Determine the page number to set in URL
+    const pageToSet = page !== null ? page : currentPage;
+    if (hasActiveFilters() && pageToSet > 1) {
+        url.searchParams.set('filter_page', pageToSet);
+    }
+
+    // Use replaceState for page navigation within filters, pushState for initial filter application/reset
+    const isNavigatingPage = page !== null && hasActiveFilters();
+    const stateAction = isNavigatingPage ? 'replaceState' : 'pushState';
+
+    // Prevent pushing same state repeatedly
+    if (url.toString() !== window.location.href) {
+        history[stateAction]({}, '', url);
+        console.log(`URL updated (${stateAction}): ${url}`);
+    }
+  }
 
 
-      // Checks if any filters are currently active
-      function hasActiveFilters() {
-          return checkConditions([
-              activeFilters.keyword !== '',
-              activeFilters.deadline !== 'all',
-              activeFilters.minAmount !== '',
-              activeFilters.maxAmount !== '',
-              activeFilters.category !== '',
-              activeFilters.location !== '',
-              activeFilters.eligibility.length > 0
-          ].some(Boolean)); // Use .some to check if ANY condition is true
-      }
+  // Checks if any filters are currently active
+  function hasActiveFilters() {
+      return checkConditions([
+          activeFilters.keyword !== '',
+          activeFilters.deadline !== 'all',
+          activeFilters.minAmount !== '',
+          activeFilters.maxAmount !== '',
+          activeFilters.category !== '',
+          activeFilters.location !== '',
+          activeFilters.eligibility.length > 0
+      ].some(Boolean)); // Use .some to check if ANY condition is true
+  }
 
 
-      // Updates the display of active filter tags below the filter button
-      function updateActiveFiltersDisplay() {
-          activeFiltersContainer.innerHTML = ''; // Clear existing
+  // Updates the display of active filter tags below the filter button
+  function updateActiveFiltersDisplay() {
+      activeFiltersContainer.innerHTML = ''; // Clear existing
 
-          if (!hasActiveFilters()) return; // Don't show anything if no filters
+      if (!hasActiveFilters()) return; // Don't show anything if no filters
 
-          // Add keyword filter tag
-          if (activeFilters.keyword) {
-              addActiveFilterTag('Keyword', activeFilters.keyword, () => {
-                  activeFilters.keyword = '';
-                  keywordFilter.value = '';
-                  currentPage = 1; applyFilters();
-              });
-          }
-          // Add deadline filter tag
-          if (activeFilters.deadline !== 'all') {
-              const label = document.querySelector(`label[for="deadline-${activeFilters.deadline}"]`)?.textContent || activeFilters.deadline;
-              addActiveFilterTag('Deadline', label, () => {
-                  activeFilters.deadline = 'all';
-                  document.getElementById('deadline-all').checked = true;
-                   currentPage = 1; applyFilters();
-              });
-          }
-          // Add amount filters tags
-          if (activeFilters.minAmount) {
-              addActiveFilterTag('Min Amount', '$' + activeFilters.minAmount, () => {
-                  activeFilters.minAmount = ''; minAmountFilter.value = ''; currentPage = 1; applyFilters();
-              });
-          }
-          if (activeFilters.maxAmount) {
-              addActiveFilterTag('Max Amount', '$' + activeFilters.maxAmount, () => {
-                  activeFilters.maxAmount = ''; maxAmountFilter.value = ''; currentPage = 1; applyFilters();
-              });
-          }
-           // Add category filter tag
-           if (activeFilters.category) {
-                const text = categoryFilter.options[categoryFilter.selectedIndex]?.textContent || activeFilters.category;
-                if (text && text !== 'All Categories') {
-                     addActiveFilterTag('Category', text, () => {
-                          activeFilters.category = ''; categoryFilter.value = ''; currentPage = 1; applyFilters();
-                     });
-                }
-           }
-           // Add location filter tag
-           if (activeFilters.location) {
-               const text = locationFilter.options[locationFilter.selectedIndex]?.textContent || activeFilters.location;
-               if (text && text !== 'All Locations') {
-                    addActiveFilterTag('Location', text, () => {
-                         activeFilters.location = ''; locationFilter.value = ''; currentPage = 1; applyFilters();
-                    });
-               }
-           }
-          // Add eligibility filter tags
-          activeFilters.eligibility.forEach(criteria => {
-              addActiveFilterTag('Eligibility', criteria, () => {
-                  activeFilters.eligibility = activeFilters.eligibility.filter(e => e !== criteria);
-                  document.querySelectorAll('input[name="eligibility"]').forEach(cb => { if (cb.value === criteria) cb.checked = false; });
-                  currentPage = 1; applyFilters();
-              });
+      // Add keyword filter tag
+      if (activeFilters.keyword) {
+          addActiveFilterTag('Keyword', activeFilters.keyword, () => {
+              activeFilters.keyword = '';
+              keywordFilter.value = '';
+              currentPage = 1; applyFilters();
           });
-
-           // Add Reset All button at the end if there are filters
-           const resetButton = document.createElement('button');
-           resetButton.type = 'button';
-           resetButton.className = 'reset-all-filters';
-           resetButton.textContent = 'Reset All';
-           resetButton.addEventListener('click', () => resetFilters());
-           activeFiltersContainer.appendChild(resetButton);
       }
-
-      // Helper to create and append an active filter tag element
-      function addActiveFilterTag(label, value, removeCallback) {
-        const filterTag = document.createElement('div');
-        filterTag.className = 'active-filter';
-
-        const filterLabel = document.createElement('span');
-        filterLabel.className = 'active-filter-label';
-        filterLabel.textContent = label + ': ';
-
-        const filterValue = document.createElement('span');
-        filterValue.className = 'active-filter-value';
-        filterValue.textContent = value;
-
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'active-filter-remove';
-        removeButton.setAttribute('aria-label', `Remove ${label} filter: ${value}`);
-        removeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-        removeButton.addEventListener('click', removeCallback); // Attach the remove logic
-
-        filterTag.appendChild(filterLabel);
-        filterTag.appendChild(filterValue);
-        filterTag.appendChild(removeButton);
-        activeFiltersContainer.appendChild(filterTag); // Append to the container
+      // Add deadline filter tag
+      if (activeFilters.deadline !== 'all') {
+          const label = document.querySelector(`label[for="deadline-${activeFilters.deadline}"]`)?.textContent || activeFilters.deadline;
+          addActiveFilterTag('Deadline', label, () => {
+              activeFilters.deadline = 'all';
+              document.getElementById('deadline-all').checked = true;
+               currentPage = 1; applyFilters();
+          });
       }
-
-       // --- DOM Manipulation & Filtering Logic ---
-
-       // Applies current filters and updates the DOM
-       function applyFilters(updateUrlFlag = true) {
-           console.log('Applying filters:', activeFilters);
-           grantsLoading.classList.add('is-active');
-           noMatchingGrants.classList.remove('is-visible'); // Hide no results message initially
-
-           // Use requestAnimationFrame to allow loading indicator to render
-           requestAnimationFrame(() => {
-                try {
-                    const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant.data));
-                    console.log(`Filtering complete: ${filteredGrants.length} grants match.`);
-
-                    updateActiveFiltersDisplay(); // Update tags
-                    updateGrantsCounter(filteredGrants.length, allGrants.length); // Update counts
-
-                    // Calculate pagination for filtered results
-                    const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage) || 1;
-                    // Ensure currentPage is valid for the filtered set
-                    currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages);
-
-                    // Determine grants to display for the current page
-                    const startIndex = (currentPage - 1) * postsPerPage;
-                    const endIndex = startIndex + postsPerPage;
-                    const grantsToShow = filteredGrants.slice(startIndex, endIndex);
-
-                    // Update the DOM with filtered results
-                    renderGrants(grantsToShow);
-
-                    // Update and show/hide filtered pagination
-                    updateFilteredPagination(filteredGrants.length, totalFilteredPages);
-
-                    // Show "no results" message if needed
-                    if (grantsToShow.length === 0 && hasActiveFilters()) {
-                        noMatchingGrants.classList.add('is-visible');
-                         // Ensure grants container is empty visually
-                         if (grantsContainer) grantsContainer.innerHTML = '';
-                    }
-
-                     // Update URL if requested and filters are active
-                    if (updateUrlFlag) {
-                        updateUrl();
-                    }
-
-                } catch (error) {
-                    console.error('Grantaura Filter Error applying filters:', error);
-                    grantsCounter.textContent = 'Error applying filters.';
-                    // Optionally reset to original state or show error message
-                    resetToOriginalState(false); // Reset visually without pushing state
-                } finally {
-                    grantsLoading.classList.remove('is-active');
-                    initGrantsScripts(); // Re-initialize countdowns etc. for displayed grants
-                }
-           });
-       }
-
-        // Renders the provided grant objects into the grants container
-       function renderGrants(grantsToRender) {
-            console.log(`Rendering ${grantsToRender.length} grants for page ${currentPage}.`);
-            if (!grantsListPlaceholder || !originalStructureTemplate.hasChildNodes()) {
-                 console.error("Cannot render grants: placeholder or original structure template missing.");
-                 return;
-            }
-
-            // Create a fresh copy of the grants list section structure
-            const newSection = originalStructureTemplate.firstChild.cloneNode(true);
-            const newContainer = newSection.querySelector('.grants-container');
-
-            if (!newContainer) {
-                console.error("Cannot render grants: .grants-container not found in template.");
-                return;
-            }
-
-            newContainer.innerHTML = ''; // Clear the container inside the new structure
-
-            // Append grant cards from templates
-            if (grantsToRender.length > 0) {
-                 grantsToRender.forEach(grantInfo => {
-                      const template = templateContainer.querySelector(`#${grantInfo.templateId}`);
-                      if (template) {
-                          const grantCard = template.cloneNode(true);
-                          grantCard.id = grantInfo.id; // Restore runtime ID if needed
-                           // Restore original classes/styles if necessary (though template should have them)
-                           // grantCard.className = grantInfo.originalClasses || 'g-card';
-                           // grantCard.style = grantInfo.originalStyle || '';
-                          newContainer.appendChild(grantCard);
-                      } else {
-                          console.warn(`Template not found for grant ID: ${grantInfo.templateId}`);
-                           // Fallback: create a simple message? Or skip?
-                      }
+      // Add amount filters tags
+      if (activeFilters.minAmount) {
+          addActiveFilterTag('Min Amount', '$' + activeFilters.minAmount, () => {
+              activeFilters.minAmount = ''; minAmountFilter.value = ''; currentPage = 1; applyFilters();
+          });
+      }
+      if (activeFilters.maxAmount) {
+          addActiveFilterTag('Max Amount', '$' + activeFilters.maxAmount, () => {
+              activeFilters.maxAmount = ''; maxAmountFilter.value = ''; currentPage = 1; applyFilters();
+          });
+      }
+       // Add category filter tag
+       if (activeFilters.category) {
+            const text = categoryFilter.options[categoryFilter.selectedIndex]?.textContent || activeFilters.category;
+            if (text && text !== 'All Categories') {
+                 addActiveFilterTag('Category', text, () => {
+                      activeFilters.category = ''; categoryFilter.value = ''; currentPage = 1; applyFilters();
                  });
-                noMatchingGrants.classList.remove('is-visible'); // Hide message if grants found
             }
+       }
+       // Add location filter tag
+       if (activeFilters.location) {
+           const text = locationFilter.options[locationFilter.selectedIndex]?.textContent || activeFilters.location;
+           if (text && text !== 'All Locations') {
+                addActiveFilterTag('Location', text, () => {
+                     activeFilters.location = ''; locationFilter.value = ''; currentPage = 1; applyFilters();
+                });
+           }
+       }
+      // Add eligibility filter tags
+      activeFilters.eligibility.forEach(criteria => {
+          addActiveFilterTag('Eligibility', criteria, () => {
+              activeFilters.eligibility = activeFilters.eligibility.filter(e => e !== criteria);
+              document.querySelectorAll('input[name="eligibility"]').forEach(cb => { if (cb.value === criteria) cb.checked = false; });
+              currentPage = 1; applyFilters();
+          });
+      });
 
-            // Replace the current content with the new filtered structure
-            grantsListPlaceholder.innerHTML = ''; // Clear placeholder
-            grantsListPlaceholder.appendChild(newSection);
+       // Add Reset All button at the end if there are filters
+       const resetButton = document.createElement('button');
+       resetButton.type = 'button';
+       resetButton.className = 'reset-all-filters';
+       resetButton.textContent = 'Reset All';
+       resetButton.addEventListener('click', () => resetFilters());
+       activeFiltersContainer.appendChild(resetButton);
+  }
 
-            // Update global references
-            grantsListingSection = newSection;
-            grantsContainer = newContainer;
+  // Helper to create and append an active filter tag element
+  function addActiveFilterTag(label, value, removeCallback) {
+    const filterTag = document.createElement('div');
+    filterTag.className = 'active-filter';
+
+    const filterLabel = document.createElement('span');
+    filterLabel.className = 'active-filter-label';
+    filterLabel.textContent = label + ': ';
+
+    const filterValue = document.createElement('span');
+    filterValue.className = 'active-filter-value';
+    filterValue.textContent = value;
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'active-filter-remove';
+    removeButton.setAttribute('aria-label', `Remove ${label} filter: ${value}`);
+    removeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+    removeButton.addEventListener('click', removeCallback); // Attach the remove logic
+
+    filterTag.appendChild(filterLabel);
+    filterTag.appendChild(filterValue);
+    filterTag.appendChild(removeButton);
+    activeFiltersContainer.appendChild(filterTag); // Append to the container
+  }
+
+   // --- DOM Manipulation & Filtering Logic ---
+
+   // Applies current filters and updates the DOM
+   function applyFilters(updateUrlFlag = true) {
+       console.log('Applying filters:', activeFilters);
+       grantsLoading.classList.add('is-active');
+       noMatchingGrants.classList.remove('is-visible'); // Hide no results message initially
+
+       // Use requestAnimationFrame to allow loading indicator to render
+       requestAnimationFrame(() => {
+            try {
+                const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant.data));
+                console.log(`Filtering complete: ${filteredGrants.length} grants match.`);
+
+                updateActiveFiltersDisplay(); // Update tags
+                updateGrantsCounter(filteredGrants.length, allGrants.length); // Update counts
+
+                // Calculate pagination for filtered results
+                const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage) || 1;
+                // Ensure currentPage is valid for the filtered set
+                currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages);
+
+                // Determine grants to display for the current page
+                const startIndex = (currentPage - 1) * postsPerPage;
+                const endIndex = startIndex + postsPerPage;
+                const grantsToShow = filteredGrants.slice(startIndex, endIndex);
+
+                // Update the DOM with filtered results
+                renderGrants(grantsToShow);
+
+                // Update and show/hide filtered pagination
+                updateFilteredPagination(filteredGrants.length, totalFilteredPages);
+
+                // Show "no results" message if needed
+                if (grantsToShow.length === 0 && hasActiveFilters()) {
+                    noMatchingGrants.classList.add('is-visible');
+                     // Ensure grants container is empty visually
+                     if (grantsContainer) grantsContainer.innerHTML = '';
+                }
+
+                 // Update URL if requested and filters are active
+                if (updateUrlFlag) {
+                    updateUrl();
+                }
+
+            } catch (error) {
+                console.error('Grantaura Filter Error applying filters:', error);
+                grantsCounter.textContent = 'Error applying filters.';
+                // Optionally reset to original state or show error message
+                resetToOriginalState(false); // Reset visually without pushing state
+            } finally {
+                grantsLoading.classList.remove('is-active');
+                initGrantsScripts(); // Re-initialize countdowns etc. for displayed grants
+            }
+       });
+   }
+
+    // Renders the provided grant objects into the grants container
+   function renderGrants(grantsToRender) {
+        console.log(`Rendering ${grantsToRender.length} grants for page ${currentPage}.`);
+        if (!grantsListPlaceholder || !originalStructureTemplate.hasChildNodes()) {
+             console.error("Cannot render grants: placeholder or original structure template missing.");
+             return;
+        }
+
+        // Create a fresh copy of the grants list section structure
+        const newSection = originalStructureTemplate.firstChild.cloneNode(true);
+        const newContainer = newSection.querySelector('.grants-container');
+
+        if (!newContainer) {
+            console.error("Cannot render grants: .grants-container not found in template.");
+            return;
+        }
+
+        newContainer.innerHTML = ''; // Clear the container inside the new structure
+
+        // Append grant cards from templates
+        if (grantsToRender.length > 0) {
+             grantsToRender.forEach(grantInfo => {
+                  const template = templateContainer.querySelector(`#${grantInfo.templateId}`);
+                  if (template) {
+                      const grantCard = template.cloneNode(true);
+                      grantCard.id = grantInfo.id; // Restore runtime ID if needed
+                       // Restore original classes/styles if necessary (though template should have them)
+                       // grantCard.className = grantInfo.originalClasses || 'g-card';
+                       // grantCard.style = grantInfo.originalStyle || '';
+                      newContainer.appendChild(grantCard);
+                  } else {
+                      console.warn(`Template not found for grant ID: ${grantInfo.templateId}`);
+                       // Fallback: create a simple message? Or skip?
+                  }
+             });
+            noMatchingGrants.classList.remove('is-visible'); // Hide message if grants found
+        }
+
+        // Replace the current content with the new filtered structure
+        grantsListPlaceholder.innerHTML = ''; // Clear placeholder
+        grantsListPlaceholder.appendChild(newSection);
+
+        // Update global references
+        grantsListingSection = newSection;
+        grantsContainer = newContainer;
+   }
+
+
+  // Checks if a single grant matches the current activeFilters state
+   function doesGrantMatchFilters(grantData) {
+       // Keyword Filter (Title & Excerpt)
+       if (activeFilters.keyword) {
+            const keywordLower = activeFilters.keyword.toLowerCase();
+            if (!grantData.title.includes(keywordLower) && !grantData.excerpt.includes(keywordLower)) {
+                 return false;
+            }
        }
 
-
-      // Checks if a single grant matches the current activeFilters state
-       function doesGrantMatchFilters(grantData) {
-           // Keyword Filter (Title & Excerpt)
-           if (activeFilters.keyword) {
-                const keywordLower = activeFilters.keyword.toLowerCase();
-                if (!grantData.title.includes(keywordLower) && !grantData.excerpt.includes(keywordLower)) {
-                     return false;
-                }
-           }
-
-           // Deadline Filter
-           if (activeFilters.deadline !== 'all') {
-               if (!getDeadlineMatch(grantData, activeFilters.deadline)) {
-                   return false;
-               }
-           }
-
-           // Amount Filter
-           const minAmount = parseFloat(activeFilters.minAmount);
-           const maxAmount = parseFloat(activeFilters.maxAmount);
-
-           if (!isNaN(minAmount) && (isNaN(grantData.amountValue) || grantData.amountValue < minAmount)) {
-                return false; // Grant amount is less than min, or not a number when min is set
-           }
-           if (!isNaN(maxAmount) && (isNaN(grantData.amountValue) || grantData.amountValue > maxAmount)) {
-                return false; // Grant amount is more than max, or not a number when max is set
-           }
-           // Note: Grants with NaN amount (e.g., "Various Benefits") will pass amount filters unless specifically excluded
-
-           // Category Filter (checks against category URL)
-           if (activeFilters.category && !grantData.categories.some(cat => cat.url === activeFilters.category)) {
+       // Deadline Filter
+       if (activeFilters.deadline !== 'all') {
+           if (!getDeadlineMatch(grantData, activeFilters.deadline)) {
                return false;
            }
+       }
 
-           // Location Filter (checks against location URL)
-           if (activeFilters.location && !grantData.locations.some(loc => loc.url === activeFilters.location)) {
-                return false;
+       // Amount Filter
+       const minAmount = parseFloat(activeFilters.minAmount);
+       const maxAmount = parseFloat(activeFilters.maxAmount);
+
+       // FIXED: Improved amount filter logic to better handle special cases
+       // Previous issue: Excluded all grants with non-numeric amounts and had logic errors
+       
+       // Min amount filter
+       if (!isNaN(minAmount)) {
+           if (isNaN(grantData.amountValue)) {
+               // Special case: For "Various Benefits" or similar non-numeric amounts
+               // We need to decide whether to include them in filtered results
+               const isVariousBenefits = grantData.amountText.toLowerCase().includes('various') || 
+                                        grantData.amountText.toLowerCase().includes('benefits');
+               
+               // Currently excluding non-numeric amounts when min filter is set
+               // Can be modified to include them if needed by policy
+               if (!isVariousBenefits) return false;
+           } 
+           else if (grantData.amountValue < minAmount) {
+               return false; // Amount is below minimum
            }
+       }
 
-            // Eligibility Filter (checks if ANY selected criteria match grant's criteria)
-            if (activeFilters.eligibility.length > 0) {
-                const grantEligibilityLower = grantData.eligibility.map(e => e.toLowerCase());
-                const filterMatch = activeFilters.eligibility.some(filterCriteria =>
-                    grantEligibilityLower.includes(filterCriteria.toLowerCase())
+       // Max amount filter
+       if (!isNaN(maxAmount)) {
+           if (isNaN(grantData.amountValue)) {
+               // Same special handling for max filter
+               const isVariousBenefits = grantData.amountText.toLowerCase().includes('various') || 
+                                       grantData.amountText.toLowerCase().includes('benefits');
+               
+               if (!isVariousBenefits) return false;
+           } 
+           else if (grantData.amountValue > maxAmount) {
+               return false; // Amount is above maximum
+           }
+       }
+
+       // Category Filter (checks against category URL)
+       if (activeFilters.category && !grantData.categories.some(cat => cat.url === activeFilters.category)) {
+           return false;
+       }
+
+       // Location Filter (checks against location URL)
+       if (activeFilters.location && !grantData.locations.some(loc => loc.url === activeFilters.location)) {
+            return false;
+       }
+
+        // Eligibility Filter (checks if ANY selected criteria match grant's criteria)
+        if (activeFilters.eligibility.length > 0) {
+            // FIXED: Improved eligibility matching with better normalization and partial matching
+            // Previous issue: Strict casing and whitespace comparison was causing false negatives
+            const grantEligibilityLower = grantData.eligibility.map(e => e.toLowerCase().trim());
+            
+            // First try exact match, then try partial match for more flexibility
+            const filterMatch = activeFilters.eligibility.some(filterCriteria => {
+                const normalizedCriteria = filterCriteria.toLowerCase().trim();
+                
+                // Exact match check
+                if (grantEligibilityLower.includes(normalizedCriteria)) {
+                    return true;
+                }
+                
+                // Partial match as fallback - check if selected criteria contains or is contained in any grant eligibility
+                return grantEligibilityLower.some(grantElig => 
+                    grantElig.includes(normalizedCriteria) || normalizedCriteria.includes(grantElig)
                 );
-                 if (!filterMatch) {
-                      // Maybe add partial matching here if needed:
-                      // const partialMatch = activeFilters.eligibility.some(filterCriteriaLower =>
-                      //     grantEligibilityLower.some(grantEC => grantEC.includes(filterCriteriaLower))
-                      // );
-                      // if (!partialMatch) return false;
-                      return false; // Strict matching for now
-                 }
+            });
+            
+            if (!filterMatch) {
+                return false;
             }
+        }
 
 
-           return true; // All filters passed
-       }
+       return true; // All filters passed
+   }
 
-      // Helper function for deadline matching logic
-       function getDeadlineMatch(grantData, filterValue) {
-            const today = new Date(); today.setHours(0, 0, 0, 0);
-            const status = grantData.status || '';
-            const isOngoing = grantData.deadlineText.toLowerCase().includes('ongoing') || status.includes('ongoing');
-            const isActiveStatus = status.includes('active'); // Based on badge text
+  // Helper function for deadline matching logic
+   function getDeadlineMatch(grantData, filterValue) {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+        // FIXED: Added current time reference for 24-hour calculations
+        const now = new Date(); // Current time with hours/minutes
+        
+        const status = grantData.status || '';
+        const isOngoing = grantData.deadlineText.toLowerCase().includes('ongoing') || status.includes('ongoing');
+        const isActiveStatus = status.includes('active'); // Based on badge text
 
-            let deadlineDate = null;
-            if (grantData.deadlineTimestamp) {
-                 deadlineDate = new Date(grantData.deadlineTimestamp * 1000);
-                 deadlineDate.setHours(23, 59, 59, 999); // Consider deadline as end of day
-            } else if (grantData.deadlineText && !isOngoing) {
-                // Try parsing text if timestamp is missing
-                try {
-                    const parsed = new Date(grantData.deadlineText);
-                    if (!isNaN(parsed.getTime())) {
-                        deadlineDate = parsed;
-                        deadlineDate.setHours(23, 59, 59, 999);
-                    }
-                } catch(e) { /* Ignore parsing errors */ }
-            }
-
-           switch (filterValue) {
-               case 'today':
-                   return deadlineDate instanceof Date && deadlineDate.toDateString() === today.toDateString();
-               case 'week':
-                   if (!deadlineDate) return false;
-                   const firstDayOfWeek = new Date(today); firstDayOfWeek.setDate(today.getDate() - today.getDay());
-                   const lastDayOfWeek = new Date(firstDayOfWeek); lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6); lastDayOfWeek.setHours(23, 59, 59, 999);
-                   return deadlineDate >= firstDayOfWeek && deadlineDate <= lastDayOfWeek;
-               case 'month':
-                   if (!deadlineDate) return false;
-                   return deadlineDate.getMonth() === today.getMonth() && deadlineDate.getFullYear() === today.getFullYear();
-               case 'ongoing':
-                   return isOngoing;
-               case 'active':
-                    // Consider active if status badge says "Active", OR it's ongoing, OR it has a future deadline
-                    return isActiveStatus || isOngoing || (deadlineDate instanceof Date && deadlineDate >= today);
-               default: // 'all' case or unrecognized filter
-                   return true;
-           }
-       }
-
-      // Helper function to parse amount string
-      function parseAmount(amountText) {
-          if (!amountText || typeof amountText !== 'string') return NaN;
-          if (amountText.toLowerCase().includes('various') || !amountText.includes('$')) return NaN;
-          const numericString = amountText.replace(/[^0-9.]/g, ''); // Keep only numbers and decimal
-          return parseFloat(numericString);
-      }
-
-        // Updates the grants counter text
-       function updateGrantsCounter(count, total = null) {
-            total = total ?? allGrants.length; // Use total stored grants if not provided
-            const totalText = initialLoadComplete ? total : '...'; // Show '...' if still loading
-
-            if (!hasActiveFilters()) {
-                 grantsCounter.innerHTML = `Showing <strong>${count}</strong> of <strong>${totalText}</strong> Grants`;
-            } else {
-                 grantsCounter.innerHTML = `Found <strong>${count}</strong> Matching Grants (of ${totalText})`;
-            }
-       }
-
-
-      // Updates the filtered pagination display
-      function updateFilteredPagination(totalItems, totalPages) {
-           console.log(`Updating pagination: totalItems=${totalItems}, totalPages=${totalPages}, currentPage=${currentPage}`);
-           filteredPaginationList.innerHTML = ''; // Clear existing
-
-           if (totalPages <= 1) {
-                filteredPagination.classList.remove('is-visible');
-                return; // No pagination needed for 0 or 1 page
-           }
-
-            filteredPagination.classList.add('is-visible'); // Show pagination
-
-           // Previous page link
-           if (currentPage > 1) {
-               filteredPaginationList.appendChild(createPaginationItem('prev', currentPage - 1, 'Prev'));
-           }
-
-           // Page number links logic (simplified for clarity)
-           const maxPagesToShow = 5;
-           let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-           let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-            // Adjust startPage if endPage reaches the total limit early
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
-
-            // Add first page and ellipsis if needed
-            if (startPage > 1) {
-                filteredPaginationList.appendChild(createPaginationItem('page', 1));
-                if (startPage > 2) {
-                    filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
+        let deadlineDate = null;
+        if (grantData.deadlineTimestamp) {
+             deadlineDate = new Date(grantData.deadlineTimestamp * 1000);
+             deadlineDate.setHours(23, 59, 59, 999); // Consider deadline as end of day
+        } else if (grantData.deadlineText && !isOngoing) {
+            // Try parsing text if timestamp is missing
+            try {
+                const parsed = new Date(grantData.deadlineText);
+                if (!isNaN(parsed.getTime())) {
+                    deadlineDate = parsed;
+                    deadlineDate.setHours(23, 59, 59, 999);
                 }
-            }
+            } catch(e) { /* Ignore parsing errors */ }
+        }
 
-            // Create page number links
-            for (let i = startPage; i <= endPage; i++) {
-                 filteredPaginationList.appendChild(createPaginationItem(i === currentPage ? 'current' : 'page', i));
-            }
+       switch (filterValue) {
+           case 'today':
+               // FIXED: Improved "today" filter to include grants due within 24 hours
+               // Previous issue: Only matched grants with today's exact date
+               if (!deadlineDate) return false;
+               
+               // Match if deadline is today's date
+               if (deadlineDate.toDateString() === today.toDateString()) return true;
+               
+               // Also match if deadline is within the next 24 hours (even if tomorrow)
+               const within24Hours = (deadlineDate.getTime() - now.getTime()) <= (24 * 60 * 60 * 1000);
+               return within24Hours;
+               
+           case 'week':
+               if (!deadlineDate) return false;
+               const firstDayOfWeek = new Date(today); firstDayOfWeek.setDate(today.getDate() - today.getDay());
+               const lastDayOfWeek = new Date(firstDayOfWeek); lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6); lastDayOfWeek.setHours(23, 59, 59, 999);
+               return deadlineDate >= firstDayOfWeek && deadlineDate <= lastDayOfWeek;
+           case 'month':
+               if (!deadlineDate) return false;
+               return deadlineDate.getMonth() === today.getMonth() && deadlineDate.getFullYear() === today.getFullYear();
+           case 'ongoing':
+               return isOngoing;
+           case 'active':
+                // Consider active if status badge says "Active", OR it's ongoing, OR it has a future deadline
+                return isActiveStatus || isOngoing || (deadlineDate instanceof Date && deadlineDate >= today);
+           default: // 'all' case or unrecognized filter
+               return true;
+       }
+   }
 
-            // Add last page and ellipsis if needed
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
-                }
-                filteredPaginationList.appendChild(createPaginationItem('page', totalPages));
-            }
-
-           // Next page link
-           if (currentPage < totalPages) {
-               filteredPaginationList.appendChild(createPaginationItem('next', currentPage + 1, 'Next'));
-           }
-      }
-
-      // Helper to create a single pagination list item (li)
-      function createPaginationItem(type, page, text = null) {
-        const item = document.createElement('li');
-        item.className = 'g-pagination__item';
-
-        if (type === 'current') {
-          item.classList.add('g-pagination__item--current');
-          const span = document.createElement('span');
-          span.textContent = page;
-          item.appendChild(span);
-        } else if (type === 'dots') {
-          item.classList.add('g-pagination__item--dots');
-          const span = document.createElement('span');
-          span.setAttribute('aria-hidden', 'true'); // Dots are decorative
-          span.textContent = text || '...';
-          item.appendChild(span);
-        } else {
-          const link = document.createElement('a');
-          link.href = '#'; // Prevent page jump, handled by JS
-          link.setAttribute('data-page', page);
-          link.setAttribute('aria-label', type === 'prev' ? 'Previous page' : type === 'next' ? 'Next page' : `Go to page ${page}`);
-
-          if (type === 'prev') {
-            item.classList.add('g-pagination__item--prev');
-            link.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg> ${text || 'Prev'}`;
-          } else if (type === 'next') {
-            item.classList.add('g-pagination__item--next');
-            link.innerHTML = `${text || 'Next'} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
-          } else { // 'page' type
-            link.textContent = text || page;
+  // Helper function to parse amount string
+  function parseAmount(amountText) {
+      // FIXED: Improved amount parsing logic to handle various formats
+      // Previous issue: Only handled simple numeric amounts and failed on ranges
+      if (!amountText || typeof amountText !== 'string') return NaN;
+      
+      // Skip parsing for non-numeric description amounts
+      if (amountText.toLowerCase().includes('various') || !amountText.includes('$')) return NaN;
+      
+      // Handle range amounts (e.g., "$1,000-$5,000", "Up to $10,000", etc.)
+      if (amountText.includes('-') || amountText.toLowerCase().includes('up to')) {
+          // For ranges, take the lower value as a conservative approach
+          let lowerValue;
+          
+          if (amountText.includes('-')) {
+              // Extract first number in range (e.g., "$1,000-$5,000" => "$1,000")
+              lowerValue = amountText.split('-')[0].trim();
+          } else if (amountText.toLowerCase().includes('up to')) {
+              // Extract the "up to" value (e.g., "Up to $10,000" => "$10,000")
+              lowerValue = amountText.toLowerCase().replace('up to', '').trim();
           }
-          item.appendChild(link);
-        }
-        return item;
+          
+          // Extract numeric part after $ sign
+          const numericMatch = lowerValue.match(/\$\s*([\d,]+(?:\.\d+)?)/);
+          if (numericMatch && numericMatch[1]) {
+              // Remove commas and convert to float
+              return parseFloat(numericMatch[1].replace(/,/g, ''));
+          }
       }
+      
+      // For single amounts, extract the numeric part after the $ sign
+      const numericMatch = amountText.match(/\$\s*([\d,]+(?:\.\d+)?)/);
+      if (numericMatch && numericMatch[1]) {
+          // Remove commas and convert to float
+          return parseFloat(numericMatch[1].replace(/,/g, ''));
+      }
+      
+      // Fallback: remove all non-numeric characters except decimal point
+      const numericString = amountText.replace(/[^0-9.]/g, '');
+      return parseFloat(numericString);
+  }
 
-      // Navigates to a filtered page
-       function navigateToFilteredPage(pageNum) {
-            if (pageNum === currentPage) return; // Don't reload same page
-            console.log(`Navigating to filtered page: ${pageNum}`);
-            currentPage = pageNum;
-            applyFilters(true); // Re-apply filters for the new page and update URL
+    // Updates the grants counter text
+   function updateGrantsCounter(count, total = null) {
+        total = total ?? allGrants.length; // Use total stored grants if not provided
+        const totalText = initialLoadComplete ? total : '...'; // Show '...' if still loading
 
-            // Smooth scroll to the top of the grants list
-            if (grantsListingSection) {
-                 grantsListingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-       }
+        if (!hasActiveFilters()) {
+             grantsCounter.innerHTML = `Showing <strong>${count}</strong> of <strong>${totalText}</strong> Grants`;
+        } else {
+             grantsCounter.innerHTML = `Found <strong>${count}</strong> Matching Grants (of ${totalText})`;
+        }
+   }
 
-      // Resets all filters and restores the original view
-       function resetFilters(updateUrlFlag = true) {
-           console.log('Resetting filters...');
-           // Reset filter state object
-           activeFilters = { keyword: '', deadline: 'all', minAmount: '', maxAmount: '', category: '', location: '', eligibility: [] };
-           currentPage = 1; // Reset page to 1
 
-           // Reset form elements visually
-           filterForm.reset();
-           updateFormFromFilters(); // Ensure form matches reset state
+  // Updates the filtered pagination display
+  function updateFilteredPagination(totalItems, totalPages) {
+       console.log(`Updating pagination: totalItems=${totalItems}, totalPages=${totalPages}, currentPage=${currentPage}`);
+       filteredPaginationList.innerHTML = ''; // Clear existing
 
-           // Restore original DOM
-           resetToOriginalState(updateUrlFlag);
-
-            // Close modal if open
-            closeFilterModal();
-       }
-
-      // Restores the original DOM state from the stored template
-       function resetToOriginalState(updateUrlFlag = true) {
-            console.log('Resetting to original state...');
-            if (!originalStructureTemplate.hasChildNodes()) {
-                 console.error("Cannot reset: Original structure template is empty.");
-                 // Maybe try reloading the page as a last resort?
-                 // window.location.reload();
-                 return;
-            }
-
-            // Clone the original structure
-            const originalSectionClone = originalStructureTemplate.firstChild.cloneNode(true);
-
-            // Replace current list placeholder content with the original clone
-            grantsListPlaceholder.innerHTML = '';
-            grantsListPlaceholder.appendChild(originalSectionClone);
-
-            // Update global references to the restored elements
-            grantsListingSection = originalSectionClone;
-            grantsContainer = grantsListingSection.querySelector('.grants-container');
-
-            // Hide filtered pagination, "no results" message
+       if (totalPages <= 1) {
             filteredPagination.classList.remove('is-visible');
-            noMatchingGrants.classList.remove('is-visible');
+            return; // No pagination needed for 0 or 1 page
+       }
 
-            // Restore and show original pagination if it existed
-             if (originalPaginationElement) {
-                  // Ensure it's not already in the restored section
-                  if (!grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)')) {
-                       grantsListingSection.appendChild(originalPaginationElement.cloneNode(true)); // Append a clone
-                  }
-                  // Make sure the original pagination is visible (it might have been hidden by filters)
-                  const restoredOriginalPagination = grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)');
-                  if(restoredOriginalPagination) restoredOriginalPagination.style.display = '';
-             }
+        filteredPagination.classList.add('is-visible'); // Show pagination
 
+       // Previous page link
+       if (currentPage > 1) {
+           filteredPaginationList.appendChild(createPaginationItem('prev', currentPage - 1, 'Prev'));
+       }
 
-            // Update counter to show total grants
-            updateGrantsCounter(allGrants.length, allGrants.length);
-            updateActiveFiltersDisplay(); // Clear filter tags
+       // Page number links logic (simplified for clarity)
+       const maxPagesToShow = 5;
+       let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+       let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-            if (updateUrlFlag) {
-                 updateUrl(); // Update URL to remove filter params
+        // Adjust startPage if endPage reaches the total limit early
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+
+        // Add first page and ellipsis if needed
+        if (startPage > 1) {
+            filteredPaginationList.appendChild(createPaginationItem('page', 1));
+            if (startPage > 2) {
+                filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
             }
-
-            initGrantsScripts(); // Re-initialize scripts for the original grants
-            console.log('Reset complete.');
-       }
-
-
-      // --- Modal Handling ---
-      function openFilterModal() {
-        filterModal.classList.add('is-active');
-        filterModal.setAttribute('aria-hidden', 'false');
-        filterTrigger.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden'; // Prevent background scroll
-        setTimeout(() => keywordFilter.focus(), 100); // Focus after transition
-        document.addEventListener('keydown', handleModalKeydown);
-      }
-
-      function closeFilterModal() {
-        filterModal.classList.remove('is-active');
-        filterModal.setAttribute('aria-hidden', 'true');
-        filterTrigger.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = ''; // Restore background scroll
-        document.removeEventListener('keydown', handleModalKeydown);
-      }
-
-      function handleModalKeydown(e) {
-        if (e.key === 'Escape') {
-          closeFilterModal();
         }
+
+        // Create page number links
+        for (let i = startPage; i <= endPage; i++) {
+             filteredPaginationList.appendChild(createPaginationItem(i === currentPage ? 'current' : 'page', i));
+        }
+
+        // Add last page and ellipsis if needed
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
+            }
+            filteredPaginationList.appendChild(createPaginationItem('page', totalPages));
+        }
+
+       // Next page link
+       if (currentPage < totalPages) {
+           filteredPaginationList.appendChild(createPaginationItem('next', currentPage + 1, 'Next'));
+       }
+  }
+
+  // Helper to create a single pagination list item (li)
+  function createPaginationItem(type, page, text = null) {
+    const item = document.createElement('li');
+    item.className = 'g-pagination__item';
+
+    if (type === 'current') {
+      item.classList.add('g-pagination__item--current');
+      const span = document.createElement('span');
+      span.textContent = page;
+      item.appendChild(span);
+    } else if (type === 'dots') {
+      item.classList.add('g-pagination__item--dots');
+      const span = document.createElement('span');
+      span.setAttribute('aria-hidden', 'true'); // Dots are decorative
+      span.textContent = text || '...';
+      item.appendChild(span);
+    } else {
+      const link = document.createElement('a');
+      link.href = '#'; // Prevent page jump, handled by JS
+      link.setAttribute('data-page', page);
+      link.setAttribute('aria-label', type === 'prev' ? 'Previous page' : type === 'next' ? 'Next page' : `Go to page ${page}`);
+
+      if (type === 'prev') {
+        item.classList.add('g-pagination__item--prev');
+        link.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg> ${text || 'Prev'}`;
+      } else if (type === 'next') {
+        item.classList.add('g-pagination__item--next');
+        link.innerHTML = `${text || 'Next'} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+      } else { // 'page' type
+        link.textContent = text || page;
       }
+      item.appendChild(link);
+    }
+    return item;
+  }
 
-      // --- Utility Functions ---
-      function initGrantsScripts() {
-          // Debounce initialization slightly
-          setTimeout(() => {
-               console.log('Initializing grant scripts (countdowns, etc.)...');
-               initCountdowns();
-               // Add other re-initialization functions if needed (e.g., tooltips, lazy loading for dynamic content)
-          }, 100);
-      }
+  // Navigates to a filtered page
+   function navigateToFilteredPage(pageNum) {
+        if (pageNum === currentPage) return; // Don't reload same page
+        console.log(`Navigating to filtered page: ${pageNum}`);
+        currentPage = pageNum;
+        applyFilters(true); // Re-apply filters for the new page and update URL
 
-       // Initialize countdown timers (ensure it handles missing elements gracefully)
-       function initCountdowns() {
-           const countdownElements = document.querySelectorAll('#grants-list-placeholder [data-deadline]');
-           // Clear existing intervals to prevent duplicates if re-initializing
-           countdownElements.forEach(el => {
-               const intervalId = el.dataset.intervalId;
-               if (intervalId) {
-                   clearInterval(parseInt(intervalId));
-                   delete el.dataset.intervalId; // Remove the stored ID
-               }
-           });
+        // Smooth scroll to the top of the grants list
+        if (grantsListingSection) {
+             grantsListingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+   }
 
-           countdownElements.forEach(element => {
-               const deadline = parseInt(element.dataset.deadline, 10);
-                if (isNaN(deadline)) return; // Skip if deadline is not a valid number
+  // Resets all filters and restores the original view
+   function resetFilters(updateUrlFlag = true) {
+       console.log('Resetting filters...');
+       // Reset filter state object
+       activeFilters = { keyword: '', deadline: 'all', minAmount: '', maxAmount: '', category: '', location: '', eligibility: [] };
+       currentPage = 1; // Reset page to 1
 
-               const countdownContainer = element.closest('.g-card__countdown'); // Find the parent countdown container
-               if (!countdownContainer) return;
+       // Reset form elements visually
+       filterForm.reset();
+       
+       // FIXED: Explicitly clear search input to ensure it's reset
+       // Previous issue: Form reset wasn't reliably clearing the search field
+       if (keywordFilter) {
+           keywordFilter.value = '';
+       }
+       
+       // Ensure all other fields are properly reset
+       if (minAmountFilter) minAmountFilter.value = '';
+       if (maxAmountFilter) maxAmountFilter.value = '';
+       if (categoryFilter) categoryFilter.value = '';
+       if (locationFilter) locationFilter.value = '';
+       
+       document.getElementById('deadline-all').checked = true;
+       
+       // Uncheck all eligibility checkboxes
+       document.querySelectorAll('input[name="eligibility"]:checked').forEach(cb => {
+           cb.checked = false;
+       });
+       
+       updateFormFromFilters(); // Ensure form matches reset state
 
-               const hoursElement = countdownContainer.querySelector('[data-hours]');
-               const minutesElement = countdownContainer.querySelector('[data-minutes]');
-               const secondsElement = countdownContainer.querySelector('[data-seconds]');
-
-                // Skip if essential elements are missing
-                if (!hoursElement || !minutesElement || !secondsElement) return;
-
-
-               const updateCountdown = () => {
-                   const now = Math.floor(Date.now() / 1000); // Current time in seconds
-                   const distance = deadline - now; // Deadline is already in seconds
-
-                   if (distance <= 0) {
-                       hoursElement.textContent = '00';
-                       minutesElement.textContent = '00';
-                       secondsElement.textContent = '00';
-                       const intervalId = element.dataset.intervalId;
-                       if (intervalId) {
-                           clearInterval(parseInt(intervalId)); // Stop interval when expired
-                           delete element.dataset.intervalId;
-                       }
-                       // Consider visual change for expired state if needed
-                       return;
-                   }
-
-                   const hours = Math.floor((distance % 86400) / 3600);
-                   const minutes = Math.floor((distance % 3600) / 60);
-                   const seconds = Math.floor(distance % 60);
-
-                   hoursElement.textContent = hours.toString().padStart(2, '0');
-                   minutesElement.textContent = minutes.toString().padStart(2, '0');
-                   secondsElement.textContent = seconds.toString().padStart(2, '0');
-               };
-
-               updateCountdown(); // Initial call
-               const intervalId = setInterval(updateCountdown, 1000); // Update every second
-               element.dataset.intervalId = intervalId.toString(); // Store interval ID on the element
-           });
+       // Restore original DOM
+       resetToOriginalState(updateUrlFlag);
+       
+       // FIXED: Explicitly clear URL parameters when resetting filters
+       // Previous issue: URL parameters were persisting after reset
+       if (updateUrlFlag && history.pushState) {
+           const cleanUrl = window.location.origin + window.location.pathname;
+           history.pushState({}, '', cleanUrl);
        }
 
+       // Close modal if open
+       closeFilterModal();
+   }
 
-    }); 
+  // Restores the original DOM state from the stored template
+   function resetToOriginalState(updateUrlFlag = true) {
+        console.log('Resetting to original state...');
+        if (!originalStructureTemplate.hasChildNodes()) {
+             console.error("Cannot reset: Original structure template is empty.");
+             // Maybe try reloading the page as a last resort?
+             // window.location.reload();
+             return;
+        }
+
+        // Clone the original structure
+        const originalSectionClone = originalStructureTemplate.firstChild.cloneNode(true);
+
+        // Replace current list placeholder content with the original clone
+        grantsListPlaceholder.innerHTML = '';
+        grantsListPlaceholder.appendChild(originalSectionClone);
+
+        // Update global references to the restored elements
+        grantsListingSection = originalSectionClone;
+        grantsContainer = grantsListingSection.querySelector('.grants-container');
+
+        // Hide filtered pagination, "no results" message
+        filteredPagination.classList.remove('is-visible');
+        noMatchingGrants.classList.remove('is-visible');
+
+        // Restore and show original pagination if it existed
+         if (originalPaginationElement) {
+              // Ensure it's not already in the restored section
+              if (!grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)')) {
+                   grantsListingSection.appendChild(originalPaginationElement.cloneNode(true)); // Append a clone
+              }
+              // Make sure the original pagination is visible (it might have been hidden by filters)
+              const restoredOriginalPagination = grantsListingSection.querySelector('.g-pagination:not(.filtered-pagination)');
+              if(restoredOriginalPagination) restoredOriginalPagination.style.display = '';
+         }
+
+
+        // Update counter to show total grants
+        updateGrantsCounter(allGrants.length, allGrants.length);
+        updateActiveFiltersDisplay(); // Clear filter tags
+
+        if (updateUrlFlag) {
+             updateUrl(); // Update URL to remove filter params
+        }
+
+        initGrantsScripts(); // Re-initialize scripts for the original grants
+        console.log('Reset complete.');
+   }
+
+
+  // --- Modal Handling ---
+  function openFilterModal() {
+    filterModal.classList.add('is-active');
+    filterModal.setAttribute('aria-hidden', 'false');
+    filterTrigger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+    setTimeout(() => keywordFilter.focus(), 100); // Focus after transition
+    document.addEventListener('keydown', handleModalKeydown);
+  }
+
+  function closeFilterModal() {
+    filterModal.classList.remove('is-active');
+    filterModal.setAttribute('aria-hidden', 'true');
+    filterTrigger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = ''; // Restore background scroll
+    document.removeEventListener('keydown', handleModalKeydown);
+  }
+
+  function handleModalKeydown(e) {
+    if (e.key === 'Escape') {
+      closeFilterModal();
+    }
+  }
+
+  // --- Utility Functions ---
+  function initGrantsScripts() {
+      // Debounce initialization slightly
+      setTimeout(() => {
+           console.log('Initializing grant scripts (countdowns, etc.)...');
+           initCountdowns();
+           // Add other re-initialization functions if needed (e.g., tooltips, lazy loading for dynamic content)
+      }, 100);
+  }
+
+   // Initialize countdown timers (ensure it handles missing elements gracefully)
+   function initCountdowns() {
+       const countdownElements = document.querySelectorAll('#grants-list-placeholder [data-deadline]');
+       // Clear existing intervals to prevent duplicates if re-initializing
+       countdownElements.forEach(el => {
+           const intervalId = el.dataset.intervalId;
+           if (intervalId) {
+               clearInterval(parseInt(intervalId));
+               delete el.dataset.intervalId; // Remove the stored ID
+           }
+       });
+
+       countdownElements.forEach(element => {
+           const deadline = parseInt(element.dataset.deadline, 10);
+            if (isNaN(deadline)) return; // Skip if deadline is not a valid number
+
+           const countdownContainer = element.closest('.g-card__countdown'); // Find the parent countdown container
+           if (!countdownContainer) return;
+
+           const hoursElement = countdownContainer.querySelector('[data-hours]');
+           const minutesElement = countdownContainer.querySelector('[data-minutes]');
+           const secondsElement = countdownContainer.querySelector('[data-seconds]');
+
+            // Skip if essential elements are missing
+            if (!hoursElement || !minutesElement || !secondsElement) return;
+
+
+           const updateCountdown = () => {
+               const now = Math.floor(Date.now() / 1000); // Current time in seconds
+               const distance = deadline - now; // Deadline is already in seconds
+
+               if (distance <= 0) {
+                   hoursElement.textContent = '00';
+                   minutesElement.textContent = '00';
+                   secondsElement.textContent = '00';
+                   const intervalId = element.dataset.intervalId;
+                   if (intervalId) {
+                       clearInterval(parseInt(intervalId)); // Stop interval when expired
+                       delete element.dataset.intervalId;
+                   }
+                   // Consider visual change for expired state if needed
+                   return;
+               }
+
+               const hours = Math.floor((distance % 86400) / 3600);
+               const minutes = Math.floor((distance % 3600) / 60);
+               const seconds = Math.floor(distance % 60);
+
+               hoursElement.textContent = hours.toString().padStart(2, '0');
+               minutesElement.textContent = minutes.toString().padStart(2, '0');
+               secondsElement.textContent = seconds.toString().padStart(2, '0');
+           };
+
+           updateCountdown(); // Initial call
+           const intervalId = setInterval(updateCountdown, 1000); // Update every second
+           element.dataset.intervalId = intervalId.toString(); // Store interval ID on the element
+       });
+   }
+});
   </script>
 
 </section>
