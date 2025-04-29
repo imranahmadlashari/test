@@ -396,7 +396,7 @@ if ($has_any_posts) {
     }
     
     // Get eligible entities
-    $eligible_entities = get_post_meta($post_id, 'custom-checkbox', true);
+    $eligible_entities = get_post_meta($post_id, '_custom-checkbox', true);
     $is_eligible_entities_not_array = !is_array($eligible_entities);
     $is_eligible_entities_not_empty = !empty($eligible_entities);
     
