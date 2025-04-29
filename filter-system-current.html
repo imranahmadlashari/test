@@ -8,7 +8,7 @@
       padding: 0.5rem;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     }
-    
+
     /* Filter Controls */
     .filter-controls {
       display: flex;
@@ -17,7 +17,7 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
-    
+
     .filter-trigger-button {
       display: flex;
       align-items: center;
@@ -31,24 +31,24 @@
       cursor: pointer;
       transition: var(--grantaura-transition);
     }
-    
+
     .filter-trigger-button:hover {
       background: var(--grantaura-primary-dark);
       transform: translateY(-2px);
     }
-    
+
     .filter-trigger-button svg {
       width: 18px;
       height: 18px;
     }
-    
+
     /* Active Filters */
     .active-filters {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
     }
-    
+
     .active-filter {
       display: flex;
       align-items: center;
@@ -59,16 +59,16 @@
       border-radius: 20px;
       font-size: 0.85rem;
     }
-    
+
     .active-filter-label {
       font-weight: 600;
       color: var(--grantaura-gray-700);
     }
-    
+
     .active-filter-value {
       color: var(--grantaura-primary);
     }
-    
+
     .active-filter-remove {
       display: flex;
       align-items: center;
@@ -83,16 +83,16 @@
       transition: var(--grantaura-transition);
       margin-left: 5px;
     }
-    
+
     .active-filter-remove:hover {
       background: var(--grantaura-danger);
     }
-    
+
     .active-filter-remove svg {
       width: 10px;
       height: 10px;
     }
-    
+
     .reset-all-filters {
       font-size: 0.85rem;
       color: var(--grantaura-primary);
@@ -102,11 +102,11 @@
       text-decoration: underline;
       transition: var(--grantaura-transition);
     }
-    
+
     .reset-all-filters:hover {
       color: var(--grantaura-primary-dark);
     }
-    
+
     /* Filter Modal */
     .filter-modal {
       position: fixed;
@@ -123,12 +123,12 @@
       visibility: hidden;
       transition: opacity 0.3s, visibility 0.3s;
     }
-    
+
     .filter-modal.is-active {
       opacity: 1;
       visibility: visible;
     }
-    
+
     .filter-modal-content {
       width: 90%;
       max-width: 600px;
@@ -140,11 +140,11 @@
       transform: translateY(20px);
       transition: transform 0.3s;
     }
-    
+
     .filter-modal.is-active .filter-modal-content {
       transform: translateY(0);
     }
-    
+
     .filter-modal header {
       display: flex;
       align-items: center;
@@ -156,13 +156,13 @@
       background: white;
       z-index: 10;
     }
-    
+
     .filter-modal h2 {
       font-size: 1.5rem;
       color: var(--grantaura-primary);
       margin: 0;
     }
-    
+
     .filter-close-button {
       display: flex;
       align-items: center;
@@ -175,34 +175,34 @@
       cursor: pointer;
       transition: var(--grantaura-transition);
     }
-    
+
     .filter-close-button:hover {
       background: var(--grantaura-gray-200);
     }
-    
+
     .filter-close-button svg {
       width: 20px;
       height: 20px;
       color: var(--grantaura-gray-700);
     }
-    
+
     .filter-modal-body {
       padding: 1.25rem;
     }
-    
+
     /* Filter Groups */
     .filter-group {
       margin-bottom: 1.5rem;
       padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--grantaura-gray-200);
     }
-    
+
     .filter-group:last-child {
       margin-bottom: 0;
       padding-bottom: 0;
       border-bottom: none;
     }
-    
+
     .filter-group-title {
       font-size: 1.1rem;
       font-weight: 600;
@@ -212,18 +212,18 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .filter-group-title svg {
       width: 18px;
       height: 18px;
       color: var(--grantaura-primary);
     }
-    
+
     /* Search Filter */
     .search-filter {
       position: relative;
     }
-    
+
     .search-filter input {
       width: 100%;
       padding: 0.75rem 1rem 0.75rem 2.5rem !important;
@@ -232,13 +232,13 @@
       font-size: 1rem;
       transition: var(--grantaura-transition);
     }
-    
+
     .search-filter input:focus {
       border-color: var(--grantaura-primary) !important;
       outline: none !important;
       box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
     }
-    
+
     .search-filter svg {
       position: absolute;
       left: 0.75rem;
@@ -249,31 +249,31 @@
       color: var(--grantaura-gray-500);
       pointer-events: none;
     }
-    
+
     /* Deadline Filter */
     .deadline-options {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 0.75rem;
     }
-    
+
     @media (min-width: 480px) {
       .deadline-options {
         grid-template-columns: repeat(3, 1fr);
       }
     }
-    
+
     .deadline-option {
       position: relative;
     }
-    
+
     .deadline-option input {
       position: absolute;
       opacity: 0;
       width: 0;
       height: 0;
     }
-    
+
     .deadline-option label {
       display: block;
       padding: 0.75rem 0.5rem;
@@ -285,28 +285,28 @@
       cursor: pointer;
       transition: var(--grantaura-transition);
     }
-    
-    .deadline-option input:checked + label {
+
+    .deadline-option input:checked+label {
       background: var(--grantaura-primary);
       color: white;
       border-color: var(--grantaura-primary);
     }
-    
+
     .deadline-option label:hover:not(input:checked + label) {
       background: var(--grantaura-gray-200);
     }
-    
+
     /* Amount Filter */
     .amount-filter {
       display: flex;
       gap: 1rem;
     }
-    
+
     .amount-input {
       flex: 1;
       position: relative;
     }
-    
+
     .amount-input input {
       width: 100%;
       padding: 0.75rem 1rem 0.75rem 2.25rem !important;
@@ -315,13 +315,13 @@
       font-size: 1rem;
       transition: var(--grantaura-transition);
     }
-    
+
     .amount-input input:focus {
       border-color: var(--grantaura-primary) !important;
       outline: none !important;
       box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
     }
-    
+
     .amount-input span {
       position: absolute;
       left: 0.75rem;
@@ -331,12 +331,12 @@
       color: var(--grantaura-gray-700);
       pointer-events: none;
     }
-    
+
     /* Category & Location Filters */
     .select-filter {
       position: relative;
     }
-    
+
     .select-filter select {
       width: 100%;
       padding: 0.75rem 1rem !important;
@@ -350,33 +350,33 @@
       background-position: right 1rem center;
       background-size: 16px 16px;
     }
-    
+
     .select-filter select:focus {
       border-color: var(--grantaura-primary) !important;
       outline: none !important;
       box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2) !important;
     }
-    
+
     /* Eligibility Filter */
     .eligibility-options {
       display: grid;
       grid-template-columns: 1fr;
       gap: 0.75rem;
     }
-    
+
     @media (min-width: 480px) {
       .eligibility-options {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-    
+
     .eligibility-option {
       position: relative;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .eligibility-option input[type="checkbox"] {
       position: relative;
       width: 18px;
@@ -388,12 +388,12 @@
       cursor: pointer;
       transition: var(--grantaura-transition);
     }
-    
+
     .eligibility-option input[type="checkbox"]:checked {
       background: var(--grantaura-primary);
       border-color: var(--grantaura-primary);
     }
-    
+
     .eligibility-option input[type="checkbox"]:checked::after {
       content: "";
       position: absolute;
@@ -405,17 +405,17 @@
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
-    
+
     .eligibility-option input[type="checkbox"]:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(90, 59, 140, 0.2);
     }
-    
+
     .eligibility-option label {
       font-size: 0.9rem;
       cursor: pointer;
     }
-    
+
     /* Filter Actions */
     .filter-actions {
       display: flex;
@@ -425,7 +425,7 @@
       padding-top: 1.5rem;
       border-top: 1px solid var(--grantaura-gray-200);
     }
-    
+
     .filter-reset {
       font-size: 0.9rem;
       color: var(--grantaura-gray-600);
@@ -435,11 +435,11 @@
       text-decoration: underline;
       transition: var(--grantaura-transition);
     }
-    
+
     .filter-reset:hover {
       color: var(--grantaura-danger);
     }
-    
+
     .filter-apply {
       padding: 0.75rem 1.5rem;
       background: var(--grantaura-primary);
@@ -450,11 +450,11 @@
       cursor: pointer;
       transition: var(--grantaura-transition);
     }
-    
+
     .filter-apply:hover {
       background: var(--grantaura-primary-dark);
     }
-    
+
     /* Results Counter */
     .grants-counter {
       font-size: 0.95rem;
@@ -462,12 +462,12 @@
       margin-right: auto;
       padding: 0.5rem 0;
     }
-    
+
     .grants-counter strong {
       font-weight: 700;
       color: var(--grantaura-primary);
     }
-    
+
     /* Loading States */
     .grants-loading {
       position: fixed;
@@ -481,12 +481,12 @@
       visibility: hidden;
       transition: opacity 0.3s, visibility 0.3s;
     }
-    
+
     .grants-loading.is-active {
       opacity: 1;
       visibility: visible;
     }
-    
+
     .grants-loading::after {
       content: "";
       position: absolute;
@@ -497,13 +497,23 @@
       background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
       animation: loading 1.5s infinite ease-in-out;
     }
-    
+
     @keyframes loading {
-      0% { left: -20%; width: 20%; }
-      50% { width: 30%; }
-      100% { left: 100%; width: 20%; }
+      0% {
+        left: -20%;
+        width: 20%;
+      }
+
+      50% {
+        width: 30%;
+      }
+
+      100% {
+        left: 100%;
+        width: 20%;
+      }
     }
-    
+
     /* Empty State */
     .no-matching-grants {
       grid-column: 1 / -1;
@@ -516,11 +526,11 @@
       border: 1px solid var(--grantaura-gray-200);
       display: none;
     }
-    
+
     .no-matching-grants.is-visible {
       display: block;
     }
-    
+
     .no-matching-grants::before {
       content: "";
       position: absolute;
@@ -530,7 +540,7 @@
       height: 5px;
       background: linear-gradient(90deg, var(--grantaura-primary), var(--grantaura-secondary));
     }
-    
+
     .no-matching-grants h3 {
       font-size: clamp(1.5rem, 5vw, 1.75rem);
       margin-bottom: 1.25rem;
@@ -538,7 +548,7 @@
       position: relative;
       display: inline-block;
     }
-    
+
     .no-matching-grants h3::after {
       content: "";
       position: absolute;
@@ -549,7 +559,7 @@
       height: 3px;
       background-color: var(--grantaura-primary-light);
     }
-    
+
     .no-matching-grants p {
       font-size: clamp(0.95rem, 4vw, 1.1rem);
       color: var(--grantaura-gray-600);
@@ -557,38 +567,39 @@
       margin: 0 auto;
       line-height: 1.6;
     }
-    
+
     /* Custom Pagination for Filtered Results */
     .g-pagination.filtered-mode {
       display: flex !important;
     }
-    
+
     /* Responsive Adjustments */
     @media (max-width: 768px) {
       .filter-controls {
         flex-direction: column;
         align-items: flex-start;
       }
-      
+
       .active-filters {
         width: 100%;
       }
     }
-    
+
     @media (prefers-reduced-motion: reduce) {
+
       .filter-modal,
       .filter-modal-content,
       .grants-loading,
       .grants-loading::after {
         transition: none;
       }
-      
+
       .grants-loading::after {
         animation: none;
       }
     }
   </style>
-  
+
   <!-- Grant Filter Controls -->
   <div class="filter-controls">
     <button type="button" class="filter-trigger-button" id="filter-trigger" aria-expanded="false" aria-controls="filter-modal">
@@ -597,16 +608,16 @@
       </svg>
       Filter Grants
     </button>
-    
+
     <div class="grants-counter" id="grants-counter">
       Showing <strong>All</strong> Grants
     </div>
-    
+
     <div class="active-filters" id="active-filters">
       <!-- Active filters will be inserted here by JavaScript -->
     </div>
   </div>
-  
+
   <!-- Grant Filter Modal -->
   <div class="filter-modal" id="filter-modal" aria-hidden="true">
     <div class="filter-modal-content" role="dialog" aria-labelledby="filter-modal-title">
@@ -619,7 +630,7 @@
           </svg>
         </button>
       </header>
-      
+
       <div class="filter-modal-body">
         <form id="filter-form">
           <!-- Search Filter -->
@@ -639,7 +650,7 @@
               <input type="text" name="keyword" id="keyword-filter" placeholder="Search grant titles, descriptions..." aria-label="Search grants">
             </div>
           </div>
-          
+
           <!-- Deadline Filter -->
           <div class="filter-group">
             <h3 class="filter-group-title">
@@ -676,7 +687,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Amount Filter -->
           <div class="filter-group">
             <h3 class="filter-group-title">
@@ -697,7 +708,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Category Filter -->
           <div class="filter-group">
             <h3 class="filter-group-title">
@@ -715,7 +726,7 @@
               </select>
             </div>
           </div>
-          
+
           <!-- Location Filter -->
           <div class="filter-group">
             <h3 class="filter-group-title">
@@ -732,7 +743,7 @@
               </select>
             </div>
           </div>
-          
+
           <!-- Eligibility Filter -->
           <div class="filter-group">
             <h3 class="filter-group-title">
@@ -748,7 +759,7 @@
               <!-- Eligibility options will be populated by JavaScript -->
             </div>
           </div>
-          
+
           <!-- Filter Actions -->
           <div class="filter-actions">
             <button type="button" class="filter-reset" id="filter-reset">Reset All</button>
@@ -758,25 +769,28 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Grants Loading Indicator -->
   <div class="grants-loading" id="grants-loading" aria-hidden="true"></div>
-  
+
   <!-- No Matching Grants Message -->
   <div class="no-matching-grants" id="no-matching-grants">
     <h3>No Matching Grants</h3>
     <p>No grants match your current filter criteria. Try adjusting your filters or <button type="button" class="reset-all-filters" id="reset-filters-empty">reset all filters</button> to see all available grants.</p>
   </div>
-  
+
   <!-- Custom Pagination for Filtered Results (hidden by default) -->
   <div class="g-pagination filtered-pagination" id="filtered-pagination" style="display: none;">
     <ul class="g-pagination__list" id="filtered-pagination-list">
       <!-- Pagination will be generated by JavaScript -->
     </ul>
   </div>
-  
+
+  <!-- Template container to hold card styles & structure -->
+  <div id="grant-card-templates" style="display: none;"></div>
+
   <script>
- document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
       // Function to safely check multiple conditions (alternative to && operator)
       function checkConditions(conditions) {
         for (var i = 0; i < conditions.length; i++) {
@@ -786,7 +800,6 @@
         }
         return true;
       }
-      
       // Element references
       const filterTrigger = document.getElementById('filter-trigger');
       const filterModal = document.getElementById('filter-modal');
@@ -802,7 +815,7 @@
       const originalPagination = document.querySelector('.g-pagination:not(.filtered-pagination)');
       const filteredPagination = document.getElementById('filtered-pagination');
       const filteredPaginationList = document.getElementById('filtered-pagination-list');
-      
+      const templateContainer = document.getElementById('grant-card-templates');
       // Filter elements
       const keywordFilter = document.getElementById('keyword-filter');
       const deadlineOptions = document.querySelectorAll('input[name="deadline"]');
@@ -811,20 +824,16 @@
       const categoryFilter = document.getElementById('category-filter');
       const locationFilter = document.getElementById('location-filter');
       const eligibilityContainer = document.querySelector('.eligibility-options');
-      
       // Store the original markup of the grants container
       // This will be used to restore the original state when filters are cleared
       const originalGrantsContainerMarkup = grantsContainer ? grantsContainer.innerHTML : '';
-      
       // Store all visible grants for initial state
       const visibleGrants = Array.from(document.querySelectorAll('.g-card'));
-      
       // Store the original layout template for grant cards
       let grantTemplate = null;
       if (visibleGrants.length > 0) {
-          grantTemplate = visibleGrants[0].cloneNode(true);
+        grantTemplate = visibleGrants[0].cloneNode(true);
       }
-      
       // Will store all grants from all pages
       let allGrants = [];
       let postsPerPage = 16; // Default, will be updated based on actual data
@@ -832,10 +841,10 @@
       let currentPage = 1; // Current page in pagination
       let currentPageParam = getQueryParam('paged') || getQueryParam('page') || 1;
       currentPage = parseInt(currentPageParam);
-      
-      // Keep track of original classes for layout restoration
-      const originalGrantClasses = {};
-      
+      // Keep track of original classes, HTML, and styles for layout restoration
+      const originalGrantData = {};
+      // Flag to track if the global CSS for grant cards has been extracted
+      let globalStylesExtracted = false;
       // Current active filters
       let activeFilters = {
         keyword: '',
@@ -846,50 +855,85 @@
         location: '',
         eligibility: []
       };
-      
       // Get query parameter helper
       function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
       }
-      
+      // Function to extract all CSS from grant cards and apply it globally once
+      function extractAndApplyGlobalStyles() {
+        if (globalStylesExtracted) return; // Only extract once
+        let allStyles = '';
+        // Extract styles from all visible grant cards
+        visibleGrants.forEach(function(card) {
+          // Find all style elements in the card
+          card.querySelectorAll('style').forEach(function(styleEl) {
+            allStyles += styleEl.textContent;
+          });
+        });
+        // Create a style element to hold all styles
+        if (allStyles) {
+          const globalStyle = document.createElement('style');
+          globalStyle.id = 'grant-cards-global-styles';
+          globalStyle.textContent = allStyles;
+          document.head.appendChild(globalStyle);
+          globalStylesExtracted = true;
+        }
+      }
+      // Function to store HTML template for a grant card (without style elements)
+      function storeCardTemplate(card, id) {
+        // Clone the card
+        const template = card.cloneNode(true);
+        // Add it to the template container with a unique ID
+        template.id = 'template-' + id;
+        templateContainer.appendChild(template);
+        return template;
+      }
       // Function to fetch all grants from all pages
       async function fetchAllGrants() {
         // Show loading indicator
         grantsLoading.classList.add('is-active');
-        
         try {
+          // Extract all CSS from grant cards and apply it globally (once)
+          extractAndApplyGlobalStyles();
           // Start with visible grants on the current page
-          // Store original classes and IDs before cloning
-          visibleGrants.forEach(grant => {
+          // Store original data and templates for each grant
+          visibleGrants.forEach(function(grant) {
             const id = grant.id || `grant-${Math.random().toString(36).substring(2, 15)}`;
             grant.id = id; // Ensure each grant has an ID
-            originalGrantClasses[id] = {
+            // Store original data
+            originalGrantData[id] = {
               classes: grant.className,
-              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : ''
+              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : '',
+              templateId: 'template-' + id
             };
+            // Store card template
+            storeCardTemplate(grant, id);
           });
-          
-          allGrants = visibleGrants.map(grant => grant.cloneNode(true));
-          
+          // Clone grants for filtering - WITHOUT style tags
+          allGrants = visibleGrants.map(function(grant) {
+            const clone = grant.cloneNode(true);
+            // Remove style elements from clone to avoid duplicates
+            clone.querySelectorAll('style').forEach(function(style) {
+              style.remove();
+            });
+            return clone;
+          });
           // Get pagination info from the original pagination
           if (originalPagination) {
             const paginationItems = originalPagination.querySelectorAll('.g-pagination__item');
             const lastPageItem = Array.from(paginationItems).filter(item => {
               const link = item.querySelector('a');
               const span = item.querySelector('span');
-              return (link && !isNaN(parseInt(link.textContent))) || 
-                     (span && !isNaN(parseInt(span.textContent)));
+              return (link && !isNaN(parseInt(link.textContent))) ||
+                (span && !isNaN(parseInt(span.textContent)));
             }).pop();
-            
             if (lastPageItem) {
               const lastPageNum = parseInt(lastPageItem.textContent || lastPageItem.querySelector('a, span').textContent);
               if (!isNaN(lastPageNum) && lastPageNum > 1) {
                 totalPages = lastPageNum;
-                
                 // Calculate posts per page based on visible grants and current page
                 postsPerPage = visibleGrants.length;
-                
                 // For pages other than current, we need to fetch grants
                 if (totalPages > 1) {
                   // Fetch all additional pages in parallel
@@ -899,10 +943,8 @@
                       pagePromises.push(fetchGrantsFromPage(page));
                     }
                   }
-                  
                   // Wait for all pages to load
                   const results = await Promise.all(pagePromises);
-                  
                   // Process results and add to allGrants
                   results.forEach(pageGrants => {
                     if (pageGrants && pageGrants.length) {
@@ -913,28 +955,31 @@
               }
             }
           }
-          
           // Initialize filters after all grants are loaded
           initializeFilters();
-          
         } catch (error) {
           console.error('Error fetching all grants:', error);
           // Fallback to just using visible grants
-          allGrants = visibleGrants.map(grant => grant.cloneNode(true));
+          allGrants = visibleGrants.map(function(grant) {
+            const clone = grant.cloneNode(true);
+            // Remove style elements from clone
+            clone.querySelectorAll('style').forEach(function(style) {
+              style.remove();
+            });
+            return clone;
+          });
           initializeFilters();
         } finally {
           // Hide loading indicator
           grantsLoading.classList.remove('is-active');
         }
       }
-      
       // Function to fetch grants from a specific page
       async function fetchGrantsFromPage(pageNum) {
         try {
           // Construct URL for the page
           let pageUrl = window.location.pathname;
           const isHomepage = pageUrl === '/' || pageUrl.endsWith('/');
-          
           if (isHomepage) {
             pageUrl = pageNum > 1 ? `/page/${pageNum}/` : '/';
           } else {
@@ -943,67 +988,77 @@
             urlObj.searchParams.set('paged', pageNum);
             pageUrl = urlObj.toString();
           }
-          
           // Fetch the page
           const response = await fetch(pageUrl);
           if (!response.ok) throw new Error(`Failed to fetch page ${pageNum}`);
-          
           const html = await response.text();
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, 'text/html');
-          
-          // Extract grants from the page
-          const pageGrants = Array.from(doc.querySelectorAll('.g-card'));
-          
-          // Store classes and ensure IDs before cloning
-          return pageGrants.map(grant => {
+          // Extract CSS from this page and add it to global styles if not already done
+          if (!globalStylesExtracted) {
+            let pageStyles = '';
+            const grantCards = doc.querySelectorAll('.g-card');
+            grantCards.forEach(function(card) {
+              card.querySelectorAll('style').forEach(function(styleEl) {
+                pageStyles += styleEl.textContent;
+              });
+            });
+            if (pageStyles) {
+              const styleElement = document.createElement('style');
+              styleElement.textContent = pageStyles;
+              document.head.appendChild(styleElement);
+            }
+          }
+          // Extract grants from the page - without style elements
+          const pageGrants = [];
+          const grantElements = doc.querySelectorAll('.g-card');
+          grantElements.forEach(function(grant) {
             const id = grant.id || `grant-page${pageNum}-${Math.random().toString(36).substring(2, 15)}`;
             grant.id = id;
-            
-            // Store original classes for this grant
-            originalGrantClasses[id] = {
+            // Store original data
+            originalGrantData[id] = {
               classes: grant.className,
-              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : ''
+              parentGrid: grant.closest('.grants-container') ? grant.closest('.grants-container').className : '',
+              templateId: 'template-' + id,
+              fromPage: pageNum
             };
-            
+            // Store card template
+            storeCardTemplate(grant, id);
+            // Clone without style elements
             const clone = grant.cloneNode(true);
+            clone.querySelectorAll('style').forEach(function(style) {
+              style.remove();
+            });
             clone.setAttribute('data-page', pageNum);
-            return clone;
+            pageGrants.push(clone);
           });
-          
+          return pageGrants;
         } catch (error) {
           console.error(`Error fetching page ${pageNum}:`, error);
           return [];
         }
       }
-      
       // Initialize filters after all grants are loaded
       function initializeFilters() {
         // Populate filter options
         populateCategories();
         populateLocations();
         populateEligibility();
-        
         // Read filters from URL if present
         readFiltersFromUrl();
-        
         // Set up event listeners
         setupEventListeners();
       }
-      
       // Populate category options
       function populateCategories() {
         // Create a Set to track unique categories
         const categories = new Set();
-        
         // Loop through all grants to collect categories
         allGrants.forEach(function(grant) {
           const categoryTags = grant.querySelectorAll('.g-card__tag:not(.g-card__tag--more)');
-          
           categoryTags.forEach(function(tag) {
             const categoryName = tag.textContent.trim();
             const categoryUrl = tag.getAttribute('href');
-            
             if (categoryName && categoryUrl) {
               // Use the URL as key and name as value
               categories.add(JSON.stringify({
@@ -1013,12 +1068,10 @@
             }
           });
         });
-        
         // Sort categories alphabetically
         const sortedCategories = Array.from(categories)
           .map(item => JSON.parse(item))
           .sort((a, b) => a.name.localeCompare(b.name));
-        
         // Add options to the select element
         sortedCategories.forEach(function(category) {
           const option = document.createElement('option');
@@ -1027,20 +1080,16 @@
           categoryFilter.appendChild(option);
         });
       }
-      
       // Populate location options
       function populateLocations() {
         // Create a Set to track unique locations
         const locations = new Set();
-        
         // Loop through all grants to collect locations
         allGrants.forEach(function(grant) {
           const locationLinks = grant.querySelectorAll('.g-card__location-link');
-          
           locationLinks.forEach(function(link) {
             const locationName = link.textContent.trim();
             const locationUrl = link.getAttribute('href');
-            
             if (locationName && locationUrl) {
               // Use the URL as key and name as value
               locations.add(JSON.stringify({
@@ -1050,12 +1099,10 @@
             }
           });
         });
-        
         // Sort locations alphabetically
         const sortedLocations = Array.from(locations)
           .map(item => JSON.parse(item))
           .sort((a, b) => a.name.localeCompare(b.name));
-        
         // Add options to the select element
         sortedLocations.forEach(function(location) {
           const option = document.createElement('option');
@@ -1064,39 +1111,32 @@
           locationFilter.appendChild(option);
         });
       }
-      
       // Populate eligibility options - IMPROVED IMPLEMENTATION
       function populateEligibility() {
         // Create a Set to track unique eligibility criteria
         const eligibilityCriteria = new Set();
-        
         // Loop through all grants to collect eligibility criteria
         allGrants.forEach(function(grant) {
           // Use multiple approaches to find eligibility info
           let eligibilityItems = [];
-          
           // Attempt 1: Look for meta items that contain "Eligible:"
           const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item'))
             .find(item => item.textContent.includes('Eligible:'));
-          
           if (eligibilitySection) {
             // Get all spans excluding "more" indicators
             eligibilityItems = Array.from(eligibilitySection.querySelectorAll('span:not(.g-card__location-more)'));
           }
-          
           // Attempt 2: Look for specific eligibility class
           if (eligibilityItems.length === 0) {
             eligibilityItems = Array.from(grant.querySelectorAll('.g-card__eligibility-item'));
           }
-          
           // Attempt 3: Look for a section with class containing "eligib"
           if (eligibilityItems.length === 0) {
             const potentialSections = Array.from(grant.querySelectorAll('[class*="eligib"]'));
-            eligibilityItems = potentialSections.flatMap(section => 
+            eligibilityItems = potentialSections.flatMap(section =>
               Array.from(section.querySelectorAll('span'))
             );
           }
-          
           // Process found items
           eligibilityItems.forEach(function(item) {
             // Clean up text (remove commas, colons, "Eligible:" text)
@@ -1104,17 +1144,15 @@
               .replace(',', '')
               .replace('Eligible:', '')
               .trim();
-              
             if (criteria && !criteria.includes('+') && !criteria.includes('...') && criteria !== ',') {
               eligibilityCriteria.add(criteria);
             }
           });
         });
-        
         // Fallback: Add commonly used eligibility types if none found
         if (eligibilityCriteria.size === 0) {
           const fallbackTypes = [
-            'Small Businesses', 
+            'Small Businesses',
             'Nonprofits',
             'Individuals',
             'Startups',
@@ -1123,87 +1161,69 @@
             'Veteran-Owned Businesses',
             'Educational Institutions'
           ];
-          
           fallbackTypes.forEach(type => eligibilityCriteria.add(type));
         }
-        
         // Sort eligibility alphabetically
         const sortedEligibility = Array.from(eligibilityCriteria).sort();
-        
         // Clear existing content
         eligibilityContainer.innerHTML = '';
-        
         // Create checkboxes for each eligibility criteria
         sortedEligibility.forEach(function(criteria, index) {
           const optionId = 'eligibility-' + index;
-          
           const optionDiv = document.createElement('div');
           optionDiv.className = 'eligibility-option';
-          
           const input = document.createElement('input');
           input.type = 'checkbox';
           input.name = 'eligibility';
           input.id = optionId;
           input.value = criteria;
-          
           const label = document.createElement('label');
           label.setAttribute('for', optionId);
           label.textContent = criteria;
-          
           optionDiv.appendChild(input);
           optionDiv.appendChild(label);
           eligibilityContainer.appendChild(optionDiv);
         });
       }
-      
       // Set up event listeners
       function setupEventListeners() {
         filterTrigger.addEventListener('click', openFilterModal);
         filterClose.addEventListener('click', closeFilterModal);
         filterReset.addEventListener('click', resetFilters);
         resetFiltersEmpty.addEventListener('click', resetFilters);
-        
         // Close modal when clicking outside the content
         filterModal.addEventListener('click', function(e) {
           if (e.target === filterModal) {
             closeFilterModal();
           }
         });
-        
-        // Handle form submission
+        // Handle form submission (continued)
         filterForm.addEventListener('submit', function(e) {
           e.preventDefault();
-          
           // Update active filters from form
           activeFilters.keyword = keywordFilter.value.trim();
-          
           // Get selected deadline
           document.querySelectorAll('input[name="deadline"]').forEach(function(input) {
             if (input.checked) {
               activeFilters.deadline = input.value;
             }
           });
-          
           activeFilters.minAmount = minAmountFilter.value.trim();
           activeFilters.maxAmount = maxAmountFilter.value.trim();
           activeFilters.category = categoryFilter.value;
           activeFilters.location = locationFilter.value;
-          
           // Get selected eligibility options
           activeFilters.eligibility = [];
           document.querySelectorAll('input[name="eligibility"]:checked').forEach(function(input) {
             activeFilters.eligibility.push(input.value);
           });
-          
           // Apply the filters
           applyFilters();
         });
-        
         // Set up browser history navigation
         window.addEventListener('popstate', function() {
           readFiltersFromUrl();
         });
-        
         // Page navigation for filtered results
         document.addEventListener('click', function(e) {
           // Check if clicked element is a filtered pagination link
@@ -1217,13 +1237,10 @@
           }
         });
       }
-      
       // Function to update URL with current filters
       function updateUrl() {
         if (!history.pushState) return; // Skip if browser doesn't support history API
-        
         const url = new URL(window.location.href);
-        
         // Clear existing filter params
         url.searchParams.delete('keyword');
         url.searchParams.delete('deadline');
@@ -1233,49 +1250,38 @@
         url.searchParams.delete('location');
         url.searchParams.delete('eligibility');
         url.searchParams.delete('filter_page');
-        
         // Add current filter values
         if (activeFilters.keyword) {
           url.searchParams.set('keyword', activeFilters.keyword);
         }
-        
         if (activeFilters.deadline !== 'all') {
           url.searchParams.set('deadline', activeFilters.deadline);
         }
-        
         if (activeFilters.minAmount) {
           url.searchParams.set('min_amount', activeFilters.minAmount);
         }
-        
         if (activeFilters.maxAmount) {
           url.searchParams.set('max_amount', activeFilters.maxAmount);
         }
-        
         if (activeFilters.category) {
           url.searchParams.set('category', activeFilters.category);
         }
-        
         if (activeFilters.location) {
           url.searchParams.set('location', activeFilters.location);
         }
-        
         if (activeFilters.eligibility.length > 0) {
           url.searchParams.set('eligibility', activeFilters.eligibility.join(','));
         }
-        
         // Add current page for filtered results
         if (hasActiveFilters() && currentPage > 1) {
           url.searchParams.set('filter_page', currentPage);
         }
-        
         // Update URL without reloading the page
         history.pushState({}, '', url);
       }
-      
       // Function to read filters from URL
       function readFiltersFromUrl() {
         const url = new URL(window.location.href);
-        
         // Read each filter param
         activeFilters.keyword = url.searchParams.get('keyword') || '';
         activeFilters.deadline = url.searchParams.get('deadline') || 'all';
@@ -1283,10 +1289,8 @@
         activeFilters.maxAmount = url.searchParams.get('max_amount') || '';
         activeFilters.category = url.searchParams.get('category') || '';
         activeFilters.location = url.searchParams.get('location') || '';
-        
         const eligibilityParam = url.searchParams.get('eligibility') || '';
         activeFilters.eligibility = eligibilityParam ? eligibilityParam.split(',') : [];
-        
         // Read filtered page number
         const filterPage = url.searchParams.get('filter_page');
         if (filterPage) {
@@ -1294,30 +1298,24 @@
         } else {
           currentPage = 1;
         }
-        
         // Update form fields to match URL parameters
         keywordFilter.value = activeFilters.keyword;
-        
         document.querySelectorAll('input[name="deadline"]').forEach(function(input) {
           input.checked = input.value === activeFilters.deadline;
         });
-        
         minAmountFilter.value = activeFilters.minAmount;
         maxAmountFilter.value = activeFilters.maxAmount;
         categoryFilter.value = activeFilters.category;
         locationFilter.value = activeFilters.location;
-        
         // Update eligibility checkboxes
         document.querySelectorAll('input[name="eligibility"]').forEach(function(checkbox) {
           checkbox.checked = activeFilters.eligibility.includes(checkbox.value);
         });
-        
         // Apply the filters
         if (hasActiveFilters()) {
           applyFilters(false); // Don't update URL again to avoid loops
         }
       }
-      
       // Function to check if there are any active filters
       function hasActiveFilters() {
         return (
@@ -1330,17 +1328,14 @@
           activeFilters.eligibility.length > 0
         );
       }
-      
       // Function to update active filters display
       function updateActiveFiltersDisplay() {
         // Clear existing filters
         activeFiltersContainer.innerHTML = '';
-        
         // Only show if we have active filters
         if (!hasActiveFilters()) {
           return;
         }
-        
         // Add reset all button
         const resetAllButton = document.createElement('button');
         resetAllButton.type = 'button';
@@ -1348,7 +1343,6 @@
         resetAllButton.textContent = 'Reset All';
         resetAllButton.addEventListener('click', resetFilters);
         activeFiltersContainer.appendChild(resetAllButton);
-        
         // Add keyword filter
         if (activeFilters.keyword) {
           addActiveFilterTag('Keyword', activeFilters.keyword, function() {
@@ -1358,7 +1352,6 @@
             applyFilters();
           });
         }
-        
         // Add deadline filter
         if (activeFilters.deadline !== 'all') {
           const deadlineLabel = document.querySelector(`label[for="deadline-${activeFilters.deadline}"]`).textContent;
@@ -1369,7 +1362,6 @@
             applyFilters();
           });
         }
-        
         // Add amount filters
         if (activeFilters.minAmount) {
           addActiveFilterTag('Min Amount', '$' + activeFilters.minAmount, function() {
@@ -1379,7 +1371,6 @@
             applyFilters();
           });
         }
-        
         if (activeFilters.maxAmount) {
           addActiveFilterTag('Max Amount', '$' + activeFilters.maxAmount, function() {
             activeFilters.maxAmount = '';
@@ -1388,7 +1379,6 @@
             applyFilters();
           });
         }
-        
         // Add category filter
         if (activeFilters.category) {
           const categoryOption = categoryFilter.querySelector(`option[value="${activeFilters.category}"]`);
@@ -1401,7 +1391,6 @@
             });
           }
         }
-        
         // Add location filter
         if (activeFilters.location) {
           const locationOption = locationFilter.querySelector(`option[value="${activeFilters.location}"]`);
@@ -1414,132 +1403,130 @@
             });
           }
         }
-        
         // Add eligibility filters
         activeFilters.eligibility.forEach(function(eligibility) {
           addActiveFilterTag('Eligibility', eligibility, function() {
             activeFilters.eligibility = activeFilters.eligibility.filter(e => e !== eligibility);
-            
             // Update checkbox state
             document.querySelectorAll('input[name="eligibility"]').forEach(function(checkbox) {
               if (checkbox.value === eligibility) {
                 checkbox.checked = false;
               }
             });
-            
             updateActiveFiltersDisplay();
             applyFilters();
           });
         });
       }
-      
       // Helper function to add an active filter tag
       function addActiveFilterTag(label, value, removeCallback) {
         const filterTag = document.createElement('div');
         filterTag.className = 'active-filter';
-        
         const filterLabel = document.createElement('span');
         filterLabel.className = 'active-filter-label';
         filterLabel.textContent = label + ': ';
-        
         const filterValue = document.createElement('span');
         filterValue.className = 'active-filter-value';
         filterValue.textContent = value;
-        
         const removeButton = document.createElement('button');
         removeButton.type = 'button';
         removeButton.className = 'active-filter-remove';
         removeButton.setAttribute('aria-label', `Remove ${label} filter: ${value}`);
         removeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
         removeButton.addEventListener('click', removeCallback);
-        
         filterTag.appendChild(filterLabel);
         filterTag.appendChild(filterValue);
         filterTag.appendChild(removeButton);
-        
         activeFiltersContainer.appendChild(filterTag);
       }
-      
       // Function to apply all filters
       function applyFilters(updateUrlFlag = true) {
         // Show loading indicator
         grantsLoading.classList.add('is-active');
-        
         // Short delay to ensure loading indicator appears
         setTimeout(function() {
           try {
             // Filter all grants
             const filteredGrants = allGrants.filter(grant => doesGrantMatchFilters(grant));
-            
             // Update filters display
             updateActiveFiltersDisplay();
-            
             if (hasActiveFilters()) {
               // Show filtered pagination, hide original
               if (originalPagination) originalPagination.style.display = 'none';
-              
               // Calculate total pages for filtered results
               const totalFilteredPages = Math.ceil(filteredGrants.length / postsPerPage);
-              
               // Make sure current page is valid
               currentPage = Math.min(Math.max(1, currentPage), totalFilteredPages || 1);
-              
               // Calculate which grants to show on current page
               const startIndex = (currentPage - 1) * postsPerPage;
               const endIndex = Math.min(startIndex + postsPerPage, filteredGrants.length);
               const grantsToShow = filteredGrants.slice(startIndex, endIndex);
-              
               // Clear grants container
               if (grantsContainer) {
-                  // Keep track of original container classes
-                  const containerClasses = grantsContainer.className;
-                  
-                  // Clear container
-                  grantsContainer.innerHTML = '';
-                  
-                  // Ensure container has correct classes
-                  grantsContainer.className = containerClasses;
-                  
-                  // Add grants for current page
-                  if (grantsToShow.length > 0) {
-                      grantsToShow.forEach(grant => {
-                          // Clone the grant to avoid modifying the original
-                          const clonedGrant = grant.cloneNode(true);
-                          
-                          // Ensure proper classes are applied
-                          const grantId = grant.id;
-                          if (originalGrantClasses[grantId]) {
-                              clonedGrant.className = originalGrantClasses[grantId].classes;
-                          }
-                          
-                          grantsContainer.appendChild(clonedGrant);
-                      });
-                      
-                      // Show filtered pagination
-                      updateFilteredPagination(filteredGrants.length, totalFilteredPages);
-                      noMatchingGrants.classList.remove('is-visible');
-                  } else {
-                      // No matching grants
-                      noMatchingGrants.classList.add('is-visible');
-                      filteredPagination.style.display = 'none';
-                  }
-              } else {
-                  console.error('Grants container not found');
+                // Keep track of original container classes
+                const containerClasses = grantsContainer.className;
+                // Clear container
+                grantsContainer.innerHTML = '';
+                // Ensure container has correct classes
+                grantsContainer.className = containerClasses;
+                // Add grants for current page
+                if (grantsToShow.length > 0) {
+                  // NEW APPROACH: Create full cards with preserved structure
+                  grantsToShow.forEach(grant => {
+                    // Get grant ID
+                    const grantId = grant.id;
+                    // Get the template from our storage
+                    const templateId = originalGrantData[grantId]?.templateId;
+                    if (templateId) {
+                      // Get the template with full styling
+                      const template = document.getElementById(templateId);
+                      if (template) {
+                        // Clone the template (with all style elements)
+                        const newCard = template.cloneNode(true);
+                        // Remove the template ID to avoid duplicates
+                        newCard.id = grantId;
+                        // Apply original class names
+                        if (originalGrantData[grantId]?.classes) {
+                          newCard.className = originalGrantData[grantId].classes;
+                        }
+                        // Add to container
+                        grantsContainer.appendChild(newCard);
+                      } else {
+                        // Fallback: Add the filtered grant directly
+                        const clonedGrant = grant.cloneNode(true);
+                        // Apply original class names if available
+                        if (originalGrantData[grantId]?.classes) {
+                          clonedGrant.className = originalGrantData[grantId].classes;
+                        }
+                        grantsContainer.appendChild(clonedGrant);
+                      }
+                    } else {
+                      // Fallback: Add the filtered grant directly
+                      grantsContainer.appendChild(grant.cloneNode(true));
+                    }
+                  });
+                  // Show filtered pagination
+                  updateFilteredPagination(filteredGrants.length, totalFilteredPages);
+                  noMatchingGrants.classList.remove('is-visible');
+                } else {
+                  // No matching grants
                   noMatchingGrants.classList.add('is-visible');
+                  filteredPagination.style.display = 'none';
+                }
+              } else {
+                console.error('Grants container not found');
+                noMatchingGrants.classList.add('is-visible');
               }
-              
               // Update grants counter
               updateGrantsCounter(filteredGrants.length);
             } else {
               // Reset to original state
               resetToOriginalState();
             }
-            
             // Update URL if requested
             if (updateUrlFlag) {
               updateUrl();
             }
-            
             // Initialize any JavaScript needed for the newly added grants
             initGrantsScripts();
           } catch (error) {
@@ -1549,13 +1536,11 @@
           } finally {
             // Hide loading indicator
             grantsLoading.classList.remove('is-active');
-            
             // Close modal after applying filters
             closeFilterModal();
           }
         }, 300);
       }
-      
       // Reset to original unfiltered state
       function resetToOriginalState() {
         try {
@@ -1568,23 +1553,19 @@
             visibleGrants.forEach(grant => {
               const clone = grant.cloneNode(true);
               // Apply original classes if available
-              if (grant.id && originalGrantClasses[grant.id]) {
-                clone.className = originalGrantClasses[grant.id].classes;
+              if (grant.id && originalGrantData[grant.id]) {
+                clone.className = originalGrantData[grant.id].classes;
               }
               grantsContainer.appendChild(clone);
             });
           }
-          
           // Show original pagination, hide filtered
           if (originalPagination) originalPagination.style.display = '';
           if (filteredPagination) filteredPagination.style.display = 'none';
-          
           // Hide no matching message
           if (noMatchingGrants) noMatchingGrants.classList.remove('is-visible');
-          
           // Update grants counter
           updateGrantsCounter(visibleGrants.length);
-          
           // Initialize scripts for restored content
           initGrantsScripts();
         } catch (error) {
@@ -1595,60 +1576,47 @@
           }
         }
       }
-      
       // Update filtered pagination
       function updateFilteredPagination(totalItems, totalPages) {
         // Show filtered pagination
         filteredPagination.style.display = totalPages > 1 ? 'flex' : 'none';
-        
         // Clear pagination list
         filteredPaginationList.innerHTML = '';
-        
         if (totalPages <= 1) return;
-        
         // Previous page
         if (currentPage > 1) {
           filteredPaginationList.appendChild(createPaginationItem('prev', currentPage - 1, 'Prev'));
         }
-        
         // Calculate page range to show
         let startPage = Math.max(1, currentPage - 2);
         const endPage = Math.min(startPage + 4, totalPages);
-        
         // First page and ellipsis if needed
         if (startPage > 1) {
           filteredPaginationList.appendChild(createPaginationItem('page', 1));
-          
           if (startPage > 2) {
             filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
           }
         }
-        
         // Page numbers
         for (let i = startPage; i <= endPage; i++) {
           filteredPaginationList.appendChild(createPaginationItem(i === currentPage ? 'current' : 'page', i));
         }
-        
         // Last page and ellipsis if needed
         if (endPage < totalPages) {
           if (endPage < totalPages - 1) {
             filteredPaginationList.appendChild(createPaginationItem('dots', null, '...'));
           }
-          
           filteredPaginationList.appendChild(createPaginationItem('page', totalPages));
         }
-        
         // Next page
         if (currentPage < totalPages) {
           filteredPaginationList.appendChild(createPaginationItem('next', currentPage + 1, 'Next'));
         }
       }
-      
       // Helper to create pagination item
       function createPaginationItem(type, page, text = null) {
         const item = document.createElement('li');
         item.className = 'g-pagination__item';
-        
         if (type === 'current') {
           item.className += ' g-pagination__item--current';
           const span = document.createElement('span');
@@ -1665,11 +1633,9 @@
           } else if (type === 'next') {
             item.className += ' g-pagination__item--next';
           }
-          
           const link = document.createElement('a');
           link.href = '#';
           link.setAttribute('data-page', page);
-          
           if (type === 'prev') {
             link.innerHTML = `
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1687,18 +1653,14 @@
           } else {
             link.textContent = text || page;
           }
-          
           item.appendChild(link);
         }
-        
         return item;
       }
-      
       // Navigate to a specific page in filtered results
       function navigateToFilteredPage(pageNum) {
         currentPage = pageNum;
         applyFilters();
-        
         // Scroll to top of grants container
         if (grantsContainer) {
           window.scrollTo({
@@ -1707,7 +1669,6 @@
           });
         }
       }
-      
       // Function to check if a grant matches all active filters
       function doesGrantMatchFilters(grant) {
         // Keyword filter
@@ -1715,12 +1676,10 @@
           const title = grant.querySelector('.g-card__title a')?.textContent.toLowerCase() || '';
           const excerpt = grant.querySelector('.g-card__excerpt')?.textContent.toLowerCase() || '';
           const keyword = activeFilters.keyword.toLowerCase();
-          
           if (!title.includes(keyword) && !excerpt.includes(keyword)) {
             return false;
           }
         }
-        
         // Deadline filter
         if (activeFilters.deadline !== 'all') {
           const statusBadge = grant.querySelector('.g-card__status-badge');
@@ -1728,83 +1687,68 @@
           const deadlineEl = grant.querySelector('.g-card__deadline-value, [class*="deadline"]');
           const deadlineText = deadlineEl ? deadlineEl.textContent.trim() : '';
           const deadlineMatch = getDeadlineMatch(statusText, deadlineText, activeFilters.deadline);
-          
           if (!deadlineMatch) {
             return false;
           }
         }
-        
         // Amount filter
         const amountEl = grant.querySelector('.g-card__amount, [class*="amount"]');
         const amountText = amountEl ? amountEl.textContent.trim() : '';
         const amountValue = parseAmount(amountText);
-        
         if (activeFilters.minAmount && !isNaN(amountValue) && amountValue < parseInt(activeFilters.minAmount)) {
           return false;
         }
-        
         if (activeFilters.maxAmount && !isNaN(amountValue) && amountValue > parseInt(activeFilters.maxAmount)) {
           return false;
         }
-        
         // Category filter
         if (activeFilters.category) {
           const categoryLinks = grant.querySelectorAll('.g-card__tag, [class*="category"], [class*="tag"]');
           let categoryMatch = false;
-          
           categoryLinks.forEach(function(link) {
             const linkHref = link.getAttribute('href');
             if (linkHref === activeFilters.category) {
               categoryMatch = true;
             }
           });
-          
           if (!categoryMatch) {
             return false;
           }
         }
-        
         // Location filter
         if (activeFilters.location) {
           const locationLinks = grant.querySelectorAll('.g-card__location-link, [class*="location"]');
           let locationMatch = false;
-          
           locationLinks.forEach(function(link) {
             const linkHref = link.getAttribute('href');
             if (linkHref === activeFilters.location) {
               locationMatch = true;
             }
           });
-          
           if (!locationMatch) {
             return false;
           }
         }
-        
         // Eligibility filter - Enhanced to check multiple selectors
         if (activeFilters.eligibility.length > 0) {
           // Try multiple approaches to find eligibility information
           let grantEligibility = [];
-          
           // Approach 1: Look for meta items with "Eligible:"
           const eligibilitySection = Array.from(grant.querySelectorAll('.g-card__meta-item, [class*="meta"]'))
             .find(item => item.textContent.includes('Eligible:'));
-          
           if (eligibilitySection) {
             const eligibilityItems = eligibilitySection.querySelectorAll('span:not(.g-card__location-more)');
-            grantEligibility = Array.from(eligibilityItems).map(item => 
+            grantEligibility = Array.from(eligibilityItems).map(item =>
               item.textContent.replace(',', '').replace('Eligible:', '').trim()
             );
           }
-          
           // Approach 2: Look for specific eligibility classes
           if (grantEligibility.length === 0) {
             const eligibilityItems = grant.querySelectorAll('.g-card__eligibility-item, [class*="eligib"]');
-            grantEligibility = Array.from(eligibilityItems).map(item => 
+            grantEligibility = Array.from(eligibilityItems).map(item =>
               item.textContent.replace(',', '').trim()
             );
           }
-          
           // Approach 3: Check the entire grant text as last resort
           if (grantEligibility.length === 0) {
             const grantText = grant.textContent.toLowerCase();
@@ -1815,7 +1759,6 @@
             }
             return false; // No match in text
           }
-          
           // Check if any of the selected eligibility criteria match
           let matchesAny = false;
           for (let i = 0; i < activeFilters.eligibility.length; i++) {
@@ -1828,29 +1771,23 @@
             }
             if (matchesAny) break;
           }
-          
           if (!matchesAny) {
             return false;
           }
         }
-        
         // If we get here, all filters match
         return true;
       }
-      
       // Helper function to determine if a grant matches deadline filter
       function getDeadlineMatch(status, deadline, filterValue) {
         // For safety, handle null/undefined values
         status = status || '';
         deadline = deadline || '';
-        
         // Check if this is an ongoing grant
-        const isOngoing = deadline.toLowerCase().includes('ongoing') || 
-                          status.toLowerCase().includes('ongoing');
-        
+        const isOngoing = deadline.toLowerCase().includes('ongoing') ||
+          status.toLowerCase().includes('ongoing');
         // Check if this grant is marked as active
         const isActive = status.toLowerCase().includes('active');
-        
         switch (filterValue) {
           case 'today':
             return deadline.includes(getTodayFormatted());
@@ -1866,123 +1803,121 @@
             return true;
         }
       }
-      
       // Helper function to get today's date formatted like "April 28, 2025"
       function getTodayFormatted() {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const today = new Date();
         return months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
       }
-      
       // Helper function to check if date is within this week
       function isWithinThisWeek(dateStr) {
         if (!dateStr || dateStr.toLowerCase().includes('ongoing')) return false;
-        
         try {
           const dateMatches = dateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
-          
           if (dateMatches) {
-            const months = {'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 
-                           'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11};
-                           
+            const months = {
+              'january': 0,
+              'february': 1,
+              'march': 2,
+              'april': 3,
+              'may': 4,
+              'june': 5,
+              'july': 6,
+              'august': 7,
+              'september': 8,
+              'october': 9,
+              'november': 10,
+              'december': 11
+            };
             const month = months[dateMatches[1].toLowerCase()];
             const day = parseInt(dateMatches[2]);
             const year = parseInt(dateMatches[3]);
-            
             if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
               const deadline = new Date(year, month, day);
               const today = new Date();
-              
               // Get the first day of the current week (Sunday)
               const firstDayOfWeek = new Date(today);
               firstDayOfWeek.setDate(today.getDate() - today.getDay());
               firstDayOfWeek.setHours(0, 0, 0, 0);
-              
               // Get the last day of the current week (Saturday)
               const lastDayOfWeek = new Date(firstDayOfWeek);
               lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
               lastDayOfWeek.setHours(23, 59, 59, 999);
-              
               return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
             }
           }
-          
           // Fallback to try direct Date parsing
           const deadline = new Date(dateStr);
           if (!isNaN(deadline.getTime())) {
             const today = new Date();
-            
             // Get the first day of the current week (Sunday)
             const firstDayOfWeek = new Date(today);
             firstDayOfWeek.setDate(today.getDate() - today.getDay());
             firstDayOfWeek.setHours(0, 0, 0, 0);
-            
             // Get the last day of the current week (Saturday)
             const lastDayOfWeek = new Date(firstDayOfWeek);
             lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
             lastDayOfWeek.setHours(23, 59, 59, 999);
-            
             return deadline >= firstDayOfWeek && deadline <= lastDayOfWeek;
           }
-          
           return false;
         } catch (e) {
           return false;
         }
       }
-      
       // Helper function to check if date is within this month
       function isWithinThisMonth(dateStr) {
         if (!dateStr || dateStr.toLowerCase().includes('ongoing')) return false;
-        
         try {
           const dateMatches = dateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
-          
           if (dateMatches) {
-            const months = {'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 
-                           'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11};
-                           
+            const months = {
+              'january': 0,
+              'february': 1,
+              'march': 2,
+              'april': 3,
+              'may': 4,
+              'june': 5,
+              'july': 6,
+              'august': 7,
+              'september': 8,
+              'october': 9,
+              'november': 10,
+              'december': 11
+            };
             const month = months[dateMatches[1].toLowerCase()];
             const year = parseInt(dateMatches[3]);
-            
             if (!isNaN(month) && !isNaN(year)) {
               const today = new Date();
               return month === today.getMonth() && year === today.getFullYear();
             }
           }
-          
           // Fallback to try direct Date parsing
           const deadline = new Date(dateStr);
           if (!isNaN(deadline.getTime())) {
             const today = new Date();
-            return deadline.getMonth() === today.getMonth() && 
-                   deadline.getFullYear() === today.getFullYear();
+            return deadline.getMonth() === today.getMonth() &&
+              deadline.getFullYear() === today.getFullYear();
           }
-          
           return false;
         } catch (e) {
           return false;
         }
       }
-      
       // Helper function to parse amount from text
       function parseAmount(amountText) {
         if (!amountText) return NaN;
-        
         // Handle "Various Benefits" or non-numeric amount
         if (amountText.includes('Various Benefits') || !amountText.includes('$')) {
           return NaN;
         }
-        
         // Extract numeric value from format like "$10,000"
         const matches = amountText.match(/\$([0-9,]+)/);
         if (matches && matches[1]) {
           return parseInt(matches[1].replace(/,/g, ''));
         }
-        
         return NaN;
       }
-      
       // Function to update the grants counter
       function updateGrantsCounter(count) {
         if (!hasActiveFilters()) {
@@ -1991,7 +1926,6 @@
           grantsCounter.innerHTML = `Showing <strong>${count}</strong> of ${allGrants.length} Grants`;
         }
       }
-      
       // Function to reset all filters
       function resetFilters() {
         // Reset filter state
@@ -2004,72 +1938,57 @@
           location: '',
           eligibility: []
         };
-        
         // Reset current page
         currentPage = 1;
-        
         // Reset form elements
         filterForm.reset();
-        
         // Update UI and apply (empty) filters
         updateActiveFiltersDisplay();
         applyFilters();
       }
-      
       // Function to open filter modal
       function openFilterModal() {
         filterModal.classList.add('is-active');
         filterModal.setAttribute('aria-hidden', 'false');
         filterTrigger.setAttribute('aria-expanded', 'true');
-        
         // Set focus to the first input element
         setTimeout(function() {
           keywordFilter.focus();
         }, 100);
-        
         // Add key event listener to modal
         document.addEventListener('keydown', handleModalKeydown);
       }
-      
       // Function to close filter modal
       function closeFilterModal() {
         filterModal.classList.remove('is-active');
         filterModal.setAttribute('aria-hidden', 'true');
         filterTrigger.setAttribute('aria-expanded', 'false');
-        
         // Remove key event listener
         document.removeEventListener('keydown', handleModalKeydown);
       }
-      
       // Function to handle keydown events for modal
       function handleModalKeydown(e) {
         if (e.key === 'Escape') {
           closeFilterModal();
         }
       }
-      
       // Initialize countdown timers for filtered grants
       function initGrantsScripts() {
         // Initialize countdown timers
         const countdownElements = document.querySelectorAll('[data-deadline]');
-        
         countdownElements.forEach(function(element) {
           const deadline = parseInt(element.dataset.deadline, 10) * 1000;
           const countdownId = element.id;
-          
           if (!countdownId) return;
-          
           const countdown = document.getElementById(countdownId);
           if (!countdown) return;
-          
           const hoursElement = countdown.querySelector('[data-hours]');
           const minutesElement = countdown.querySelector('[data-minutes]');
           const secondsElement = countdown.querySelector('[data-seconds]');
-          
+
           function updateCountdown() {
             const now = new Date().getTime();
             const distance = deadline - now;
-            
             if (distance <= 0) {
               // Handle expired timer
               if (hoursElement) hoursElement.textContent = '00';
@@ -2077,30 +1996,24 @@
               if (secondsElement) secondsElement.textContent = '00';
               return;
             }
-            
             // Calculate time units
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
             // Update the elements
             if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
             if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
             if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
           }
-          
           // Initial update
           updateCountdown();
-          
           // Update every second
           setInterval(updateCountdown, 1000);
         });
-        
         // Any other initialization needed for the grants
         reinitializeDropdowns();
         reinitializeTruncation();
       }
-      
       // Reinitialize truncation for long text
       function reinitializeTruncation() {
         const longTextElements = document.querySelectorAll('.g-card__excerpt');
@@ -2110,7 +2023,6 @@
           }
         });
       }
-      
       // Reinitialize dropdowns and other interactive elements
       function reinitializeDropdowns() {
         document.querySelectorAll('.g-card__dropdown-trigger').forEach(function(trigger) {
@@ -2126,22 +2038,19 @@
           }
         });
       }
-      
       // Start by fetching all grants
       fetchAllGrants();
-      
       // Add mutation observer to detect DOM changes and reapply styles
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
             // Check if we need to reinitialize scripts
-            const hasGrantCards = Array.from(mutation.addedNodes).some(node => 
+            const hasGrantCards = Array.from(mutation.addedNodes).some(node =>
               node.nodeType === 1 && (
-                node.classList && node.classList.contains('g-card') || 
+                node.classList && node.classList.contains('g-card') ||
                 node.querySelector && node.querySelector('.g-card')
               )
             );
-            
             if (hasGrantCards) {
               // Reinitialize scripts for newly added grants
               setTimeout(initGrantsScripts, 100);
@@ -2149,10 +2058,12 @@
           }
         });
       });
-      
       // Observe the grants container
       if (grantsContainer) {
-        observer.observe(grantsContainer, { childList: true, subtree: true });
+        observer.observe(grantsContainer, {
+          childList: true,
+          subtree: true
+        });
       }
     });
   </script>
